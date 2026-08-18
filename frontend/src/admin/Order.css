@@ -1,0 +1,295 @@
+/* ===========================================
+   ORDER MANAGEMENT
+=========================================== */
+
+.order-page {
+    padding: 25px;
+    background: #f5f7fb;
+    min-height: 100vh;
+}
+
+/* ===========================================
+   HEADER
+=========================================== */
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.page-header h2 {
+    color: #1b1bc5;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+/* ===========================================
+   TABLE
+=========================================== */
+/* ===========================================
+   TABLE
+=========================================== */
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 75vh;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.order-table {
+    min-width: 1400px;
+    width: max-content;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #fff;
+}
+
+/* Header */
+
+.order-table thead th {
+    position: sticky;
+    top: 0;
+    background: #1b1bc5;
+    color: #fff;
+    padding: 14px;
+    text-align: center;
+    border: 1px solid #ddd;
+    white-space: nowrap;
+    z-index: 100;
+}
+
+/* Body */
+
+.order-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    background: #fff;
+    white-space: nowrap;
+}
+
+/* Hover */
+
+.order-table tbody tr:hover td {
+    background: #f5f8ff;
+}
+
+/* ===========================================
+   STICKY COLUMN 1
+=========================================== */
+
+.order-table th:nth-child(1),
+.order-table td:nth-child(1) {
+    position: sticky;
+    left: 0;
+    width: 70px;
+    min-width: 70px;
+    text-align: center;
+    background: #fff;
+    z-index: 90;
+}
+
+/* ===========================================
+   STICKY COLUMN 2
+=========================================== */
+
+.order-table th:nth-child(2),
+.order-table td:nth-child(2) {
+    position: sticky;
+    left: 70px;
+    width: 120px;
+    min-width: 120px;
+    background: #fff;
+    z-index: 90;
+}
+
+/* ===========================================
+   STICKY COLUMN 3
+=========================================== */
+
+.order-table th:nth-child(3),
+.order-table td:nth-child(3) {
+    position: sticky;
+    left: 190px;
+    width: 220px;
+    min-width: 220px;
+    background: #fff;
+    z-index: 90;
+}
+
+/* Header Sticky Columns */
+
+.order-table thead th:nth-child(1) {
+    left: 0;
+    z-index: 110;
+    background: #1b1bc5;
+}
+
+.order-table thead th:nth-child(2) {
+    left: 70px;
+    z-index: 110;
+    background: #1b1bc5;
+}
+
+.order-table thead th:nth-child(3) {
+    left: 190px;
+    z-index: 110;
+    background: #1b1bc5;
+}
+
+/* Keep sticky cells white while hovering */
+
+.order-table tbody tr:hover td:nth-child(1),
+.order-table tbody tr:hover td:nth-child(2),
+.order-table tbody tr:hover td:nth-child(3) {
+    background: #fff;
+    z-index: 95;
+}
+
+/* ===========================================
+   STATUS BADGES
+=========================================== */
+
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 13px;
+    display: inline-block;
+}
+
+.status-badge.pending {
+    background: #ff9800;
+}
+
+.status-badge.confirmed {
+    background: #3f51b5;
+}
+
+.status-badge.packed {
+    background: #673ab7;
+}
+
+.status-badge.shipped {
+    background: #03a9f4;
+}
+
+.status-badge.delivered {
+    background: #4caf50;
+}
+
+.status-badge.cancelled {
+    background: #f44336;
+}
+
+/* ===========================================
+   PAYMENT STATUS
+=========================================== */
+
+.paid {
+    background: #d4edda;
+    color: #2e7d32;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-weight: 600;
+}
+
+.pending {
+    background: #fff3cd;
+    color: #b26a00;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-weight: 600;
+}
+
+/* ===========================================
+   SELECT BOX
+=========================================== */
+
+.order-table select {
+    width: 150px;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #cfd4dc;
+    cursor: pointer;
+    background: white;
+    outline: none;
+    transition: .3s;
+}
+
+.order-table select:hover {
+    border-color: #1b1bc5;
+}
+
+.order-table select:focus {
+    border-color: #1b1bc5;
+    box-shadow: 0 0 5px rgba(27,27,197,.25);
+}
+
+.order-table select:disabled {
+    background: #eeeeee;
+    cursor: not-allowed;
+    color: #777;
+}
+
+/* ===========================================
+   LOADING / EMPTY
+=========================================== */
+
+.order-table td[colspan] {
+    padding: 40px;
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+}
+
+/* ===========================================
+   ACCESS DENIED
+=========================================== */
+
+.access-denied {
+    text-align: center;
+    margin-top: 120px;
+}
+
+.access-denied h2 {
+    color: crimson;
+    margin-bottom: 10px;
+}
+
+.access-denied p {
+    color: #555;
+}
+
+/* ===========================================
+   RESPONSIVE
+=========================================== */
+
+@media (max-width:992px) {
+
+    .order-page {
+        padding: 15px;
+    }
+
+    .page-header h2 {
+        font-size: 24px;
+    }
+
+}
+
+@media (max-width:768px) {
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .order-table {
+        min-width: 1300px;
+    }
+
+}

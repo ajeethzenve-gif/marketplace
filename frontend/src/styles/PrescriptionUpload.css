@@ -1,0 +1,702 @@
+/* ================================
+   Prescription Upload Page
+   ================================ */
+
+.prescription-page {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 10% 10%, rgba(37, 99, 235, 0.08), transparent 28%),
+        radial-gradient(circle at 90% 30%, rgba(20, 184, 166, 0.08), transparent 28%),
+        #f7faff;
+    padding: 145px 25px 50px;
+}
+
+.prescription-container {
+    width: min(1180px, 100%);
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+/* Background decorations */
+
+.prescription-bg-shape {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(1px);
+}
+
+.shape-one {
+    width: 280px;
+    height: 280px;
+    background: rgba(37, 99, 235, 0.06);
+    top: 170px;
+    left: -120px;
+}
+
+.shape-two {
+    width: 360px;
+    height: 360px;
+    background: rgba(20, 184, 166, 0.05);
+    bottom: 80px;
+    right: -170px;
+}
+
+/* Back button */
+
+.back-button {
+    border: none;
+    background: transparent;
+    color: #315caa;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 7px 0;
+    margin-bottom: 15px;
+    transition: 0.2s ease;
+}
+
+.back-button:hover {
+    color: #173f7a;
+    transform: translateX(-3px);
+}
+
+/* Hero */
+
+.prescription-hero {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 35px;
+    align-items: center;
+    background: linear-gradient(135deg, #ffffff 0%, #f1f7ff 100%);
+    border: 1px solid #e1eaf7;
+    border-radius: 28px;
+    padding: 45px 50px;
+    box-shadow: 0 20px 55px rgba(24, 63, 122, 0.09);
+    margin-bottom: 25px;
+}
+
+.hero-badge {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 13px;
+    border-radius: 50px;
+    background: #e8f1ff;
+    color: #2158a8;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 17px;
+}
+
+.hero-content h1 {
+    margin: 0;
+    color: #172b4d;
+    font-size: clamp(34px, 5vw, 52px);
+    line-height: 1.08;
+    letter-spacing: -1.5px;
+}
+
+.hero-content h1 span {
+    display: block;
+    color: #2161c4;
+}
+
+.hero-content > p {
+    max-width: 610px;
+    margin: 18px 0 22px;
+    color: #60708a;
+    line-height: 1.7;
+    font-size: 15px;
+}
+
+.hero-points {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.hero-points div {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: white;
+    border: 1px solid #e4ebf5;
+    color: #435875;
+    border-radius: 50px;
+    padding: 8px 11px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.hero-points svg {
+    color: #16a085;
+}
+
+/* Hero illustration */
+
+.hero-illustration {
+    min-height: 300px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.illustration-circle {
+    width: 235px;
+    height: 235px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #dceaff, #eef7ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        inset 0 0 0 20px rgba(255, 255, 255, 0.65),
+        0 20px 40px rgba(37, 99, 235, 0.13);
+}
+
+.paw-large {
+    font-size: 105px;
+    color: #2865bd;
+    opacity: 0.92;
+}
+
+.floating-card {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid #e3eaf4;
+    border-radius: 15px;
+    box-shadow: 0 12px 28px rgba(27, 62, 112, 0.12);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    animation: floatingCard 3.5s ease-in-out infinite;
+}
+
+.floating-card svg {
+    font-size: 24px;
+    color: #e53935;
+}
+
+.floating-card strong {
+    display: block;
+    font-size: 12px;
+    color: #253b5c;
+}
+
+.floating-card small {
+    display: block;
+    margin-top: 2px;
+    color: #7a8799;
+    font-size: 10px;
+}
+
+.card-top {
+    top: 20px;
+    right: 0;
+}
+
+.card-bottom {
+    bottom: 18px;
+    left: 15px;
+    color: #23559c;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.card-bottom svg {
+    color: #23559c;
+}
+
+@keyframes floatingCard {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* Upload section */
+
+.upload-section {
+    display: grid;
+    grid-template-columns: 1.55fr 0.85fr;
+    gap: 22px;
+    align-items: stretch;
+}
+
+.upload-card,
+.info-card {
+    background: white;
+    border: 1px solid #e1e8f2;
+    border-radius: 22px;
+    box-shadow: 0 12px 35px rgba(30, 64, 110, 0.07);
+}
+
+.upload-card {
+    padding: 28px;
+}
+
+.upload-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.upload-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e9f2ff;
+    color: #2563bd;
+    font-size: 22px;
+}
+
+.upload-heading h2 {
+    margin: 0 0 4px;
+    color: #203653;
+    font-size: 22px;
+}
+
+.upload-heading p {
+    margin: 0;
+    color: #75839a;
+    font-size: 13px;
+}
+
+/* Drop zone */
+
+.drop-zone {
+    min-height: 260px;
+    border: 2px dashed #b7c9e2;
+    border-radius: 18px;
+    background: #f9fbff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-active {
+    border-color: #3572c9;
+    background: #f0f6ff;
+    transform: translateY(-2px);
+}
+
+.drop-icon {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: #e5efff;
+    color: #2865bd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 31px;
+    margin-bottom: 14px;
+}
+
+.drop-zone h3 {
+    margin: 0;
+    color: #2c4261;
+    font-size: 17px;
+}
+
+.drop-zone p {
+    margin: 8px 0 17px;
+    color: #7b8799;
+    font-size: 13px;
+}
+
+.drop-zone p span {
+    color: #2463bd;
+    font-weight: 700;
+    margin-left: 4px;
+}
+
+.file-types {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 7px;
+}
+
+.file-types span {
+    background: white;
+    border: 1px solid #dce5f1;
+    border-radius: 20px;
+    padding: 6px 10px;
+    color: #65758c;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+/* Selected file */
+
+.selected-file {
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid #dce7f5;
+    background: #f8fbff;
+    border-radius: 18px;
+    padding: 22px;
+}
+
+.file-preview-icon {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    background: #fff0f0;
+    color: #e53935;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 29px;
+}
+
+.file-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.file-details strong {
+    display: block;
+    color: #263b59;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-details > span {
+    display: block;
+    color: #8390a3;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.upload-ready {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #13916f;
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+.remove-file {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: #fff0f0;
+    color: #d33b3b;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.remove-file:hover {
+    background: #ffe0e0;
+    transform: rotate(90deg);
+}
+
+/* Messages */
+
+.upload-message {
+    margin-top: 14px;
+    border-radius: 10px;
+    padding: 11px 13px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.error-message {
+    background: #fff1f1;
+    color: #c02f2f;
+    border: 1px solid #ffd4d4;
+}
+
+.success-message {
+    background: #ecfbf6;
+    color: #08795e;
+    border: 1px solid #c7f0e3;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+/* Upload button */
+
+.upload-button {
+    width: 100%;
+    margin-top: 18px;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, #2463bd, #174b99);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(36, 99, 189, 0.22);
+    transition: 0.25s ease;
+}
+
+.upload-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(36, 99, 189, 0.3);
+}
+
+.upload-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.upload-note {
+    text-align: center;
+    margin: 12px 0 0;
+    color: #8994a5;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+/* Information card */
+
+.info-card {
+    padding: 25px;
+}
+
+.info-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.info-header svg {
+    color: #2563bd;
+    font-size: 21px;
+}
+
+.info-header h3 {
+    margin: 0;
+    color: #243a58;
+    font-size: 18px;
+}
+
+.step {
+    display: flex;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid #edf1f6;
+}
+
+.step > span {
+    width: 31px;
+    height: 31px;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: #edf4ff;
+    color: #2563bd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.step strong {
+    display: block;
+    color: #334966;
+    font-size: 13px;
+}
+
+.step p {
+    margin: 4px 0 0;
+    color: #7a879a;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.safety-box {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+    padding: 13px;
+    border-radius: 12px;
+    background: #f7f9fc;
+    border: 1px solid #e5ebf3;
+}
+
+.safety-box svg {
+    color: #2470bb;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.safety-box p {
+    margin: 0;
+    color: #69788d;
+    font-size: 10px;
+    line-height: 1.55;
+}
+
+/* Bottom banner */
+
+.clinic-banner {
+    margin-top: 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    border-radius: 19px;
+    background: linear-gradient(135deg, #173f7a, #2365b9);
+    color: white;
+    box-shadow: 0 15px 35px rgba(23, 63, 122, 0.18);
+}
+
+.clinic-paw {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.clinic-banner > div:nth-child(2) {
+    flex: 1;
+}
+
+.clinic-banner h3 {
+    margin: 0 0 4px;
+    font-size: 16px;
+}
+
+.clinic-banner p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.clinic-banner button {
+    border: none;
+    border-radius: 9px;
+    padding: 10px 16px;
+    background: white;
+    color: #1b4e98;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.clinic-banner button:hover {
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+
+@media (max-width: 950px) {
+    .prescription-hero {
+        grid-template-columns: 1fr;
+        padding: 35px;
+    }
+
+    .hero-illustration {
+        min-height: 260px;
+    }
+
+    .upload-section {
+        grid-template-columns: 1fr;
+    }
+
+    .info-card {
+        order: 2;
+    }
+}
+
+@media (max-width: 650px) {
+    .prescription-page {
+        padding: 125px 12px 30px;
+    }
+
+    .prescription-hero {
+        padding: 27px 20px;
+        border-radius: 20px;
+    }
+
+    .hero-content h1 {
+        font-size: 34px;
+    }
+
+    .hero-points {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .upload-card,
+    .info-card {
+        padding: 19px;
+        border-radius: 17px;
+    }
+
+    .drop-zone {
+        min-height: 220px;
+        padding: 20px;
+    }
+
+    .selected-file {
+        padding: 15px;
+    }
+
+    .clinic-banner {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .clinic-banner button {
+        width: 100%;
+    }
+
+    .card-top {
+        right: -5px;
+    }
+
+    .card-bottom {
+        left: -5px;
+    }
+}

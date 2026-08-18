@@ -1,0 +1,55 @@
+.pagination-container{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin:40px 0;
+
+    flex-wrap:wrap;
+
+}
+
+.pagination-container button{
+
+    border:none;
+
+    padding:10px 16px;
+
+    border-radius:8px;
+
+    background:#f3f3f3;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.pagination-container button:hover{
+
+    background:#1976d2;
+
+    color:white;
+
+}
+
+.active-page{
+
+    background:#1976d2 !important;
+
+    color:white;
+
+}
+
+.pagination-container button:disabled{
+
+    opacity:.5;
+
+    cursor:not-allowed;
+
+}

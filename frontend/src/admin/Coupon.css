@@ -1,0 +1,218 @@
+/* =====================================================
+   COUPON PAGE
+===================================================== */
+
+.coupon-page {
+    width: 100%;
+    padding: 25px;
+    background: #f5f7fb;
+    min-height: calc(100vh - 70px);
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.coupon-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.coupon-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1b1bc5;
+}
+
+.coupon-header .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #1b1bc5;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.coupon-header .btn:hover {
+    background: #14149c;
+}
+
+/* =====================================================
+   TABLE
+===================================================== */
+
+.coupon-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+.coupon-table thead {
+    background: #1b1bc5;
+    color: white;
+}
+
+.coupon-table th,
+.coupon-table td {
+    padding: 15px;
+    text-align: center;
+}
+
+.coupon-table tbody tr {
+    border-bottom: 1px solid #ececec;
+}
+
+.coupon-table tbody tr:hover {
+    background: #f4f7ff;
+}
+
+.coupon-table td {
+    color: #444;
+    font-size: 15px;
+}
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.status-active {
+    background: #d4edda;
+    color: #198754;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.status-inactive {
+    background: #f8d7da;
+    color: #dc3545;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+}
+/* ==========================================
+   COUPON FORM
+========================================== */
+
+.coupon-form {
+    width: 800px;
+    max-width: 100%;
+    margin: 40px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+.coupon-form h2 {
+    text-align: center;
+    color: #1b1bc5;
+    margin-bottom: 30px;
+}
+
+/* Two-column layout */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input,
+.form-group select {
+    height: 45px;
+    padding: 0 12px;
+    border: 1px solid #d5d5d5;
+    border-radius: 8px;
+    outline: none;
+    font-size: 15px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #1b1bc5;
+    box-shadow: 0 0 5px rgba(27,27,197,.2);
+}
+
+/* Checkbox */
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.checkbox-group input {
+    width: 18px;
+    height: 18px;
+}
+
+/* Button */
+
+.coupon-form button {
+    width: 100%;
+    height: 48px;
+    background: #1b1bc5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.coupon-form button:hover {
+    background: #14149c;
+}
+
+/* Mobile */
+
+@media (max-width:768px){
+
+    .form-row{
+        grid-template-columns:1fr;
+    }
+
+}/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 768px) {
+
+    .coupon-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .coupon-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .coupon-form {
+        padding: 20px;
+    }
+}

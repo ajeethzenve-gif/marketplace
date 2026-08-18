@@ -1,0 +1,311 @@
+/* ================================
+   PAYMENT PAGE
+================================== */
+
+.payment-page{
+    background:#f5f7fb;
+    min-height:100vh;
+    padding:40px 0;
+}
+
+/* ================================
+   CARDS
+================================== */
+
+.premium-card,
+.premium-summary{
+    background:#fff;
+    border-radius:18px;
+    padding:28px;
+    border:1px solid #ececec;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+
+.premium-summary{
+    position:sticky;
+    top:90px;
+}
+
+/* ================================
+   TITLES
+================================== */
+
+.section-title,
+.summary-title{
+    font-size:24px;
+    font-weight:700;
+    color:#1b1bc5;
+    margin-bottom:20px;
+}
+
+/* ================================
+   PRODUCT CARD
+================================== */
+
+.checkout-product{
+    display:flex;
+    gap:20px;
+    align-items:center;
+}
+
+.checkout-image{
+    width:130px;
+    height:130px;
+    object-fit:cover;
+    border-radius:14px;
+    border:1px solid #ddd;
+    background:#fff;
+}
+
+.checkout-info{
+    flex:1;
+}
+
+.checkout-info h5{
+    font-size:22px;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.checkout-info p{
+    margin-bottom:8px;
+    color:#666;
+}
+
+.checkout-info h4{
+    color:#198754;
+    font-weight:700;
+    margin-top:10px;
+}
+
+/* ================================
+   ADDRESS
+================================== */
+
+.premium-input{
+    width:100%;
+    border:2px solid #ddd;
+    border-radius:12px;
+    padding:16px;
+    font-size:16px;
+    resize:none;
+    transition:.3s;
+}
+
+.premium-input:focus{
+    border-color:#1b1bc5;
+    outline:none;
+    box-shadow:0 0 10px rgba(27,27,197,.15);
+}
+
+/* ================================
+   PAYMENT OPTIONS
+================================== */
+
+.payment-options{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.payment-option{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    padding:18px;
+    border:2px solid #e6e6e6;
+    border-radius:15px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.payment-option:hover{
+    border-color:#1b1bc5;
+    transform:translateY(-2px);
+}
+
+.payment-option.active{
+    border-color:#1b1bc5;
+    background:#eef3ff;
+    box-shadow:0 8px 18px rgba(27,27,197,.12);
+}
+
+.payment-option input{
+    display:none;
+}
+
+.payment-option svg{
+    font-size:30px;
+    color:#1b1bc5;
+}
+
+.payment-option span{
+    font-size:17px;
+    font-weight:600;
+}
+
+/* ================================
+   SUMMARY
+================================== */
+
+.summary-row{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:15px;
+    font-size:16px;
+    color:#555;
+}
+
+.summary-total{
+    display:flex;
+    justify-content:space-between;
+    font-size:25px;
+    font-weight:700;
+    color:#1b1bc5;
+    margin-top:20px;
+}
+
+/* ================================
+   BUTTON
+================================== */
+
+.place-order-btn{
+    width:100%;
+    margin-top:25px;
+    border:none;
+    padding:16px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#1b1bc5,#3f55ff);
+    color:#fff;
+    font-size:18px;
+    font-weight:700;
+    transition:.3s;
+}
+
+.place-order-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 25px rgba(27,27,197,.35);
+}
+
+.place-order-btn:disabled{
+    background:#999;
+}
+
+/* ================================
+   SECURE BOX
+================================== */
+
+.secure-box{
+    margin-top:25px;
+    background:#f7f9ff;
+    border-radius:15px;
+    padding:18px;
+    border:1px solid #dbe4ff;
+}
+
+.secure-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:12px;
+}
+
+.secure-item:last-child{
+    margin-bottom:0;
+}
+
+.secure-item svg{
+    color:#1b1bc5;
+    font-size:20px;
+}
+
+/* ================================
+   OFFER BOX
+================================== */
+
+.offer-box{
+    margin-top:20px;
+    border-radius:15px;
+    padding:18px;
+    background:linear-gradient(135deg,#fff7db,#fff2b8);
+    border:1px solid #ffd65f;
+}
+
+.offer-box h6{
+    font-size:18px;
+    color:#d98300;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.offer-box p{
+    margin-bottom:8px;
+    color:#555;
+}
+
+.coupon-box {
+    margin: 20px 0;
+}
+
+.coupon-title {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.coupon-input {
+    display: flex;
+    gap: 10px;
+}
+
+.coupon-input input {
+    flex: 1;
+    height: 45px;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    padding: 0 12px;
+    font-size: 15px;
+}
+
+.coupon-input button {
+    width: 120px;
+    border: none;
+    border-radius: 8px;
+    background: #0d6efd;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.coupon-input button:hover {
+    background: #0b5ed7;
+}
+/* ================================
+   RESPONSIVE
+================================== */
+
+@media(max-width:768px){
+
+    .checkout-product{
+        flex-direction:column;
+        text-align:center;
+    }
+
+    .checkout-image{
+        width:180px;
+        height:180px;
+    }
+
+    .premium-summary{
+        position:static;
+    }
+
+    .section-title,
+    .summary-title{
+        font-size:22px;
+    }
+
+    .summary-total{
+        font-size:22px;
+    }
+}
