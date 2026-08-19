@@ -4,12 +4,12 @@ from rest_framework import status
 
 from rest_framework.permissions import (
     AllowAny,
-    IsAuthenticated
+    IsAuthenticated,
 )
 
 from rest_framework.parsers import (
     MultiPartParser,
-    FormParser
+    FormParser,
 )
 
 from .pagination import ProductPagination
@@ -17,33 +17,33 @@ from .pagination import ProductPagination
 from .models import (
     Product,
     Category,
-    Brand
+    Brand,
 )
 
 from accounts.models import (
     PetProfile,
-    Customer
+    Customer,
 )
 
 from .serializers import (
     ProductSerializer,
     CategorySerializer,
     BrandSerializer,
-    ProductImageSerializer
+    ProductImageSerializer,
 )
 
 from .permissions import IsAdminOrStaff
 
 
 # =========================================================
-# PRODUCT LIST + CREATE
+# PUBLIC PRODUCT LIST + FILTER
 # =========================================================
 
 class ProductListAPIView(APIView):
 
     parser_classes = [
         MultiPartParser,
-        FormParser
+        FormParser,
     ]
 
     # =====================================================
@@ -56,7 +56,7 @@ class ProductListAPIView(APIView):
         if self.request.method == "GET":
             return [AllowAny()]
 
-        # Only Admin / Staff can create products
+        # Only admin/staff can create products
         return [IsAdminOrStaff()]
 
     # =====================================================
@@ -68,15 +68,6 @@ class ProductListAPIView(APIView):
         # =================================================
         # QUERY PARAMETERS
         # =================================================
-
-        # IMPORTANT:
-        # getlist() allows:
-        #
-        # ?product_type=Medicine
-        #
-        # and:
-        #
-        # ?product_type=Medicine&product_type=Supplement
 
         product_types = request.query_params.getlist(
             "product_type"
@@ -186,6 +177,12 @@ class ProductListAPIView(APIView):
                 "-stock"
             )
 
+        else:
+
+            products = products.order_by(
+                "-id"
+            )
+
         # =================================================
         # PAGINATION
         # =================================================
@@ -224,7 +221,6 @@ class ProductListAPIView(APIView):
     def post(self, request):
 
         print("DATA:", request.data)
-
         print("FILES:", request.FILES)
 
         serializer = ProductSerializer(
@@ -239,19 +235,105 @@ class ProductListAPIView(APIView):
             product = serializer.save()
 
             return Response(
-
                 ProductSerializer(
                     product,
                     context={
                         "request": request
                     }
                 ).data,
-
                 status=status.HTTP_201_CREATED
             )
 
         print(
             "SERIALIZER ERRORS:",
+            serializer.errors
+        )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+# =========================================================
+# ADMIN PRODUCT LIST + CREATE
+# =========================================================
+
+class AdminProductAPIView(APIView):
+
+    parser_classes = [
+        MultiPartParser,
+        FormParser,
+    ]
+
+    # =====================================================
+    # ADMIN PERMISSIONS
+    # =====================================================
+
+    def get_permissions(self):
+
+        # Admin/staff only
+        return [IsAdminOrStaff()]
+
+    # =====================================================
+    # GET ALL PRODUCTS
+    # =====================================================
+
+    def get(self, request):
+
+        # IMPORTANT:
+        # No pagination here.
+        # Admin receives ALL products.
+
+        products = Product.objects.all().order_by(
+            "-id"
+        )
+
+        serializer = ProductSerializer(
+            products,
+            many=True,
+            context={
+                "request": request
+            }
+        )
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )
+
+    # =====================================================
+    # CREATE PRODUCT
+    # =====================================================
+
+    def post(self, request):
+
+        print("ADMIN PRODUCT DATA:", request.data)
+        print("ADMIN PRODUCT FILES:", request.FILES)
+
+        serializer = ProductSerializer(
+            data=request.data,
+            context={
+                "request": request
+            }
+        )
+
+        if serializer.is_valid():
+
+            product = serializer.save()
+
+            return Response(
+                ProductSerializer(
+                    product,
+                    context={
+                        "request": request
+                    }
+                ).data,
+                status=status.HTTP_201_CREATED
+            )
+
+        print(
+            "ADMIN PRODUCT ERRORS:",
             serializer.errors
         )
 
@@ -269,8 +351,21 @@ class ProductDetailAPIView(APIView):
 
     parser_classes = [
         MultiPartParser,
-        FormParser
+        FormParser,
     ]
+
+    # =====================================================
+    # PERMISSIONS
+    # =====================================================
+
+    def get_permissions(self):
+
+        # Anyone can view product
+        if self.request.method == "GET":
+            return [AllowAny()]
+
+        # Only admin/staff can update/delete
+        return [IsAdminOrStaff()]
 
     # =====================================================
     # GET PRODUCT OBJECT
@@ -396,7 +491,7 @@ class ProductImageUploadAPIView(APIView):
 
     parser_classes = [
         MultiPartParser,
-        FormParser
+        FormParser,
     ]
 
     def post(self, request):
@@ -644,6 +739,5 @@ class PetRecommendedProductsAPIView(APIView):
 
                 "categories": response_data
             },
-
             status=status.HTTP_200_OK
         )

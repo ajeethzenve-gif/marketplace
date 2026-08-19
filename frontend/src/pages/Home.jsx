@@ -2,10 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import ProductCard from "../components/ProductCard";
+
+import dogImage from "../assets/images/dog-transparent.png";
+import catImage from "../assets/images/cat-transparent.png";
+import productImage from "../assets/images/product-transparent.png";
+
+
 import "../styles/Home.css";
 
 function Home() {
-
     const navigate = useNavigate();
 
     // =====================================================
@@ -14,12 +19,12 @@ function Home() {
 
     const [products, setProducts] = useState([]);
 
-
     // =====================================================
     // PET MODAL
     // =====================================================
 
     const [showPetModal, setShowPetModal] = useState(false);
+    const [savingPet, setSavingPet] = useState(false);
 
     const [petDetails, setPetDetails] = useState({
         pet_name: "",
@@ -28,44 +33,34 @@ function Home() {
         age: "",
         gender: "",
         weight: "",
-        health_notes: ""
+        health_notes: "",
     });
-    const [savingPet, setSavingPet] = useState(false);
-
-    const [petMessage, setPetMessage] = useState("");
 
     // =====================================================
     // LOAD PRODUCTS
     // =====================================================
 
     useEffect(() => {
-
         loadProducts();
-
     }, []);
 
-
     const loadProducts = async () => {
-
         try {
-
             const response = await api.get("products/?page=1");
 
-            const data = response.data.results || response.data || [];
+            const data =
+                response.data?.results ||
+                response.data ||
+                [];
 
-            setProducts(data.slice(0, 5));
-
+            setProducts(Array.isArray(data) ? data.slice(0, 5) : []);
         } catch (error) {
-
             console.error(
                 "Products loading error:",
-                error
+                error.response?.data || error
             );
-
         }
-
     };
-
 
     // =====================================================
     // PET INPUT CHANGE
@@ -76,16 +71,15 @@ function Home() {
 
         setPetDetails((previous) => ({
             ...previous,
-            [name]: value
+            [name]: value,
         }));
     };
-
 
     // =====================================================
     // SAVE PET DETAILS
     // =====================================================
 
-     const savePetDetails = async (e) => {
+    const savePetDetails = async (e) => {
         e.preventDefault();
 
         const token = localStorage.getItem("access");
@@ -103,21 +97,18 @@ function Home() {
 
         try {
             setSavingPet(true);
-            setPetMessage("");
 
             const response = await api.post(
                 "accounts/pets/",
                 petDetails,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
             );
 
             console.log("Pet created:", response.data);
-
-            setPetMessage("Pet details saved successfully!");
 
             alert(
                 `${petDetails.pet_name} details saved successfully!`
@@ -130,71 +121,58 @@ function Home() {
                 age: "",
                 gender: "",
                 weight: "",
-                health_notes: ""
+                health_notes: "",
             });
 
             setShowPetModal(false);
-
         } catch (error) {
-
             console.error(
                 "Save Pet Error:",
                 error.response?.data || error
             );
 
             if (error.response?.status === 401) {
-
-                alert("Your session has expired. Please login again.");
+                alert(
+                    "Your session has expired. Please login again."
+                );
 
                 localStorage.removeItem("access");
-
                 navigate("/login");
-
             } else if (error.response?.status === 403) {
-
-                alert("You do not have permission to add pet details.");
-
+                alert(
+                    "You do not have permission to add pet details."
+                );
             } else {
-
                 alert(
                     error.response?.data?.detail ||
                     "Failed to save pet details."
                 );
             }
-
         } finally {
-
             setSavingPet(false);
-
         }
     };
 
     // =====================================================
-    // OPEN PET MODAL
+    // OPEN / CLOSE MODAL
     // =====================================================
 
     const openPetModal = () => {
-
         setShowPetModal(true);
-
     };
-
-
-    // =====================================================
-    // CLOSE PET MODAL
-    // =====================================================
 
     const closePetModal = () => {
-
-        setShowPetModal(false);
-
+        if (!savingPet) {
+            setShowPetModal(false);
+        }
     };
 
+    // =====================================================
+    // RENDER
+    // =====================================================
 
     return (
-
         <main className="home-body">
-
 
             {/* =====================================================
                 HERO SECTION
@@ -202,136 +180,89 @@ function Home() {
 
             <section className="hero-section">
 
-
-                {/* HERO CONTENT */}
-
                 <div className="hero-content">
-
 
                     <span className="hero-label">
                         Smart Care for Every Pet
                     </span>
 
-
                     <h1>
-
                         Smart Pet
-
                         <br />
-
-                        <span>
-                            Store
-                        </span>
-
+                        <span>Store</span>
                     </h1>
 
-
                     <p>
-
                         Everything your pet needs in one place.
                         Discover food, medicines, supplements,
                         grooming products and expert veterinary
                         care — all designed for smarter pet care.
-
                     </p>
-
 
                     {/* HERO FEATURES */}
 
                     <div className="hero-features">
 
-
                         <div className="hero-feature">
-
                             <span className="feature-icon">
                                 🐾
                             </span>
 
                             <span>
-
-                                <b>
-                                    Personalized
-                                </b>
-
+                                <b>Personalized</b>
+                                <br />
                                 Pet Care
-
                             </span>
-
                         </div>
 
-
                         <div className="hero-feature">
-
                             <span className="feature-icon">
                                 🩺
                             </span>
 
                             <span>
-
-                                <b>
-                                    Expert Vet
-                                </b>
-
+                                <b>Expert Vet</b>
+                                <br />
                                 Support
-
                             </span>
-
                         </div>
 
-
                         <div className="hero-feature">
-
                             <span className="feature-icon">
                                 🚚
                             </span>
 
                             <span>
-
-                                <b>
-                                    Fast & Safe
-                                </b>
-
+                                <b>Fast & Safe</b>
+                                <br />
                                 Delivery
-
                             </span>
-
                         </div>
 
-
                         <div className="hero-feature">
-
                             <span className="feature-icon">
                                 ❤️
                             </span>
 
                             <span>
-
-                                <b>
-                                    Complete
-                                </b>
-
+                                <b>Complete</b>
+                                <br />
                                 Pet Wellness
-
                             </span>
-
                         </div>
 
-
                     </div>
-
 
                     {/* HERO BUTTONS */}
 
                     <div className="hero-buttons">
 
-
                         <button
                             type="button"
-                            onClick={() => navigate("/pets")}
+                            onClick={() => navigate("/products")}
                         >
                             Shop for Your Pet
                         </button>
-
 
                         <button
                             type="button"
@@ -341,19 +272,13 @@ function Home() {
                             🐾 Add Your Pet Details
                         </button>
 
-
                     </div>
-
 
                     <div className="hero-smart-text">
-
                         ✨ Get smarter recommendations based on your pet
-
                     </div>
 
-
                 </div>
-
 
                 {/* =================================================
                     HERO VISUAL
@@ -361,56 +286,42 @@ function Home() {
 
                 <div className="hero-visual">
 
-
                     <div className="hero-circle"></div>
-
-
-                    {/* PET IMAGES */}
 
                     <div className="hero-pet-images">
 
-
                         <img
-                            src="/images/home/dog.png"
+                            src={dogImage}
                             alt="Dog"
+                            className="hero-dog-image"
                         />
-
 
                         <img
-                            src="/images/home/cat.png"
+                            src={catImage}
                             alt="Cat"
+                            className="hero-cat-image"
                         />
-
 
                     </div>
-
-
-                    {/* PRODUCTS IMAGE */}
 
                     <div className="hero-products-image">
 
                         <img
-                            src="/images/home/hero-products.png"
+                            src={productImage}
                             alt="Pet products"
                         />
 
                     </div>
 
-
-                    {/* DISCOUNT CARD */}
-
                     <div className="discount-card">
-
 
                         <strong>
                             20% OFF
                         </strong>
 
-
                         <span>
                             On First Order
                         </span>
-
 
                         <button
                             type="button"
@@ -419,50 +330,36 @@ function Home() {
                             Use Code: WELCOME10
                         </button>
 
-
                     </div>
-
 
                 </div>
 
-
             </section>
-
-
 
             {/* =====================================================
                 PET DETAILS MODAL
             ===================================================== */}
 
             {showPetModal && (
-
                 <div
                     className="pet-modal-overlay"
                     onClick={closePetModal}
                 >
-
 
                     <div
                         className="pet-modal"
                         onClick={(e) => e.stopPropagation()}
                     >
 
-
-                        {/* MODAL HEADER */}
-
                         <div className="pet-modal-header">
 
-
                             <div className="pet-modal-title">
-
 
                                 <span className="pet-modal-icon">
                                     🐾
                                 </span>
 
-
                                 <div>
-
                                     <h2>
                                         Add Your Pet
                                     </h2>
@@ -470,43 +367,34 @@ function Home() {
                                     <p>
                                         Tell us about your pet
                                     </p>
-
                                 </div>
 
-
                             </div>
-
 
                             <button
                                 type="button"
                                 className="pet-modal-close"
                                 onClick={closePetModal}
+                                disabled={savingPet}
                                 aria-label="Close"
                             >
                                 ×
                             </button>
 
-
                         </div>
-
-
-
-                        {/* PET FORM */}
 
                         <form
                             className="pet-details-form"
                             onSubmit={savePetDetails}
                         >
 
-
                             {/* PET NAME */}
 
                             <div className="pet-form-group">
 
-                                <label htmlFor="petName">
+                                <label htmlFor="pet_name">
                                     Pet Name
                                 </label>
-
 
                                 <input
                                     id="pet_name"
@@ -520,27 +408,23 @@ function Home() {
 
                             </div>
 
-
-
                             {/* PET TYPE + GENDER */}
 
                             <div className="pet-form-row">
 
-
                                 <div className="pet-form-group">
 
-                                    <label htmlFor="petType">
+                                    <label htmlFor="pet_type">
                                         Pet Type
                                     </label>
 
-
                                     <select
-                                        id="petType"
-                                        name="petType"
-                                        value={petDetails.petType}
+                                        id="pet_type"
+                                        name="pet_type"
+                                        value={petDetails.pet_type}
                                         onChange={handlePetChange}
+                                        required
                                     >
-
                                         <option value="Dog">
                                             🐶 Dog
                                         </option>
@@ -569,14 +453,11 @@ function Home() {
 
                                 </div>
 
-
-
                                 <div className="pet-form-group">
 
                                     <label htmlFor="gender">
                                         Gender
                                     </label>
-
 
                                     <select
                                         id="gender"
@@ -601,10 +482,7 @@ function Home() {
 
                                 </div>
 
-
                             </div>
-
-
 
                             {/* BREED */}
 
@@ -613,7 +491,6 @@ function Home() {
                                 <label htmlFor="breed">
                                     Breed
                                 </label>
-
 
                                 <input
                                     id="breed"
@@ -626,19 +503,15 @@ function Home() {
 
                             </div>
 
-
-
                             {/* AGE + WEIGHT */}
 
                             <div className="pet-form-row">
-
 
                                 <div className="pet-form-group">
 
                                     <label htmlFor="age">
                                         Age
                                     </label>
-
 
                                     <input
                                         id="age"
@@ -651,14 +524,11 @@ function Home() {
 
                                 </div>
 
-
-
                                 <div className="pet-form-group">
 
                                     <label htmlFor="weight">
                                         Weight
                                     </label>
-
 
                                     <input
                                         id="weight"
@@ -671,24 +541,20 @@ function Home() {
 
                                 </div>
 
-
                             </div>
-
-
 
                             {/* HEALTH NOTES */}
 
                             <div className="pet-form-group">
 
-                                <label htmlFor="notes">
+                                <label htmlFor="health_notes">
                                     Health / Special Requirements
                                 </label>
 
-
                                 <textarea
-                                    id="notes"
-                                    name="notes"
-                                    value={petDetails.notes}
+                                    id="health_notes"
+                                    name="health_notes"
+                                    value={petDetails.health_notes}
                                     onChange={handlePetChange}
                                     placeholder="Enter allergies or special requirements"
                                     rows="3"
@@ -696,44 +562,37 @@ function Home() {
 
                             </div>
 
-
-
                             {/* ACTION BUTTONS */}
 
                             <div className="pet-modal-actions">
-
 
                                 <button
                                     type="button"
                                     className="pet-cancel-btn"
                                     onClick={closePetModal}
+                                    disabled={savingPet}
                                 >
                                     Cancel
                                 </button>
 
-
                                 <button
                                     type="submit"
                                     className="pet-save-btn"
+                                    disabled={savingPet}
                                 >
-                                    🐾 Save Pet Details
+                                    {savingPet
+                                        ? "Saving..."
+                                        : "🐾 Save Pet Details"}
                                 </button>
-
 
                             </div>
 
-
                         </form>
-
 
                     </div>
 
-
                 </div>
-
             )}
-
-
 
             {/* =====================================================
                 SHOP BY CATEGORIES
@@ -741,212 +600,113 @@ function Home() {
 
             <section className="home-section">
 
-
                 <div className="section-heading">
-
 
                     <h2>
                         Shop by Categories
                     </h2>
 
-
                     <Link to="/categories">
                         View All Categories →
                     </Link>
 
-
                 </div>
 
-
-
                 <div className="category-grid">
-
 
                     <Link
                         to="/products?category=Medicines"
                         className="category-card"
                     >
-
                         <div className="category-image">
-
-                            <img
-                                src="/images/home/medicine.png"
-                                alt="Medicines"
-                            />
-
+                            💊
                         </div>
 
-
                         <h3>
-
                             Medicines &
-
                             <br />
-
                             Supplements
-
                         </h3>
-
-
                     </Link>
-
-
 
                     <Link
                         to="/products?category=Pet Food"
                         className="category-card"
                     >
-
                         <div className="category-image">
-
-                            <img
-                                src="/images/home/pet-food.png"
-                                alt="Pet Food"
-                            />
-
+                            🥣
                         </div>
 
-
                         <h3>
-
                             Pet Food &
-
                             <br />
-
                             Products
-
                         </h3>
-
-
                     </Link>
-
-
 
                     <Link
                         to="/products?category=Farm"
                         className="category-card"
                     >
-
                         <div className="category-image">
-
-                            <img
-                                src="/images/home/farm.png"
-                                alt="Farm Supplies"
-                            />
-
+                            🐄
                         </div>
 
-
                         <h3>
-
                             Farm
-
                             <br />
-
                             Supplies
-
                         </h3>
-
-
                     </Link>
-
-
 
                     <Link
                         to="/products?category=Vet"
                         className="category-card"
                     >
-
                         <div className="category-image">
-
-                            <img
-                                src="/images/home/vet-equipment.png"
-                                alt="Vet Equipment"
-                            />
-
+                            🩺
                         </div>
 
-
                         <h3>
-
                             Vet
-
                             <br />
-
                             Equipment
-
                         </h3>
-
-
                     </Link>
-
-
 
                     <Link
                         to="/services"
                         className="category-card"
                     >
-
                         <div className="category-image">
-
-                            <img
-                                src="/images/home/home-visit.png"
-                                alt="Home Visit"
-                            />
-
+                            🏠
                         </div>
 
-
                         <h3>
-
                             Home Visit
-
                             <br />
-
                             Service
-
                         </h3>
-
-
                     </Link>
-
-
 
                     <Link
                         to="/adoption"
                         className="category-card"
                     >
-
-                        <div className="category-image adoption-icon">
-
-                            <img
-                                src="/images/home/adoption.png"
-                                alt="Adoption"
-                            />
-
+                        <div className="category-image">
+                            🐾
                         </div>
 
-
                         <h3>
-
                             Adoption
-
                             <br />
-
                             Platform
-
                         </h3>
-
-
                     </Link>
-
 
                 </div>
 
-
             </section>
-
-
 
             {/* =====================================================
                 MEGA SAVINGS
@@ -954,24 +714,19 @@ function Home() {
 
             <section className="offer-banner">
 
-
                 <div className="offer-content">
-
 
                     <span>
                         Mega Savings
                     </span>
 
-
                     <h2>
                         Upto 30% OFF
                     </h2>
 
-
                     <p>
                         On Selected Products
                     </p>
-
 
                     <button
                         type="button"
@@ -980,86 +735,43 @@ function Home() {
                         Shop Offers →
                     </button>
 
-
                 </div>
-
-
 
                 <div className="offer-image">
 
-
                     <img
-                        src="/images/home/offer-products.png"
+                        src={productImage}
                         alt="Special offers"
                     />
 
-
                 </div>
 
-
-
                 <div className="countdown-box">
-
 
                     <strong>
                         Offer Ends In
                     </strong>
 
-
                     <div className="countdown-time">
-
-                        <span>
-                            02
-                        </span>
-
+                        <span>02</span>
                         :
-
-                        <span>
-                            18
-                        </span>
-
+                        <span>18</span>
                         :
-
-                        <span>
-                            45
-                        </span>
-
+                        <span>45</span>
                         :
-
-                        <span>
-                            30
-                        </span>
-
+                        <span>30</span>
                     </div>
-
 
                     <div className="countdown-labels">
-
-                        <span>
-                            Days
-                        </span>
-
-                        <span>
-                            Hrs
-                        </span>
-
-                        <span>
-                            Mins
-                        </span>
-
-                        <span>
-                            Secs
-                        </span>
-
+                        <span>Days</span>
+                        <span>Hrs</span>
+                        <span>Mins</span>
+                        <span>Secs</span>
                     </div>
-
 
                 </div>
 
-
             </section>
-
-
 
             {/* =====================================================
                 BEST SELLERS
@@ -1067,57 +779,38 @@ function Home() {
 
             <section className="home-section">
 
-
                 <div className="section-heading">
-
 
                     <h2>
                         Best Sellers
                     </h2>
 
-
                     <Link to="/products">
                         View All →
                     </Link>
 
-
                 </div>
-
-
 
                 <div className="best-seller-grid">
 
-
                     {products.length > 0 ? (
-
                         products.map((product) => (
-
                             <ProductCard
                                 key={product.id}
                                 product={product}
                             />
-
                         ))
-
                     ) : (
-
                         <div className="home-products-loading">
-
                             <p>
                                 No products available.
                             </p>
-
                         </div>
-
                     )}
-
 
                 </div>
 
-
             </section>
-
-
 
             {/* =====================================================
                 POPULAR SERVICES
@@ -1125,231 +818,146 @@ function Home() {
 
             <section className="home-section">
 
-
                 <div className="section-heading">
-
 
                     <h2>
                         Popular Services
                     </h2>
 
-
                     <Link to="/services">
                         View All Services →
                     </Link>
 
-
                 </div>
-
-
 
                 <div className="services-grid">
 
-
                     <div className="service-card">
-
-                        <img
-                            src="/images/home/home-vet.jpg"
-                            alt="Home Visit"
-                        />
-
+                        <div className="service-placeholder">
+                            🏠
+                        </div>
 
                         <div className="service-info">
-
                             <h3>
-
                                 Home Visit
-
                                 <br />
-
                                 by Vet
-
                             </h3>
-
 
                             <span>
                                 Starting at ₹499
                             </span>
 
-
                             <button
                                 type="button"
                                 onClick={() => navigate("/services")}
                             >
                                 →
                             </button>
-
-
                         </div>
-
-
                     </div>
 
-
-
                     <div className="service-card">
-
-                        <img
-                            src="/images/home/vaccination.jpg"
-                            alt="Vaccination"
-                        />
-
+                        <div className="service-placeholder">
+                            💉
+                        </div>
 
                         <div className="service-info">
-
                             <h3>
-
                                 Vaccination &
-
                                 <br />
-
                                 Deworming
-
                             </h3>
-
 
                             <span>
                                 Starting at ₹299
                             </span>
 
-
                             <button
                                 type="button"
                                 onClick={() => navigate("/services")}
                             >
                                 →
                             </button>
-
-
                         </div>
-
-
                     </div>
 
-
-
                     <div className="service-card">
-
-                        <img
-                            src="/images/home/grooming.jpg"
-                            alt="Pet Grooming"
-                        />
-
+                        <div className="service-placeholder">
+                            ✂️
+                        </div>
 
                         <div className="service-info">
-
                             <h3>
-
                                 Pet Grooming
-
                                 <br />
-
                                 at Home
-
                             </h3>
-
 
                             <span>
                                 Starting at ₹599
                             </span>
 
-
                             <button
                                 type="button"
                                 onClick={() => navigate("/services")}
                             >
                                 →
                             </button>
-
-
                         </div>
-
-
                     </div>
 
-
-
                     <div className="service-card">
-
-                        <img
-                            src="/images/home/checkup.jpg"
-                            alt="Health Checkup"
-                        />
-
+                        <div className="service-placeholder">
+                            🩺
+                        </div>
 
                         <div className="service-info">
-
                             <h3>
-
                                 Health Checkup
-
                                 <br />
-
                                 at Home
-
                             </h3>
-
 
                             <span>
                                 Starting at ₹699
                             </span>
 
-
                             <button
                                 type="button"
                                 onClick={() => navigate("/services")}
                             >
                                 →
                             </button>
-
-
                         </div>
-
-
                     </div>
 
-
-
                     <div className="service-card">
-
-                        <img
-                            src="/images/home/emergency.jpg"
-                            alt="Emergency Care"
-                        />
-
+                        <div className="service-placeholder">
+                            🚑
+                        </div>
 
                         <div className="service-info">
-
                             <h3>
                                 Emergency Care
                             </h3>
-
 
                             <span>
                                 Starting at ₹999
                             </span>
 
-
                             <button
                                 type="button"
                                 onClick={() => navigate("/services")}
                             >
                                 →
                             </button>
-
-
                         </div>
-
-
                     </div>
-
 
                 </div>
 
-
             </section>
-
-
 
             {/* =====================================================
                 FEATURED PETS
@@ -1357,42 +965,32 @@ function Home() {
 
             <section className="home-section">
 
-
                 <div className="section-heading">
-
 
                     <h2>
                         Featured Pets for Adoption
                     </h2>
 
-
                     <Link to="/adoption">
                         View All Pets →
                     </Link>
 
-
                 </div>
 
-
-
                 <div className="pets-grid">
-
 
                     <div className="pet-card">
 
                         <div className="pet-image">
 
-
                             <img
-                                src="/images/home/bruno.jpg"
+                                src={dogImage}
                                 alt="Bruno"
                             />
-
 
                             <span className="pet-type">
                                 Dog
                             </span>
-
 
                             <button
                                 type="button"
@@ -1401,50 +999,38 @@ function Home() {
                                 ♡
                             </button>
 
-
                         </div>
 
-
                         <div className="pet-info">
-
 
                             <h3>
                                 Bruno
                             </h3>
 
-
                             <p>
                                 2 Years · Male · Labrador
                             </p>
-
 
                             <small>
                                 📍 Bangalore, Karnataka
                             </small>
 
-
                         </div>
 
-
                     </div>
-
-
 
                     <div className="pet-card">
 
                         <div className="pet-image">
 
-
                             <img
-                                src="/images/home/luna.jpg"
+                                src={catImage}
                                 alt="Luna"
                             />
-
 
                             <span className="pet-type cat">
                                 Cat
                             </span>
-
 
                             <button
                                 type="button"
@@ -1453,51 +1039,39 @@ function Home() {
                                 ♡
                             </button>
 
-
                         </div>
 
-
                         <div className="pet-info">
-
 
                             <h3>
                                 Luna
                             </h3>
 
-
                             <p>
                                 1 Year · Female · Indie
                             </p>
-
 
                             <small>
                                 📍 Pune, Maharashtra
                             </small>
 
-
                         </div>
 
-
                     </div>
-
-
 
                     <div className="pet-card">
 
                         <div className="pet-image">
 
-
                             <img
-                                src="/images/home/rocky.jpg"
+                                src={dogImage}
                                 alt="Rocky"
                             />
-
 
                             <span className="pet-type">
                                 Dog
                             </span>
 
-
                             <button
                                 type="button"
                                 className="favorite"
@@ -1505,50 +1079,38 @@ function Home() {
                                 ♡
                             </button>
 
-
                         </div>
 
-
                         <div className="pet-info">
-
 
                             <h3>
                                 Rocky
                             </h3>
 
-
                             <p>
                                 3 Years · Male · German Shepherd
                             </p>
-
 
                             <small>
                                 📍 Hyderabad, Telangana
                             </small>
 
-
                         </div>
 
-
                     </div>
-
-
 
                     <div className="pet-card">
 
                         <div className="pet-image">
 
-
                             <img
-                                src="/images/home/milo.jpg"
+                                src={catImage}
                                 alt="Milo"
                             />
-
 
                             <span className="pet-type cat">
                                 Cat
                             </span>
-
 
                             <button
                                 type="button"
@@ -1557,40 +1119,29 @@ function Home() {
                                 ♡
                             </button>
 
-
                         </div>
 
-
                         <div className="pet-info">
-
 
                             <h3>
                                 Milo
                             </h3>
 
-
                             <p>
                                 8 Months · Male · Persian
                             </p>
-
 
                             <small>
                                 📍 Chennai, Tamil Nadu
                             </small>
 
-
                         </div>
-
 
                     </div>
 
-
                 </div>
 
-
             </section>
-
-
 
             {/* =====================================================
                 TRUSTED BRANDS
@@ -1598,108 +1149,37 @@ function Home() {
 
             <section className="home-section">
 
-
                 <div className="section-heading">
-
 
                     <h2>
                         Trusted Brands
                     </h2>
 
-
                 </div>
-
-
 
                 <div className="brands-grid">
 
-
-                    <div>
-
-                        <img
-                            src="/images/brands/royal-canin.png"
-                            alt="Royal Canin"
-                        />
-
-                    </div>
-
-
-                    <div>
-
-                        <img
-                            src="/images/brands/drools.png"
-                            alt="Drools"
-                        />
-
-                    </div>
-
-
-                    <div>
-
-                        <img
-                            src="/images/brands/pedigree.png"
-                            alt="Pedigree"
-                        />
-
-                    </div>
-
-
-                    <div>
-
-                        <img
-                            src="/images/brands/himalaya.png"
-                            alt="Himalaya"
-                        />
-
-                    </div>
-
-
-                    <div>
-
-                        <img
-                            src="/images/brands/virbac.png"
-                            alt="Virbac"
-                        />
-
-                    </div>
-
-
-                    <div>
-
-                        <img
-                            src="/images/brands/intas.png"
-                            alt="Intas"
-                        />
-
-                    </div>
-
-
-                    <div>
-
-                        <img
-                            src="/images/brands/bayer.png"
-                            alt="Bayer"
-                        />
-
-                    </div>
-
-
-                    <div>
-
-                        <img
-                            src="/images/brands/nd.png"
-                            alt="N&D"
-                        />
-
-                    </div>
-
+                    {[
+                        "Royal Canin",
+                        "Drools",
+                        "Pedigree",
+                        "Himalaya",
+                        "Virbac",
+                        "Intas",
+                        "Bayer",
+                        "N&D",
+                    ].map((brand) => (
+                        <div
+                            className="brand-placeholder"
+                            key={brand}
+                        >
+                            {brand}
+                        </div>
+                    ))}
 
                 </div>
 
-
             </section>
-
-
 
             {/* =====================================================
                 REVIEWS
@@ -1707,171 +1187,120 @@ function Home() {
 
             <section className="reviews-section">
 
-
                 <div className="section-heading">
-
 
                     <h2>
                         What Pet Parents Say
                     </h2>
 
-
                 </div>
-
-
 
                 <div className="reviews-grid">
 
-
                     <div className="review-card">
-
 
                         <span className="quote">
                             “
                         </span>
 
-
                         <p>
-
-                            VetMart has everything my pet
+                            Zenve has everything my pet
                             needs — from medicines to healthy
                             food. Delivery is always on time
                             and products are 100% genuine.
-
                         </p>
 
-
                         <div className="review-user">
-
 
                             <div className="review-avatar">
                                 PS
                             </div>
 
-
                             <div>
-
                                 <strong>
                                     Priya Sharma
                                 </strong>
 
-
                                 <span>
                                     ⭐⭐⭐⭐⭐
                                 </span>
-
                             </div>
-
 
                         </div>
 
-
                     </div>
 
-
-
                     <div className="review-card">
-
 
                         <span className="quote">
                             “
                         </span>
 
-
                         <p>
-
                             The home visit service is a
                             lifesaver! The vet was very
                             professional and my pet felt
                             comfortable at home.
-
                         </p>
 
-
                         <div className="review-user">
-
 
                             <div className="review-avatar">
                                 RM
                             </div>
 
-
                             <div>
-
                                 <strong>
                                     Rahul Mehta
                                 </strong>
 
-
                                 <span>
                                     ⭐⭐⭐⭐⭐
                                 </span>
-
                             </div>
-
 
                         </div>
 
-
                     </div>
 
-
-
                     <div className="review-card">
-
 
                         <span className="quote">
                             “
                         </span>
 
-
                         <p>
-
                             We adopted our cute Indie puppy
                             from the platform. Great experience
                             and good support from the team.
-
                         </p>
 
-
                         <div className="review-user">
-
 
                             <div className="review-avatar">
                                 AI
                             </div>
 
-
                             <div>
-
                                 <strong>
                                     Anjali Iyer
                                 </strong>
 
-
                                 <span>
                                     ⭐⭐⭐⭐⭐
                                 </span>
-
                             </div>
-
 
                         </div>
 
-
                     </div>
-
 
                 </div>
 
-
             </section>
 
-
         </main>
-
     );
-
 }
 
 export default Home;

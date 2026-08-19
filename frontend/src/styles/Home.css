@@ -11,14 +11,14 @@
 
     overflow-x: hidden;
 
-    /* Adjust according to your fixed navbar height */
     padding-top: 30px;
 
     box-sizing: border-box;
 }
 
+
 /* =========================================================
-   HERO
+   HERO SECTION
    ========================================================= */
 
 .hero-section {
@@ -35,11 +35,14 @@
 
     position: relative;
 
+    box-sizing: border-box;
+
     background:
         radial-gradient(
-            circle at 70% 45%,
-            #d8ecff 0%,
-            transparent 38%
+            circle at 72% 45%,
+            #d7ebff 0%,
+            #e5f2ff 35%,
+            transparent 65%
         ),
         linear-gradient(
             110deg,
@@ -49,15 +52,20 @@
 }
 
 
-/* LEFT */
+/* =========================================================
+   HERO CONTENT - LEFT SIDE
+   ========================================================= */
 
 .hero-content {
-    width: 48%;
+    width: 50%;
 
     padding: 40px 0 30px 62px;
 
     position: relative;
-    z-index: 3;
+
+    z-index: 10;
+
+    box-sizing: border-box;
 }
 
 .hero-label {
@@ -72,9 +80,11 @@
     border-radius: 20px;
 
     font-size: 12px;
+
     font-weight: 700;
 
-    box-shadow: 0 3px 12px rgba(20, 80, 150, 0.08);
+    box-shadow:
+        0 3px 12px rgba(20, 80, 150, 0.08);
 }
 
 .hero-content h1 {
@@ -83,6 +93,7 @@
     color: #10245c;
 
     font-size: 50px;
+
     line-height: 0.98;
 
     font-weight: 800;
@@ -97,33 +108,46 @@
 .hero-content p {
     max-width: 430px;
 
-    margin-bottom: 17px;
+    margin: 0 0 17px;
 
     color: #1d315f;
 
     font-size: 13px;
+
     line-height: 1.6;
 }
 
 
-/* FEATURES */
+/* =========================================================
+   HERO FEATURES
+   ========================================================= */
 
 .hero-features {
-    display: flex;
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
 
     gap: 8px;
+
+    max-width: 500px;
 
     margin-bottom: 16px;
 }
 
 .hero-feature {
-    min-width: 88px;
+    min-width: 0;
+
     height: 51px;
 
     padding: 7px;
 
+    display: flex;
+
     align-items: center;
 
+    gap: 6px;
+
+    box-sizing: border-box;
 
     border-radius: 9px;
 
@@ -131,19 +155,13 @@
 
     border: 1px solid #e4ebf5;
 
-    box-shadow: 0 4px 12px rgba(20, 80, 150, 0.05);
-     display: grid;
-
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-
-    gap: 8px;
-
-    margin-bottom: 16px;
-
-    max-width: 500px;
+    box-shadow:
+        0 4px 12px rgba(20, 80, 150, 0.05);
 }
 
 .feature-icon {
+    flex-shrink: 0;
+
     color: #0868dc;
 
     font-size: 17px;
@@ -151,11 +169,13 @@
 
 .hero-feature > span:last-child {
     display: flex;
+
     flex-direction: column;
 
     color: #52617c;
 
     font-size: 7px;
+
     line-height: 1.25;
 }
 
@@ -166,11 +186,16 @@
 }
 
 
-/* BUTTONS */
+/* =========================================================
+   HERO BUTTONS
+   ========================================================= */
 
 .hero-buttons {
     display: flex;
+
     gap: 14px;
+
+    flex-wrap: wrap;
 }
 
 .hero-buttons button {
@@ -179,13 +204,15 @@
     padding: 0 22px;
 
     border: none;
+
     border-radius: 6px;
 
     background: #0868dc;
 
-    color: white;
+    color: #ffffff;
 
     font-size: 11px;
+
     font-weight: 700;
 
     cursor: pointer;
@@ -200,7 +227,7 @@
 }
 
 .hero-outline-btn {
-    background: white !important;
+    background: #ffffff !important;
 
     color: #0868dc !important;
 
@@ -211,22 +238,41 @@
     background: #f1f7ff !important;
 }
 
+.hero-smart-text {
+    margin-top: 9px;
+
+    color: #63728d;
+
+    font-size: 9px;
+}
+
 
 /* =========================================================
-   HERO VISUAL
+   HERO VISUAL - RIGHT SIDE
    ========================================================= */
 
 .hero-visual {
-    flex: 1;
+    width: 50%;
 
     min-height: 370px;
 
     position: relative;
 
+    overflow: hidden;
+
     display: flex;
+
     align-items: flex-end;
+
     justify-content: center;
+
+    box-sizing: border-box;
 }
+
+
+/* =========================================================
+   HERO BLUE CIRCLE
+   ========================================================= */
 
 .hero-circle {
     position: absolute;
@@ -234,92 +280,164 @@
     width: 470px;
     height: 470px;
 
-    right: 25px;
-    top: -45px;
+    right: -20px;
+    top: -65px;
 
     border-radius: 50%;
 
-    background: #d8ebff;
+    background: #d7ebff;
+
+    z-index: 1;
 }
 
 
-/* PET IMAGES */
+/* =========================================================
+   DOG + CAT CONTAINER
+   ========================================================= */
 
 .hero-pet-images {
-    position: relative;
+    position: absolute;
+
+    left: 25px;
+    bottom: 5px;
+
+    width: 330px;
+    height: 270px;
 
     z-index: 2;
 
     display: flex;
+
     align-items: flex-end;
 
-    gap: 5px;
+    justify-content: center;
 
-    margin-bottom: 5px;
+    pointer-events: none;
 }
 
+
+/* =========================================================
+   DOG / CAT IMAGE COMMON
+   ========================================================= */
+
 .hero-pet-images img {
-    width: 210px;
-    height: 250px;
+    display: block;
 
     object-fit: contain;
 
-    filter: drop-shadow(
-        0 12px 12px rgba(0, 0, 0, 0.1)
-    );
+    filter:
+        drop-shadow(
+            0 12px 12px rgba(0, 0, 0, 0.10)
+        );
+
+    /*
+       Makes white backgrounds visually blend
+       with the hero background.
+    */
+    mix-blend-mode: multiply;
 }
 
-.hero-pet-images img:nth-child(2) {
-    width: 145px;
-    height: 190px;
 
-    margin-left: -40px;
+/* =========================================================
+   DOG
+   ========================================================= */
+
+.hero-dog-image {
+    width: 300px;
+
+    height: 300px;
+
+    position: relative;
+
+    z-index: 2;
 }
 
 
-/* PRODUCTS */
+/* =========================================================
+   CAT
+   ========================================================= */
+
+.hero-cat-image {
+    width: 200px;
+
+    height: 150px;
+
+    position: relative;
+
+    z-index: 3;
+
+    margin-left: -80px;
+
+    margin-bottom: 15px;
+}
+
+
+/* =========================================================
+   PRODUCT IMAGE
+   ========================================================= */
 
 .hero-products-image {
     position: absolute;
 
-    z-index: 3;
+    right: 15px;
 
-    bottom: 10px;
-    right: 50px;
+    bottom: 8px;
+
+    width: 330px;
+
+    z-index: 5;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: flex-end;
+
+    pointer-events: none;
+    background: transparent;
 }
 
 .hero-products-image img {
-    width: 310px;
-
+    width: 250px;
+    height: auto;
     object-fit: contain;
 
-    filter: drop-shadow(
-        0 10px 10px rgba(0, 0, 0, 0.12)
-    );
+    background: transparent;
+
+    /* Makes white background visually blend with the hero */
+    mix-blend-mode: multiply;
+
+    filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.12));
 }
 
 
-/* DISCOUNT */
+/* =========================================================
+   DISCOUNT CARD
+   ========================================================= */
 
 .discount-card {
     position: absolute;
 
-    z-index: 5;
+    z-index: 20;
 
     right: 20px;
-    top: 45px;
+
+    top: 10px;
 
     width: 155px;
 
     padding: 14px;
 
+    box-sizing: border-box;
+
     text-align: center;
 
     border-radius: 10px;
 
-    background: rgba(255, 255, 255, 0.96);
+    background: rgba(255, 255, 255, 0.97);
 
-    box-shadow: 0 5px 20px rgba(20, 70, 130, 0.12);
+    box-shadow:
+        0 5px 20px rgba(20, 70, 130, 0.12);
 }
 
 .discount-card strong {
@@ -344,14 +462,22 @@
     padding: 7px 11px;
 
     border: none;
+
     border-radius: 5px;
 
     background: #0868dc;
 
-    color: white;
+    color: #ffffff;
 
     font-size: 9px;
+
     font-weight: 700;
+
+    cursor: pointer;
+}
+
+.discount-card button:hover {
+    background: #0758bd;
 }
 
 
@@ -367,7 +493,9 @@
 
 .section-heading {
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
     margin-bottom: 11px;
@@ -379,6 +507,7 @@
     color: #10245c;
 
     font-size: 16px;
+
     font-weight: 800;
 }
 
@@ -388,6 +517,7 @@
     text-decoration: none;
 
     font-size: 10px;
+
     font-weight: 700;
 }
 
@@ -397,7 +527,7 @@
 
 
 /* =========================================================
-   CATEGORIES
+   SHOP BY CATEGORIES
    ========================================================= */
 
 .category-grid {
@@ -412,8 +542,11 @@
     height: 112px;
 
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
+
     justify-content: center;
 
     text-align: center;
@@ -422,7 +555,7 @@
 
     border-radius: 11px;
 
-    background: white;
+    background: #ffffff;
 
     text-decoration: none;
 
@@ -434,7 +567,8 @@
 
     border-color: #8bbaf0;
 
-    box-shadow: 0 8px 22px rgba(20, 85, 160, 0.1);
+    box-shadow:
+        0 8px 22px rgba(20, 85, 160, 0.10);
 }
 
 .category-image {
@@ -444,7 +578,9 @@
     margin-bottom: 7px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     border-radius: 50%;
@@ -465,6 +601,7 @@
     color: #12235a;
 
     font-size: 10px;
+
     line-height: 1.4;
 }
 
@@ -483,8 +620,12 @@
     padding: 14px 22px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
+
+    box-sizing: border-box;
 
     border-radius: 13px;
 
@@ -504,6 +645,7 @@
     color: #0868dc;
 
     font-size: 10px;
+
     font-weight: 600;
 }
 
@@ -527,16 +669,22 @@
     padding: 7px 12px;
 
     border: none;
+
     border-radius: 5px;
 
     background: #0868dc;
 
-    color: white;
+    color: #ffffff;
 
     font-size: 9px;
+
     font-weight: 700;
 
     cursor: pointer;
+}
+
+.offer-content button:hover {
+    background: #0758bd;
 }
 
 .offer-image {
@@ -550,12 +698,16 @@
     height: 120px;
 
     object-fit: contain;
+
+    mix-blend-mode: multiply;
 }
 
 .countdown-box {
     width: 245px;
 
     padding: 14px;
+
+    box-sizing: border-box;
 
     border-radius: 10px;
 
@@ -578,6 +730,7 @@
     display: flex;
 
     justify-content: center;
+
     align-items: center;
 
     gap: 7px;
@@ -585,6 +738,7 @@
     color: #12235a;
 
     font-size: 21px;
+
     font-weight: 800;
 }
 
@@ -621,12 +775,6 @@
     gap: 12px;
 }
 
-
-/*
-   Your existing ProductCard controls
-   the actual product design.
-*/
-
 .best-seller-grid > * {
     min-width: 0;
 }
@@ -659,7 +807,8 @@
 .service-card:hover {
     transform: translateY(-4px);
 
-    box-shadow: 0 8px 20px rgba(20, 70, 130, 0.1);
+    box-shadow:
+        0 8px 20px rgba(20, 70, 130, 0.10);
 }
 
 .service-card > img {
@@ -669,6 +818,21 @@
     display: block;
 
     object-fit: cover;
+}
+
+.service-placeholder {
+    width: 100%;
+    height: 80px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eef7ff;
+
+    font-size: 32px;
 }
 
 .service-info {
@@ -683,6 +847,7 @@
     color: #12235a;
 
     font-size: 10px;
+
     line-height: 1.25;
 }
 
@@ -696,6 +861,7 @@
     position: absolute;
 
     right: 9px;
+
     bottom: 8px;
 
     width: 20px;
@@ -705,11 +871,19 @@
 
     border-radius: 50%;
 
-    background: white;
+    background: #ffffff;
 
     color: #0868dc;
 
     cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.service-info button:hover {
+    background: #0868dc;
+
+    color: #ffffff;
 }
 
 
@@ -740,7 +914,8 @@
 .pet-card:hover {
     transform: translateY(-4px);
 
-    box-shadow: 0 8px 20px rgba(20, 60, 110, 0.1);
+    box-shadow:
+        0 8px 20px rgba(20, 60, 110, 0.10);
 }
 
 .pet-image {
@@ -749,6 +924,8 @@
     position: relative;
 
     overflow: hidden;
+
+    background: #eef7ff;
 }
 
 .pet-image img {
@@ -770,9 +947,10 @@
 
     background: #0868dc;
 
-    color: white;
+    color: #ffffff;
 
     font-size: 8px;
+
     font-weight: 700;
 }
 
@@ -786,6 +964,7 @@
     position: absolute;
 
     right: 8px;
+
     bottom: 7px;
 
     width: 25px;
@@ -795,13 +974,21 @@
 
     border-radius: 50%;
 
-    background: white;
+    background: #ffffff;
 
     color: #ff3333;
 
     font-size: 17px;
 
     cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.favorite:hover {
+    transform: scale(1.1);
+
+    background: #fff2f2;
 }
 
 .pet-info {
@@ -847,14 +1034,16 @@
     height: 65px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     border: 1px solid #e5eaf1;
 
     border-radius: 9px;
 
-    background: white;
+    background: #ffffff;
 
     transition: 0.2s ease;
 }
@@ -864,7 +1053,8 @@
 
     border-color: #8ebcf0;
 
-    box-shadow: 0 5px 15px rgba(20, 70, 130, 0.08);
+    box-shadow:
+        0 5px 15px rgba(20, 70, 130, 0.08);
 }
 
 .brands-grid img {
@@ -886,6 +1076,8 @@
 
     padding: 17px 28px 28px;
 
+    box-sizing: border-box;
+
     border-radius: 16px;
 
     background: #eef7ff;
@@ -904,11 +1096,14 @@
 
     padding: 13px 17px;
 
+    box-sizing: border-box;
+
     border-radius: 10px;
 
-    background: white;
+    background: #ffffff;
 
-    box-shadow: 0 3px 10px rgba(20, 60, 110, 0.05);
+    box-shadow:
+        0 3px 10px rgba(20, 60, 110, 0.05);
 }
 
 .quote {
@@ -942,8 +1137,12 @@
     height: 27px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
+
+    flex-shrink: 0;
 
     border-radius: 50%;
 
@@ -952,6 +1151,7 @@
     color: #0868dc;
 
     font-size: 8px;
+
     font-weight: 800;
 }
 
@@ -973,208 +1173,6 @@
 
 
 /* =========================================================
-   TABLET
-   ========================================================= */
-
-@media (max-width: 1100px) {
-
-    .hero-content {
-        padding-left: 40px;
-    }
-
-    .hero-content h1 {
-        font-size: 42px;
-    }
-
-    .category-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    .best-seller-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-
-    .services-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    .brands-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 700px) {
-
-    .hero-section {
-        width: calc(100% - 20px);
-
-        flex-direction: column;
-
-        min-height: 600px;
-    }
-
-    .hero-content {
-        width: 100%;
-
-        padding: 25px 20px 15px;
-    }
-
-    .hero-content h1 {
-        font-size: 37px;
-    }
-
-    .hero-content p {
-        font-size: 11px;
-    }
-
-    .hero-features {
-        display: grid;
-
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .hero-visual {
-        min-height: 230px;
-    }
-
-    .hero-circle {
-        width: 330px;
-        height: 330px;
-
-        right: 50%;
-
-        transform: translateX(50%);
-
-        top: -30px;
-    }
-
-    .hero-pet-images img {
-        width: 150px;
-        height: 180px;
-    }
-
-    .hero-pet-images img:nth-child(2) {
-        width: 110px;
-        height: 150px;
-    }
-
-    .hero-products-image {
-        right: 10px;
-        bottom: 5px;
-    }
-
-    .hero-products-image img {
-        width: 180px;
-    }
-
-    .discount-card {
-        right: 8px;
-        top: 5px;
-
-        width: 120px;
-
-        padding: 9px;
-    }
-
-    .discount-card strong {
-        font-size: 18px;
-    }
-
-    .discount-card span {
-        font-size: 8px;
-    }
-
-
-    .home-section {
-        width: calc(100% - 25px);
-    }
-
-
-    .category-grid {
-        grid-template-columns: repeat(2, 1fr);
-
-        gap: 9px;
-    }
-
-
-    .offer-banner {
-        width: calc(100% - 25px);
-
-        flex-direction: column;
-
-        align-items: flex-start;
-
-        gap: 12px;
-
-        padding: 15px;
-    }
-
-    .offer-image {
-        display: none;
-    }
-
-    .countdown-box {
-        width: 100%;
-    }
-
-
-    .best-seller-grid {
-        grid-template-columns: repeat(2, 1fr);
-
-        gap: 8px;
-    }
-
-
-    .services-grid {
-        grid-template-columns: repeat(2, 1fr);
-
-        gap: 8px;
-    }
-
-
-    .pets-grid {
-        grid-template-columns: repeat(2, 1fr);
-
-        gap: 8px;
-    }
-
-
-    .brands-grid {
-        grid-template-columns: repeat(4, 1fr);
-
-        gap: 6px;
-    }
-
-    .brands-grid > div {
-        height: 50px;
-    }
-
-    .brands-grid img {
-        max-width: 70px;
-    }
-
-
-    .reviews-section {
-        width: calc(100% - 20px);
-
-        padding: 15px;
-    }
-
-    .reviews-grid {
-        grid-template-columns: 1fr;
-
-        gap: 8px;
-    }
-
-}
-
-/* =========================================================
    PET DETAILS MODAL
    ========================================================= */
 
@@ -1188,6 +1186,7 @@
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
     padding: 20px;
@@ -1225,6 +1224,7 @@
 
 .pet-modal {
     width: 100%;
+
     max-width: 500px;
 
     max-height: 90vh;
@@ -1275,6 +1275,7 @@
     display: flex;
 
     align-items: center;
+
     justify-content: space-between;
 
     padding: 18px 20px;
@@ -1289,9 +1290,6 @@
         );
 }
 
-
-/* LEFT SIDE OF HEADER */
-
 .pet-modal-title {
     display: flex;
 
@@ -1300,9 +1298,6 @@
     gap: 11px;
 }
 
-
-/* PET ICON */
-
 .pet-modal-icon {
     width: 42px;
     height: 42px;
@@ -1310,6 +1305,7 @@
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
     flex-shrink: 0;
@@ -1321,9 +1317,6 @@
     font-size: 21px;
 }
 
-
-/* TITLE */
-
 .pet-modal-header h2 {
     margin: 0;
 
@@ -1333,9 +1326,6 @@
 
     font-weight: 800;
 }
-
-
-/* SUBTITLE */
 
 .pet-modal-header p {
     margin: 3px 0 0;
@@ -1347,7 +1337,7 @@
 
 
 /* =========================================================
-   CLOSE BUTTON
+   MODAL CLOSE BUTTON
    ========================================================= */
 
 .pet-modal-close {
@@ -1357,6 +1347,7 @@
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
     flex-shrink: 0;
@@ -1378,7 +1369,6 @@
     transition: all 0.2s ease;
 }
 
-
 .pet-modal-close:hover {
     background: #e2e8ef;
 
@@ -1389,20 +1379,18 @@
 
 
 /* =========================================================
-   FORM
+   PET FORM
    ========================================================= */
 
 .pet-details-form {
     padding: 20px;
 }
 
-
 .pet-form-group {
     width: 100%;
 
     margin-bottom: 13px;
 }
-
 
 .pet-form-group label {
     display: block;
@@ -1447,14 +1435,12 @@
         box-shadow 0.2s ease;
 }
 
-
 .pet-form-group input,
 .pet-form-group select {
     height: 37px;
 
     padding: 0 11px;
 }
-
 
 .pet-form-group textarea {
     min-height: 75px;
@@ -1464,16 +1450,10 @@
     resize: vertical;
 }
 
-
-/* PLACEHOLDER */
-
 .pet-form-group input::placeholder,
 .pet-form-group textarea::placeholder {
     color: #a2acbb;
 }
-
-
-/* FOCUS */
 
 .pet-form-group input:focus,
 .pet-form-group select:focus,
@@ -1499,7 +1479,7 @@
 
 
 /* =========================================================
-   ACTION BUTTONS
+   MODAL ACTION BUTTONS
    ========================================================= */
 
 .pet-modal-actions {
@@ -1513,9 +1493,6 @@
 
     padding-top: 5px;
 }
-
-
-/* COMMON BUTTON */
 
 .pet-cancel-btn,
 .pet-save-btn {
@@ -1547,7 +1524,6 @@
     color: #59677d;
 }
 
-
 .pet-cancel-btn:hover {
     background: #f4f7fa;
 
@@ -1565,7 +1541,6 @@
     color: #ffffff;
 }
 
-
 .pet-save-btn:hover {
     background: #0758bd;
 
@@ -1579,7 +1554,467 @@
 
 
 /* =========================================================
-   MOBILE MODAL
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .hero-content {
+        padding-left: 40px;
+    }
+
+    .hero-content h1 {
+        font-size: 42px;
+    }
+
+    .hero-pet-images {
+        left: 0;
+    }
+
+    .hero-products-image {
+        right: 5px;
+    }
+
+    .hero-products-image img {
+        width: 290px;
+    }
+
+    .discount-card {
+        right: 10px;
+    }
+
+    .category-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .best-seller-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .services-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .brands-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+
+/* =========================================================
+   SMALL TABLET
+   ========================================================= */
+
+@media (max-width: 850px) {
+
+    .hero-section {
+        min-height: 400px;
+    }
+
+    .hero-content {
+        width: 52%;
+
+        padding-left: 30px;
+    }
+
+    .hero-visual {
+        width: 48%;
+    }
+
+    .hero-content h1 {
+        font-size: 38px;
+    }
+
+    .hero-content p {
+        max-width: 350px;
+
+        font-size: 11px;
+    }
+
+    .hero-features {
+        grid-template-columns: repeat(2, 1fr);
+
+        max-width: 360px;
+    }
+
+    .hero-feature {
+        height: 45px;
+    }
+
+    .hero-circle {
+        width: 350px;
+
+        height: 350px;
+
+        right: -50px;
+
+        top: 5px;
+    }
+
+    .hero-pet-images {
+        width: 220px;
+
+        height: 190px;
+
+        left: -10px;
+    }
+
+    .hero-dog-image {
+        width: 150px;
+
+        height: 185px;
+    }
+
+    .hero-cat-image {
+        width: 100px;
+
+        height: 145px;
+
+        margin-left: -30px;
+    }
+
+    .hero-products-image {
+        width: 230px;
+
+        right: -15px;
+
+        bottom: 5px;
+    }
+
+    .hero-products-image img {
+        width: 230px;
+
+        height: 155px;
+    }
+
+    .discount-card {
+        width: 125px;
+
+        padding: 9px;
+
+        right: 5px;
+
+        top: 10px;
+    }
+
+    .discount-card strong {
+        font-size: 19px;
+    }
+
+    .discount-card span {
+        font-size: 8px;
+    }
+
+    .home-section {
+        width: calc(100% - 60px);
+    }
+
+    .offer-banner {
+        width: calc(100% - 60px);
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .home-body {
+        padding-top: 20px;
+    }
+
+    .hero-section {
+        width: calc(100% - 20px);
+
+        min-height: 650px;
+
+        flex-direction: column;
+
+        border-radius: 18px;
+    }
+
+    .hero-content {
+        width: 100%;
+
+        padding: 25px 20px 15px;
+    }
+
+    .hero-label {
+        font-size: 10px;
+    }
+
+    .hero-content h1 {
+        font-size: 37px;
+    }
+
+    .hero-content p {
+        max-width: 100%;
+
+        font-size: 11px;
+    }
+
+    .hero-features {
+        display: grid;
+
+        grid-template-columns: repeat(2, 1fr);
+
+        max-width: 100%;
+
+        gap: 7px;
+    }
+
+    .hero-feature {
+        height: 48px;
+
+        padding: 6px;
+    }
+
+    .feature-icon {
+        font-size: 15px;
+    }
+
+    .hero-feature > span:last-child {
+        font-size: 7px;
+    }
+
+    .hero-feature b {
+        font-size: 8px;
+    }
+
+    .hero-buttons {
+        gap: 8px;
+    }
+
+    .hero-buttons button {
+        padding: 0 15px;
+
+        font-size: 9px;
+    }
+
+    .hero-visual {
+        width: 100%;
+
+        min-height: 280px;
+
+        flex: 1;
+    }
+
+    .hero-circle {
+        width: 340px;
+
+        height: 340px;
+
+        right: 50%;
+
+        transform: translateX(50%);
+
+        top: -25px;
+    }
+
+    .hero-pet-images {
+        left: 5px;
+
+        bottom: 5px;
+
+        width: 230px;
+
+        height: 200px;
+    }
+
+    .hero-dog-image {
+        width: 145px;
+
+        height: 185px;
+    }
+
+    .hero-cat-image {
+        width: 100px;
+
+        height: 145px;
+
+        margin-left: -30px;
+
+        margin-bottom: 8px;
+    }
+
+    .hero-products-image {
+        right: 0;
+
+        bottom: 5px;
+
+        width: 210px;
+    }
+
+    .hero-products-image img {
+        width: 210px;
+
+        height: 150px;
+    }
+
+    .discount-card {
+        right: 8px;
+
+        top: 5px;
+
+        width: 120px;
+
+        padding: 9px;
+    }
+
+    .discount-card strong {
+        font-size: 18px;
+    }
+
+    .discount-card span {
+        font-size: 8px;
+    }
+
+    .discount-card button {
+        font-size: 8px;
+
+        padding: 6px 8px;
+    }
+
+
+    /* =====================================================
+       MOBILE SECTIONS
+       ===================================================== */
+
+    .home-section {
+        width: calc(100% - 25px);
+
+        margin-top: 18px;
+    }
+
+    .section-heading h2 {
+        font-size: 14px;
+    }
+
+    .section-heading a {
+        font-size: 9px;
+    }
+
+
+    /* =====================================================
+       MOBILE CATEGORIES
+       ===================================================== */
+
+    .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 9px;
+    }
+
+    .category-card {
+        height: 105px;
+    }
+
+
+    /* =====================================================
+       MOBILE OFFER
+       ===================================================== */
+
+    .offer-banner {
+        width: calc(100% - 25px);
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 12px;
+
+        padding: 15px;
+    }
+
+    .offer-image {
+        display: none;
+    }
+
+    .countdown-box {
+        width: 100%;
+    }
+
+
+    /* =====================================================
+       MOBILE BEST SELLERS
+       ===================================================== */
+
+    .best-seller-grid {
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 8px;
+    }
+
+
+    /* =====================================================
+       MOBILE SERVICES
+       ===================================================== */
+
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 8px;
+    }
+
+
+    /* =====================================================
+       MOBILE PETS
+       ===================================================== */
+
+    .pets-grid {
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 8px;
+    }
+
+    .pet-image {
+        height: 115px;
+    }
+
+
+    /* =====================================================
+       MOBILE BRANDS
+       ===================================================== */
+
+    .brands-grid {
+        grid-template-columns: repeat(4, 1fr);
+
+        gap: 6px;
+    }
+
+    .brands-grid > div {
+        height: 50px;
+
+        font-size: 8px;
+    }
+
+    .brands-grid img {
+        max-width: 70px;
+    }
+
+
+    /* =====================================================
+       MOBILE REVIEWS
+       ===================================================== */
+
+    .reviews-section {
+        width: calc(100% - 20px);
+
+        padding: 15px;
+    }
+
+    .reviews-grid {
+        grid-template-columns: 1fr;
+
+        gap: 8px;
+    }
+}
+
+
+/* =========================================================
+   PET MODAL - MOBILE
    ========================================================= */
 
 @media (max-width: 600px) {
@@ -1588,30 +2023,25 @@
         padding: 12px;
     }
 
-
     .pet-modal {
         max-height: 92vh;
 
         border-radius: 14px;
     }
 
-
     .pet-modal-header {
         padding: 15px;
     }
 
-
     .pet-details-form {
         padding: 15px;
     }
-
 
     .pet-form-row {
         grid-template-columns: 1fr;
 
         gap: 0;
     }
-
 
     .pet-modal-actions {
         display: grid;
@@ -1621,10 +2051,104 @@
         width: 100%;
     }
 
-
     .pet-cancel-btn,
     .pet-save-btn {
         width: 100%;
     }
+}
 
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 420px) {
+
+    .hero-section {
+        min-height: 680px;
+    }
+
+    .hero-content {
+        padding-left: 15px;
+
+        padding-right: 15px;
+    }
+
+    .hero-content h1 {
+        font-size: 33px;
+    }
+
+    .hero-content p {
+        font-size: 10px;
+    }
+
+    .hero-feature {
+        height: 45px;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+
+        width: 100%;
+    }
+
+    .hero-buttons button {
+        width: 100%;
+    }
+
+    .hero-visual {
+        min-height: 275px;
+    }
+
+    .hero-circle {
+        width: 300px;
+
+        height: 300px;
+    }
+
+    .hero-pet-images {
+        left: -5px;
+
+        width: 205px;
+    }
+
+    .hero-dog-image {
+        width: 130px;
+
+        height: 170px;
+    }
+
+    .hero-cat-image {
+        width: 90px;
+
+        height: 135px;
+
+        margin-left: -28px;
+    }
+
+    .hero-products-image {
+        width: 190px;
+
+        right: -5px;
+    }
+
+    .hero-products-image img {
+        width: 190px;
+
+        height: 140px;
+    }
+
+    .discount-card {
+        width: 110px;
+
+        right: 5px;
+    }
+
+    .discount-card strong {
+        font-size: 16px;
+    }
+
+    .discount-card span {
+        font-size: 7px;
+    }
 }

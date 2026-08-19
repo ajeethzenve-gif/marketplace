@@ -1,641 +1,996 @@
-/* ==========================================
+/* =========================================================
    PRODUCT MANAGEMENT CSS
-========================================== */
+   ========================================================= */
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-/* ==========================================
+
+/* =========================================================
    PAGE
-========================================== */
+   ========================================================= */
 
-.manage-products{
-    width:100%;
-    min-height:100vh;
-    background:#f5f7fb;
-    padding:25px;
+.manage-products {
+    width: 100%;
+    min-height: 100vh;
+
+    background: #f5f7fb;
+
+    padding: 25px;
 }
 
-/* ==========================================
+
+/* =========================================================
    PAGE HEADER
-========================================== */
+   ========================================================= */
 
-.page-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:25px;
+.page-header {
+    width: 100%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 25px;
 }
 
-.page-header h2{
-    font-size:30px;
-    font-weight:700;
-    color:#2c3e50;
+.page-header h2 {
+    margin: 0;
+
+    font-size: 30px;
+    font-weight: 700;
+
+    color: #2c3e50;
 }
 
-/* ==========================================
+
+/* =========================================================
    ADD BUTTON
-========================================== */
+   ========================================================= */
 
-.add-btn{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:12px 22px;
-    border:none;
-    border-radius:8px;
-    background:#28a745;
-    color:#fff;
-    font-size:15px;
-    font-weight:600;
-    cursor:pointer;
-    transition:.3s;
-    text-decoration:none;
+.add-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 12px 22px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #28a745;
+
+    color: #ffffff;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+    text-decoration: none;
 }
 
-.add-btn:hover{
-    background:#218838;
+.add-btn:hover {
+    background: #218838;
+
+    transform: translateY(-1px);
 }
 
-/* ==========================================
+
+/* =========================================================
+   PRODUCT TABLE WRAPPER
+   ========================================================= */
+
+.product-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    background: #ffffff;
+
+    border-radius: 10px;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================================
    PRODUCT TABLE
-========================================== */
+   ========================================================= */
 
-.product-table{
-    width:100%;
-    background:#fff;
-    border-collapse:collapse;
-    border-radius:10px;
-    overflow:hidden;
-    box-shadow:0 5px 20px rgba(0,0,0,.08);
+.product-table {
+    width: 100%;
+
+    min-width: 900px;
+
+    background: #ffffff;
+
+    border-collapse: collapse;
+
+    overflow: hidden;
 }
 
-.product-table thead{
-    background:#2c3e50;
+
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+.product-table thead {
+    background: #2c3e50;
 }
 
-.product-table thead th{
-    color:#fff;
-    font-size:15px;
-    font-weight:600;
-    padding:16px;
-    text-align:center;
+.product-table thead th {
+    height: 55px;
+
+    padding: 14px 12px;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-align: center;
+
+    white-space: nowrap;
+
+    border: none;
 }
 
-.product-table tbody td{
-    padding:10px;
-    text-align:left;
-    border-bottom:1px solid #eee;
-    font-size:14px;
-    color:#444;
+
+/* =========================================================
+   TABLE BODY
+   ========================================================= */
+
+.product-table tbody td {
+    padding: 10px 12px;
+
+    text-align: center;
+
+    border-bottom: 1px solid #eeeeee;
+
+    font-size: 14px;
+
+    color: #444444;
+
+    vertical-align: middle;
 }
 
-.product-table tbody tr:hover{
-    background:#f9fafc;
+.product-table tbody tr {
+    transition: background 0.2s ease;
 }
 
-/* ==========================================
+.product-table tbody tr:hover {
+    background: #f9fafc;
+}
+
+
+/* =========================================================
+   COLUMN ALIGNMENT
+   ========================================================= */
+
+/* Serial number */
+
+.product-table th:first-child,
+.product-table td:first-child {
+    width: 70px;
+
+    text-align: center;
+}
+
+
+/* Image column */
+
+.product-table th:nth-child(2),
+.product-table td:nth-child(2) {
+    width: 100px;
+
+    text-align: center;
+}
+
+
+/* Product name */
+
+.product-table th:nth-child(3),
+.product-table td:nth-child(3) {
+    min-width: 180px;
+
+    text-align: left;
+}
+
+
+/* Category */
+
+.product-table th:nth-child(4),
+.product-table td:nth-child(4) {
+    min-width: 130px;
+
+    text-align: left;
+}
+
+
+/* Brand */
+
+.product-table th:nth-child(5),
+.product-table td:nth-child(5) {
+    min-width: 120px;
+
+    text-align: left;
+}
+
+
+/* Price */
+
+.product-table th:nth-child(6),
+.product-table td:nth-child(6) {
+    width: 110px;
+
+    text-align: center;
+}
+
+
+/* Stock */
+
+.product-table th:nth-child(7),
+.product-table td:nth-child(7) {
+    width: 100px;
+
+    text-align: center;
+}
+
+
+/* Action */
+
+.product-table th:nth-child(8),
+.product-table td:nth-child(8) {
+    width: 130px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   PRODUCT IMAGE CELL
+   ========================================================= */
+
+.product-image-cell {
+    width: 100px;
+
+    min-width: 100px;
+
+    text-align: center;
+
+    vertical-align: middle;
+}
+
+
+/* =========================================================
    PRODUCT IMAGE
-========================================== */
+   ========================================================= */
 
+.product-table-image {
+    width: 60px;
 
-/* ==========================================
-   ACTION BUTTONS
-========================================== */
+    height: 60px;
 
-.action-buttons{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:8px;
+    display: block;
+
+    margin: 0 auto;
+
+    object-fit: contain;
+
+    border-radius: 8px;
+
+    border: 1px solid #e0e5eb;
+
+    background: #ffffff;
+
+    padding: 3px;
+
+    transition: 0.2s ease;
 }
 
-.edit-btn{
-    width:38px!important;
-    height:38px!important;
-    border:none;
-    border-radius:6px;
-    background:#ffc107;
-    color:#222;
-    cursor:pointer;
-    transition:.3s;
-    font-size:15px;
+.product-table-image:hover {
+    transform: scale(1.05);
+
+    border-color: #0d6efd;
 }
 
-.edit-btn:hover{
-    background:#e0a800;
+
+/* =========================================================
+   NO IMAGE
+   ========================================================= */
+
+.no-product-image {
+    width: 60px;
+
+    height: 60px;
+
+    margin: 0 auto;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    border: 1px dashed #cbd5e1;
+
+    border-radius: 8px;
+
+    background: #f7f9fc;
+
+    color: #8a94a6;
+
+    font-size: 10px;
+
+    line-height: 1.2;
 }
 
-.delete-btn{
-    width:38px;
-    height:38px;
-    border:none;
-    border-radius:6px;
-    background:#dc3545;
-    color:#fff;
-    cursor:pointer;
-    transition:.3s;
-    font-size:15px;
-}
 
-.delete-btn:hover{
-    background:#bb2d3b;
-}
+/* =========================================================
+   LOW STOCK ROW
+   ========================================================= */
+
 .low-stock-row {
-    background-color: #ffe5e5;
-    animation: blinkRow 1s infinite;
+    animation: blinkRow 1.2s infinite;
 }
+
+
+/* =========================================================
+   LOW STOCK TEXT
+   ========================================================= */
 
 .low-stock-text {
     color: #d50000;
-    font-weight: bold;
-    animation: blinkText .8s infinite;
+
+    font-weight: 700;
+
+    animation: blinkText 0.8s infinite;
+
+    white-space: nowrap;
 }
 
-/* ==========================================
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.action-buttons {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+/* =========================================================
+   EDIT BUTTON
+   ========================================================= */
+
+.edit-btn {
+    width: 38px !important;
+
+    height: 38px !important;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 6px;
+
+    background: #ffc107;
+
+    color: #222222;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+    font-size: 15px;
+}
+
+.edit-btn:hover {
+    background: #e0a800;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   DELETE BUTTON
+   ========================================================= */
+
+.delete-btn {
+    width: 38px;
+
+    height: 38px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 6px;
+
+    background: #dc3545;
+
+    color: #ffffff;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+    font-size: 15px;
+}
+
+.delete-btn:hover {
+    background: #bb2d3b;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
    EMPTY TABLE
-========================================== */
+   ========================================================= */
 
-.no-data{
-    text-align:center;
-    padding:40px;
-    color:#777;
-    font-size:16px;
+.no-data {
+    text-align: center;
+
+    padding: 40px;
+
+    color: #777777;
+
+    font-size: 16px;
 }
-/* ==========================================
+
+
+/* =========================================================
    ADD PRODUCT PAGE
-========================================== */
+   ========================================================= */
 
-.admin-page{
-    width:100%;
-    min-height:100vh;
-    background:#f5f7fb;
-    padding:25px;
+.admin-page {
+    width: 100%;
+
+    min-height: 100vh;
+
+    background: #f5f7fb;
+
+    padding: 25px;
 }
 
-.admin-header{
-    margin-bottom:25px;
+
+/* =========================================================
+   ADMIN HEADER
+   ========================================================= */
+
+.admin-header {
+    margin-bottom: 25px;
 }
 
-.admin-header h2{
-    font-size:30px;
-    font-weight:700;
-    color:#2c3e50;
+.admin-header h2 {
+    font-size: 30px;
+
+    font-weight: 700;
+
+    color: #2c3e50;
 }
 
-/* ==========================================
-   FORM CONTAINER
-========================================== */
 
-.product-form{
-    width:100%;
-    background:#ffffff;
-    padding:30px;
-    border-radius:12px;
-    box-shadow:0 5px 20px rgba(0,0,0,.08);
+/* =========================================================
+   PRODUCT FORM
+   ========================================================= */
+
+.product-form {
+    width: 100%;
+
+    background: #ffffff;
+
+    padding: 30px;
+
+    border-radius: 12px;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* ==========================================
-   TWO COLUMN LAYOUT
-========================================== */
 
-.form-row{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:20px;
-    margin-bottom:20px;
-    width:100%;
+/* =========================================================
+   FORM ROW
+   ========================================================= */
+
+.form-row {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 20px;
+
+    margin-bottom: 20px;
+
+    width: 100%;
 }
 
-/* ==========================================
+
+/* =========================================================
    FORM GROUP
-========================================== */
+   ========================================================= */
 
-.form-group{
-    display:flex;
-    flex-direction:column;
-    width:100%;
+.form-group {
+    display: flex;
+
+    flex-direction: column;
+
+    width: 100%;
 }
 
-.form-group label{
-    margin-bottom:8px;
-    font-size:15px;
-    font-weight:600;
-    color:#444;
+.form-group label {
+    margin-bottom: 8px;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    color: #444444;
 }
 
-/* ==========================================
+
+/* =========================================================
    INPUTS
-========================================== */
+   ========================================================= */
 
 .form-group input,
 .form-group select,
-.form-group textarea{
-    width:100%;
-    padding:12px 15px;
-    border:1px solid #d5d5d5;
-    border-radius:8px;
-    outline:none;
-    font-size:15px;
-    transition:.3s;
-    background:#fff;
+.form-group textarea {
+    width: 100%;
+
+    padding: 12px 15px;
+
+    border: 1px solid #d5d5d5;
+
+    border-radius: 8px;
+
+    outline: none;
+
+    font-size: 15px;
+
+    transition: 0.3s;
+
+    background: #ffffff;
+
+    color: #333333;
 }
 
 .form-group input:focus,
 .form-group select:focus,
-.form-group textarea:focus{
-    border-color:#0d6efd;
-    box-shadow:0 0 0 3px rgba(13,110,253,.15);
+.form-group textarea:focus {
+    border-color: #0d6efd;
+
+    box-shadow:
+        0 0 0 3px rgba(13, 110, 253, 0.15);
 }
 
-/* ==========================================
+
+/* =========================================================
    TEXTAREA
-========================================== */
+   ========================================================= */
 
-.form-group textarea{
-    min-height:140px;
-    resize:vertical;
+.form-group textarea {
+    min-height: 140px;
+
+    resize: vertical;
 }
 
-/* ==========================================
+
+/* =========================================================
    FULL WIDTH FIELD
-========================================== */
+   ========================================================= */
 
-.full-width{
-    grid-column:1 / span 2;
+.full-width {
+    grid-column: 1 / span 2;
 }
 
-/* ==========================================
+
+/* =========================================================
    FILE INPUT
-========================================== */
+   ========================================================= */
 
-.form-group input[type="file"]{
-    padding:10px;
-    background:#fafafa;
-    cursor:pointer;
+.form-group input[type="file"] {
+    padding: 10px;
+
+    background: #fafafa;
+
+    cursor: pointer;
 }
 
-/* ==========================================
+
+/* =========================================================
    IMAGE PREVIEW
-========================================== */
+   ========================================================= */
 
-.preview-image{
-    width:180px;
-    height:180px;
-    object-fit:cover;
-    border-radius:10px;
-    border:1px solid #ddd;
-    margin-top:5px;
+.preview-image {
+    width: 180px;
+
+    height: 180px;
+
+    object-fit: contain;
+
+    border-radius: 10px;
+
+    border: 1px solid #dddddd;
+
+    margin-top: 8px;
+
+    background: #f8fafc;
+
+    padding: 5px;
 }
-/* ==========================================
+
+
+/* =========================================================
    CHECKBOX
-========================================== */
+   ========================================================= */
 
-.checkbox-group{
-    margin-top:20px;
-    margin-bottom:25px;
+.checkbox-group {
+    margin-top: 20px;
+
+    margin-bottom: 25px;
 }
 
-.checkbox-group label{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-size:15px;
-    font-weight:600;
-    color:#444;
-    cursor:pointer;
+.checkbox-group label {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    color: #444444;
+
+    cursor: pointer;
 }
 
-.checkbox-group input[type="checkbox"]{
-    width:18px;
-    height:18px;
-    cursor:pointer;
+.checkbox-group input[type="checkbox"] {
+    width: 18px;
+
+    height: 18px;
+
+    cursor: pointer;
 }
 
-/* ==========================================
+
+/* =========================================================
    BUTTON GROUP
-========================================== */
+   ========================================================= */
 
-.button-group{
-    display:flex;
-    justify-content:flex-end;
-    align-items:center;
-    gap:15px;
-    margin-top:30px;
+.button-group {
+    display: flex;
+
+    justify-content: flex-end;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-top: 30px;
 }
 
-.save-btn{
-    background:#0d6efd;
-    color:#fff;
-    border:none;
-    padding:12px 28px;
-    border-radius:8px;
-    font-size:15px;
-    font-weight:600;
-    cursor:pointer;
-    transition:.3s;
+
+/* =========================================================
+   SAVE BUTTON
+   ========================================================= */
+
+.save-btn {
+    background: #0d6efd;
+
+    color: #ffffff;
+
+    border: none;
+
+    padding: 12px 28px;
+
+    border-radius: 8px;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.3s;
 }
 
-.save-btn:hover{
-    background:#0b5ed7;
+.save-btn:hover {
+    background: #0b5ed7;
 }
 
-.save-btn:disabled{
-    background:#8ab6ff;
-    cursor:not-allowed;
+.save-btn:disabled {
+    background: #8ab6ff;
+
+    cursor: not-allowed;
 }
 
-.cancel-btn{
-    background:#6c757d;
-    color:#fff;
-    border:none;
-    padding:12px 28px;
-    border-radius:8px;
-    font-size:15px;
-    font-weight:600;
-    cursor:pointer;
-    transition:.3s;
+
+/* =========================================================
+   CANCEL BUTTON
+   ========================================================= */
+
+.cancel-btn {
+    background: #6c757d;
+
+    color: #ffffff;
+
+    border: none;
+
+    padding: 12px 28px;
+
+    border-radius: 8px;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.3s;
 }
 
-.cancel-btn:hover{
-    background:#565e64;
+.cancel-btn:hover {
+    background: #565e64;
 }
 
-/* ==========================================
-   SUCCESS / ERROR MESSAGE
-========================================== */
 
-.success-message{
-    background:#d1e7dd;
-    color:#0f5132;
-    border:1px solid #badbcc;
-    padding:12px 15px;
-    border-radius:6px;
-    margin-bottom:20px;
+/* =========================================================
+   SUCCESS MESSAGE
+   ========================================================= */
+
+.success-message {
+    background: #d1e7dd;
+
+    color: #0f5132;
+
+    border: 1px solid #badbcc;
+
+    padding: 12px 15px;
+
+    border-radius: 6px;
+
+    margin-bottom: 20px;
 }
 
-.error-message{
-    background:#f8d7da;
-    color:#842029;
-    border:1px solid #f5c2c7;
-    padding:12px 15px;
-    border-radius:6px;
-    margin-bottom:20px;
+
+/* =========================================================
+   ERROR MESSAGE
+   ========================================================= */
+
+.error-message {
+    background: #f8d7da;
+
+    color: #842029;
+
+    border: 1px solid #f5c2c7;
+
+    padding: 12px 15px;
+
+    border-radius: 6px;
+
+    margin-bottom: 20px;
 }
 
-/* ==========================================
+
+/* =========================================================
    LOADING BUTTON
-========================================== */
+   ========================================================= */
 
-.loading-btn{
-    opacity:.7;
-    pointer-events:none;
+.loading-btn {
+    opacity: 0.7;
+
+    pointer-events: none;
 }
 
-/* ==========================================
-   INPUT PLACEHOLDER
-========================================== */
 
-::placeholder{
-    color:#999;
+/* =========================================================
+   PLACEHOLDER
+   ========================================================= */
+
+::placeholder {
+    color: #999999;
 }
 
-/* ==========================================
+
+/* =========================================================
    SCROLLBAR
-========================================== */
+   ========================================================= */
 
-::-webkit-scrollbar{
-    width:8px;
-    height:8px;
+::-webkit-scrollbar {
+    width: 8px;
+
+    height: 8px;
 }
 
-::-webkit-scrollbar-track{
-    background:#f1f1f1;
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
 }
 
-::-webkit-scrollbar-thumb{
-    background:#b7b7b7;
-    border-radius:20px;
+::-webkit-scrollbar-thumb {
+    background: #b7b7b7;
+
+    border-radius: 20px;
 }
 
-::-webkit-scrollbar-thumb:hover{
-    background:#888;
-}
-/* ==========================
-   Delete Modal
-========================== */
-
-.modal-overlay{
-
-    position:fixed;
-
-    top:0;
-    left:0;
-
-    width:100%;
-    height:100%;
-
-    background:rgba(0,0,0,.55);
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    z-index:9999;
-
+::-webkit-scrollbar-thumb:hover {
+    background: #888888;
 }
 
-.delete-modal{
 
-    width:420px;
+/* =========================================================
+   DELETE MODAL OVERLAY
+   ========================================================= */
 
-    background:#fff;
+.modal-overlay {
+    position: fixed;
 
-    border-radius:12px;
+    top: 0;
+    left: 0;
 
-    padding:30px;
+    width: 100%;
+    height: 100%;
 
-    text-align:center;
+    background: rgba(0, 0, 0, 0.55);
 
-    box-shadow:0 10px 30px rgba(0,0,0,.25);
+    display: flex;
 
-    animation:popup .3s ease;
+    justify-content: center;
+    align-items: center;
 
+    z-index: 9999;
+
+    padding: 20px;
 }
 
-.delete-modal h3{
 
-    color:#dc3545;
+/* =========================================================
+   DELETE MODAL
+   ========================================================= */
 
-    margin-bottom:15px;
+.delete-modal {
+    width: 420px;
 
-    font-size:26px;
+    max-width: 100%;
 
+    background: #ffffff;
+
+    border-radius: 12px;
+
+    padding: 30px;
+
+    text-align: center;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.25);
+
+    animation: popup 0.3s ease;
 }
 
-.delete-modal p{
 
-    font-size:17px;
+/* =========================================================
+   DELETE MODAL TITLE
+   ========================================================= */
 
-    color:#555;
+.delete-modal h3 {
+    color: #dc3545;
 
-    margin-bottom:25px;
+    margin-bottom: 15px;
 
-    line-height:1.6;
-
+    font-size: 26px;
 }
 
-.modal-buttons{
 
-    display:flex;
+/* =========================================================
+   DELETE MODAL TEXT
+   ========================================================= */
 
-    justify-content:center;
+.delete-modal p {
+    font-size: 17px;
 
-    gap:15px;
+    color: #555555;
 
+    margin-bottom: 25px;
+
+    line-height: 1.6;
 }
 
-.delete-confirm-btn{
-
-    background:#dc3545;
-
-    color:#fff;
-
-    border:none;
-
-    padding:10px 28px;
-
-    border-radius:8px;
-
-    cursor:pointer;
-
-    font-size:15px;
-
-    transition:.3s;
-
+.delete-modal p strong {
+    color: #2c3e50;
 }
 
-.delete-confirm-btn:hover{
 
-    background:#b52b3a;
+/* =========================================================
+   MODAL BUTTONS
+   ========================================================= */
 
+.modal-buttons {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 15px;
 }
 
-@keyframes popup{
 
-    from{
+/* =========================================================
+   DELETE CONFIRM BUTTON
+   ========================================================= */
 
-        transform:scale(.8);
+.delete-confirm-btn {
+    background: #dc3545;
 
-        opacity:0;
+    color: #ffffff;
 
-    }
+    border: none;
 
-    to{
+    padding: 10px 28px;
 
-        transform:scale(1);
+    border-radius: 8px;
 
-        opacity:1;
+    cursor: pointer;
 
-    }
+    font-size: 15px;
 
+    transition: 0.3s;
 }
 
-/* ==========================================
-   RESPONSIVE
-========================================== */
-
-@media (max-width:992px){
-
-    .page-header{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:15px;
-    }
-
-    .button-group{
-        justify-content:flex-start;
-    }
-
+.delete-confirm-btn:hover {
+    background: #b52b3a;
 }
 
-@media (max-width:768px){
 
-    .manage-products,
-    .admin-page{
-        padding:15px;
+/* =========================================================
+   POPUP ANIMATION
+   ========================================================= */
+
+@keyframes popup {
+    from {
+        transform: scale(0.8);
+
+        opacity: 0;
     }
 
-    .product-form{
-        padding:20px;
-    }
+    to {
+        transform: scale(1);
 
-    .form-row{
-        grid-template-columns:1fr;
-        gap:18px;
+        opacity: 1;
     }
-
-    .full-width{
-        grid-column:span 1;
-    }
-
-    .preview-image{
-        width:140px;
-        height:140px;
-    }
-
-    .button-group{
-        flex-direction:column;
-        width:100%;
-    }
-
-    .button-group button{
-        width:100%;
-    }
-
-    .add-btn{
-        width:100%;
-        justify-content:center;
-    }
-
-    .product-table{
-        display:block;
-        overflow-x:auto;
-        white-space:nowrap;
-    }
-
 }
 
-@media (max-width:480px){
 
-    .page-header h2,
-    .admin-header h2{
-        font-size:24px;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea{
-        font-size:14px;
-        padding:10px;
-    }
-
-    .save-btn,
-    .cancel-btn{
-        font-size:14px;
-        padding:10px 18px;
-    }
-
-}
+/* =========================================================
+   LOW STOCK ROW ANIMATION
+   ========================================================= */
 
 @keyframes blinkRow {
-
     0% {
         background: #ffe5e5;
     }
@@ -647,21 +1002,185 @@
     100% {
         background: #ffe5e5;
     }
-
 }
 
-@keyframes blinkText {
 
+/* =========================================================
+   LOW STOCK TEXT ANIMATION
+   ========================================================= */
+
+@keyframes blinkText {
     0% {
         opacity: 1;
     }
 
     50% {
-        opacity: .2;
+        opacity: 0.2;
     }
 
     100% {
         opacity: 1;
+    }
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 992px) {
+
+    .page-header {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+    .button-group {
+        justify-content: flex-start;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .manage-products,
+    .admin-page {
+        padding: 15px;
+    }
+
+
+    /* -----------------------------
+       PRODUCT TABLE
+    ----------------------------- */
+
+    .product-table-wrapper {
+        width: 100%;
+
+        overflow-x: auto;
+
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .product-table {
+        min-width: 900px;
+    }
+
+
+    /* -----------------------------
+       FORM
+    ----------------------------- */
+
+    .product-form {
+        padding: 20px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+
+        gap: 18px;
+    }
+
+    .full-width {
+        grid-column: span 1;
+    }
+
+
+    /* -----------------------------
+       IMAGE PREVIEW
+    ----------------------------- */
+
+    .preview-image {
+        width: 140px;
+
+        height: 140px;
+    }
+
+
+    /* -----------------------------
+       BUTTONS
+    ----------------------------- */
+
+    .button-group {
+        flex-direction: column;
+
+        width: 100%;
+    }
+
+    .button-group button {
+        width: 100%;
+    }
+
+    .add-btn {
+        width: 100%;
+
+        justify-content: center;
+    }
+
+
+    /* -----------------------------
+       DELETE MODAL
+    ----------------------------- */
+
+    .delete-modal {
+        width: 100%;
+
+        max-width: 380px;
+
+        padding: 25px;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .page-header h2,
+    .admin-header h2 {
+        font-size: 24px;
+    }
+
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 14px;
+
+        padding: 10px;
+    }
+
+
+    .save-btn,
+    .cancel-btn {
+        width: 100%;
+
+        font-size: 14px;
+
+        padding: 10px 18px;
+    }
+
+
+    .modal-buttons {
+        flex-direction: column;
+
+        width: 100%;
+    }
+
+
+    .delete-confirm-btn,
+    .modal-buttons .cancel-btn {
+        width: 100%;
     }
 
 }

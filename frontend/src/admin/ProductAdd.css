@@ -1,0 +1,604 @@
+/* =========================================================
+   PRODUCT FORM PAGE
+========================================================= */
+
+.product-form-page {
+    min-height: 100vh;
+    background: #f5f7fb;
+    padding: 30px 20px;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
+.product-form-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 30px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.product-form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.product-form-header h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.product-form-header button {
+    border: none;
+    background: #6b7280;
+    color: #ffffff;
+
+    padding: 10px 20px;
+
+    border-radius: 6px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.product-form-header button:hover {
+    background: #4b5563;
+}
+
+
+/* =========================================================
+   FORM SECTION
+========================================================= */
+
+.form-section {
+    margin-bottom: 30px;
+    padding: 24px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.form-section h3 {
+    margin: 0 0 22px 0;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    color: #111827;
+
+    padding-bottom: 12px;
+
+    border-bottom: 1px solid #e5e7eb;
+}
+
+
+/* =========================================================
+   TWO COLUMN GRID
+========================================================= */
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 20px 24px;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.form-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    margin-bottom: 20px;
+}
+
+.form-grid .form-group {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #374151;
+}
+
+
+/* =========================================================
+   INPUT / SELECT / TEXTAREA
+========================================================= */
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 7px;
+
+    padding: 11px 13px;
+
+    background: #ffffff;
+
+    color: #111827;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.form-group input {
+    min-height: 42px;
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.form-group select {
+    min-height: 42px;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   TEXTAREA
+========================================================= */
+
+.form-group textarea {
+    min-height: 110px;
+
+    resize: vertical;
+
+    font-family: inherit;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #2563eb;
+
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+========================================================= */
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #9ca3af;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+   FULL WIDTH
+========================================================= */
+
+.form-section > .form-group {
+    width: 100%;
+}
+
+
+/* =========================================================
+   CHECKBOX
+========================================================= */
+
+.checkbox-group {
+    justify-content: center;
+}
+
+.checkbox-group label {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin: 0;
+
+    min-height: 42px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    color: #374151;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+
+    margin: 0;
+
+    cursor: pointer;
+
+    accent-color: #2563eb;
+}
+
+
+/* =========================================================
+   IMAGE SECTION
+========================================================= */
+
+.image-preview {
+    width: 100%;
+
+    margin-bottom: 20px;
+
+    display: flex;
+
+    justify-content: flex-start;
+}
+
+.image-preview img {
+    width: 180px;
+    height: 180px;
+
+    object-fit: cover;
+
+    border-radius: 10px;
+
+    border: 1px solid #d1d5db;
+
+    background: #f9fafb;
+
+    padding: 5px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   FILE INPUT
+========================================================= */
+
+.form-group input[type="file"] {
+    padding: 8px;
+
+    background: #f9fafb;
+
+    cursor: pointer;
+}
+
+.form-group input[type="file"]::file-selector-button {
+    border: none;
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+    padding: 8px 14px;
+
+    border-radius: 5px;
+
+    margin-right: 10px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+}
+
+.form-group input[type="file"]::file-selector-button:hover {
+    background: #1d4ed8;
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+========================================================= */
+
+.form-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 30px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid #e5e7eb;
+}
+
+
+/* =========================================================
+   CANCEL BUTTON
+========================================================= */
+
+.cancel-button {
+    min-width: 120px;
+
+    padding: 12px 20px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #374151;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.cancel-button:hover {
+    background: #f3f4f6;
+
+    border-color: #9ca3af;
+}
+
+
+/* =========================================================
+   SUBMIT BUTTON
+========================================================= */
+
+.submit-button {
+    min-width: 150px;
+
+    padding: 12px 20px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.submit-button:hover {
+    background: #1d4ed8;
+}
+
+.submit-button:disabled {
+    background: #93c5fd;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   REQUIRED FIELD
+========================================================= */
+
+.form-group input:required,
+.form-group select:required,
+.form-group textarea:required {
+    background-color: #ffffff;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.product-form-page > p {
+    text-align: center;
+
+    font-size: 18px;
+
+    color: #6b7280;
+
+    margin-top: 50px;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .product-form-container {
+        max-width: 95%;
+
+        padding: 24px;
+    }
+
+    .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 18px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .product-form-page {
+        padding: 15px 10px;
+    }
+
+    .product-form-container {
+        width: 100%;
+
+        max-width: 100%;
+
+        padding: 18px;
+
+        border-radius: 8px;
+    }
+
+
+    /* Header */
+
+    .product-form-header {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+    .product-form-header h2 {
+        font-size: 23px;
+    }
+
+    .product-form-header button {
+        width: 100%;
+    }
+
+
+    /* One column */
+
+    .form-grid {
+        grid-template-columns: 1fr;
+
+        gap: 0;
+    }
+
+
+    .form-section {
+        padding: 18px;
+
+        margin-bottom: 20px;
+    }
+
+    .form-section h3 {
+        font-size: 18px;
+    }
+
+
+    /* Image */
+
+    .image-preview img {
+        width: 150px;
+        height: 150px;
+    }
+
+
+    /* Buttons */
+
+    .form-actions {
+        flex-direction: column;
+
+        width: 100%;
+    }
+
+    .cancel-button,
+    .submit-button {
+        width: 100%;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 400px) {
+
+    .product-form-page {
+        padding: 10px 5px;
+    }
+
+    .product-form-container {
+        padding: 14px;
+    }
+
+    .form-section {
+        padding: 14px;
+    }
+
+    .product-form-header h2 {
+        font-size: 21px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 13px;
+    }
+
+}

@@ -19,7 +19,7 @@ import Home from "./pages/Home.jsx"
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from "./components/Profile";
-
+import Footer from "./components/Footer.jsx";
 import TopBar from "./components/TopBar.jsx";
 import Pagination from "./components/Pagination";
 
@@ -319,6 +319,7 @@ function AppContent() {
         </main>
 
       </div>
+       <Footer />
     </>
   );
 }
