@@ -15,4 +15,3 @@ frontend/dist/
 .vscode/
 
 *.sqlite3
-media/
