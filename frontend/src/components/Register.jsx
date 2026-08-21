@@ -11,6 +11,9 @@ import {
   FaEyeSlash,
   FaHome,
   FaPaw,
+  FaMapMarkerAlt,
+  FaCity,
+  FaMapPin,
 } from "react-icons/fa";
 
 import "../styles/Register.css";
@@ -21,12 +24,18 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
     phone_number: "",
     email: "",
     address: "",
+    city: "",
+    state: "",
+    country: "India",
+    postal_code: "",
     username: "",
     password: "",
     confirm_password: "",
@@ -46,16 +55,100 @@ function Register() {
   };
 
   /* =====================================================
+     VALIDATE FORM
+  ===================================================== */
+
+  const validateForm = () => {
+    if (!formData.first_name.trim()) {
+      alert("Please enter your first name.");
+      return false;
+    }
+
+    if (!formData.last_name.trim()) {
+      alert("Please enter your last name.");
+      return false;
+    }
+
+    if (!formData.phone_number.trim()) {
+      alert("Please enter your phone number.");
+      return false;
+    }
+
+    if (!/^[0-9]{10,15}$/.test(formData.phone_number.trim())) {
+      alert("Please enter a valid phone number.");
+      return false;
+    }
+
+    if (!formData.email.trim()) {
+      alert("Please enter your email address.");
+      return false;
+    }
+
+    if (!formData.address.trim()) {
+      alert("Please enter your address.");
+      return false;
+    }
+
+    if (!formData.city.trim()) {
+      alert("Please enter your city.");
+      return false;
+    }
+
+    if (!formData.state.trim()) {
+      alert("Please enter your state.");
+      return false;
+    }
+
+    if (!formData.postal_code.trim()) {
+      alert("Please enter your postal code.");
+      return false;
+    }
+
+    if (!/^[0-9]{5,10}$/.test(formData.postal_code.trim())) {
+      alert("Please enter a valid postal code.");
+      return false;
+    }
+
+    if (!formData.username.trim()) {
+      alert("Please enter your username.");
+      return false;
+    }
+
+    if (!formData.password) {
+      alert("Please enter your password.");
+      return false;
+    }
+
+    if (formData.password.length < 8) {
+      alert("Password must contain at least 8 characters.");
+      return false;
+    }
+
+    if (!formData.confirm_password) {
+      alert("Please confirm your password.");
+      return false;
+    }
+
+    if (formData.password !== formData.confirm_password) {
+      alert("Passwords do not match.");
+      return false;
+    }
+
+    return true;
+  };
+
+  /* =====================================================
      REGISTER
   ===================================================== */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirm_password) {
-      alert("Passwords do not match");
+    if (!validateForm()) {
       return;
     }
+
+    setLoading(true);
 
     try {
       const response = await axios.post(
@@ -63,7 +156,10 @@ function Register() {
         formData
       );
 
-      alert(response.data.message || "Registration successful");
+      alert(
+        response.data?.message ||
+          "Registration successful"
+      );
 
       setFormData({
         first_name: "",
@@ -71,6 +167,10 @@ function Register() {
         phone_number: "",
         email: "",
         address: "",
+        city: "",
+        state: "",
+        country: "India",
+        postal_code: "",
         username: "",
         password: "",
         confirm_password: "",
@@ -81,19 +181,47 @@ function Register() {
 
       navigate("/login");
     } catch (error) {
-      console.error("Registration Error:", error);
+      console.error(
+        "Registration Error:",
+        error
+      );
 
       if (error.response) {
-        console.error("Server Response:", error.response.data);
+        console.error(
+          "Server Response:",
+          error.response.data
+        );
 
-        if (typeof error.response.data === "object") {
-          alert(JSON.stringify(error.response.data));
+        const data = error.response.data;
+
+        if (typeof data === "object") {
+          const messages = Object.entries(data)
+            .map(([field, message]) => {
+              if (Array.isArray(message)) {
+                return `${field}: ${message.join(", ")}`;
+              }
+
+              return `${field}: ${message}`;
+            })
+            .join("\n");
+
+          alert(
+            messages ||
+              "Registration failed."
+          );
         } else {
-          alert(error.response.data);
+          alert(
+            data ||
+              "Registration failed."
+          );
         }
       } else {
-        alert("Unable to connect to server.");
+        alert(
+          "Unable to connect to server. Please make sure Django is running."
+        );
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -105,8 +233,11 @@ function Register() {
       ================================================= */}
 
       <div className="register-circle register-circle-one"></div>
+
       <div className="register-circle register-circle-two"></div>
+
       <div className="register-circle register-circle-three"></div>
+
 
       {/* =================================================
           MAIN CONTAINER
@@ -120,8 +251,6 @@ function Register() {
 
         <div className="register-left">
 
-          {/* BRAND */}
-
           <div className="register-brand">
 
             <div className="register-paw-box">
@@ -129,16 +258,19 @@ function Register() {
             </div>
 
             <div className="register-brand-text">
-              <h1>PetCare Store</h1>
+
+              <h1>
+                PetCare Store
+              </h1>
 
               <span>
                 Premium care for your pets
               </span>
+
             </div>
 
           </div>
 
-          {/* WELCOME */}
 
           <div className="register-welcome">
 
@@ -156,7 +288,6 @@ function Register() {
               healthcare products.
             </p>
 
-            {/* FEATURES */}
 
             <div className="register-feature-list">
 
@@ -170,6 +301,7 @@ function Register() {
 
               </div>
 
+
               <div className="register-feature">
 
                 <span>🛍️</span>
@@ -180,12 +312,12 @@ function Register() {
 
               </div>
 
-
             </div>
 
           </div>
 
         </div>
+
 
         {/* =================================================
             RIGHT SIDE
@@ -201,6 +333,7 @@ function Register() {
               <FaPaw />
             </div>
 
+
             {/* HEADING */}
 
             <div className="register-heading">
@@ -215,6 +348,7 @@ function Register() {
 
             </div>
 
+
             {/* =================================================
                 FORM
             ================================================= */}
@@ -222,11 +356,14 @@ function Register() {
             <form
               onSubmit={handleSubmit}
               className="register-form"
+              noValidate
             >
 
               <div className="register-form-grid">
 
-                {/* FIRST NAME */}
+                {/* =================================================
+                    FIRST NAME
+                ================================================= */}
 
                 <div className="register-input-group">
 
@@ -238,12 +375,16 @@ function Register() {
                     placeholder="First Name"
                     value={formData.first_name}
                     onChange={handleChange}
+                    autoComplete="given-name"
                     required
                   />
 
                 </div>
 
-                {/* LAST NAME */}
+
+                {/* =================================================
+                    LAST NAME
+                ================================================= */}
 
                 <div className="register-input-group">
 
@@ -255,12 +396,16 @@ function Register() {
                     placeholder="Last Name"
                     value={formData.last_name}
                     onChange={handleChange}
+                    autoComplete="family-name"
                     required
                   />
 
                 </div>
 
-                {/* PHONE */}
+
+                {/* =================================================
+                    PHONE
+                ================================================= */}
 
                 <div className="register-input-group">
 
@@ -272,12 +417,18 @@ function Register() {
                     placeholder="Phone Number"
                     value={formData.phone_number}
                     onChange={handleChange}
+                    autoComplete="tel"
+                    inputMode="numeric"
+                    maxLength="15"
                     required
                   />
 
                 </div>
 
-                {/* EMAIL */}
+
+                {/* =================================================
+                    EMAIL
+                ================================================= */}
 
                 <div className="register-input-group">
 
@@ -289,12 +440,16 @@ function Register() {
                     placeholder="Email Address"
                     value={formData.email}
                     onChange={handleChange}
+                    autoComplete="email"
                     required
                   />
 
                 </div>
 
-                {/* ADDRESS */}
+
+                {/* =================================================
+                    ADDRESS
+                ================================================= */}
 
                 <div className="register-input-group">
 
@@ -306,12 +461,102 @@ function Register() {
                     placeholder="Address"
                     value={formData.address}
                     onChange={handleChange}
+                    autoComplete="street-address"
                     required
                   />
 
                 </div>
 
-                {/* USERNAME */}
+
+                {/* =================================================
+                    CITY
+                ================================================= */}
+
+                <div className="register-input-group">
+
+                  <FaCity className="register-input-icon" />
+
+                  <input
+                    type="text"
+                    name="city"
+                    placeholder="City"
+                    value={formData.city}
+                    onChange={handleChange}
+                    autoComplete="address-level2"
+                    required
+                  />
+
+                </div>
+
+
+                {/* =================================================
+                    STATE
+                ================================================= */}
+
+                <div className="register-input-group">
+
+                  <FaMapMarkerAlt className="register-input-icon" />
+
+                  <input
+                    type="text"
+                    name="state"
+                    placeholder="State"
+                    value={formData.state}
+                    onChange={handleChange}
+                    autoComplete="address-level1"
+                    required
+                  />
+
+                </div>
+
+
+                {/* =================================================
+                    COUNTRY
+                ================================================= */}
+
+                <div className="register-input-group">
+
+                  <FaMapMarkerAlt className="register-input-icon" />
+
+                  <input
+                    type="text"
+                    name="country"
+                    placeholder="Country"
+                    value={formData.country}
+                    onChange={handleChange}
+                    autoComplete="country-name"
+                    required
+                  />
+
+                </div>
+
+
+                {/* =================================================
+                    POSTAL CODE
+                ================================================= */}
+
+                <div className="register-input-group">
+
+                  <FaMapPin className="register-input-icon" />
+
+                  <input
+                    type="text"
+                    name="postal_code"
+                    placeholder="Postal Code"
+                    value={formData.postal_code}
+                    onChange={handleChange}
+                    autoComplete="postal-code"
+                    inputMode="numeric"
+                    maxLength="10"
+                    required
+                  />
+
+                </div>
+
+
+                {/* =================================================
+                    USERNAME
+                ================================================= */}
 
                 <div className="register-input-group">
 
@@ -323,31 +568,43 @@ function Register() {
                     placeholder="Username"
                     value={formData.username}
                     onChange={handleChange}
+                    autoComplete="username"
                     required
                   />
 
                 </div>
 
-                {/* PASSWORD */}
+
+                {/* =================================================
+                    PASSWORD
+                ================================================= */}
 
                 <div className="register-input-group">
 
                   <FaLock className="register-input-icon" />
 
                   <input
-                    type={showPassword ? "text" : "password"}
+                    type={
+                      showPassword
+                        ? "text"
+                        : "password"
+                    }
                     name="password"
                     placeholder="Password"
                     value={formData.password}
                     onChange={handleChange}
+                    autoComplete="new-password"
                     required
                   />
+
 
                   <button
                     type="button"
                     className="register-password-toggle"
                     onClick={() =>
-                      setShowPassword((prev) => !prev)
+                      setShowPassword(
+                        (prev) => !prev
+                      )
                     }
                     aria-label={
                       showPassword
@@ -355,16 +612,21 @@ function Register() {
                         : "Show password"
                     }
                   >
+
                     {showPassword ? (
                       <FaEyeSlash />
                     ) : (
                       <FaEye />
                     )}
+
                   </button>
 
                 </div>
 
-                {/* CONFIRM PASSWORD */}
+
+                {/* =================================================
+                    CONFIRM PASSWORD
+                ================================================= */}
 
                 <div className="register-input-group">
 
@@ -378,10 +640,14 @@ function Register() {
                     }
                     name="confirm_password"
                     placeholder="Confirm Password"
-                    value={formData.confirm_password}
+                    value={
+                      formData.confirm_password
+                    }
                     onChange={handleChange}
+                    autoComplete="new-password"
                     required
                   />
+
 
                   <button
                     type="button"
@@ -397,31 +663,46 @@ function Register() {
                         : "Show confirm password"
                     }
                   >
+
                     {showConfirmPassword ? (
                       <FaEyeSlash />
                     ) : (
                       <FaEye />
                     )}
+
                   </button>
 
                 </div>
 
               </div>
 
-              {/* REGISTER BUTTON */}
+
+              {/* =================================================
+                  REGISTER BUTTON
+              ================================================= */}
 
               <button
                 type="submit"
                 className="register-btn"
+                disabled={loading}
               >
-                Create Account
+
+                {loading
+                  ? "Creating Account..."
+                  : "Create Account"}
+
               </button>
 
-              {/* LOGIN */}
+
+              {/* =================================================
+                  LOGIN
+              ================================================= */}
 
               <p className="register-login-text">
 
                 Already have an account?
+
+                {" "}
 
                 <Link to="/login">
                   Login
