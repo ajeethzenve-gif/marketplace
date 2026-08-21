@@ -55,13 +55,7 @@ function Sidebar() {
 
         {/* Products - Everyone */}
 
-        <Link
-          to="/products"
-          className="menu-item"
-        >
-          <FaBox />
-          Products
-        </Link>
+
 
 
 
@@ -133,18 +127,6 @@ function Sidebar() {
         {/* Categories */}
 
 
-        <Link
-          to="/categories"
-          className="menu-item"
-        >
-          <FaList />
-          Categories
-        </Link>
-
-
-
-
-
         {
           isManagementRole &&
 
@@ -212,18 +194,6 @@ function Sidebar() {
 
 
         {/* Brands */}
-
-
-        <Link
-          to="/brands"
-          className="menu-item"
-        >
-
-          <FaTags />
-          Brands
-
-        </Link>
-
 
 
 

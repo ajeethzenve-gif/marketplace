@@ -31,7 +31,8 @@ function Navbar({ toggleSidebar }) {
     const token = localStorage.getItem("access");
 
     const isAdminOrStaff =
-        role === "Admin" || role === "Staff";
+        role === "Admin" ||
+        role === "Staff";
 
 
     // =====================================================
@@ -39,20 +40,15 @@ function Navbar({ toggleSidebar }) {
     // =====================================================
 
     const [profileImage, setProfileImage] = useState("");
-
     const [search, setSearch] = useState("");
-
     const [hasPet, setHasPet] = useState(false);
 
-    // CART COUNT
     const [cartCount, setCartCount] = useState(0);
-
-    // WISHLIST COUNT
     const [wishlistCount, setWishlistCount] = useState(0);
 
 
     // =====================================================
-    // LOAD CART + WISHLIST + PROFILE + PET
+    // LOAD USER DATA
     // =====================================================
 
     useEffect(() => {
@@ -62,29 +58,59 @@ function Navbar({ toggleSidebar }) {
             setCartCount(0);
             setWishlistCount(0);
             setHasPet(false);
+            setProfileImage("");
 
             return;
         }
 
+
+        // Profile is required for both Customer and Admin/Staff
         loadProfile();
-
-        loadPetDetails();
-
-        loadCartCount();
-
-        loadWishlistCount();
 
 
         // =================================================
-        // LISTEN FOR CART/WISHLIST CHANGES
+        // CUSTOMER DATA ONLY
+        // =================================================
+
+        if (!isAdminOrStaff) {
+
+            loadPetDetails();
+            loadCartCount();
+            loadWishlistCount();
+
+        } else {
+
+            // Make sure admin doesn't keep old customer data
+            setCartCount(0);
+            setWishlistCount(0);
+            setHasPet(false);
+
+        }
+
+
+        // =================================================
+        // CART EVENT
         // =================================================
 
         const handleCartUpdate = () => {
-            loadCartCount();
+
+            if (!isAdminOrStaff) {
+                loadCartCount();
+            }
+
         };
 
+
+        // =================================================
+        // WISHLIST EVENT
+        // =================================================
+
         const handleWishlistUpdate = () => {
-            loadWishlistCount();
+
+            if (!isAdminOrStaff) {
+                loadWishlistCount();
+            }
+
         };
 
 
@@ -117,7 +143,7 @@ function Navbar({ toggleSidebar }) {
 
         };
 
-    }, [token]);
+    }, [token, isAdminOrStaff]);
 
 
     // =====================================================
@@ -149,51 +175,13 @@ function Navbar({ toggleSidebar }) {
             const data = response.data;
 
 
-            console.log(
-                "Cart API Response:",
-                data
-            );
-
-
-            /*
-             * Possible API responses:
-             *
-             * [
-             *   {...},
-             *   {...}
-             * ]
-             *
-             * OR
-             *
-             * {
-             *   items: [...]
-             * }
-             *
-             * OR
-             *
-             * {
-             *   total_items: 3
-             * }
-             */
-
-
             if (Array.isArray(data)) {
-
-                /*
-                 * If API returns cart items.
-                 *
-                 * If each item has quantity, count
-                 * the quantities rather than just
-                 * counting products.
-                 */
 
                 const totalQuantity =
                     data.reduce(
                         (total, item) =>
                             total +
-                            Number(
-                                item.quantity || 1
-                            ),
+                            Number(item.quantity || 1),
                         0
                     );
 
@@ -201,17 +189,13 @@ function Navbar({ toggleSidebar }) {
 
             }
 
-            else if (
-                Array.isArray(data.items)
-            ) {
+            else if (Array.isArray(data.items)) {
 
                 const totalQuantity =
                     data.items.reduce(
                         (total, item) =>
                             total +
-                            Number(
-                                item.quantity || 1
-                            ),
+                            Number(item.quantity || 1),
                         0
                     );
 
@@ -255,15 +239,10 @@ function Navbar({ toggleSidebar }) {
                 error.message
             );
 
-            /*
-             * Fallback to localStorage
-             * if API request fails.
-             */
 
             const savedCartCount =
-                localStorage.getItem(
-                    "cartCount"
-                );
+                localStorage.getItem("cartCount");
+
 
             setCartCount(
                 Number(savedCartCount || 0)
@@ -303,33 +282,9 @@ function Navbar({ toggleSidebar }) {
             const data = response.data;
 
 
-            console.log(
-                "Wishlist API Response:",
-                data
-            );
-
-
-            /*
-             * Expected response:
-             *
-             * [
-             *   {...},
-             *   {...}
-             * ]
-             *
-             * OR
-             *
-             * {
-             *   results: [...]
-             * }
-             */
-
-
             if (Array.isArray(data)) {
 
-                setWishlistCount(
-                    data.length
-                );
+                setWishlistCount(data.length);
 
             }
 
@@ -390,19 +345,14 @@ function Navbar({ toggleSidebar }) {
             );
 
 
-            /*
-             * Fallback to localStorage
-             */
-
             const savedWishlistCount =
                 localStorage.getItem(
                     "wishlistCount"
                 );
 
+
             setWishlistCount(
-                Number(
-                    savedWishlistCount || 0
-                )
+                Number(savedWishlistCount || 0)
             );
 
         }
@@ -411,7 +361,7 @@ function Navbar({ toggleSidebar }) {
 
 
     // =====================================================
-    // LOAD CUSTOMER PROFILE
+    // LOAD PROFILE
     // =====================================================
 
     const loadProfile = async () => {
@@ -428,13 +378,26 @@ function Navbar({ toggleSidebar }) {
             );
 
 
-            if (
-                response.data.profile_image
-            ) {
+            if (response.data.profile_image) {
 
-                setProfileImage(
-                    `http://127.0.0.1:8000${response.data.profile_image}`
-                );
+                const image =
+                    response.data.profile_image;
+
+                if (image.startsWith("http")) {
+
+                    setProfileImage(image);
+
+                } else {
+
+                    setProfileImage(
+                        `http://127.0.0.1:8000${image}`
+                    );
+
+                }
+
+            } else {
+
+                setProfileImage("");
 
             }
 
@@ -447,6 +410,8 @@ function Navbar({ toggleSidebar }) {
                 error.response?.data ||
                 error.message
             );
+
+            setProfileImage("");
 
         }
 
@@ -477,9 +442,7 @@ function Navbar({ toggleSidebar }) {
                     : response.data.results || [];
 
 
-            setHasPet(
-                pets.length > 0
-            );
+            setHasPet(pets.length > 0);
 
         }
 
@@ -504,8 +467,7 @@ function Navbar({ toggleSidebar }) {
 
     const handleSearch = (e) => {
 
-        const value =
-            e.target.value;
+        const value = e.target.value;
 
         setSearch(value);
 
@@ -516,9 +478,7 @@ function Navbar({ toggleSidebar }) {
                 `/products?search=${encodeURIComponent(value)}`
             );
 
-        }
-
-        else {
+        } else {
 
             navigate("/products");
 
@@ -534,20 +494,16 @@ function Navbar({ toggleSidebar }) {
     const handleLogout = () => {
 
         localStorage.removeItem("access");
-
         localStorage.removeItem("refresh");
-
         localStorage.removeItem("username");
-
         localStorage.removeItem("role");
-
         localStorage.removeItem("cartCount");
-
         localStorage.removeItem("wishlistCount");
 
         setCartCount(0);
-
         setWishlistCount(0);
+        setHasPet(false);
+        setProfileImage("");
 
         navigate("/login");
 
@@ -557,7 +513,113 @@ function Navbar({ toggleSidebar }) {
 
 
     // =====================================================
-    // RETURN
+    // ADMIN / STAFF NAVBAR
+    // =====================================================
+
+    if (isAdminOrStaff) {
+
+        return (
+
+            <header className="navbar admin-simple-navbar">
+
+                {/* =================================================
+                    ADMIN LOGO
+                ================================================= */}
+
+                <div className="logo">
+
+                    <Link
+                        to="/products/manage"
+                        className="logo-link"
+                    >
+
+                        <span className="company-name">
+                            🐾Zenve
+                        </span>
+
+                        <span className="marketplace-name">
+                            MarketPlace
+                        </span>
+
+                    </Link>
+
+                </div>
+
+
+                {/* =================================================
+                    ADMIN PROFILE
+                ================================================= */}
+
+                <div className="profile-menu admin-profile-menu">
+
+                    <Link
+                        to="/profile"
+                        className="profile-link admin-profile-link"
+                    >
+
+                        {profileImage ? (
+
+                            <img
+                                src={profileImage}
+                                className="avatar-img"
+                                alt="Profile"
+                            />
+
+                        ) : (
+
+                            <FaUserCircle
+                                size={40}
+                            />
+
+                        )}
+
+                        <p>
+                            {username || "Admin"}
+                        </p>
+
+                    </Link>
+
+
+                    {/* =================================================
+                        ADMIN HOVER POPUP
+                    ================================================= */}
+
+                    <div className="profile-popup admin-profile-popup">
+
+                        <h4>
+                            Hello, {username || "Admin"}
+                        </h4>
+
+
+                        <Link
+                            to="/profile"
+                            className="popup-btn"
+                        >
+                            My Profile
+                        </Link>
+
+
+                        <button
+                            type="button"
+                            onClick={handleLogout}
+                            className="popup-btn logout-popup-btn"
+                        >
+                            Logout
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+        );
+
+    }
+
+
+    // =====================================================
+    // CUSTOMER NAVBAR
     // =====================================================
 
     return (
@@ -604,10 +666,7 @@ function Navbar({ toggleSidebar }) {
 
             <header className="navbar">
 
-
-                {/* =================================================
-                    LOGO
-                ================================================= */}
+                {/* LOGO */}
 
                 <div className="logo">
 
@@ -629,33 +688,32 @@ function Navbar({ toggleSidebar }) {
                 </div>
 
 
-                {/* =================================================
-                    SEARCH
-                ================================================= */}
+                {/* SEARCH */}
 
                 <div className="search-container">
 
                     <select
                         className="category-select"
+                        defaultValue="all"
                     >
 
-                        <option>
+                        <option value="all">
                             All Categories
                         </option>
 
-                        <option>
+                        <option value="medicine">
                             Medicines
                         </option>
 
-                        <option>
+                        <option value="food">
                             Pet Food
                         </option>
 
-                        <option>
+                        <option value="farm">
                             Farm Supplies
                         </option>
 
-                        <option>
+                        <option value="vet">
                             Vet Equipment
                         </option>
 
@@ -688,10 +746,7 @@ function Navbar({ toggleSidebar }) {
 
                 <div className="nav-icons">
 
-
-                    {/* =================================================
-                        OFFERS
-                    ================================================= */}
+                    {/* OFFERS */}
 
                     <Link to="/offers">
 
@@ -704,9 +759,7 @@ function Navbar({ toggleSidebar }) {
                     </Link>
 
 
-                    {/* =================================================
-                        WISHLIST
-                    ================================================= */}
+                    {/* WISHLIST */}
 
                     <Link
                         to="/wishlists"
@@ -720,9 +773,7 @@ function Navbar({ toggleSidebar }) {
                             {wishlistCount > 0 && (
 
                                 <span className="wishlist-count">
-
                                     {wishlistCount}
-
                                 </span>
 
                             )}
@@ -736,9 +787,7 @@ function Navbar({ toggleSidebar }) {
                     </Link>
 
 
-                    {/* =================================================
-                        CART
-                    ================================================= */}
+                    {/* CART */}
 
                     <Link
                         to="/cart"
@@ -752,9 +801,7 @@ function Navbar({ toggleSidebar }) {
                             {cartCount > 0 && (
 
                                 <span className="cart-count">
-
                                     {cartCount}
-
                                 </span>
 
                             )}
@@ -768,9 +815,7 @@ function Navbar({ toggleSidebar }) {
                     </Link>
 
 
-                    {/* =================================================
-                        PET PROFILE ICON
-                    ================================================= */}
+                    {/* PET PROFILE */}
 
                     {username && hasPet && (
 
@@ -791,12 +836,9 @@ function Navbar({ toggleSidebar }) {
                     )}
 
 
-                    {/* =================================================
-                        PROFILE
-                    ================================================= */}
+                    {/* PROFILE */}
 
                     <div className="profile-menu">
-
 
                         <Link
                             to={
@@ -806,7 +848,6 @@ function Navbar({ toggleSidebar }) {
                             }
                             className="profile-link"
                         >
-
 
                             {profileImage ? (
 
@@ -824,21 +865,16 @@ function Navbar({ toggleSidebar }) {
 
                             )}
 
-
                             <p>
                                 {username || "Login"}
                             </p>
 
-
                         </Link>
 
 
-                        {/* =================================================
-                            PROFILE POPUP
-                        ================================================= */}
+                        {/* PROFILE POPUP */}
 
                         <div className="profile-popup">
-
 
                             {username ? (
 
@@ -847,7 +883,6 @@ function Navbar({ toggleSidebar }) {
                                     <h4>
                                         Hello, {username}
                                     </h4>
-
 
                                     <Link
                                         to="/profile"
@@ -880,7 +915,7 @@ function Navbar({ toggleSidebar }) {
                                     <button
                                         type="button"
                                         onClick={handleLogout}
-                                        className="popup-btn logout-btn"
+                                        className="popup-btn logout-popup-btn"
                                     >
                                         Logout
                                     </button>
@@ -895,11 +930,9 @@ function Navbar({ toggleSidebar }) {
                                         Welcome
                                     </h4>
 
-
                                     <p>
                                         Please login to continue.
                                     </p>
-
 
                                     <Link
                                         to="/login"
@@ -907,7 +940,6 @@ function Navbar({ toggleSidebar }) {
                                     >
                                         Login
                                     </Link>
-
 
                                     <Link
                                         to="/register"
@@ -922,12 +954,9 @@ function Navbar({ toggleSidebar }) {
 
                         </div>
 
-
                     </div>
 
-
                 </div>
-
 
             </header>
 
@@ -938,15 +967,9 @@ function Navbar({ toggleSidebar }) {
 
             <nav className="bottom-menu">
 
-
-                {/* MEDICINES */}
-
                 <Link to="/products?product_type=Medicine&product_type=Supplements">
                     Medicines & Supplements
                 </Link>
-
-
-                {/* PRESCRIPTION */}
 
                 <Link
                     to="/prescription/upload"
@@ -955,36 +978,21 @@ function Navbar({ toggleSidebar }) {
                     📄 Upload Prescription
                 </Link>
 
-
-                {/* PET FOOD */}
-
                 <Link to="/products?product_type=food&product_type=Other">
                     Pet Food & Products
                 </Link>
-
-
-                {/* FARM */}
 
                 <Link to="/products?product_type=FarmSupplies">
                     Farm Supplies
                 </Link>
 
-
-                {/* VET */}
-
                 <Link to="/products?product_type=VetEquipment">
                     Vet Equipment
                 </Link>
 
-
-                {/* HOME VISIT */}
-
                 <Link to="/home-visit">
                     Home Visit Service
                 </Link>
-
-
-                {/* ADOPTION */}
 
                 <Link to="/adoption">
                     Adoption Platform

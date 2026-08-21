@@ -17,8 +17,6 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from "./components/Profile";
 import ForgotPassword from "./components/ForgotPassword.jsx";
-import TopBar from "./components/TopBar.jsx";
-import Pagination from "./components/Pagination";
 
 // ================= PUBLIC PAGES =================
 
@@ -65,6 +63,7 @@ function AppContent() {
 
   const location = useLocation();
 
+
   // =====================================================
   // AUTHENTICATION
   // =====================================================
@@ -85,14 +84,40 @@ function AppContent() {
   // =====================================================
   // AUTH PAGES
   // =====================================================
-  // Navbar, Sidebar and Footer will be hidden
-  // on Login, Register and Forgot Password pages.
-  // =====================================================
 
-  const hideLayout =
+  const isAuthPage =
     location.pathname === "/login" ||
     location.pathname === "/register" ||
     location.pathname === "/forgotpassword";
+
+
+  // =====================================================
+  // ADMIN PAGE
+  // =====================================================
+
+  /*
+   * Admin/Staff should not see the public Home page.
+   *
+   * If Admin/Staff manually visits:
+   *
+   * /home
+   *
+   * they will automatically be redirected to:
+   *
+   * /products/manage
+   */
+
+  const isAdminHomePage =
+    isAdminOrStaff &&
+    location.pathname === "/home";
+
+
+  // =====================================================
+  // HIDE LAYOUT
+  // =====================================================
+
+  const hideLayout =
+    isAuthPage;
 
 
   // =====================================================
@@ -109,7 +134,9 @@ function AppContent() {
       {!hideLayout && (
         <Navbar
           toggleSidebar={() =>
-            setShowSidebar((previous) => !previous)
+            setShowSidebar(
+              (previous) => !previous
+            )
           }
         />
       )}
@@ -119,7 +146,13 @@ function AppContent() {
           MAIN APP LAYOUT
       ================================================= */}
 
-      <div className="app-layout">
+      <div
+        className={
+          isAdminOrStaff
+            ? "app-layout admin-layout"
+            : "app-layout"
+        }
+      >
 
 
         {/* =================================================
@@ -142,11 +175,14 @@ function AppContent() {
           className={
             hideLayout
               ? "auth-content"
-              : "main-content"
+              : isAdminOrStaff
+                ? "main-content admin-main-content"
+                : "main-content"
           }
         >
 
           <Routes>
+
 
             {/* =================================================
                 ROOT
@@ -155,23 +191,43 @@ function AppContent() {
             <Route
               path="/"
               element={
-                <Navigate
-                  to="/home"
-                  replace
-                />
+                isAdminOrStaff ? (
+                  <Navigate
+                    to="/products/manage"
+                    replace
+                  />
+                ) : (
+                  <Navigate
+                    to="/home"
+                    replace
+                  />
+                )
               }
             />
 
 
             {/* =================================================
-                PUBLIC PAGES
+                HOME
             ================================================= */}
 
             <Route
               path="/home"
-              element={<Home />}
+              element={
+                isAdminOrStaff ? (
+                  <Navigate
+                    to="/products/manage"
+                    replace
+                  />
+                ) : (
+                  <Home />
+                )
+              }
             />
 
+
+            {/* =================================================
+                PRODUCTS
+            ================================================= */}
 
             <Route
               path="/Products"
@@ -185,17 +241,29 @@ function AppContent() {
             />
 
 
+            {/* =================================================
+                CATEGORIES
+            ================================================= */}
+
             <Route
               path="/categories"
               element={<CategoryList />}
             />
 
 
+            {/* =================================================
+                BRANDS
+            ================================================= */}
+
             <Route
               path="/brands"
               element={<BrandList />}
             />
 
+
+            {/* =================================================
+                OFFERS
+            ================================================= */}
 
             <Route
               path="/offers"
@@ -274,7 +342,7 @@ function AppContent() {
 
 
             {/* =================================================
-                PRESCRIPTION UPLOAD
+                PRESCRIPTION
             ================================================= */}
 
             <Route
@@ -294,7 +362,7 @@ function AppContent() {
 
 
             {/* =================================================
-                AUTHENTICATION
+                LOGIN
             ================================================= */}
 
             <Route
@@ -303,11 +371,19 @@ function AppContent() {
             />
 
 
+            {/* =================================================
+                REGISTER
+            ================================================= */}
+
             <Route
               path="/register"
               element={<Register />}
             />
 
+
+            {/* =================================================
+                FORGOT PASSWORD
+            ================================================= */}
 
             <Route
               path="/forgotpassword"
@@ -321,7 +397,16 @@ function AppContent() {
 
             <Route
               path="/customers"
-              element={<CustomerList />}
+              element={
+                isAdminOrStaff ? (
+                  <CustomerList />
+                ) : (
+                  <Navigate
+                    to="/products"
+                    replace
+                  />
+                )
+              }
             />
 
 
@@ -370,8 +455,7 @@ function AppContent() {
             <Route
               path="/total-orders"
               element={
-                role === "Admin" ||
-                role === "Staff" ? (
+                isAdminOrStaff ? (
                   <OrderList />
                 ) : (
                   <Navigate
@@ -441,7 +525,7 @@ function AppContent() {
 
 
             {/* =================================================
-                404 PAGE
+                404
             ================================================= */}
 
             <Route
@@ -463,11 +547,6 @@ function AppContent() {
       {/* =================================================
           FOOTER
       ================================================= */}
-      {/* Footer will NOT appear on:
-          /login
-          /register
-          /forgotpassword
-      */}
 
       {!hideLayout && <Footer />}
 
