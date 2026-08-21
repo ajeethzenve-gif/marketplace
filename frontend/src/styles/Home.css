@@ -274,21 +274,21 @@
    HERO BLUE CIRCLE
    ========================================================= */
 
-.hero-circle {
-    position: absolute;
+/*.hero-circle {*/
+/*    position: absolute;*/
 
-    width: 470px;
-    height: 470px;
+/*    width: 470px;*/
+/*    height: 470px;*/
 
-    right: -20px;
-    top: -65px;
+/*    right: -20px;*/
+/*    top: -65px;*/
 
-    border-radius: 50%;
+/*    border-radius: 50%;*/
 
-    background: #d7ebff;
+/*    background: #d7ebff;*/
 
-    z-index: 1;
-}
+/*    z-index: 1;*/
+/*}*/
 
 
 /* =========================================================
@@ -893,131 +893,174 @@
 
 .pets-grid {
     display: grid;
-
     grid-template-columns: repeat(4, 1fr);
-
     gap: 18px;
+    width: 100%;
 }
+
+/* =========================
+   PET CARD
+========================= */
 
 .pet-card {
     overflow: hidden;
-
     border: 1px solid #e3e8f0;
-
-    border-radius: 10px;
-
+    border-radius: 12px;
     background: #ffffff;
-
-    transition: 0.25s ease;
+    transition: all 0.25s ease;
 }
 
 .pet-card:hover {
     transform: translateY(-4px);
-
-    box-shadow:
-        0 8px 20px rgba(20, 60, 110, 0.10);
+    box-shadow: 0 8px 20px rgba(20, 60, 110, 0.10);
 }
+
+/* =========================
+   PET IMAGE
+========================= */
 
 .pet-image {
-    height: 120px;
-
+    width: 100%;
+    height: 220px; /* Increased height */
     position: relative;
-
     overflow: hidden;
-
     background: #eef7ff;
 }
+
+/* SHOW IMAGE PROPERLY */
 
 .pet-image img {
     width: 100%;
     height: 100%;
+    display: block;
 
-    object-fit: cover;
+    object-fit: contain; /* Prevent image cropping */
+    object-position: center;
+
+    background: #eef7ff;
 }
+
+/* =========================
+   PET TYPE
+========================= */
 
 .pet-type {
     position: absolute;
+    top: 10px;
+    left: 10px;
 
-    top: 8px;
-    left: 9px;
+    padding: 5px 10px;
 
-    padding: 4px 9px;
-
-    border-radius: 12px;
+    border-radius: 15px;
 
     background: #0868dc;
-
     color: #ffffff;
 
-    font-size: 8px;
-
+    font-size: 11px;
     font-weight: 700;
 }
 
 .pet-type.cat {
     background: #f1d5c5;
-
     color: #4d3025;
 }
+
+/* =========================
+   FAVORITE BUTTON
+========================= */
 
 .favorite {
     position: absolute;
 
-    right: 8px;
+    right: 10px;
+    bottom: 10px;
 
-    bottom: 7px;
-
-    width: 25px;
-    height: 25px;
+    width: 34px;
+    height: 34px;
 
     border: none;
-
     border-radius: 50%;
 
     background: #ffffff;
-
     color: #ff3333;
 
-    font-size: 17px;
+    font-size: 22px;
+    line-height: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     cursor: pointer;
 
-    transition: 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+
+    transition: all 0.2s ease;
 }
 
 .favorite:hover {
     transform: scale(1.1);
-
     background: #fff2f2;
 }
 
+/* =========================
+   PET INFORMATION
+========================= */
+
 .pet-info {
-    padding: 8px 10px 11px;
+    padding: 12px;
 }
 
 .pet-info h3 {
-    margin: 0 0 3px;
+    margin: 0 0 5px;
 
     color: #14255c;
 
-    font-size: 11px;
+    font-size: 15px;
+    font-weight: 700;
 }
 
 .pet-info p {
-    margin: 0 0 5px;
+    margin: 0 0 8px;
 
     color: #55627c;
 
-    font-size: 8px;
+    font-size: 11px;
 }
 
 .pet-info small {
     color: #6d7890;
 
-    font-size: 8px;
+    font-size: 11px;
 }
 
+/* =========================
+   TABLET
+========================= */
 
+@media (max-width: 992px) {
+    .pets-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .pet-image {
+        height: 240px;
+    }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 576px) {
+    .pets-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pet-image {
+        height: 280px;
+    }
+}
 /* =========================================================
    TRUSTED BRANDS
    ========================================================= */
@@ -2150,5 +2193,182 @@
 
     .discount-card span {
         font-size: 7px;
+    }
+}
+
+/* =========================================================
+   HERO SLIDER - NEW
+========================================================= */
+.hero-slider { display:block; }
+.hero-slide { min-height:370px; display:flex; animation:heroSlideIn .45s ease; }
+@keyframes heroSlideIn { from { opacity:0; transform:translateX(18px); } to { opacity:1; transform:translateX(0); } }
+.hero-slider .hero-content { flex:0 0 50%; }
+.hero-slider .hero-visual { flex:0 0 50%; }
+.slider-arrow { position:absolute; top:50%; z-index:100; width:38px; height:38px; border:none; border-radius:50%; background:rgba(255,255,255,.9); color:#0868dc; font-size:22px; cursor:pointer; box-shadow:0 5px 18px rgba(20,70,130,.14); transform:translateY(-50%); opacity:0; transition:.25s ease; }
+.hero-slider:hover .slider-arrow { opacity:1; }
+.slider-arrow:hover { background:#0868dc; color:#fff; }
+.slider-prev { left:15px; } .slider-next { right:15px; }
+.slider-dots { position:absolute; left:50%; bottom:15px; z-index:100; display:flex; gap:8px; transform:translateX(-50%); }
+.slider-dot { width:8px; height:8px; padding:0; border:none; border-radius:20px; background:rgba(8,104,220,.28); cursor:pointer; transition:.25s ease; }
+.slider-dot.active { width:28px; background:#0868dc; }
+
+.adoption-slide { background:radial-gradient(circle at 72% 45%,#ffe0d0 0%,#ffefe7 35%,transparent 65%),linear-gradient(110deg,#fff9f5,#ffede3); }
+.prescription-slide { background:radial-gradient(circle at 72% 45%,#d8efff 0%,#eaf7ff 35%,transparent 65%),linear-gradient(110deg,#f7fcff,#e9f6ff); }
+.home-visit-slide { background:radial-gradient(circle at 72% 45%,#dff6e8 0%,#effbf3 35%,transparent 65%),linear-gradient(110deg,#f7fffa,#e8f8ee); }
+.offers-slide { background:radial-gradient(circle at 72% 45%,#ffe3a1 0%,#fff2cf 35%,transparent 65%),linear-gradient(110deg,#fffaf0,#fff0c9); }
+
+.slider-visual { position:absolute; inset:0; z-index:5; overflow:hidden; }
+.adoption-visual .visual-dog { position:absolute; left:18%; bottom:20px; font-size:190px; filter:drop-shadow(0 12px 12px rgba(0,0,0,.12)); }
+.adoption-visual .visual-cat { position:absolute; right:20%; bottom:35px; font-size:125px; }
+.visual-heart { position:absolute; top:60px; right:34%; font-size:65px; animation:heartFloat 2s ease-in-out infinite; }
+.visual-caption { position:absolute; bottom:20px; right:8%; padding:9px 14px; border-radius:20px; background:#fff; color:#c65b36; font-size:11px; font-weight:700; box-shadow:0 5px 15px rgba(0,0,0,.08); }
+@keyframes heartFloat { 0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)} }
+
+.prescription-paper { position:absolute; left:25%; bottom:42px; width:220px; height:250px; padding:28px; box-sizing:border-box; border-radius:16px; background:#fff; box-shadow:0 18px 40px rgba(20,70,130,.16); transform:rotate(-5deg); }
+.paper-title { color:#0868dc; font-size:12px; font-weight:800; margin-bottom:24px; }
+.paper-line { width:100%; height:10px; margin-bottom:14px; border-radius:10px; background:#dcecff; }.paper-line.short{width:62%}.paper-line.medium{width:80%}
+.paper-check { position:absolute; right:-22px; bottom:18px; width:54px; height:54px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:#28b779; color:#fff; font-size:30px; font-weight:800; }
+.medicine-pill { position:absolute; right:15%; bottom:70px; font-size:100px; }.medicine-bottle { position:absolute; right:30%; bottom:20px; font-size:80px; }
+
+.visit-house { position:absolute; right:26%; bottom:40px; font-size:180px; }.visit-vet { position:absolute; left:15%; bottom:25px; font-size:150px; }.visit-pet { position:absolute; right:9%; bottom:25px; font-size:105px; }
+.visit-badge { position:absolute; top:65px; right:22%; width:70px; height:70px; display:flex; align-items:center; justify-content:center; text-align:center; border-radius:50%; background:#28b779; color:#fff; font-size:11px; font-weight:800; }
+
+.offer-percent { position:absolute; left:18%; top:50px; width:155px; height:155px; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:50%; background:#ff6b35; color:#fff; font-size:42px; font-weight:800; transform:rotate(-10deg); box-shadow:0 15px 35px rgba(255,107,53,.28); }.offer-percent small{font-size:20px}.offer-gift{position:absolute;right:16%;bottom:25px;font-size:165px}.offer-food-icon{position:absolute;left:18%;bottom:20px;font-size:100px}.offer-sale-tag{position:absolute;right:20%;top:55px;padding:10px 18px;border-radius:8px;background:#0868dc;color:#fff;font-size:18px;font-weight:800;transform:rotate(12deg)}
+
+@media (max-width:850px){.hero-slider .hero-content{flex-basis:52%}.hero-slider .hero-visual{flex-basis:48%}.adoption-visual .visual-dog{font-size:135px;left:10%}.adoption-visual .visual-cat{font-size:90px;right:10%}.prescription-paper{left:12%;transform:scale(.78) rotate(-5deg)}.medicine-pill{font-size:75px}.medicine-bottle{font-size:60px}.visit-house{font-size:125px}.visit-vet{font-size:100px}.visit-pet{font-size:75px}.offer-percent{transform:scale(.75) rotate(-10deg);left:8%}.offer-gift{font-size:120px}.offer-food-icon{font-size:70px}}
+@media (max-width:700px){.hero-slider{min-height:650px}.hero-slider .hero-slide{min-height:650px;flex-direction:column}.hero-slider .hero-content{flex:0 0 auto;width:100%}.hero-slider .hero-visual{flex:1 0 auto;width:100%;min-height:280px}.slider-arrow{opacity:1;width:32px;height:32px;font-size:18px}.adoption-visual .visual-dog{font-size:135px;left:18%}.adoption-visual .visual-cat{font-size:90px;right:18%}.visual-heart{font-size:45px;right:35%;top:25px}.prescription-paper{left:18%;bottom:18px;transform:scale(.78) rotate(-5deg);transform-origin:bottom left}.medicine-pill{right:10%;font-size:70px}.medicine-bottle{right:28%;font-size:55px}.visit-house{font-size:120px;right:28%}.visit-vet{font-size:95px;left:15%}.visit-pet{font-size:70px}.visit-badge{top:15px;right:18%;transform:scale(.8)}.offer-percent{top:20px;left:12%;transform:scale(.7) rotate(-10deg)}.offer-gift{right:10%;font-size:120px}.offer-food-icon{font-size:75px;left:14%}.offer-sale-tag{right:12%;top:25px;font-size:13px}}
+
+/* =========================================================
+   CORRECTED HERO SLIDER IMAGES
+   Uses the actual images supplied by Home.jsx for every slide.
+   ========================================================= */
+
+.hero-image-wrapper {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 6;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.hero-slide-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+    background: transparent;
+    border: 0;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.10));
+    animation: heroImageEnter 0.55s ease both;
+}
+
+@keyframes heroImageEnter {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Keep the decorative circle behind the real image. */
+.hero-circle {
+    z-index: 1;
+}
+
+/* The new image replaces the previous CSS/emoji illustrations. */
+.slider-visual,
+.visual-dog,
+.visual-cat,
+.visual-heart,
+.visual-caption,
+.prescription-paper,
+.medicine-pill,
+.medicine-bottle,
+.visit-house,
+.visit-vet,
+.visit-pet,
+.visit-badge,
+.offer-percent,
+.offer-gift,
+.offer-food-icon,
+.offer-sale-tag,
+.hero-pet-images,
+.hero-products-image,
+.discount-card {
+    display: none !important;
+}
+
+/* Individual slides: allow the supplied artwork to remain transparent. */
+.store-slide .hero-slide-image,
+.adoption-slide .hero-slide-image,
+.prescription-slide .hero-slide-image,
+.home-visit-slide .hero-slide-image,
+.offers-slide .hero-slide-image {
+    object-position: center;
+}
+
+/* =========================================================
+   CORRECTED HERO RESPONSIVE IMAGE SIZING
+   ========================================================= */
+
+@media (max-width: 1100px) {
+    .hero-slide-image {
+        width: 96%;
+        height: 96%;
+    }
+}
+
+@media (max-width: 850px) {
+    .hero-image-wrapper {
+        width: 100%;
+        height: 100%;
+    }
+
+    .hero-slide-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+}
+
+@media (max-width: 700px) {
+    .hero-slider .hero-visual {
+        position: relative;
+        min-height: 280px;
+    }
+
+    .hero-image-wrapper {
+        inset: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .hero-slide-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+    }
+}
+
+@media (max-width: 420px) {
+    .hero-slider .hero-visual {
+        min-height: 275px;
+    }
+
+    .hero-slide-image {
+        width: 100%;
+        height: 100%;
     }
 }

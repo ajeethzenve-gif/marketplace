@@ -6,7 +6,10 @@ import ProductCard from "../components/ProductCard";
 import dogImage from "../assets/images/dog-transparent.png";
 import catImage from "../assets/images/cat-transparent.png";
 import productImage from "../assets/images/product-transparent.png";
-
+import petAdoption from "../assets/images/pet-adoption-removebg.png";
+import homeService from "../assets/images/pet_home_service_remove_bg.png";
+import prescriptionUpload from "../assets/images/prescription_upload-removebg.png";
+import offerProduct from "../assets/images/offer_proudct-removebg.png";
 
 import "../styles/Home.css";
 
@@ -53,7 +56,11 @@ function Home() {
                 response.data ||
                 [];
 
-            setProducts(Array.isArray(data) ? data.slice(0, 5) : []);
+            setProducts(
+                Array.isArray(data)
+                    ? data.slice(0, 5)
+                    : []
+            );
         } catch (error) {
             console.error(
                 "Products loading error:",
@@ -154,7 +161,7 @@ function Home() {
     };
 
     // =====================================================
-    // OPEN / CLOSE MODAL
+    // PET MODAL
     // =====================================================
 
     const openPetModal = () => {
@@ -168,6 +175,166 @@ function Home() {
     };
 
     // =====================================================
+    // HERO SLIDER
+    // =====================================================
+
+    const [currentSlide, setCurrentSlide] = useState(0);
+
+    const heroSlides = [
+        {
+            key: "store",
+            label: "Smart Care for Every Pet",
+            title: (
+                <>
+                    Smart Pet
+                    <br />
+                    <span>Store</span>
+                </>
+            ),
+            description:
+                "Everything your pet needs in one place. Discover food, medicines, supplements, grooming products and expert veterinary care.",
+            primaryText: "Shop for Your Pet",
+            primaryAction: () => navigate("/products"),
+            secondaryText: "🐾 Add Your Pet Details",
+            secondaryAction: openPetModal,
+            smartText:
+                "✨ Get smarter recommendations based on your pet",
+            image: productImage,
+            imageAlt: "Pet products",
+        },
+
+        {
+            key: "adoption",
+            label: "Find Your New Best Friend",
+            title: (
+                <>
+                    Pet
+                    <br />
+                    <span>Adoption</span>
+                </>
+            ),
+            description:
+                "Give a loving pet a forever home. Explore adorable pets waiting for their perfect family.",
+            primaryText: "View Pets",
+            primaryAction: () => navigate("/adoption"),
+            secondaryText: "🐾 Start Adoption",
+            secondaryAction: () => navigate("/adoption"),
+            smartText:
+                "❤️ Give a pet the loving home they deserve",
+            image: petAdoption,
+            imageAlt: "Pet adoption",
+        },
+
+        {
+            key: "prescription",
+            label: "Easy & Secure Medicine Ordering",
+            title: (
+                <>
+                    Prescription
+                    <br />
+                    <span>Upload</span>
+                </>
+            ),
+            description:
+                "Upload your pet's prescription and quickly find the medicines recommended by your veterinarian.",
+            primaryText: "Upload Prescription",
+            primaryAction: () =>
+                navigate("/prescription-upload"),
+            secondaryText: "View Medicines",
+            secondaryAction: () =>
+                navigate("/products?category=Medicines"),
+            smartText:
+                "📄 Simple prescription upload and medicine matching",
+            image: prescriptionUpload,
+            imageAlt: "Prescription upload",
+        },
+
+        {
+            key: "home-visit",
+            label: "Professional Care at Your Doorstep",
+            title: (
+                <>
+                    Vet Home
+                    <br />
+                    <span>Visit Service</span>
+                </>
+            ),
+            description:
+                "Book experienced veterinary professionals for health checkups, vaccinations, grooming and pet care at home.",
+            primaryText: "Book a Home Visit",
+            primaryAction: () => navigate("/services"),
+            secondaryText: "Explore Services",
+            secondaryAction: () => navigate("/services"),
+            smartText:
+                "🏠 Professional pet care without leaving home",
+            image: homeService,
+            imageAlt: "Pet home veterinary service",
+        },
+
+        {
+            key: "offers",
+            label: "Limited Time Deals",
+            title: (
+                <>
+                    Mega Pet
+                    <br />
+                    <span>Offers</span>
+                </>
+            ),
+            description:
+                "Save more on pet food, medicines, supplements and everyday essentials with exciting special offers.",
+            primaryText: "Shop Offers",
+            primaryAction: () => navigate("/products"),
+            secondaryText: "Browse Products",
+            secondaryAction: () => navigate("/products"),
+            smartText:
+                "🎉 New deals and savings for every pet parent",
+            image: offerProduct,
+            imageAlt: "Pet product offers",
+        },
+    ];
+
+    // =====================================================
+    // AUTO SLIDER
+    // =====================================================
+
+    useEffect(() => {
+        const slider = setInterval(() => {
+            setCurrentSlide((previous) =>
+                previous === heroSlides.length - 1
+                    ? 0
+                    : previous + 1
+            );
+        }, 5000);
+
+        return () => clearInterval(slider);
+    }, [heroSlides.length]);
+
+    // =====================================================
+    // SLIDER CONTROLS
+    // =====================================================
+
+    const nextSlide = () => {
+        setCurrentSlide((previous) =>
+            previous === heroSlides.length - 1
+                ? 0
+                : previous + 1
+        );
+    };
+
+    const previousSlide = () => {
+        setCurrentSlide((previous) =>
+            previous === 0
+                ? heroSlides.length - 1
+                : previous - 1
+        );
+    };
+
+    const goToSlide = (index) => {
+        setCurrentSlide(index);
+    };
+
+    // =====================================================
     // RENDER
     // =====================================================
 
@@ -178,159 +345,200 @@ function Home() {
                 HERO SECTION
             ===================================================== */}
 
-            <section className="hero-section">
+            <section
+                className={`hero-section hero-slider ${heroSlides[currentSlide].key}-slide`}
+            >
 
-                <div className="hero-content">
+                <div
+                    className="hero-slide"
+                    key={currentSlide}
+                >
 
-                    <span className="hero-label">
-                        Smart Care for Every Pet
-                    </span>
+                    {/* =================================================
+                        HERO CONTENT
+                    ================================================= */}
 
-                    <h1>
-                        Smart Pet
-                        <br />
-                        <span>Store</span>
-                    </h1>
+                    <div className="hero-content">
 
-                    <p>
-                        Everything your pet needs in one place.
-                        Discover food, medicines, supplements,
-                        grooming products and expert veterinary
-                        care — all designed for smarter pet care.
-                    </p>
+                        <span className="hero-label">
+                            {heroSlides[currentSlide].label}
+                        </span>
 
-                    {/* HERO FEATURES */}
+                        <h1>
+                            {heroSlides[currentSlide].title}
+                        </h1>
 
-                    <div className="hero-features">
+                        <p>
+                            {heroSlides[currentSlide].description}
+                        </p>
 
-                        <div className="hero-feature">
-                            <span className="feature-icon">
-                                🐾
-                            </span>
+                        {/* HERO FEATURES */}
 
-                            <span>
-                                <b>Personalized</b>
-                                <br />
-                                Pet Care
-                            </span>
+                        <div className="hero-features">
+
+                            <div className="hero-feature">
+                                <span className="feature-icon">
+                                    🐾
+                                </span>
+
+                                <span>
+                                    <b>Personalized</b>
+                                    <br />
+                                    Pet Care
+                                </span>
+                            </div>
+
+                            <div className="hero-feature">
+                                <span className="feature-icon">
+                                    🩺
+                                </span>
+
+                                <span>
+                                    <b>Expert Vet</b>
+                                    <br />
+                                    Support
+                                </span>
+                            </div>
+
+                            <div className="hero-feature">
+                                <span className="feature-icon">
+                                    ⚡
+                                </span>
+
+                                <span>
+                                    <b>Fast & Safe</b>
+                                    <br />
+                                    Service
+                                </span>
+                            </div>
+
+                            <div className="hero-feature">
+                                <span className="feature-icon">
+                                    ❤️
+                                </span>
+
+                                <span>
+                                    <b>Complete</b>
+                                    <br />
+                                    Pet Wellness
+                                </span>
+                            </div>
+
                         </div>
 
-                        <div className="hero-feature">
-                            <span className="feature-icon">
-                                🩺
-                            </span>
+                        {/* HERO BUTTONS */}
 
-                            <span>
-                                <b>Expert Vet</b>
-                                <br />
-                                Support
-                            </span>
+                        <div className="hero-buttons">
+
+                            <button
+                                type="button"
+                                onClick={
+                                    heroSlides[currentSlide]
+                                        .primaryAction
+                                }
+                            >
+                                {
+                                    heroSlides[currentSlide]
+                                        .primaryText
+                                }
+                            </button>
+
+                            <button
+                                type="button"
+                                className="hero-outline-btn"
+                                onClick={
+                                    heroSlides[currentSlide]
+                                        .secondaryAction
+                                }
+                            >
+                                {
+                                    heroSlides[currentSlide]
+                                        .secondaryText
+                                }
+                            </button>
+
                         </div>
 
-                        <div className="hero-feature">
-                            <span className="feature-icon">
-                                🚚
-                            </span>
-
-                            <span>
-                                <b>Fast & Safe</b>
-                                <br />
-                                Delivery
-                            </span>
-                        </div>
-
-                        <div className="hero-feature">
-                            <span className="feature-icon">
-                                ❤️
-                            </span>
-
-                            <span>
-                                <b>Complete</b>
-                                <br />
-                                Pet Wellness
-                            </span>
+                        <div className="hero-smart-text">
+                            {
+                                heroSlides[currentSlide]
+                                    .smartText
+                            }
                         </div>
 
                     </div>
 
-                    {/* HERO BUTTONS */}
+                    {/* =================================================
+                        HERO IMAGE
+                    ================================================= */}
 
-                    <div className="hero-buttons">
+                    <div className="hero-visual">
 
-                        <button
-                            type="button"
-                            onClick={() => navigate("/products")}
-                        >
-                            Shop for Your Pet
-                        </button>
+                        <div className="hero-circle"></div>
 
-                        <button
-                            type="button"
-                            className="hero-outline-btn"
-                            onClick={openPetModal}
-                        >
-                            🐾 Add Your Pet Details
-                        </button>
+                        <div className="hero-image-wrapper">
 
-                    </div>
+                            <img
+                                src={
+                                    heroSlides[currentSlide]
+                                        .image
+                                }
+                                alt={
+                                    heroSlides[currentSlide]
+                                        .imageAlt
+                                }
+                                className="hero-slide-image"
+                            />
 
-                    <div className="hero-smart-text">
-                        ✨ Get smarter recommendations based on your pet
+                        </div>
+
                     </div>
 
                 </div>
 
-                {/* =================================================
-                    HERO VISUAL
-                ================================================= */}
+                {/* =====================================================
+                    SLIDER ARROWS
+                ===================================================== */}
 
-                <div className="hero-visual">
+                <button
+                    type="button"
+                    className="slider-arrow slider-prev"
+                    onClick={previousSlide}
+                    aria-label="Previous slide"
+                >
+                    ❮
+                </button>
 
-                    <div className="hero-circle"></div>
+                <button
+                    type="button"
+                    className="slider-arrow slider-next"
+                    onClick={nextSlide}
+                    aria-label="Next slide"
+                >
+                    ❯
+                </button>
 
-                    <div className="hero-pet-images">
+                {/* =====================================================
+                    SLIDER DOTS
+                ===================================================== */}
 
-                        <img
-                            src={dogImage}
-                            alt="Dog"
-                            className="hero-dog-image"
-                        />
+                <div className="slider-dots">
 
-                        <img
-                            src={catImage}
-                            alt="Cat"
-                            className="hero-cat-image"
-                        />
-
-                    </div>
-
-                    <div className="hero-products-image">
-
-                        <img
-                            src={productImage}
-                            alt="Pet products"
-                        />
-
-                    </div>
-
-                    <div className="discount-card">
-
-                        <strong>
-                            20% OFF
-                        </strong>
-
-                        <span>
-                            On First Order
-                        </span>
-
+                    {heroSlides.map((slide, index) => (
                         <button
+                            key={slide.key}
                             type="button"
-                            onClick={() => navigate("/products")}
-                        >
-                            Use Code: WELCOME10
-                        </button>
-
-                    </div>
+                            aria-label={`Go to ${slide.label}`}
+                            onClick={() =>
+                                goToSlide(index)
+                            }
+                            className={
+                                currentSlide === index
+                                    ? "slider-dot active"
+                                    : "slider-dot"
+                            }
+                        />
+                    ))}
 
                 </div>
 
@@ -348,7 +556,9 @@ function Home() {
 
                     <div
                         className="pet-modal"
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={(e) =>
+                            e.stopPropagation()
+                        }
                     >
 
                         <div className="pet-modal-header">
@@ -360,6 +570,7 @@ function Home() {
                                 </span>
 
                                 <div>
+
                                     <h2>
                                         Add Your Pet
                                     </h2>
@@ -367,6 +578,7 @@ function Home() {
                                     <p>
                                         Tell us about your pet
                                     </p>
+
                                 </div>
 
                             </div>
@@ -388,8 +600,6 @@ function Home() {
                             onSubmit={savePetDetails}
                         >
 
-                            {/* PET NAME */}
-
                             <div className="pet-form-group">
 
                                 <label htmlFor="pet_name">
@@ -400,15 +610,17 @@ function Home() {
                                     id="pet_name"
                                     type="text"
                                     name="pet_name"
-                                    value={petDetails.pet_name}
-                                    onChange={handlePetChange}
+                                    value={
+                                        petDetails.pet_name
+                                    }
+                                    onChange={
+                                        handlePetChange
+                                    }
                                     placeholder="Enter your pet's name"
                                     required
                                 />
 
                             </div>
-
-                            {/* PET TYPE + GENDER */}
 
                             <div className="pet-form-row">
 
@@ -421,10 +633,15 @@ function Home() {
                                     <select
                                         id="pet_type"
                                         name="pet_type"
-                                        value={petDetails.pet_type}
-                                        onChange={handlePetChange}
+                                        value={
+                                            petDetails.pet_type
+                                        }
+                                        onChange={
+                                            handlePetChange
+                                        }
                                         required
                                     >
+
                                         <option value="Dog">
                                             🐶 Dog
                                         </option>
@@ -462,8 +679,12 @@ function Home() {
                                     <select
                                         id="gender"
                                         name="gender"
-                                        value={petDetails.gender}
-                                        onChange={handlePetChange}
+                                        value={
+                                            petDetails.gender
+                                        }
+                                        onChange={
+                                            handlePetChange
+                                        }
                                     >
 
                                         <option value="">
@@ -484,8 +705,6 @@ function Home() {
 
                             </div>
 
-                            {/* BREED */}
-
                             <div className="pet-form-group">
 
                                 <label htmlFor="breed">
@@ -496,14 +715,16 @@ function Home() {
                                     id="breed"
                                     type="text"
                                     name="breed"
-                                    value={petDetails.breed}
-                                    onChange={handlePetChange}
+                                    value={
+                                        petDetails.breed
+                                    }
+                                    onChange={
+                                        handlePetChange
+                                    }
                                     placeholder="e.g. Labrador, Persian, Indie"
                                 />
 
                             </div>
-
-                            {/* AGE + WEIGHT */}
 
                             <div className="pet-form-row">
 
@@ -517,8 +738,12 @@ function Home() {
                                         id="age"
                                         type="text"
                                         name="age"
-                                        value={petDetails.age}
-                                        onChange={handlePetChange}
+                                        value={
+                                            petDetails.age
+                                        }
+                                        onChange={
+                                            handlePetChange
+                                        }
                                         placeholder="e.g. 2 years"
                                     />
 
@@ -534,16 +759,18 @@ function Home() {
                                         id="weight"
                                         type="text"
                                         name="weight"
-                                        value={petDetails.weight}
-                                        onChange={handlePetChange}
+                                        value={
+                                            petDetails.weight
+                                        }
+                                        onChange={
+                                            handlePetChange
+                                        }
                                         placeholder="e.g. 12 kg"
                                     />
 
                                 </div>
 
                             </div>
-
-                            {/* HEALTH NOTES */}
 
                             <div className="pet-form-group">
 
@@ -554,15 +781,17 @@ function Home() {
                                 <textarea
                                     id="health_notes"
                                     name="health_notes"
-                                    value={petDetails.health_notes}
-                                    onChange={handlePetChange}
+                                    value={
+                                        petDetails.health_notes
+                                    }
+                                    onChange={
+                                        handlePetChange
+                                    }
                                     placeholder="Enter allergies or special requirements"
                                     rows="3"
                                 />
 
                             </div>
-
-                            {/* ACTION BUTTONS */}
 
                             <div className="pet-modal-actions">
 
@@ -730,7 +959,9 @@ function Home() {
 
                     <button
                         type="button"
-                        onClick={() => navigate("/products")}
+                        onClick={() =>
+                            navigate("/products")
+                        }
                     >
                         Shop Offers →
                     </button>
@@ -740,7 +971,7 @@ function Home() {
                 <div className="offer-image">
 
                     <img
-                        src={productImage}
+                        src={offerProduct}
                         alt="Special offers"
                     />
 
@@ -753,6 +984,7 @@ function Home() {
                     </strong>
 
                     <div className="countdown-time">
+
                         <span>02</span>
                         :
                         <span>18</span>
@@ -760,13 +992,16 @@ function Home() {
                         <span>45</span>
                         :
                         <span>30</span>
+
                     </div>
 
                     <div className="countdown-labels">
+
                         <span>Days</span>
                         <span>Hrs</span>
                         <span>Mins</span>
                         <span>Secs</span>
+
                     </div>
 
                 </div>
@@ -833,11 +1068,13 @@ function Home() {
                 <div className="services-grid">
 
                     <div className="service-card">
+
                         <div className="service-placeholder">
                             🏠
                         </div>
 
                         <div className="service-info">
+
                             <h3>
                                 Home Visit
                                 <br />
@@ -850,19 +1087,25 @@ function Home() {
 
                             <button
                                 type="button"
-                                onClick={() => navigate("/services")}
+                                onClick={() =>
+                                    navigate("/services")
+                                }
                             >
                                 →
                             </button>
+
                         </div>
+
                     </div>
 
                     <div className="service-card">
+
                         <div className="service-placeholder">
                             💉
                         </div>
 
                         <div className="service-info">
+
                             <h3>
                                 Vaccination &
                                 <br />
@@ -875,19 +1118,25 @@ function Home() {
 
                             <button
                                 type="button"
-                                onClick={() => navigate("/services")}
+                                onClick={() =>
+                                    navigate("/services")
+                                }
                             >
                                 →
                             </button>
+
                         </div>
+
                     </div>
 
                     <div className="service-card">
+
                         <div className="service-placeholder">
                             ✂️
                         </div>
 
                         <div className="service-info">
+
                             <h3>
                                 Pet Grooming
                                 <br />
@@ -900,19 +1149,25 @@ function Home() {
 
                             <button
                                 type="button"
-                                onClick={() => navigate("/services")}
+                                onClick={() =>
+                                    navigate("/services")
+                                }
                             >
                                 →
                             </button>
+
                         </div>
+
                     </div>
 
                     <div className="service-card">
+
                         <div className="service-placeholder">
                             🩺
                         </div>
 
                         <div className="service-info">
+
                             <h3>
                                 Health Checkup
                                 <br />
@@ -925,19 +1180,25 @@ function Home() {
 
                             <button
                                 type="button"
-                                onClick={() => navigate("/services")}
+                                onClick={() =>
+                                    navigate("/services")
+                                }
                             >
                                 →
                             </button>
+
                         </div>
+
                     </div>
 
                     <div className="service-card">
+
                         <div className="service-placeholder">
                             🚑
                         </div>
 
                         <div className="service-info">
+
                             <h3>
                                 Emergency Care
                             </h3>
@@ -948,11 +1209,15 @@ function Home() {
 
                             <button
                                 type="button"
-                                onClick={() => navigate("/services")}
+                                onClick={() =>
+                                    navigate("/services")
+                                }
                             >
                                 →
                             </button>
+
                         </div>
+
                     </div>
 
                 </div>
@@ -1217,6 +1482,7 @@ function Home() {
                             </div>
 
                             <div>
+
                                 <strong>
                                     Priya Sharma
                                 </strong>
@@ -1224,6 +1490,7 @@ function Home() {
                                 <span>
                                     ⭐⭐⭐⭐⭐
                                 </span>
+
                             </div>
 
                         </div>
@@ -1250,6 +1517,7 @@ function Home() {
                             </div>
 
                             <div>
+
                                 <strong>
                                     Rahul Mehta
                                 </strong>
@@ -1257,6 +1525,7 @@ function Home() {
                                 <span>
                                     ⭐⭐⭐⭐⭐
                                 </span>
+
                             </div>
 
                         </div>
@@ -1282,6 +1551,7 @@ function Home() {
                             </div>
 
                             <div>
+
                                 <strong>
                                     Anjali Iyer
                                 </strong>
@@ -1289,6 +1559,7 @@ function Home() {
                                 <span>
                                     ⭐⭐⭐⭐⭐
                                 </span>
+
                             </div>
 
                         </div>
