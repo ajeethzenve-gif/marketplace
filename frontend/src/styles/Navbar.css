@@ -18,6 +18,13 @@
     font-family: 'Poppins', sans-serif;
 }
 
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
 body {
     background: #f5f7fb;
 }
@@ -59,6 +66,8 @@ body {
     gap: 6px;
 
     cursor: pointer;
+
+    font-size: 13px;
 
     transition: 0.3s ease;
 }
@@ -109,13 +118,13 @@ body {
 
     z-index: 9999;
 
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    box-shadow:
+        0 2px 10px rgba(0, 0, 0, 0.08);
 
     animation: slideDown 0.5s ease;
 }
 
 @keyframes slideDown {
-
     from {
         transform: translateY(-100%);
         opacity: 0;
@@ -129,60 +138,93 @@ body {
 
 
 /* ==========================================
-   LOGO
+   LOGO CONTAINER
+========================================== */
+/* ==========================================
+   LOGO CONTAINER
 ========================================== */
 
 .logo {
     display: flex;
     align-items: center;
-
-    margin-left: 0;
+    flex-shrink: 0;
 }
+
+
+/* ==========================================
+   LOGO LINK
+========================================== */
 
 .logo-link {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;          /* IMPORTANT: side by side */
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
 
     text-decoration: none;
 
-    line-height: 1.1;
+    padding-left: 5px;
 
-    padding-left: 10px;
+    white-space: nowrap;
 
     transition: 0.3s ease;
 }
 
-.company-name {
-    font-size: 32px;
 
-    font-weight: 700;
+/* ==========================================
+   ZENVE LOGO IMAGE
+========================================== */
 
-    color: #1b1bc5;
+.navbar-logo {
+    width: 175px;
+    height: 65px;
 
-    letter-spacing: 1px;
+    display: block;
+
+    object-fit: contain;
+    object-position: center;
+
+    flex-shrink: 0;
+
+    transition:
+        transform 0.3s ease,
+        opacity 0.3s ease;
 }
 
-.marketplace-name {
-    font-size: 16px;
+.logo-link:hover .navbar-logo {
+    transform: scale(1.04);
+    opacity: 0.92;
+}
 
-    font-weight: 500;
+
+/* ==========================================
+   MARKETPLACE NAME - BESIDE LOGO
+========================================== */
+
+.marketplace-name {
+    display: inline-flex;
+    align-items: center;
+
+    margin: 0;
+    padding: 0;
+
+    font-size: 16px;
+    font-weight: 600;
 
     color: #6464c8;
 
-    margin-top: 3px;
+    white-space: nowrap;
 
-    padding-left: 45px;
-}
+    line-height: 1;
 
-.logo-link:hover .company-name {
-    color: #0056d2;
+    transition: 0.3s ease;
 }
 
 .logo-link:hover .marketplace-name {
     color: #0d6efd;
 }
-
-
 /* ==========================================
    SEARCH
 ========================================== */
@@ -196,8 +238,8 @@ body {
     max-width: 650px;
     height: 50px;
 
-    margin-left: 40px;
-    margin-right: 30px;
+    margin-left: 35px;
+    margin-right: 25px;
 
     border: 2px solid #0d6efd;
 
@@ -206,6 +248,8 @@ body {
     overflow: hidden;
 
     background: #ffffff;
+
+    min-width: 200px;
 }
 
 .category-select {
@@ -219,14 +263,24 @@ body {
 
     padding: 0 15px;
 
-    font-size: 15px;
+    color: #333;
+
+    font-size: 14px;
 
     cursor: pointer;
+
+    flex-shrink: 0;
+}
+
+.category-select:focus {
+    background: #eeeeee;
 }
 
 .search-container input {
     flex: 1;
 
+    width: 100%;
+    min-width: 0;
     height: 100%;
 
     border: none;
@@ -234,9 +288,9 @@ body {
 
     padding: 0 18px;
 
-    font-size: 15px;
+    font-size: 14px;
 
-    min-width: 0;
+    color: #333;
 }
 
 .search-container input::placeholder {
@@ -251,6 +305,10 @@ body {
     width: 65px;
     height: 100%;
 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     border: none;
 
     background: #0d6efd;
@@ -261,6 +319,8 @@ body {
 
     font-size: 18px;
 
+    flex-shrink: 0;
+
     transition: 0.3s ease;
 }
 
@@ -270,16 +330,19 @@ body {
 
 
 /* ==========================================
-   NAV ICONS
+   NAVIGATION ICONS
 ========================================== */
 
 .nav-icons {
     display: flex;
     align-items: center;
 
-    gap: 30px;
+    gap: 28px;
 
     margin-left: auto;
+
+    flex-shrink: 0;
+    margin-right: 25px;
 }
 
 .nav-icons > a {
@@ -290,6 +353,8 @@ body {
 
     align-items: center;
     justify-content: center;
+
+    min-width: 50px;
 
     text-decoration: none;
 
@@ -303,11 +368,11 @@ body {
 }
 
 .nav-icons > a svg {
-    font-size: 24px;
+    font-size: 25px;
 
     color: #1b1bc5;
 
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 
     transition: 0.3s ease;
 }
@@ -317,13 +382,15 @@ body {
 
     color: #1b1bc5;
 
-    font-size: 13px;
+    font-size: 12px;
 
     font-weight: 600;
+
+    white-space: nowrap;
 }
 
 .nav-icons > a:hover {
-    transform: translateY(-4px);
+    transform: translateY(-3px);
 }
 
 .nav-icons > a:hover svg,
@@ -348,6 +415,8 @@ body {
     height: 3px;
 
     background: #0d6efd;
+
+    border-radius: 10px;
 
     transform: translateX(-50%);
 
@@ -396,17 +465,19 @@ body {
 
     color: #ffffff;
 
-    font-size: 11px;
+    font-size: 10px;
 
     font-weight: 700;
 
-    box-shadow: 0 3px 10px rgba(255, 0, 0, 0.3);
+    box-shadow:
+        0 3px 10px rgba(255, 0, 0, 0.3);
 
     animation: pulse 1.5s infinite;
+
+    z-index: 5;
 }
 
 @keyframes pulse {
-
     0% {
         transform: scale(1);
     }
@@ -422,7 +493,7 @@ body {
 
 
 /* ==========================================
-   PROFILE
+   PROFILE MENU
 ========================================== */
 
 .profile-menu {
@@ -435,28 +506,37 @@ body {
     flex-direction: column;
 
     align-items: center;
+    justify-content: center;
 
-    gap: 5px;
+    gap: 4px;
 
     color: #333;
 
     text-decoration: none;
 
     cursor: pointer;
+
+    transition: 0.3s ease;
 }
 
 .profile-link p {
     margin: 0;
 
-    font-size: 13px;
+    font-size: 12px;
 
     font-weight: 600;
+
+    white-space: nowrap;
 }
 
 .profile-menu > .profile-link svg {
     color: #0d6efd;
 
-    font-size: 40px;
+    font-size: 38px;
+}
+
+.profile-link:hover {
+    color: #0d6efd;
 }
 
 
@@ -492,7 +572,7 @@ body {
 .profile-popup {
     position: absolute;
 
-    top: 65px;
+    top: 62px;
     right: 0;
 
     width: 250px;
@@ -510,7 +590,7 @@ body {
 
     visibility: hidden;
 
-    transform: translateY(20px);
+    transform: translateY(15px);
 
     transition:
         opacity 0.25s ease,
@@ -519,9 +599,6 @@ body {
 
     z-index: 10000;
 }
-
-
-/* Customer hover */
 
 .profile-menu:hover .profile-popup {
     opacity: 1;
@@ -606,7 +683,7 @@ body {
 
 
 /* ==========================================
-   BOTTOM MENU
+   BOTTOM MARKETPLACE MENU
 ========================================== */
 
 .bottom-menu {
@@ -622,6 +699,8 @@ body {
 
     align-items: center;
     justify-content: space-evenly;
+
+    padding: 0 10px;
 
     background: #ffffff;
 
@@ -643,9 +722,13 @@ body {
 
     color: #333;
 
-    font-size: 14px;
+    font-size: 13px;
 
     font-weight: 600;
+
+    white-space: nowrap;
+
+    padding: 5px 4px;
 
     transition: 0.3s ease;
 }
@@ -662,12 +745,14 @@ body {
     position: absolute;
 
     left: 50%;
-    bottom: -8px;
+    bottom: -7px;
 
     width: 0;
     height: 3px;
 
     background: #0d6efd;
+
+    border-radius: 10px;
 
     transform: translateX(-50%);
 
@@ -721,16 +806,17 @@ body {
 ===================================================== */
 
 .admin-simple-navbar {
-    top: 0 !important;
+    position: fixed !important;
 
-    height: 90px;
+    top: 0 !important;
+    left: 0;
 
     width: 100%;
+    height: 90px;
 
     display: flex;
 
     align-items: center;
-
     justify-content: space-between;
 
     padding: 0 30px;
@@ -741,6 +827,50 @@ body {
         0 2px 10px rgba(0, 0, 0, 0.08);
 
     z-index: 9999;
+}
+
+
+/* =====================================================
+   ADMIN LOGO
+===================================================== */
+
+.admin-simple-navbar .logo {
+    display: flex;
+    align-items: center;
+
+    flex-shrink: 0;
+}
+
+.admin-simple-navbar .logo-link {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 0;
+
+    white-space: nowrap;
+}
+
+.admin-simple-navbar .navbar-logo {
+    width: 165px;
+    height: 65px;
+
+    object-fit: contain;
+
+    flex-shrink: 0;
+}
+
+.admin-simple-navbar .marketplace-name {
+    display: inline-flex;
+
+    font-size: 17px;
+
+    font-weight: 600;
+
+    color: #6464c8;
+
+    white-space: nowrap;
 }
 
 
@@ -829,12 +959,6 @@ body {
         transform 0.25s ease;
 }
 
-
-/*
-   Keep popup open when moving mouse
-   from username to popup.
-*/
-
 .admin-profile-menu:hover .admin-profile-popup {
     opacity: 1;
 
@@ -867,49 +991,45 @@ body {
 
 
 /* =====================================================
-   ADMIN MOBILE
+   LARGE TABLET
 ===================================================== */
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
 
-    .admin-simple-navbar {
-        height: 70px;
-
-        padding: 0 15px;
+    .navbar-logo {
+        width: 145px;
+        height: 58px;
     }
 
-    .admin-simple-navbar .company-name {
-        font-size: 26px;
+    .marketplace-name {
+        font-size: 15px;
     }
 
-    .admin-simple-navbar .marketplace-name {
-        display: none;
+    .search-container {
+        margin-left: 20px;
+        margin-right: 20px;
+
+        max-width: 520px;
     }
 
-    .admin-profile-link {
-        padding: 6px 8px;
+    .nav-icons {
+        gap: 20px;
     }
 
-    .admin-profile-link p {
-        font-size: 14px;
+    .bottom-menu a {
+        font-size: 12px;
     }
 
-    .admin-profile-link .avatar-img {
-        width: 34px;
-        height: 34px;
-    }
-
-    .admin-profile-popup {
-        top: 52px;
-
-        width: 210px;
+    .admin-simple-navbar .navbar-logo {
+        width: 145px;
+        height: 58px;
     }
 }
 
 
-/* ==========================================
+/* =====================================================
    TABLET
-========================================== */
+===================================================== */
 
 @media (max-width: 992px) {
 
@@ -923,13 +1043,51 @@ body {
         gap: 12px;
     }
 
+    .navbar {
+        padding: 0 15px;
+    }
+
+    /* Keep Marketplace beside logo */
+    .logo-link {
+        gap: 5px;
+    }
+
+    .navbar-logo {
+        width: 120px;
+        height: 52px;
+    }
+
+    .marketplace-name {
+        display: inline-flex;
+
+        font-size: 13px;
+    }
+
     .search-container {
         margin-left: 15px;
         margin-right: 15px;
+
+        max-width: 420px;
     }
 
     .category-select {
-        width: 140px;
+        width: 120px;
+
+        padding: 0 10px;
+
+        font-size: 12px;
+    }
+
+    .nav-icons {
+        gap: 12px;
+    }
+
+    .nav-icons > a p {
+        font-size: 10px;
+    }
+
+    .nav-icons > a svg {
+        font-size: 23px;
     }
 
     .bottom-menu {
@@ -948,47 +1106,116 @@ body {
         display: none;
     }
 
+    .admin-simple-navbar .navbar-logo {
+        width: 120px;
+        height: 52px;
+    }
+
+    .admin-simple-navbar .marketplace-name {
+        display: inline-flex;
+
+        font-size: 13px;
+    }
 }
 
 
-/* ==========================================
+/* =====================================================
    MOBILE
-========================================== */
+===================================================== */
 
 @media (max-width: 768px) {
+
+    /* TOP BAR */
 
     .top-bar {
         display: none;
     }
+
+
+    /* MAIN NAVBAR */
 
     .navbar {
         top: 0 !important;
 
         height: 70px;
 
-        padding: 0 15px;
+        padding: 0 12px;
     }
 
-    .navbar:not(.admin-simple-navbar) .company-name {
-        font-size: 25px;
+
+    /* MOBILE LOGO */
+
+    .navbar:not(.admin-simple-navbar) .navbar-logo {
+        width: 105px;
+        height: 48px;
     }
 
+    /* Marketplace stays beside logo */
     .navbar:not(.admin-simple-navbar) .marketplace-name {
-        display: none;
+        display: inline-flex;
+
+        font-size: 12px;
     }
+
+
+    /* SEARCH */
 
     .search-container {
         display: none;
     }
 
+
+    /* NAV ICONS */
+
     .nav-icons {
-        gap: 15px;
+        gap: 13px;
+
+        margin-left: auto;
+    }
+
+    .nav-icons > a {
+        min-width: 32px;
     }
 
     .nav-icons > a p,
     .nav-icons .profile-link p {
         display: none;
     }
+
+    .nav-icons > a svg {
+        font-size: 23px;
+
+        margin-bottom: 0;
+    }
+
+
+    /* PROFILE */
+
+    .profile-menu > .profile-link svg {
+        font-size: 35px;
+    }
+
+    .avatar-img {
+        width: 37px;
+        height: 37px;
+    }
+
+
+    /* BADGES */
+
+    .cart-count,
+    .wishlist-count {
+        width: 18px;
+        height: 18px;
+
+        top: -7px;
+        right: -9px;
+
+        font-size: 9px;
+    }
+
+
+    /* BOTTOM MENU */
 
     .bottom-menu {
         top: 70px;
@@ -1010,10 +1237,170 @@ body {
         display: none;
     }
 
+
+    /* PROFILE POPUP */
+
     .profile-popup {
-        right: -20px;
+        top: 55px;
+
+        right: -15px;
+
+        width: 230px;
     }
 
+
+    /* ADMIN */
+
+    .admin-simple-navbar {
+        height: 70px;
+
+        padding: 0 12px;
+    }
+
+    .admin-simple-navbar .navbar-logo {
+        width: 105px;
+        height: 48px;
+    }
+
+    .admin-simple-navbar .marketplace-name {
+        display: inline-flex;
+
+        font-size: 12px;
+    }
+
+    .admin-profile-link {
+        padding: 6px 8px;
+    }
+
+    .admin-profile-link p {
+        font-size: 13px;
+    }
+
+    .admin-profile-link .avatar-img {
+        width: 34px;
+        height: 34px;
+    }
+
+    .admin-profile-popup {
+        top: 52px;
+
+        width: 210px;
+    }
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .navbar {
+        padding: 0 8px;
+    }
+
+    .navbar:not(.admin-simple-navbar) .navbar-logo {
+        width: 90px;
+        height: 43px;
+    }
+
+    .navbar:not(.admin-simple-navbar) .marketplace-name {
+        font-size: 11px;
+    }
+
+    .nav-icons {
+        gap: 9px;
+    }
+
+    .nav-icons > a svg {
+        font-size: 21px;
+    }
+
+    .profile-menu > .profile-link svg {
+        font-size: 32px;
+    }
+
+    .avatar-img {
+        width: 34px;
+        height: 34px;
+    }
+
+    .cart-count,
+    .wishlist-count {
+        width: 17px;
+        height: 17px;
+
+        font-size: 8px;
+
+        top: -6px;
+        right: -8px;
+    }
+
+    .bottom-menu {
+        gap: 18px;
+
+        padding: 0 12px;
+    }
+
+    .bottom-menu a {
+        font-size: 11px;
+    }
+
+    .admin-simple-navbar {
+        padding: 0 8px;
+    }
+
+    .admin-simple-navbar .navbar-logo {
+        width: 90px;
+        height: 43px;
+    }
+
+    .admin-simple-navbar .marketplace-name {
+        font-size: 11px;
+    }
+}
+
+
+/* =====================================================
+   EXTRA SMALL MOBILE
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .navbar:not(.admin-simple-navbar) .navbar-logo {
+        width: 78px;
+        height: 40px;
+    }
+
+    .navbar:not(.admin-simple-navbar) .marketplace-name {
+        font-size: 10px;
+    }
+
+    .nav-icons {
+        gap: 6px;
+    }
+
+    .nav-icons > a svg {
+        font-size: 19px;
+    }
+
+    .profile-menu > .profile-link svg {
+        font-size: 29px;
+    }
+
+    .avatar-img {
+        width: 31px;
+        height: 31px;
+    }
+
+    .admin-simple-navbar .navbar-logo {
+        width: 78px;
+        height: 40px;
+    }
+
+    .admin-simple-navbar .marketplace-name {
+        font-size: 10px;
+    }
 }
 
 
@@ -1022,16 +1409,13 @@ body {
 ========================================== */
 
 @keyframes menuSlide {
-
     from {
         opacity: 0;
-
         transform: translateY(-15px);
     }
 
     to {
         opacity: 1;
-
         transform: translateY(0);
     }
 }

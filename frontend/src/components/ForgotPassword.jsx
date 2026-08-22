@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 
 import axios from "axios";
-
+import logo from "../assets/logo/Zenve - 01 (1).png";
 import "../styles/ForgotPassword.css";
 
 import {
@@ -662,11 +662,12 @@ function ForgotPassword() {
 
         <div className="forgot-header">
 
-          <div className="forgot-icon">
-
-            <FaPaw />
-
-          </div>
+         <div className="forgot-logo">
+          <img
+            src={logo}
+            alt="Zenve Logo"
+          />
+        </div>
 
           <div>
 

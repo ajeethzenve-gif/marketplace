@@ -136,7 +136,12 @@ function Cart() {
 
     if (!cart) {
 
-        return <h3 className="text-center mt-5">Loading...</h3>;
+        return (
+            <div className="cart-loading">
+                <div className="loading-spinner"></div>
+                <p>Loading your cart...</p>
+            </div>
+        );
 
     }
 
@@ -144,7 +149,31 @@ function Cart() {
 
         <div className="cart-page">
 
-            <h1>Shopping Cart</h1>
+            {/* ==========================================
+                CART HEADER
+            ========================================== */}
+
+            <div className="cart-header">
+
+                <div>
+
+                    <span className="cart-label">
+                        ZENVE PETCARE
+                    </span>
+
+                    <h1>Your Shopping Cart</h1>
+
+                    <p>
+                        Review your selected products before checkout.
+                    </p>
+
+                </div>
+
+                <div className="cart-header-icon">
+                    🛒
+                </div>
+
+            </div>
 
             {
 
@@ -152,7 +181,23 @@ function Cart() {
 
                 (
 
-                    <h3>Your Cart is Empty</h3>
+                    /* ==========================================
+                       EMPTY CART
+                    ========================================== */
+
+                    <div className="empty-cart">
+
+                        <div className="empty-cart-icon">
+                            🛒
+                        </div>
+
+                        <h2>Your Cart is Empty</h2>
+
+                        <p>
+                            Looks like you haven't added anything to your cart yet.
+                        </p>
+
+                    </div>
 
                 )
 
@@ -162,124 +207,242 @@ function Cart() {
 
                     <div className="cart-container">
 
-                        <div className="cart-items">
+                        {/* ==========================================
+                            CART PRODUCTS
+                        ========================================== */}
 
-                            {
+                        <div className="cart-items-section">
 
-                                cart.items.map((item) => (
+                            <div className="cart-items-header">
 
-                                    <div
-                                        className="cart-item"
-                                        key={item.id}
-                                    >
+                                <div>
+                                    <h2>Cart Items</h2>
 
-                                        <img
-                                            src={`http://127.0.0.1:8000${item.image}`}
-                                            alt={item.product_name}
-                                            className="cart-image"
-                                        />
+                                    <span>
+                                        {cart.total_items} item
+                                        {cart.total_items !== 1 ? "s" : ""}
+                                    </span>
+                                </div>
 
-                                        <div className="cart-details">
+                            </div>
 
-                                            <h3>{item.product_name}</h3>
+                            <div className="cart-items">
 
-                                            <p>Price : ₹{item.price}</p>
+                                {
 
-                                            <p>Subtotal : ₹{item.subtotal}</p>
+                                    cart.items.map((item) => (
 
-                                        </div>
-
-                                        <div className="quantity-box">
-
-                                            <button
-                                                onClick={() =>
-                                                    updateQuantity(
-                                                        item.product_id,
-                                                        item.quantity - 1
-                                                    )
-                                                }
-                                            >
-                                                -
-                                            </button>
-
-                                            <span>{item.quantity}</span>
-
-                                            <button
-                                                onClick={() =>
-                                                    updateQuantity(
-                                                        item.product_id,
-                                                        item.quantity + 1
-                                                    )
-                                                }
-                                            >
-                                                +
-                                            </button>
-
-                                        </div>
-
-                                        <button
-                                            className="remove-btn"
-                                            onClick={() =>
-                                                removeItem(item.product_id)
-                                            }
+                                        <div
+                                            className="cart-item"
+                                            key={item.id}
                                         >
-                                            Remove
-                                        </button>
+
+                                            {/* PRODUCT IMAGE */}
+
+                                            <div className="cart-image-wrapper">
+
+                                                <img
+                                                    src={`http://127.0.0.1:8000${item.image}`}
+                                                    alt={item.product_name}
+                                                    className="cart-image"
+                                                />
+
+                                            </div>
+
+                                            {/* PRODUCT DETAILS */}
+
+                                            <div className="cart-details">
+
+                                                <span className="product-tag">
+                                                    PETCARE PRODUCT
+                                                </span>
+
+                                                <h3>
+                                                    {item.product_name}
+                                                </h3>
+
+                                                <p className="product-price">
+                                                    ₹{item.price}
+                                                </p>
+
+                                                <p className="product-subtotal">
+                                                    Item total: ₹{item.subtotal}
+                                                </p>
+
+                                            </div>
+
+                                            {/* QUANTITY */}
+
+                                            <div className="quantity-section">
+
+                                                <span className="quantity-label">
+                                                    Quantity
+                                                </span>
+
+                                                <div className="quantity-box">
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            updateQuantity(
+                                                                item.product_id,
+                                                                item.quantity - 1
+                                                            )
+                                                        }
+                                                    >
+                                                        −
+                                                    </button>
+
+                                                    <span>
+                                                        {item.quantity}
+                                                    </span>
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            updateQuantity(
+                                                                item.product_id,
+                                                                item.quantity + 1
+                                                            )
+                                                        }
+                                                    >
+                                                        +
+                                                    </button>
+
+                                                </div>
+
+                                            </div>
+
+                                            {/* REMOVE */}
+
+                                            <button
+                                                type="button"
+                                                className="remove-btn"
+                                                onClick={() =>
+                                                    removeItem(item.product_id)
+                                                }
+                                            >
+                                                Remove
+                                            </button>
+
+                                        </div>
+
+                                    ))
+
+                                }
+
+                            </div>
+
+                        </div>
+
+                        {/* ==========================================
+                            ORDER SUMMARY
+                        ========================================== */}
+
+                        <aside className="cart-summary">
+
+                            <div className="summary-heading">
+
+                                <div>
+
+                                    <span>
+                                        CHECKOUT
+                                    </span>
+
+                                    <h2>Order Summary</h2>
+
+                                </div>
+
+                                <div className="summary-icon">
+                                    ✓
+                                </div>
+
+                            </div>
+
+                            <div className="summary-content">
+
+                                <div className="summary-row">
+
+                                    <span>
+                                        Items
+                                    </span>
+
+                                    <span>
+                                        {cart.total_items}
+                                    </span>
+
+                                </div>
+
+                                <div className="summary-row">
+
+                                    <span>
+                                        Subtotal
+                                    </span>
+
+                                    <span>
+                                        ₹ {cart.subtotal}
+                                    </span>
+
+                                </div>
+
+                                <div className="summary-row">
+
+                                    <span>
+                                        Shipping
+                                    </span>
+
+                                    <span className="shipping-price">
+                                        ₹ {cart.shipping_charge}
+                                    </span>
+
+                                </div>
+
+                                <div className="summary-divider"></div>
+
+                                <div className="summary-row total">
+
+                                    <span>
+                                        Total
+                                    </span>
+
+                                    <strong>
+                                        ₹ {cart.total_price}
+                                    </strong>
+
+                                </div>
+
+                                <button
+                                    type="button"
+                                    className="checkout-btn"
+                                    onClick={proceedToCheckout}
+                                >
+                                    Continue to Checkout
+                                    <span>→</span>
+                                </button>
+
+                                <div className="secure-checkout">
+
+                                    <span className="secure-icon">
+                                        🔒
+                                    </span>
+
+                                    <div>
+
+                                        <strong>
+                                            Secure Checkout
+                                        </strong>
+
+                                        <p>
+                                            Your order details are protected.
+                                        </p>
 
                                     </div>
 
-                                ))
-
-                            }
-
-                        </div>
-
-                        <div className="cart-summary">
-
-                            <h2>Order Summary</h2>
-
-                            <div className="summary-row">
-
-                                <span>Total Items</span>
-
-                                <span>{cart.total_items}</span>
+                                </div>
 
                             </div>
 
-                            <div className="summary-row">
-
-                                <span>Subtotal</span>
-
-                                <span>₹ {cart.subtotal}</span>
-
-                            </div>
-
-                            <div className="summary-row">
-
-                                <span>Shipping</span>
-
-                                <span>₹ {cart.shipping_charge}</span>
-
-                            </div>
-
-                            <hr />
-
-                            <div className="summary-row total">
-
-                                <span>Total</span>
-
-                                <span>₹ {cart.total_price}</span>
-
-                            </div>
-
-                            <button
-                                className="checkout-btn"
-                                onClick={proceedToCheckout}
-                            >
-                                Proceed to Checkout
-                            </button>
-
-                        </div>
+                        </aside>
 
                     </div>
 

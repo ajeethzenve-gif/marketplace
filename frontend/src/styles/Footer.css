@@ -89,13 +89,32 @@
 }
 
 
+/* =========================================================
+   FOOTER LOGO
+========================================================= */
+
 .footer-logo {
-    margin: 0 0 8px;
+    width: 180px;
+    height: 70px;
 
-    font-size: 30px;
-    font-weight: 800;
+    margin: 0 0 14px;
 
-    color: #ffffff;
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-start;
+}
+
+.footer-logo-image {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    object-position: left center;
+
+    display: block;
 }
 
 
@@ -466,7 +485,8 @@
 
 
     .footer-logo {
-        font-size: 27px;
+        width: 160px;
+        height: 65px;
     }
 
 
@@ -536,4 +556,32 @@
         font-size: 11px;
     }
 
+}
+
+/* =========================================================
+   FOOTER LOGO
+========================================================= */
+
+.footer-logo {
+    width: 180px;
+    height: 70px;
+
+    margin: 0 0 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-start;
+}
+
+.footer-logo-image {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    object-position: left center;
+
+    display: block;
 }

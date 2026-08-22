@@ -835,7 +835,7 @@ function Home() {
                         Shop by Categories
                     </h2>
 
-                    <Link to="/categories">
+                    <Link to="">
                         View All Categories →
                     </Link>
 

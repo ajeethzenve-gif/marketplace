@@ -392,7 +392,29 @@ body {
   max-width: 500px;
 }
 
+/* ==========================================
+   BRAND LOGO
+========================================== */
 
+.logo-box {
+  width: 70px;
+  height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+}
+
+.brand-logo {
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  display: block;
+}
 /* =====================================================
    MOBILE LOGO
 ===================================================== */
@@ -849,6 +871,31 @@ body {
 
   .register-input-group input {
     font-size: 14px;
+  }
+
+}
+
+@media (max-width: 850px) {
+
+  .mobile-logo {
+    width: 90px;
+    height: 90px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 20px;
+  }
+
+  .mobile-logo img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    display: block;
   }
 
 }

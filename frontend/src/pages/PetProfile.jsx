@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 import "../styles/Petprofile.css";
 
 function Pets() {
+
     const navigate = useNavigate();
 
     const token = localStorage.getItem("access");
@@ -43,31 +45,40 @@ function Pets() {
     // =====================================================
 
     useEffect(() => {
+
         if (!token) {
             navigate("/login");
             return;
         }
 
         loadPets();
+
     }, [token, navigate]);
 
     const loadPets = async () => {
+
         try {
+
             setLoading(true);
             setError("");
 
-            const response = await axios.get(API_URL, {
-                headers: {
-                    Authorization: `Bearer ${token}`
+            const response = await axios.get(
+                API_URL,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 }
-            });
+            );
 
             const data = Array.isArray(response.data)
                 ? response.data
                 : response.data?.results || [];
 
             setPets(data);
+
         } catch (error) {
+
             console.error(
                 "Pet loading error:",
                 error.response?.data || error.message
@@ -77,8 +88,11 @@ function Pets() {
                 error.response?.data?.detail ||
                 "Unable to load your pets."
             );
+
         } finally {
+
             setLoading(false);
+
         }
     };
 
@@ -87,12 +101,14 @@ function Pets() {
     // =====================================================
 
     const handleChange = (e) => {
+
         const { name, value } = e.target;
 
         setPetDetails((previous) => ({
             ...previous,
             [name]: value
         }));
+
     };
 
     // =====================================================
@@ -100,6 +116,7 @@ function Pets() {
     // =====================================================
 
     const resetForm = () => {
+
         setPetDetails({
             pet_name: "",
             pet_type: "Dog",
@@ -111,6 +128,7 @@ function Pets() {
         });
 
         setEditingPetId(null);
+
     };
 
     // =====================================================
@@ -118,9 +136,11 @@ function Pets() {
     // =====================================================
 
     const openAddModal = () => {
+
         setError("");
         resetForm();
         setShowModal(true);
+
     };
 
     // =====================================================
@@ -128,9 +148,11 @@ function Pets() {
     // =====================================================
 
     const closeModal = () => {
+
         setShowModal(false);
         resetForm();
         setError("");
+
     };
 
     // =====================================================
@@ -138,7 +160,6 @@ function Pets() {
     // =====================================================
 
     const handleEdit = (pet) => {
-        console.log("Editing pet:", pet);
 
         setError("");
         setEditingPetId(pet.id);
@@ -154,6 +175,7 @@ function Pets() {
         });
 
         setShowModal(true);
+
     };
 
     // =====================================================
@@ -161,26 +183,51 @@ function Pets() {
     // =====================================================
 
     const handleSubmit = async (e) => {
+
         e.preventDefault();
 
         setError("");
 
         if (!petDetails.pet_name.trim()) {
+
             setError("Pet name is required.");
             return;
+
         }
 
         try {
+
             const data = {
-                pet_name: petDetails.pet_name.trim(),
-                pet_type: petDetails.pet_type,
-                breed: String(petDetails.breed ?? "").trim(),
-                age: String(petDetails.age ?? "").trim(),
-                gender: petDetails.gender,
-                weight: String(petDetails.weight ?? "").trim(),
-                health_notes: String(
-                    petDetails.health_notes ?? ""
-                ).trim()
+
+                pet_name:
+                    petDetails.pet_name.trim(),
+
+                pet_type:
+                    petDetails.pet_type,
+
+                breed:
+                    String(
+                        petDetails.breed ?? ""
+                    ).trim(),
+
+                age:
+                    String(
+                        petDetails.age ?? ""
+                    ).trim(),
+
+                gender:
+                    petDetails.gender,
+
+                weight:
+                    String(
+                        petDetails.weight ?? ""
+                    ).trim(),
+
+                health_notes:
+                    String(
+                        petDetails.health_notes ?? ""
+                    ).trim()
+
             };
 
             // =================================================
@@ -188,26 +235,31 @@ function Pets() {
             // =================================================
 
             if (editingPetId) {
+
                 const response = await axios.patch(
                     `${API_URL}${editingPetId}/`,
                     data,
                     {
                         headers: {
-                            Authorization: `Bearer ${token}`,
-                            "Content-Type": "application/json"
+                            Authorization:
+                                `Bearer ${token}`,
+                            "Content-Type":
+                                "application/json"
                         }
                     }
                 );
 
                 setPets((previousPets) =>
                     previousPets.map((pet) =>
-                        Number(pet.id) === Number(editingPetId)
+                        Number(pet.id) ===
+                        Number(editingPetId)
                             ? response.data
                             : pet
                     )
                 );
 
                 alert("Pet updated successfully.");
+
             }
 
             // =================================================
@@ -215,13 +267,16 @@ function Pets() {
             // =================================================
 
             else {
+
                 const response = await axios.post(
                     API_URL,
                     data,
                     {
                         headers: {
-                            Authorization: `Bearer ${token}`,
-                            "Content-Type": "application/json"
+                            Authorization:
+                                `Bearer ${token}`,
+                            "Content-Type":
+                                "application/json"
                         }
                     }
                 );
@@ -232,41 +287,59 @@ function Pets() {
                 ]);
 
                 alert("Pet added successfully.");
+
             }
 
             closeModal();
+
         } catch (error) {
-            console.error("PET SAVE ERROR:", error);
+
+            console.error(
+                "PET SAVE ERROR:",
+                error
+            );
 
             console.error(
                 "Backend response:",
                 error.response?.data
             );
 
-            const backendError = error.response?.data;
+            const backendError =
+                error.response?.data;
 
             if (
                 backendError &&
                 typeof backendError === "object"
             ) {
-                setError(
-                    Object.entries(backendError)
-                        .map(([field, message]) => {
-                            const formattedMessage =
-                                Array.isArray(message)
-                                    ? message.join(", ")
-                                    : String(message);
 
-                            return `${field}: ${formattedMessage}`;
-                        })
+                setError(
+                    Object.entries(
+                        backendError
+                    )
+                        .map(
+                            ([field, message]) => {
+
+                                const formattedMessage =
+                                    Array.isArray(message)
+                                        ? message.join(", ")
+                                        : String(message);
+
+                                return `${field}: ${formattedMessage}`;
+
+                            }
+                        )
                         .join(" | ")
                 );
+
             } else {
+
                 setError(
                     backendError ||
                     "Unable to save pet details."
                 );
+
             }
+
         }
     };
 
@@ -275,20 +348,24 @@ function Pets() {
     // =====================================================
 
     const handleDelete = async (petId) => {
-        const confirmDelete = window.confirm(
-            "Are you sure you want to delete this pet?"
-        );
+
+        const confirmDelete =
+            window.confirm(
+                "Are you sure you want to delete this pet?"
+            );
 
         if (!confirmDelete) {
             return;
         }
 
         try {
+
             await axios.delete(
                 `${API_URL}${petId}/`,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization:
+                            `Bearer ${token}`
                     }
                 }
             );
@@ -296,14 +373,19 @@ function Pets() {
             setPets((previousPets) =>
                 previousPets.filter(
                     (pet) =>
-                        Number(pet.id) !== Number(petId)
+                        Number(pet.id) !==
+                        Number(petId)
                 )
             );
 
             setError("");
 
-            alert("Pet deleted successfully.");
+            alert(
+                "Pet deleted successfully."
+            );
+
         } catch (error) {
+
             console.error(
                 "PET DELETE ERROR:",
                 error
@@ -319,6 +401,7 @@ function Pets() {
                 error.response?.data?.error ||
                 "Unable to delete pet."
             );
+
         }
     };
 
@@ -327,7 +410,9 @@ function Pets() {
     // =====================================================
 
     const getPetIcon = (petType) => {
+
         switch (petType) {
+
             case "Dog":
                 return "🐶";
 
@@ -345,6 +430,7 @@ function Pets() {
 
             default:
                 return "🐾";
+
         }
     };
 
@@ -353,6 +439,7 @@ function Pets() {
     // =====================================================
 
     const getPetImage = (image) => {
+
         if (!image) {
             return null;
         }
@@ -362,6 +449,7 @@ function Pets() {
         }
 
         return `${BACKEND_URL}${image}`;
+
     };
 
     // =====================================================
@@ -377,19 +465,98 @@ function Pets() {
     // =====================================================
 
     return (
+
         <main className="pets-page">
 
             {/* =================================================
-                PAGE HEADER
+                HERO HEADER
             ================================================= */}
 
-            <div className="pets-page-header">
+            <section className="pets-hero">
 
-                <div className="pets-page-heading">
+                <div className="pets-hero-content">
+
+                    <span className="pets-hero-label">
+                        🐾 PET CARE CENTER
+                    </span>
 
                     <h1>
                         My Pets
                     </h1>
+
+                    <p>
+                        Keep all your pet profiles organized
+                        in one place.
+                    </p>
+
+                    <div className="pets-hero-stats">
+
+                        <div className="hero-stat">
+                            <strong>
+                                {pets.length}
+                            </strong>
+
+                            <span>
+                                {pets.length === 1
+                                    ? "Pet"
+                                    : "Pets"}
+                            </span>
+                        </div>
+
+                        <div className="hero-stat-divider"></div>
+
+                        <div className="hero-stat">
+
+                            <strong>
+                                ❤️
+                            </strong>
+
+                            <span>
+                                Pet Care
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div className="pets-hero-art">
+
+                    <div className="hero-circle hero-circle-one">
+                    </div>
+
+                    <div className="hero-circle hero-circle-two">
+                    </div>
+
+                    <div className="hero-paw">
+                        🐾
+                    </div>
+
+                    <span className="hero-floating-paw paw-one">
+                        🐾
+                    </span>
+
+                    <span className="hero-floating-paw paw-two">
+                        🐾
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            {/* =================================================
+                PAGE TOOLBAR
+            ================================================= */}
+
+            <div className="pets-toolbar">
+
+                <div>
+
+                    <h2>
+                        Your Pet Profiles
+                    </h2>
 
                     <p>
                         Manage your pet details and health information.
@@ -402,61 +569,85 @@ function Pets() {
                     className="add-pet-btn"
                     onClick={openAddModal}
                 >
-                    🐾 Add New Pet
+                    <span>+</span>
+                    Add New Pet
                 </button>
 
             </div>
+
 
             {/* =================================================
                 ERROR
             ================================================= */}
 
             {error && (
+
                 <div className="pet-error">
+
+                    <span>⚠️</span>
+
                     {typeof error === "string"
                         ? error
                         : JSON.stringify(error)}
+
                 </div>
+
             )}
+
 
             {/* =================================================
                 LOADING
             ================================================= */}
 
             {loading ? (
+
                 <div className="pets-loading">
-                    <div className="pets-loading-spinner"></div>
+
+                    <div className="loading-paw">
+                        🐾
+                    </div>
 
                     <p>
                         Loading your pets...
                     </p>
+
                 </div>
+
             ) : pets.length === 0 ? (
 
                 /* =================================================
-                    NO PETS
+                    EMPTY STATE
                 ================================================= */
 
                 <div className="no-pets">
 
-                    <div className="no-pets-icon">
-                        🐾
+                    <div className="empty-illustration">
+
+                        <div className="empty-circle">
+                            🐾
+                        </div>
+
                     </div>
+
+                    <span className="empty-label">
+                        YOUR PET FAMILY
+                    </span>
 
                     <h2>
                         No pets added yet
                     </h2>
 
                     <p>
-                        Add your pet details to get personalized
-                        recommendations.
+                        Create your first pet profile to keep
+                        their information organized and get
+                        personalized recommendations.
                     </p>
 
                     <button
                         type="button"
                         onClick={openAddModal}
                     >
-                        Add Your First Pet
+                        🐾 Add Your First Pet
                     </button>
 
                 </div>
@@ -475,18 +666,23 @@ function Pets() {
                             getPetImage(pet.image);
 
                         return (
-                            <div
+
+                            <article
                                 className="pet-profile-card"
                                 key={pet.id}
                             >
+
+                                {/* TOP ACCENT */}
+
+                                <div className="pet-card-accent">
+                                </div>
+
 
                                 {/* =================================================
                                     PET HEADER
                                 ================================================= */}
 
                                 <div className="pet-profile-header">
-
-                                    {/* PET IMAGE */}
 
                                     <div className="pet-profile-image-wrapper">
 
@@ -501,16 +697,17 @@ function Pets() {
                                         ) : (
 
                                             <div className="pet-profile-placeholder">
+
                                                 {getPetIcon(
                                                     pet.pet_type
                                                 )}
+
                                             </div>
 
                                         )}
 
                                     </div>
 
-                                    {/* PET NAME / BREED */}
 
                                     <div className="pet-profile-title">
 
@@ -520,20 +717,28 @@ function Pets() {
                                                 {pet.pet_name}
                                             </h2>
 
+                                        </div>
+
+                                        <div className="pet-title-meta">
+
                                             <span className="pet-type-badge">
+                                                {getPetIcon(
+                                                    pet.pet_type
+                                                )}{" "}
                                                 {pet.pet_type}
+                                            </span>
+
+                                            <span className="pet-breed">
+                                                {pet.breed ||
+                                                    "Breed not specified"}
                                             </span>
 
                                         </div>
 
-                                        <p className="pet-breed">
-                                            {pet.breed ||
-                                                "Breed not specified"}
-                                        </p>
-
                                     </div>
 
                                 </div>
+
 
                                 {/* =================================================
                                     PET INFORMATION
@@ -541,67 +746,115 @@ function Pets() {
 
                                 <div className="pet-profile-details">
 
-                                    {/* AGE */}
-
                                     <div className="pet-profile-detail">
 
-                                        <div className="pet-detail-label">
-                                            📅 Age
-                                        </div>
+                                        <span className="pet-detail-icon">
+                                            📅
+                                        </span>
 
-                                        <div className="pet-detail-value">
-                                            {pet.age ||
-                                                "Not specified"}
+                                        <div>
+                                            <span className="pet-detail-label">
+                                                Age
+                                            </span>
+
+                                            <span className="pet-detail-value">
+                                                {pet.age ||
+                                                    "Not specified"}
+                                            </span>
                                         </div>
 
                                     </div>
 
-                                    {/* GENDER */}
 
                                     <div className="pet-profile-detail">
 
-                                        <div className="pet-detail-label">
-                                            ⚥ Gender
-                                        </div>
+                                        <span className="pet-detail-icon">
+                                            ⚥
+                                        </span>
 
-                                        <div className="pet-detail-value">
-                                            {pet.gender ||
-                                                "Not specified"}
+                                        <div>
+                                            <span className="pet-detail-label">
+                                                Gender
+                                            </span>
+
+                                            <span className="pet-detail-value">
+                                                {pet.gender ||
+                                                    "Not specified"}
+                                            </span>
                                         </div>
 
                                     </div>
 
-                                    {/* WEIGHT */}
 
                                     <div className="pet-profile-detail">
 
-                                        <div className="pet-detail-label">
-                                            ⚖️ Weight
-                                        </div>
+                                        <span className="pet-detail-icon">
+                                            ⚖️
+                                        </span>
 
-                                        <div className="pet-detail-value">
-                                            {pet.weight ||
-                                                "Not specified"}
+                                        <div>
+                                            <span className="pet-detail-label">
+                                                Weight
+                                            </span>
+
+                                            <span className="pet-detail-value">
+                                                {pet.weight ||
+                                                    "Not specified"}
+                                            </span>
                                         </div>
 
                                     </div>
 
-                                    {/* BREED */}
 
                                     <div className="pet-profile-detail">
 
-                                        <div className="pet-detail-label">
-                                            🐕 Breed
-                                        </div>
+                                        <span className="pet-detail-icon">
+                                            🐕
+                                        </span>
 
-                                        <div className="pet-detail-value">
-                                            {pet.breed ||
-                                                "Not specified"}
+                                        <div>
+                                            <span className="pet-detail-label">
+                                                Breed
+                                            </span>
+
+                                            <span className="pet-detail-value">
+                                                {pet.breed ||
+                                                    "Not specified"}
+                                            </span>
                                         </div>
 
                                     </div>
 
                                 </div>
+
+
+                                {/* =================================================
+                                    HEALTH NOTES
+                                ================================================= */}
+
+                                {pet.health_notes && (
+
+                                    <div className="pet-health-note">
+
+                                        <span>
+                                            ❤️
+                                        </span>
+
+                                        <div>
+
+                                            <small>
+                                                Health / Special Requirements
+                                            </small>
+
+                                            <p>
+                                                {pet.health_notes}
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                )}
 
 
                                 {/* =================================================
@@ -610,46 +863,64 @@ function Pets() {
 
                                 <div className="pet-profile-actions">
 
-                                     <button
+                                    <button
                                         type="button"
                                         className="profile-recommended-btn"
                                         onClick={() =>
-                                            navigate(`/recommended-products/${pet.id}`)
+                                            navigate(
+                                                `/recommended-products/${pet.id}`
+                                            )
                                         }
                                         title="Recommended Products"
-                                        aria-label="Recommended Products"
                                     >
-                                        🛍️
+                                        <span>🛍️</span>
+                                        <span>
+                                            Recommended
+                                        </span>
                                     </button>
+
 
                                     <button
                                         type="button"
                                         className="profile-edit-btn"
-                                        onClick={() => handleEdit(pet)}
+                                        onClick={() =>
+                                            handleEdit(pet)
+                                        }
                                         title="Edit Pet"
-                                        aria-label="Edit Pet"
                                     >
-                                        ✏️
+                                        <span>✏️</span>
+                                        <span>
+                                            Edit
+                                        </span>
                                     </button>
+
 
                                     <button
                                         type="button"
                                         className="profile-delete-btn"
-                                        onClick={() => handleDelete(pet.id)}
+                                        onClick={() =>
+                                            handleDelete(pet.id)
+                                        }
                                         title="Delete Pet"
-                                        aria-label="Delete Pet"
                                     >
-                                        🗑️
+                                        <span>🗑️</span>
+                                        <span>
+                                            Delete
+                                        </span>
                                     </button>
 
                                 </div>
 
-                            </div>
+                            </article>
+
                         );
+
                     })}
 
                 </div>
+
             )}
+
 
             {/* =================================================
                 ADD / EDIT MODAL
@@ -669,17 +940,21 @@ function Pets() {
                         }
                     >
 
-                        {/* MODAL HEADER */}
+                        {/* MODAL TOP */}
 
                         <div className="pet-modal-header">
 
                             <div className="pet-modal-heading">
 
-                                <span className="pet-modal-icon">
+                                <div className="pet-modal-icon">
                                     🐾
-                                </span>
+                                </div>
 
                                 <div>
+
+                                    <span className="modal-label">
+                                        PET PROFILE
+                                    </span>
 
                                     <h2>
                                         {editingPetId
@@ -707,12 +982,18 @@ function Pets() {
 
                         </div>
 
+
                         {/* FORM */}
 
                         <form
                             className="pet-details-form"
                             onSubmit={handleSubmit}
                         >
+
+                            <div className="form-section-title">
+                                Basic Information
+                            </div>
+
 
                             {/* PET NAME */}
 
@@ -734,6 +1015,7 @@ function Pets() {
                                 />
 
                             </div>
+
 
                             {/* TYPE + GENDER */}
 
@@ -781,6 +1063,7 @@ function Pets() {
 
                                 </div>
 
+
                                 <div className="pet-form-group">
 
                                     <label>
@@ -813,6 +1096,12 @@ function Pets() {
 
                             </div>
 
+
+                            <div className="form-section-title form-section-spaced">
+                                Pet Details
+                            </div>
+
+
                             {/* BREED */}
 
                             <div className="pet-form-group">
@@ -832,6 +1121,7 @@ function Pets() {
                                 />
 
                             </div>
+
 
                             {/* AGE + WEIGHT */}
 
@@ -855,6 +1145,7 @@ function Pets() {
 
                                 </div>
 
+
                                 <div className="pet-form-group">
 
                                     <label>
@@ -875,6 +1166,7 @@ function Pets() {
 
                             </div>
 
+
                             {/* HEALTH NOTES */}
 
                             <div className="pet-form-group">
@@ -894,6 +1186,7 @@ function Pets() {
                                 />
 
                             </div>
+
 
                             {/* MODAL ACTIONS */}
 
@@ -923,9 +1216,11 @@ function Pets() {
                     </div>
 
                 </div>
+
             )}
 
         </main>
+
     );
 }
 

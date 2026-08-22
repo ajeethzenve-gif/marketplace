@@ -1,6 +1,6 @@
 import React from "react";
 import "../styles/Footer.css";
-
+import logo from "../assets/logo/Zenve - 01 (1).png";
 function Footer() {
     return (
         <footer className="footer">
@@ -13,9 +13,13 @@ function Footer() {
                 {/* BRAND */}
                 <div className="footer-column footer-brand">
 
-                    <h2 className="footer-logo">
-                        🐾 Zenve
-                    </h2>
+                    <div className="footer-logo">
+                        <img
+                            src={logo}
+                            alt="Zenve Logo"
+                            className="footer-logo-image"
+                        />
+                    </div>
 
                     <p className="footer-tagline">
                         Your trusted marketplace for

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { GoogleLogin } from "@react-oauth/google";
-
+import logo from "../assets/logo/Zenve - 01 (1).png";
 import {
   FaEnvelope,
   FaLock,
@@ -251,14 +251,18 @@ function Login() {
 
           <div className="brand-section">
 
-            <div className="paw-box">
-              <FaPaw />
+           <div className="logo-box">
+              <img
+                src={logo}
+                alt="PetCare Store"
+                className="brand-logo"
+              />
             </div>
 
             <div className="brand-text">
 
               <h1>
-                PetCare Store
+               MarketPlace
               </h1>
 
               <span>
@@ -337,7 +341,10 @@ function Login() {
             {/* MOBILE LOGO */}
 
             <div className="mobile-logo">
-              <FaPaw />
+              <img
+                src={logo}
+                alt="PetCare Store"
+              />
             </div>
 
 

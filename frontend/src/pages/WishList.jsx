@@ -4,17 +4,13 @@ import axios from "axios";
 
 import "../styles/Wishlist.css";
 
-
 function Wishlist() {
 
-
     const navigate = useNavigate();
-
 
     const [wishlist, setWishlist] = useState([]);
 
     const [loading, setLoading] = useState(true);
-
 
 
     useEffect(() => {
@@ -22,8 +18,6 @@ function Wishlist() {
         loadWishlist();
 
     }, []);
-
-
 
 
     const getHeaders = () => {
@@ -42,13 +36,9 @@ function Wishlist() {
     };
 
 
-
-
     const loadWishlist = async () => {
 
-
         const token = localStorage.getItem("access");
-
 
         if (!token) {
 
@@ -58,10 +48,7 @@ function Wishlist() {
 
         }
 
-
-
         try {
-
 
             const response = await axios.get(
 
@@ -71,44 +58,31 @@ function Wishlist() {
 
             );
 
-
             setWishlist(response.data);
-
-
 
         }
 
-        catch(error){
-
+        catch(error) {
 
             console.log(
                 "Wishlist Load Error:",
                 error.response?.data
             );
 
-
         }
 
-        finally{
-
+        finally {
 
             setLoading(false);
 
-
         }
-
 
     };
 
 
+    const removeWishlist = async(productId) => {
 
-
-
-    const removeWishlist = async(productId)=>{
-
-
-        try{
-
+        try {
 
             await axios.delete(
 
@@ -117,7 +91,6 @@ function Wishlist() {
                 getHeaders()
 
             );
-
 
             setWishlist(
 
@@ -130,33 +103,23 @@ function Wishlist() {
 
             );
 
-
-
         }
 
-        catch(error){
-
+        catch(error) {
 
             console.log(
                 "Remove Wishlist Error:",
                 error.response?.data
             );
 
-
         }
-
 
     };
 
 
+    const addToCart = async(productId) => {
 
-
-
-    const addToCart = async(productId)=>{
-
-
-        try{
-
+        try {
 
             await axios.post(
 
@@ -166,7 +129,7 @@ function Wishlist() {
 
                     product_id: productId,
 
-                    quantity:1
+                    quantity: 1
 
                 },
 
@@ -174,328 +137,410 @@ function Wishlist() {
 
             );
 
-
             alert(
                 "Product added to cart"
             );
 
-
         }
 
-        catch(error){
-
+        catch(error) {
 
             console.log(
                 "Cart Error:",
                 error.response?.data
             );
 
-
         }
-
 
     };
 
 
-
-
-
-    if(loading){
-
+    if(loading) {
 
         return (
 
-            <h2 className="text-center mt-5">
+            <div className="wishlist-loading">
 
-                Loading...
+                <div className="wishlist-loader"></div>
 
-            </h2>
+                <p>Loading your wishlist...</p>
+
+            </div>
 
         );
-
 
     }
 
 
-
-
-
-
-
     return (
 
-        <div className="container mt-4">
+        <div className="wishlist-page">
 
 
-            <h2 className="mb-4 text-center">
+            {/* ==================================================
+                WISHLIST HERO
+            ================================================== */}
 
-                ❤️ My Wishlist
-
-            </h2>
-
-
+            <section className="wishlist-hero">
 
 
+                <div className="wishlist-hero-content">
+
+
+                    <span className="wishlist-hero-label">
+                        ♥ YOUR SAVED COLLECTION
+                    </span>
+
+
+                    <h1>
+
+                        Things You Love,
+
+                        <span>
+                            Saved For Later.
+                        </span>
+
+                    </h1>
+
+
+                    <p>
+
+                        Keep your favourite pet care products
+                        close at hand. Come back anytime and
+                        shop the products your pets love.
+
+                    </p>
+
+
+                    <div className="wishlist-hero-info">
+
+
+                        <div className="wishlist-stat">
+
+                            <strong>
+                                {wishlist.length}
+                            </strong>
+
+                            <span>
+                                Saved Products
+                            </span>
+
+                        </div>
+
+
+                        <div className="wishlist-stat-divider"></div>
+
+
+                        <div className="wishlist-stat">
+
+                            <strong>
+                                ♥
+                            </strong>
+
+                            <span>
+                                Made With Love
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+                {/* HERO VISUAL */}
+
+                <div className="wishlist-hero-visual">
+
+
+                    <div className="wishlist-hero-circle"></div>
+
+
+                    <div className="wishlist-paw paw-one">
+                        🐾
+                    </div>
+
+
+                    <div className="wishlist-paw paw-two">
+                        🐾
+                    </div>
+
+
+                    <div className="wishlist-big-heart">
+                        ♥
+                    </div>
+
+
+                    <div className="wishlist-mini-card">
+
+                        <span>
+                            ♥
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Your Favorites
+                            </strong>
+
+                            <small>
+                                Always close to you
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+            {/* ==================================================
+                WISHLIST TITLE
+            ================================================== */}
+
+            <div className="wishlist-section-header">
+
+                <div>
+
+                    <span>
+                        YOUR COLLECTION
+                    </span>
+
+                    <h2>
+                        My Wishlist
+                    </h2>
+
+                </div>
+
+
+                <div className="wishlist-item-count">
+
+                    {wishlist.length}
+
+                    <span>
+                        items
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            {/* ==================================================
+                EMPTY WISHLIST
+            ================================================== */}
 
             {
 
-                wishlist.length === 0 ?
+                wishlist.length === 0
 
+                ?
 
                 (
 
-                    <div className="text-center">
+                    <div className="wishlist-empty">
 
-                        <h4>
+                        <div className="empty-heart">
+                            ♡
+                        </div>
 
-                            Your wishlist is empty.
+                        <h3>
+                            Your Wishlist is Empty
+                        </h3>
 
-                        </h4>
+                        <p>
+                            Save products you love and they'll
+                            appear here.
+                        </p>
 
+                        <Link
+                            to="/products"
+                            className="browse-products-btn"
+                        >
+                            Browse Products
+                        </Link>
 
                     </div>
 
                 )
 
-
                 :
-
 
                 (
 
-                    <div className="row">
+                    /* ==================================================
+                       PRODUCTS
+                    ================================================== */
+
+                    <div className="wishlist-grid">
 
 
                         {
 
-                            wishlist.map((item)=>(
-
+                            wishlist.map((item) => (
 
                                 <div
-
-                                    className="col-md-4 mb-4"
-
+                                    className="wishlist-product-card"
                                     key={item.id}
-
                                 >
 
 
+                                    {/* IMAGE */}
 
-                                    <div className="card h-100 shadow">
-
-
-
+                                    <div className="wishlist-product-image">
 
 
                                         <img
 
-
                                             src={
-
                                                 item.product_image
-
                                                 ?
-
                                                 item.product_image
-
                                                 :
-
                                                 "https://via.placeholder.com/300x220"
-
                                             }
-
-
-                                            className="card-img-top"
 
                                             alt={item.product_name}
 
                                         />
 
 
+                                        <button
 
+                                            type="button"
 
+                                            className="wishlist-remove-heart"
 
+                                            onClick={() =>
+                                                removeWishlist(item.product)
+                                            }
 
-
-                                        <div className="card-body d-flex flex-column">
-
-
-
-                                            <h5>
-
-                                                {item.product_name}
-
-                                            </h5>
-
-
-
-
-                                            <p>
-
-                                                <strong>
-                                                Category :
-                                                </strong>
-
-                                                {" "}
-
-                                                {item.category_name}
-
-                                            </p>
-
-
-
-
-
-                                            <p>
-
-                                                <strong>
-                                                Brand :
-                                                </strong>
-
-                                                {" "}
-
-                                                {item.brand_name}
-
-                                            </p>
-
-
-
-
-
-                                            <p>
-
-                                                <strong>
-                                                Price :
-                                                </strong>
-
-                                                {" ₹"}
-
-                                                {item.price}
-
-                                            </p>
-
-
-
-
-
-
-                                            <div className="mt-auto">
-
-
-                                                <div className="row g-2">
-
-
-
-                                                    <div className="col-4">
-
-
-                                                        <Link
-
-                                                            to={`/products/${item.product}`}
-
-                                                            className="btn btn-primary w-100"
-
-                                                        >
-
-                                                            Details
-
-
-                                                        </Link>
-
-
-                                                    </div>
-
-
-
-
-
-                                                    <div className="col-4">
-
-
-                                                        <button
-
-                                                            className="btn btn-warning w-100"
-
-                                                            onClick={()=>addToCart(item.product)}
-
-                                                        >
-
-                                                            Cart
-
-
-                                                        </button>
-
-
-                                                    </div>
-
-
-
-
-
-
-                                                    <div className="col-4">
-
-
-                                                        <button
-
-                                                            className="btn btn-danger w-100"
-
-                                                            onClick={()=>removeWishlist(item.product)}
-
-                                                        >
-
-                                                            Remove
-
-
-                                                        </button>
-
-
-                                                    </div>
-
-
-
-
-                                                </div>
-
-
-
-                                            </div>
-
-
-
-
-                                        </div>
-
+                                        >
+                                            ♥
+                                        </button>
 
 
                                     </div>
 
 
+                                    {/* CONTENT */}
+
+                                    <div className="wishlist-product-content">
+
+
+                                        <span className="wishlist-product-category">
+
+                                            {item.category_name}
+
+                                        </span>
+
+
+                                        <h3>
+                                            {item.product_name}
+                                        </h3>
+
+
+                                        <div className="wishlist-product-brand">
+
+                                            <span>
+                                                Brand
+                                            </span>
+
+                                            <strong>
+                                                {item.brand_name}
+                                            </strong>
+
+                                        </div>
+
+
+                                        <div className="wishlist-product-bottom">
+
+
+                                            <div>
+
+                                                <small>
+                                                    Price
+                                                </small>
+
+                                                <strong>
+                                                    ₹{item.price}
+                                                </strong>
+
+                                            </div>
+
+
+                                            <Link
+
+                                                to={`/products/${item.product}`}
+
+                                                className="wishlist-details-btn"
+
+                                            >
+                                                Details
+                                            </Link>
+
+
+                                        </div>
+
+
+                                        <button
+
+                                            type="button"
+
+                                            className="wishlist-cart-btn"
+
+                                            onClick={() =>
+                                                addToCart(item.product)
+                                            }
+
+                                        >
+                                            Add to Cart
+                                        </button>
+
+
+                                        <button
+
+                                            type="button"
+
+                                            className="wishlist-remove-text"
+
+                                            onClick={() =>
+                                                removeWishlist(item.product)
+                                            }
+
+                                        >
+                                            Remove from wishlist
+
+                                        </button>
+
+
+                                    </div>
+
 
                                 </div>
-
 
                             ))
 
                         }
 
 
-
                     </div>
-
 
                 )
 
             }
 
 
-
         </div>
-
 
     );
 
 }
-
 
 export default Wishlist;

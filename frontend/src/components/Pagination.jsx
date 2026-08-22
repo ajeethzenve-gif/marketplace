@@ -1,83 +1,105 @@
-import "../styles/Pagination.css"
+import "../styles/Pagination.css";
 
 function Pagination({
-
     page,
-
     totalPages,
+    setPage,
+}) {
+    const scrollToTop = () => {
+        // Scroll browser window
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "smooth",
+        });
 
-    setPage
+        // Scroll main application content
+        const mainContent = document.querySelector(".main-content");
 
-}){
+        if (mainContent) {
+            mainContent.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: "smooth",
+            });
+        }
 
-    const pages=[];
+        // Scroll product page container if needed
+        const productsPage = document.querySelector(".products-page");
 
-    for(let i=1;i<=totalPages;i++){
+        if (productsPage) {
+            productsPage.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
+        }
+    };
 
+    const handlePageChange = (newPage) => {
+        if (
+            newPage < 1 ||
+            newPage > totalPages ||
+            newPage === page
+        ) {
+            return;
+        }
+
+        setPage(newPage);
+
+        // Scroll to the top after changing page
+        setTimeout(() => {
+            scrollToTop();
+        }, 0);
+    };
+
+    const pages = [];
+
+    for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
-
     }
 
-    return(
-
+    return (
         <div className="pagination-container">
 
             <button
-
-                disabled={page===1}
-
-                onClick={()=>setPage(page-1)}
-
+                type="button"
+                disabled={page === 1}
+                onClick={() =>
+                    handlePageChange(page - 1)
+                }
             >
-
                 Previous
-
             </button>
 
-            {
-
-                pages.map((number)=>(
-
-                    <button
-
-                        key={number}
-
-                        className={
-                            page===number
-                            ?
-                            "active-page"
-                            :
-                            ""
-                        }
-
-                        onClick={()=>setPage(number)}
-
-                    >
-
-                        {number}
-
-                    </button>
-
-                ))
-
-            }
+            {pages.map((number) => (
+                <button
+                    key={number}
+                    type="button"
+                    className={
+                        page === number
+                            ? "active-page"
+                            : ""
+                    }
+                    onClick={() =>
+                        handlePageChange(number)
+                    }
+                >
+                    {number}
+                </button>
+            ))}
 
             <button
-
-                disabled={page===totalPages}
-
-                onClick={()=>setPage(page+1)}
-
+                type="button"
+                disabled={page === totalPages}
+                onClick={() =>
+                    handlePageChange(page + 1)
+                }
             >
-
                 Next
-
             </button>
 
         </div>
-
     );
-
 }
 
 export default Pagination;

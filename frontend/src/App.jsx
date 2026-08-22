@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 
 import { useState } from "react";
-
+import ScrollToTop from "./components/ScrollToTop";
 // ================= COMPONENTS =================
 
 import Navbar from "./components/Navbar";
@@ -26,6 +26,9 @@ import ProductDetails from "./pages/ProductDetails";
 import CategoryList from "./pages/CategoryList";
 import BrandList from "./pages/BrandList";
 import Offers from "./pages/Offers";
+import PetAdoption from "./pages/PetAdoption";
+import HomeVisit from "./pages/HomeVisit";
+import Services from "./pages/Services";
 
 import Cart from "./pages/Card";
 import Orders from "./pages/Orders";
@@ -269,7 +272,10 @@ function AppContent() {
               path="/offers"
               element={<Offers />}
             />
-
+            <Route
+                path="/services"
+                element={<Services />}
+            />
 
             {/* =================================================
                 CART
@@ -350,6 +356,9 @@ function AppContent() {
               element={<PrescriptionUpload />}
             />
 
+            <Route path="/adoption" element={<PetAdoption />} />
+
+              <Route path="/home-visit" element={<HomeVisit />} />
 
             {/* =================================================
                 PAYMENT
@@ -563,7 +572,7 @@ function App() {
 
   return (
     <BrowserRouter>
-
+      <ScrollToTop />
       <AppContent />
 
     </BrowserRouter>

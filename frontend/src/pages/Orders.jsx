@@ -1,13 +1,25 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+
 import {
     FaClipboardCheck,
     FaBoxOpen,
     FaTruck,
     FaHome,
     FaCheckCircle,
+    FaTimesCircle,
+    FaShoppingBag,
+    FaBox,
+    FaArrowLeft,
+    FaMapMarkerAlt,
+    FaCreditCard,
+    FaCalendarAlt,
+    FaEye,
+    FaClock,
 } from "react-icons/fa";
+
 import "../styles/Orders.css";
+
 
 function Orders() {
 
@@ -17,29 +29,35 @@ function Orders() {
 
     const [activeTab, setActiveTab] = useState("history");
 
+    const [loading, setLoading] = useState(true);
+
+
+    // ===========================================
+    // LOAD ORDERS
+    // ===========================================
+
     useEffect(() => {
 
         loadOrders();
 
     }, []);
 
+
     const loadOrders = async () => {
 
         try {
+
+            setLoading(true);
 
             const response = await axios.get(
 
                 "http://127.0.0.1:8000/api/orders/",
 
                 {
-
                     headers: {
-
                         Authorization:
                             `Bearer ${localStorage.getItem("access")}`
-
                     }
-
                 }
 
             );
@@ -54,7 +72,18 @@ function Orders() {
 
         }
 
+        finally {
+
+            setLoading(false);
+
+        }
+
     };
+
+
+    // ===========================================
+    // LOAD ORDER DETAILS
+    // ===========================================
 
     const loadOrderDetails = async (id) => {
 
@@ -65,14 +94,10 @@ function Orders() {
                 `http://127.0.0.1:8000/api/orders/${id}/`,
 
                 {
-
                     headers: {
-
                         Authorization:
                             `Bearer ${localStorage.getItem("access")}`
-
                     }
-
                 }
 
             );
@@ -80,6 +105,11 @@ function Orders() {
             setSelectedOrder(response.data);
 
             setActiveTab("details");
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
 
         }
 
@@ -90,28 +120,11 @@ function Orders() {
         }
 
     };
-    const normalSteps = [
-        "Pending",
-        "Packed",
-        "Shipped",
-        "Out for Delivery",
-        "Delivered",
-    ];
 
-    // Cancelled Order Steps
-    const cancelledSteps = [
-        "Pending",
-        "Packed",
-        "Shipped",
-        "Out for Delivery",
-        "Cancelled",
-    ];
 
-    // Decide which tracker to show
-    const steps =
-        selectedOrder?.status === "Cancelled"
-            ? cancelledSteps
-            : normalSteps;
+    // ===========================================
+    // CANCEL ORDER
+    // ===========================================
 
     const cancelOrder = async (orderId) => {
 
@@ -120,6 +133,7 @@ function Orders() {
         );
 
         if (!confirmCancel) return;
+
 
         try {
 
@@ -131,461 +145,1212 @@ function Orders() {
 
                 {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("access")}`
+                        Authorization:
+                            `Bearer ${localStorage.getItem("access")}`
                     }
                 }
 
             );
 
+
             alert("Order cancelled successfully.");
 
-            loadOrders();
+            await loadOrders();
 
-            if (selectedOrder && selectedOrder.id === orderId) {
+            if (
+                selectedOrder &&
+                selectedOrder.id === orderId
+            ) {
 
-                loadOrderDetails(orderId);
+                await loadOrderDetails(orderId);
 
             }
 
-        } catch (error) {
+        }
+
+        catch (error) {
 
             console.log(error);
 
             alert(
+
                 error.response?.data?.message ||
+
                 "Unable to cancel order."
+
             );
 
         }
 
     };
-// Current active step
-    const currentStep =
+
+
+    // ===========================================
+    // ORDER TRACKING STEPS
+    // ===========================================
+
+    const normalSteps = [
+
+        "Pending",
+
+        "Packed",
+
+        "Shipped",
+
+        "Out for Delivery",
+
+        "Delivered",
+
+    ];
+
+
+    const cancelledSteps = [
+
+        "Pending",
+
+        "Packed",
+
+        "Shipped",
+
+        "Out for Delivery",
+
+        "Cancelled",
+
+    ];
+
+
+    const steps =
+
         selectedOrder?.status === "Cancelled"
+
+            ? cancelledSteps
+
+            : normalSteps;
+
+
+    const currentStep =
+
+        selectedOrder?.status === "Cancelled"
+
             ? steps.length - 1
+
             : steps.indexOf(selectedOrder?.status);
+
+
+    // ===========================================
+    // GET STATUS CLASS
+    // ===========================================
+
+    const getStatusClass = (status) => {
+
+        return status
+            ?.toLowerCase()
+            .replace(/\s+/g, "-");
+
+    };
+
+
+    // ===========================================
+    // LOADING
+    // ===========================================
+
+    if (loading) {
+
+        return (
+
+            <div className="orders-loading">
+
+                <div className="orders-spinner"></div>
+
+                <p>
+                    Loading your orders...
+                </p>
+
+            </div>
+
+        );
+
+    }
+
+
+    // ===========================================
+    // PAGE
+    // ===========================================
 
     return (
 
         <div className="orders-page">
 
-            <h1>My Orders</h1>
 
-            <div className="tabs">
+            {/* =====================================
+                PAGE HEADER
+            ====================================== */}
 
-                <button
+            <div className="orders-hero">
 
-                    className={
-                        activeTab === "history"
-                            ? "active-tab"
-                            : ""
-                    }
+                <div className="orders-container">
 
-                    onClick={() =>
-                        setActiveTab("history")
-                    }
+                    <div className="orders-hero-content">
 
-                >
-                    Order History
-                </button>
+                        <div className="orders-icon">
 
-                <button
+                            <FaShoppingBag />
 
-                    className={
-                        activeTab === "details"
-                            ? "active-tab"
-                            : ""
-                    }
+                        </div>
 
-                    disabled={!selectedOrder}
-
-                >
-                    Order Details
-
-                </button>
-
-            </div>
-
-            {activeTab === "history" && (
-
-    <div className="orders-list">
-
-        {orders.length === 0 ? (
-
-            <div className="empty-orders">
-
-                <h3>No Orders Found</h3>
-
-            </div>
-
-        ) : (
-
-            orders.map((order) => (
-
-                <div
-                    className="order-card"
-                    key={order.id}
-                >
-
-                    <div className="order-top">
 
                         <div>
 
+                            <span>
+                                ZENVE MARKETPLACE
+                            </span>
+
+                            <h1>
+                                My Orders
+                            </h1>
+
                             <p>
-
-                                {new Date(
-                                    order.order_date
-                                ).toLocaleDateString()}
-
+                                Track, manage and view all your pet care orders.
                             </p>
 
                         </div>
 
-                        <span
-                            className={`status ${order.status.toLowerCase()}`}
-                        >
+                    </div>
 
-                            {order.status}
+                </div>
 
-                        </span>
+            </div>
+
+
+            <main className="orders-container">
+
+
+                {/* =====================================
+                    ORDER SUMMARY
+                ====================================== */}
+
+                <div className="orders-summary">
+
+                    <div className="summary-card">
+
+                        <div className="summary-icon total">
+
+                            <FaShoppingBag />
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Total Orders
+                            </span>
+
+                            <strong>
+                                {orders.length}
+                            </strong>
+
+                        </div>
 
                     </div>
 
-                    <div className="order-body">
 
-                        <p>
+                    <div className="summary-card">
 
-                            <strong>Total Amount</strong>
+                        <div className="summary-icon pending">
 
-                        </p>
+                            <FaClock />
 
-                        <h2>
+                        </div>
 
-                            ₹{order.total_amount}
+                        <div>
 
-                        </h2>
+                            <span>
+                                Active Orders
+                            </span>
 
-                        <p>
+                            <strong>
 
-                            Total Items :
-                            {order.total_items}
+                                {
+                                    orders.filter(
+                                        (order) =>
+                                            ![
+                                                "Delivered",
+                                                "Cancelled"
+                                            ].includes(order.status)
+                                    ).length
+                                }
 
-                        </p>
+                            </strong>
+
+                        </div>
 
                     </div>
+
+
+                    <div className="summary-card">
+
+                        <div className="summary-icon delivered">
+
+                            <FaCheckCircle />
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Delivered
+                            </span>
+
+                            <strong>
+
+                                {
+                                    orders.filter(
+                                        (order) =>
+                                            order.status ===
+                                            "Delivered"
+                                    ).length
+                                }
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {/* =====================================
+                    TABS
+                ====================================== */}
+
+                <div className="orders-tabs">
 
                     <button
 
-                        className="order_view-btn"
+                        className={
+                            activeTab === "history"
+                                ? "active-tab"
+                                : ""
+                        }
 
                         onClick={() =>
-                            loadOrderDetails(order.id)
+                            setActiveTab("history")
                         }
 
                     >
 
-                        View Details
+                        <FaShoppingBag />
+
+                        Order History
+
+                    </button>
+
+
+                    <button
+
+                        className={
+                            activeTab === "details"
+                                ? "active-tab"
+                                : ""
+                        }
+
+                        disabled={!selectedOrder}
+
+                        onClick={() =>
+                            selectedOrder &&
+                            setActiveTab("details")
+                        }
+
+                    >
+
+                        <FaClipboardCheck />
+
+                        Order Details
 
                     </button>
 
                 </div>
 
-            ))
 
-        )}
-
-    </div>
-
-)}
-        {
-
-activeTab === "details" && selectedOrder && (
-
-    <div className="order-details">
-
-        <div className="details-header">
-
-
-
-            <span
-                className={`status ${selectedOrder.status.toLowerCase()}`}
-            >
-
-                {selectedOrder.status}
-
-            </span>
-
-        </div>
-
-        <div className="customer-info">
-
-            <p>
-
-                <strong>Customer :</strong>
-
-                {selectedOrder.customer_name}
-
-            </p>
-
-            <p>
-
-                <strong>Order Date :</strong>
+                {/* =====================================
+                    ORDER HISTORY
+                ====================================== */}
 
                 {
 
-                    new Date(
+                    activeTab === "history" && (
 
-                        selectedOrder.order_date
+                        <div className="orders-list">
 
-                    ).toLocaleString()
+
+                            {
+
+                                orders.length === 0
+
+                                    ?
+
+                                    <div className="empty-orders">
+
+                                        <div className="empty-orders-icon">
+
+                                            <FaBox />
+
+                                        </div>
+
+                                        <h3>
+                                            No Orders Yet
+                                        </h3>
+
+                                        <p>
+                                            You haven't placed any orders yet.
+                                        </p>
+
+                                    </div>
+
+
+                                    :
+
+                                    orders.map((order) => (
+
+                                        <div
+                                            className="modern-order-card"
+                                            key={order.id}
+                                        >
+
+
+                                            {/* CARD TOP */}
+
+                                            <div className="modern-order-header">
+
+                                                <div>
+
+                                                    <span className="order-number">
+
+                                                        Order #{order.id}
+
+                                                    </span>
+
+                                                    <p>
+
+                                                        <FaCalendarAlt />
+
+                                                        {
+
+                                                            new Date(
+                                                                order.order_date
+                                                            ).toLocaleDateString(
+                                                                "en-IN",
+                                                                {
+                                                                    day: "numeric",
+                                                                    month: "short",
+                                                                    year: "numeric"
+                                                                }
+                                                            )
+
+                                                        }
+
+                                                    </p>
+
+                                                </div>
+
+
+                                                <span
+
+                                                    className={
+                                                        `status-badge ${getStatusClass(
+                                                            order.status
+                                                        )}`
+                                                    }
+
+                                                >
+
+                                                    {order.status}
+
+                                                </span>
+
+                                            </div>
+
+
+                                            {/* CARD BODY */}
+
+                                            <div className="modern-order-body">
+
+
+                                                <div className="order-info-item">
+
+                                                    <span>
+                                                        Total Amount
+                                                    </span>
+
+                                                    <strong className="order-price">
+
+                                                        ₹{
+                                                            Number(
+                                                                order.total_amount
+                                                            ).toFixed(2)
+                                                        }
+
+                                                    </strong>
+
+                                                </div>
+
+
+                                                <div className="order-info-item">
+
+                                                    <span>
+                                                        Total Items
+                                                    </span>
+
+                                                    <strong>
+
+                                                        {order.total_items}
+
+                                                        {" "}Items
+
+                                                    </strong>
+
+                                                </div>
+
+
+                                                <div className="order-info-item">
+
+                                                    <span>
+                                                        Payment
+                                                    </span>
+
+                                                    <strong>
+
+                                                        {order.payment_status ||
+                                                            "Pending"}
+
+                                                    </strong>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            {/* CARD FOOTER */}
+
+                                            <div className="modern-order-footer">
+
+                                                <span>
+
+                                                    <FaBoxOpen />
+
+                                                    View complete order details
+
+                                                </span>
+
+
+                                                <button
+
+                                                    className="view-order-btn"
+
+                                                    onClick={() =>
+                                                        loadOrderDetails(
+                                                            order.id
+                                                        )
+                                                    }
+
+                                                >
+
+                                                    <FaEye />
+
+                                                    View Order
+
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
+                                    ))
+
+                            }
+
+                        </div>
+
+                    )
 
                 }
 
-            </p>
 
-            <div className="shipping-address">
-
-                <strong>Shipping Address :</strong>
-
-                {selectedOrder.shipping_address ? (
-
-                    <div className="mt-2">
-
-                        <p>{selectedOrder.shipping_address.full_name}</p>
-
-                        <p>{selectedOrder.shipping_address.phone_number}</p>
-
-                        <p>{selectedOrder.shipping_address.address_line1}</p>
-
-                        {selectedOrder.shipping_address.address_line2 && (
-                            <p>{selectedOrder.shipping_address.address_line2}</p>
-                        )}
-
-                        <p>
-                            {selectedOrder.shipping_address.city},
-                            {" "}
-                            {selectedOrder.shipping_address.state}
-                        </p>
-
-                        <p>
-                            {selectedOrder.shipping_address.country}
-                            {" - "}
-                            {selectedOrder.shipping_address.postal_code}
-                        </p>
-
-                    </div>
-
-                ) : (
-
-                    <p>No address available.</p>
-
-                )}
-
-            </div>
-            <p>
-
-                <strong>Payment Method :</strong>
-
-                {selectedOrder.payment_method}
-
-            </p>
-
-            <p>
-
-                <strong>Payment Status :</strong>
-
-                {selectedOrder.payment_status}
-
-            </p>
-
-        </div>
-
-        <h3>
-
-            Products
-
-        </h3>
-
-        <table className="details-table">
-
-            <thead>
-
-                <tr>
-
-                    <th>Image</th>
-
-                    <th>Product</th>
-
-                    <th>Price</th>
-
-                    <th>Quantity</th>
-
-                    <th>Subtotal</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
+                {/* =====================================
+                    ORDER DETAILS
+                ====================================== */}
 
                 {
 
-                    selectedOrder.items.map((item) => (
+                    activeTab === "details" &&
+                    selectedOrder && (
 
-                        <tr key={item.id}>
+                        <div className="order-details-modern">
 
-                            <td>
 
-                                <img
+                            {/* DETAILS HEADER */}
 
-                                    src={`http://127.0.0.1:8000${item.product_image}`}
+                            <div className="details-top-header">
 
-                                    alt={item.product_name}
+                                <div>
 
-                                    className="order-image"
+                                    <button
 
-                                />
+                                        className="back-orders-link"
 
-                            </td>
+                                        onClick={() =>
+                                            setActiveTab("history")
+                                        }
 
-                            <td>
+                                    >
 
-                                {item.product_name}
+                                        <FaArrowLeft />
 
-                            </td>
+                                        Back to Orders
 
-                            <td>
+                                    </button>
 
-                                ₹{item.price}
 
-                            </td>
+                                    <h2>
 
-                            <td>
+                                        Order #{selectedOrder.id}
 
-                                {item.quantity}
+                                    </h2>
 
-                            </td>
 
-                            <td>
+                                    <p>
 
-                                ₹{item.subtotal}
+                                        <FaCalendarAlt />
 
-                            </td>
+                                        {
 
-                        </tr>
+                                            new Date(
+                                                selectedOrder.order_date
+                                            ).toLocaleString()
 
-                    ))
+                                        }
+
+                                    </p>
+
+                                </div>
+
+
+                                <span
+
+                                    className={
+                                        `status-badge large ${getStatusClass(
+                                            selectedOrder.status
+                                        )}`
+                                    }
+
+                                >
+
+                                    {selectedOrder.status}
+
+                                </span>
+
+                            </div>
+
+
+                            {/* ORDER INFO CARDS */}
+
+                            <div className="details-info-grid">
+
+
+                                {/* SHIPPING */}
+
+                                <div className="details-info-card">
+
+                                    <div className="details-card-title">
+
+                                        <div className="details-card-icon">
+
+                                            <FaMapMarkerAlt />
+
+                                        </div>
+
+                                        <h3>
+                                            Shipping Address
+                                        </h3>
+
+                                    </div>
+
+
+                                    {
+
+                                        selectedOrder.shipping_address
+
+                                            ?
+
+                                            <div className="address-content">
+
+                                                <strong>
+
+                                                    {
+                                                        selectedOrder
+                                                            .shipping_address
+                                                            .full_name
+                                                    }
+
+                                                </strong>
+
+                                                <p>
+
+                                                    {
+                                                        selectedOrder
+                                                            .shipping_address
+                                                            .phone_number
+                                                    }
+
+                                                </p>
+
+                                                <p>
+
+                                                    {
+                                                        selectedOrder
+                                                            .shipping_address
+                                                            .address_line1
+                                                    }
+
+                                                </p>
+
+
+                                                {
+
+                                                    selectedOrder
+                                                        .shipping_address
+                                                        .address_line2 && (
+
+                                                        <p>
+
+                                                            {
+                                                                selectedOrder
+                                                                    .shipping_address
+                                                                    .address_line2
+                                                            }
+
+                                                        </p>
+
+                                                    )
+
+                                                }
+
+
+                                                <p>
+
+                                                    {
+                                                        selectedOrder
+                                                            .shipping_address
+                                                            .city
+                                                    },
+
+                                                    {" "}
+
+                                                    {
+                                                        selectedOrder
+                                                            .shipping_address
+                                                            .state
+                                                    }
+
+                                                </p>
+
+
+                                                <p>
+
+                                                    {
+                                                        selectedOrder
+                                                            .shipping_address
+                                                            .country
+                                                    }
+
+                                                    {" - "}
+
+                                                    {
+                                                        selectedOrder
+                                                            .shipping_address
+                                                            .postal_code
+                                                    }
+
+                                                </p>
+
+                                            </div>
+
+
+                                            :
+
+                                            <p className="no-data">
+
+                                                No address available.
+
+                                            </p>
+
+                                    }
+
+                                </div>
+
+
+                                {/* PAYMENT */}
+
+                                <div className="details-info-card">
+
+                                    <div className="details-card-title">
+
+                                        <div className="details-card-icon">
+
+                                            <FaCreditCard />
+
+                                        </div>
+
+                                        <h3>
+                                            Payment Information
+                                        </h3>
+
+                                    </div>
+
+
+                                    <div className="payment-info">
+
+                                        <div>
+
+                                            <span>
+                                                Customer
+                                            </span>
+
+                                            <strong>
+
+                                                {
+                                                    selectedOrder.customer_name
+                                                }
+
+                                            </strong>
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <span>
+                                                Payment Method
+                                            </span>
+
+                                            <strong>
+
+                                                {
+                                                    selectedOrder.payment_method
+                                                }
+
+                                            </strong>
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <span>
+                                                Payment Status
+                                            </span>
+
+                                            <strong>
+
+                                                {
+                                                    selectedOrder.payment_status
+                                                }
+
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            {/* =====================================
+                                PRODUCTS
+                            ====================================== */}
+
+                            <div className="order-products-section">
+
+                                <div className="section-heading">
+
+                                    <div>
+
+                                        <span>
+                                            ORDER ITEMS
+                                        </span>
+
+                                        <h3>
+                                            Products in your order
+                                        </h3>
+
+                                    </div>
+
+
+                                    <strong>
+
+                                        {
+                                            selectedOrder.items?.length || 0
+                                        }
+
+                                        {" "} Items
+
+                                    </strong>
+
+                                </div>
+
+
+                                <div className="order-products-list">
+
+                                    {
+
+                                        selectedOrder.items?.map(
+                                            (item) => {
+
+                                                const imageUrl =
+
+                                                    item.product_image
+
+                                                        ?
+
+                                                        item.product_image.startsWith(
+                                                            "http"
+                                                        )
+
+                                                            ?
+
+                                                            item.product_image
+
+                                                            :
+
+                                                            `http://127.0.0.1:8000${item.product_image}`
+
+                                                        :
+
+                                                        "https://via.placeholder.com/120";
+
+
+                                                return (
+
+                                                    <div
+                                                        className="order-product-item"
+                                                        key={item.id}
+                                                    >
+
+                                                        <div className="order-product-image">
+
+                                                            <img
+                                                                src={imageUrl}
+                                                                alt={
+                                                                    item.product_name
+                                                                }
+                                                            />
+
+                                                        </div>
+
+
+                                                        <div className="order-product-main">
+
+                                                            <h4>
+
+                                                                {
+                                                                    item.product_name
+                                                                }
+
+                                                            </h4>
+
+                                                            <span>
+
+                                                                Quantity:
+                                                                {" "}
+                                                                {
+                                                                    item.quantity
+                                                                }
+
+                                                            </span>
+
+                                                        </div>
+
+
+                                                        <div className="order-product-price">
+
+                                                            <span>
+                                                                Price
+                                                            </span>
+
+                                                            <strong>
+
+                                                                ₹{
+                                                                    Number(
+                                                                        item.price
+                                                                    ).toFixed(2)
+                                                                }
+
+                                                            </strong>
+
+                                                        </div>
+
+
+                                                        <div className="order-product-subtotal">
+
+                                                            <span>
+                                                                Subtotal
+                                                            </span>
+
+                                                            <strong>
+
+                                                                ₹{
+                                                                    Number(
+                                                                        item.subtotal
+                                                                    ).toFixed(2)
+                                                                }
+
+                                                            </strong>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                );
+
+                                            }
+
+                                        )
+
+                                    }
+
+                                </div>
+
+                            </div>
+
+
+                            {/* =====================================
+                                TOTAL + CANCEL
+                            ====================================== */}
+
+                            <div className="order-summary-bottom">
+
+                                <div>
+
+                                    <span>
+                                        Order Total
+                                    </span>
+
+                                    <h2>
+
+                                        ₹{
+                                            Number(
+                                                selectedOrder.total_amount
+                                            ).toFixed(2)
+                                        }
+
+                                    </h2>
+
+                                </div>
+
+
+                                {
+
+                                    [
+                                        "Pending",
+                                        "Placed",
+                                        "Confirmed"
+                                    ].includes(
+                                        selectedOrder.status
+                                    ) && (
+
+                                        <button
+
+                                            className="cancel-order-btn"
+
+                                            onClick={() =>
+                                                cancelOrder(
+                                                    selectedOrder.id
+                                                )
+                                            }
+
+                                        >
+
+                                            <FaTimesCircle />
+
+                                            Cancel Order
+
+                                        </button>
+
+                                    )
+
+                                }
+
+                            </div>
+
+
+                            {/* =====================================
+                                TRACKING
+                            ====================================== */}
+
+                            <div className="tracking-section">
+
+                                <div className="section-heading">
+
+                                    <div>
+
+                                        <span>
+                                            ORDER STATUS
+                                        </span>
+
+                                        <h3>
+                                            Track your order
+                                        </h3>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div className="modern-order-tracker">
+
+                                    {
+
+                                        steps.map(
+                                            (step, index) => {
+
+                                                const isCancelled =
+                                                    step === "Cancelled";
+
+                                                const isActive =
+                                                    index <= currentStep;
+
+                                                return (
+
+                                                    <div
+                                                        className="tracker-step-modern"
+                                                        key={step}
+                                                    >
+
+
+                                                        <div className="tracker-step-content">
+
+                                                            <div
+
+                                                                className={
+                                                                    `tracker-icon-modern ${
+                                                                        isCancelled
+                                                                            ? "cancelled"
+                                                                            : isActive
+                                                                            ? "active"
+                                                                            : ""
+                                                                    }`
+                                                                }
+
+                                                            >
+
+                                                                {
+
+                                                                    index === 0 &&
+                                                                    <FaClipboardCheck />
+
+                                                                }
+
+                                                                {
+
+                                                                    index === 1 &&
+                                                                    <FaBoxOpen />
+
+                                                                }
+
+                                                                {
+
+                                                                    index === 2 &&
+                                                                    <FaTruck />
+
+                                                                }
+
+                                                                {
+
+                                                                    index === 3 &&
+                                                                    <FaHome />
+
+                                                                }
+
+                                                                {
+
+                                                                    step ===
+                                                                        "Delivered" &&
+                                                                    <FaCheckCircle />
+
+                                                                }
+
+                                                                {
+
+                                                                    step ===
+                                                                        "Cancelled" &&
+                                                                    <FaTimesCircle />
+
+                                                                }
+
+                                                            </div>
+
+
+                                                            <p>
+
+                                                                {step}
+
+                                                            </p>
+
+                                                        </div>
+
+
+                                                        {
+
+                                                            index !==
+                                                                steps.length - 1 && (
+
+                                                                <div
+
+                                                                    className={
+                                                                        `tracker-line-modern ${
+                                                                            index <
+                                                                            currentStep
+                                                                                ? "active"
+                                                                                : ""
+                                                                        }`
+                                                                    }
+
+                                                                />
+
+                                                            )
+
+                                                        }
+
+                                                    </div>
+
+                                                );
+
+                                            }
+
+                                        )
+
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    )
 
                 }
 
-            </tbody>
-
-        </table>
-
-        <div className="order-total">
-
-            <h2>
-
-                Total : ₹{selectedOrder.total_amount}
-
-            </h2>
-           {["Pending", "Placed", "Confirmed"].includes(selectedOrder.status) && (
-                <button
-                    className="cancel-order-btn"
-                    onClick={() => cancelOrder(selectedOrder.id)}
-                >
-                    Cancel Order
-                </button>
-            )}
-
-        </div>
-
-        <div className="tracking">
-
-            <h3>
-
-                Order Tracking
-
-            </h3>
-
- <div className="order-tracker">
-
-    {steps.map((step, index) => (
-
-        <div
-            className="tracker-step"
-            key={step}
-        >
-
-            <div
-                className={
-                    step === "Cancelled"
-                        ? "tracker-icon cancelled"
-                        : index <= currentStep
-                        ? "tracker-icon active"
-                        : "tracker-icon"
-                }
-            >
-
-                {index === 0 && <FaClipboardCheck />}
-
-                {index === 1 && <FaBoxOpen />}
-
-                {index === 2 && <FaTruck />}
-
-                {index === 3 && <FaHome />}
-
-                {step === "Delivered" && <FaCheckCircle />}
-
-                {step === "Cancelled" && (
-                    <span style={{fontWeight:"bold"}}>✖</span>
-                )}
-
-            </div>
-
-            <p>{step}</p>
-
-            {index !== steps.length - 1 && (
-
-                <div
-                    className={
-                        step === "Cancelled"
-                            ? "tracker-line cancelled"
-                            : index < currentStep
-                            ? "tracker-line active"
-                            : "tracker-line"
-                    }
-                ></div>
-
-            )}
-
-        </div>
-
-    ))}
-
-</div>
-        </div>
-
-        <button
-
-            className="back-btn"
-
-            onClick={() => setActiveTab("history")}
-
-        >
-
-            Back to Orders
-
-        </button>
-
-    </div>
-
-    )}
+            </main>
 
         </div>
 
     );
 
 }
+
 
 export default Orders;

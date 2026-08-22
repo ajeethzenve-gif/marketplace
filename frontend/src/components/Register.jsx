@@ -17,6 +17,7 @@ import {
 } from "react-icons/fa";
 
 import "../styles/Register.css";
+import logo from "../assets/logo/Zenve - 01 (1).png";
 
 function Register() {
   const navigate = useNavigate();
@@ -253,14 +254,18 @@ function Register() {
 
           <div className="register-brand">
 
-            <div className="register-paw-box">
-              <FaPaw />
+           <div className="logo-box">
+              <img
+                src={logo}
+                alt="PetCare Store"
+                className="brand-logo"
+              />
             </div>
 
             <div className="register-brand-text">
 
-              <h1>
-                PetCare Store
+               <h1>
+               MarketPlace
               </h1>
 
               <span>

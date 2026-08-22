@@ -9,10 +9,18 @@ import {
     FaRegHeart,
     FaStar,
     FaShoppingCart,
-    FaBolt
+    FaBolt,
+    FaMinus,
+    FaPlus,
+    FaArrowLeft,
+    FaBox,
+    FaCheckCircle,
+    FaTag,
+    FaPaw,
 } from "react-icons/fa";
 
 import "../styles/ProductDetails.css";
+
 
 function ProductDetails() {
 
@@ -32,42 +40,88 @@ function ProductDetails() {
 
     const [relatedProducts, setRelatedProducts] = useState([]);
 
-    // =============================
-    // Load Product
-    // =============================
 
+    // =============================
+    // LOAD PRODUCT
+    // =============================
 
     useEffect(() => {
+
         const fetchData = async () => {
+
             await loadProduct();
-            await loadRelatedProducts(id);
 
             if (token) {
                 await checkWishlist();
             }
+
         };
 
         fetchData();
+
     }, [id]);
 
 
     const loadProduct = async () => {
+
         try {
-            const response = await api.get(`products/${id}/`);
+
+            setLoading(true);
+
+            const response = await api.get(
+                `products/${id}/`
+            );
 
             setProduct(response.data);
 
-            loadRelatedProducts(response.data.id);
+            await loadRelatedProducts(
+                response.data.id
+            );
 
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setLoading(false);
         }
+
+        catch (error) {
+
+            console.log(error);
+
+        }
+
+        finally {
+
+            setLoading(false);
+
+        }
+
     };
 
+
     // =============================
-    // Wishlist
+    // RELATED PRODUCTS
+    // =============================
+
+    const loadRelatedProducts = async (productId) => {
+
+        try {
+
+            const response = await api.get(
+                `products/${productId}/related/`
+            );
+
+            setRelatedProducts(response.data);
+
+        }
+
+        catch (error) {
+
+            console.log(error);
+
+        }
+
+    };
+
+
+    // =============================
+    // WISHLIST CHECK
     // =============================
 
     const checkWishlist = async () => {
@@ -79,16 +133,13 @@ function ProductDetails() {
                 "http://127.0.0.1:8000/api/wishlist/",
 
                 {
-
                     headers: {
-
                         Authorization: `Bearer ${token}`
-
                     }
-
                 }
 
             );
+
 
             const exists = response.data.some((item) => {
 
@@ -97,6 +148,7 @@ function ProductDetails() {
                     return item.product_id === Number(id);
 
                 }
+
 
                 if (item.product) {
 
@@ -116,6 +168,7 @@ function ProductDetails() {
 
             });
 
+
             setInWishlist(exists);
 
         }
@@ -127,27 +180,12 @@ function ProductDetails() {
         }
 
     };
-   const loadRelatedProducts = async (productId) => {
 
-        try {
 
-            const response = await api.get(
-                `products/${productId}/related/`
-            );
+    // =============================
+    // TOGGLE WISHLIST
+    // =============================
 
-            console.log("Related Products:", response.data);
-
-            setRelatedProducts(response.data);
-
-        }
-
-        catch (error) {
-
-            console.log(error);
-
-        }
-
-    };
     const toggleWishlist = async () => {
 
         if (!token) {
@@ -158,6 +196,7 @@ function ProductDetails() {
 
         }
 
+
         try {
 
             const response = await axios.post(
@@ -165,27 +204,20 @@ function ProductDetails() {
                 "http://127.0.0.1:8000/api/wishlist/toggle/",
 
                 {
-
                     product_id: id
-
                 },
 
                 {
-
                     headers: {
-
                         Authorization: `Bearer ${token}`
-
                     }
-
                 }
 
             );
 
+
             setInWishlist(
-
                 response.data.in_wishlist
-
             );
 
         }
@@ -198,8 +230,9 @@ function ProductDetails() {
 
     };
 
+
     // =============================
-    // Quantity
+    // QUANTITY
     // =============================
 
     const increaseQuantity = () => {
@@ -207,44 +240,36 @@ function ProductDetails() {
         if (!product) return;
 
         setQuantity((prev) =>
-
             prev < product.stock
-
                 ? prev + 1
-
                 : prev
-
         );
 
     };
+
 
     const decreaseQuantity = () => {
 
         setQuantity((prev) =>
-
             prev > 1
-
                 ? prev - 1
-
                 : prev
-
         );
 
     };
 
+
     // =============================
-    // Total Price
+    // TOTAL PRICE
     // =============================
 
-    const totalPrice =
+    const totalPrice = product
+        ? Number(product.price) * quantity
+        : 0;
 
-        product
 
-            ? Number(product.price) * quantity
-
-            : 0;
-        // =============================
-    // Add To Cart
+    // =============================
+    // ADD TO CART
     // =============================
 
     const addToCart = async () => {
@@ -257,6 +282,7 @@ function ProductDetails() {
 
         }
 
+
         try {
 
             await axios.post(
@@ -264,21 +290,14 @@ function ProductDetails() {
                 "http://127.0.0.1:8000/api/cart/add/",
 
                 {
-
                     product_id: product.id,
-
                     quantity: quantity
-
                 },
 
                 {
-
                     headers: {
-
                         Authorization: `Bearer ${token}`
-
                     }
-
                 }
 
             );
@@ -297,548 +316,716 @@ function ProductDetails() {
 
     };
 
-// =============================
-// Buy Now
-// =============================
-const buyNow = () => {
 
-    if (!token) {
+    // =============================
+    // BUY NOW
+    // =============================
 
-        navigate("/login");
+    const buyNow = () => {
 
-        return;
+        if (!token) {
 
-    }
+            navigate("/login");
 
-    navigate("/payment", {
+            return;
 
-        state: {
+        }
 
-            checkoutType: "buy_now",
 
-            product: {
+        navigate("/payment", {
 
-                id: product.id,
+            state: {
 
-                name: product.product_name,
+                checkoutType: "buy_now",
 
-                image: product.product_image
-                    ? (
-                        product.product_image.startsWith("http")
-                            ? product.product_image
-                            : `http://127.0.0.1:8000${product.product_image}`
-                    )
-                    : "https://via.placeholder.com/150",
+                product: {
 
-                quantity: quantity,
+                    id: product.id,
 
-                price: Number(product.price),
+                    name: product.product_name,
+
+                    image:
+
+                        product.product_image
+
+                            ?
+
+                            (
+
+                                product.product_image.startsWith("http")
+
+                                    ?
+
+                                    product.product_image
+
+                                    :
+
+                                    `http://127.0.0.1:8000${product.product_image}`
+
+                            )
+
+                            :
+
+                            "https://via.placeholder.com/500",
+
+                    quantity: quantity,
+
+                    price: Number(product.price),
+
+                },
+
+                subtotal:
+                    Number(product.price) * quantity,
+
+                shipping: 0,
+
+                total:
+                    Number(product.price) * quantity,
+
+                totalItems: quantity,
 
             },
 
-            subtotal: Number(product.price) * quantity,
+        });
 
-            shipping: 0,
+    };
 
-            total: Number(product.price) * quantity,
 
-            totalItems: quantity,
-
-        },
-
-    });
-
-};
     // =============================
-    // Loading
+    // LOADING
     // =============================
 
     if (loading) {
 
         return (
 
-            <h3 className="text-center mt-5">
+            <div className="product-loading">
 
-                Loading...
+                <div className="loading-spinner"></div>
 
-            </h3>
+                <p>
+                    Loading product details...
+                </p>
+
+            </div>
 
         );
 
     }
+
+
+    // =============================
+    // PRODUCT NOT FOUND
+    // =============================
 
     if (!product) {
 
         return (
 
-            <h3 className="text-center mt-5">
+            <div className="product-not-found">
 
-                Product not found.
+                <FaBox />
 
-            </h3>
+                <h3>
+                    Product not found
+                </h3>
+
+                <Link
+                    to="/products"
+                    className="back-products-btn"
+                >
+
+                    <FaArrowLeft />
+
+                    Back to Products
+
+                </Link>
+
+            </div>
 
         );
 
     }
 
+
+    const productImage = product.product_image
+
+        ?
+
+        (
+
+            product.product_image.startsWith("http")
+
+                ?
+
+                product.product_image
+
+                :
+
+                `http://127.0.0.1:8000${product.product_image}`
+
+        )
+
+        :
+
+        "https://via.placeholder.com/600x600";
+
+
+    // =============================
+    // PAGE
+    // =============================
+
     return (
 
-        <div className="container py-5">
+        <div className="product-details-page">
 
-            <div className="row g-4">
 
-                {/* Product Image */}
+            {/* =============================
+                BREADCRUMB
+            ============================= */}
 
-                <div className="col-lg-5">
+            <div className="product-breadcrumb">
 
-                    <div className="product-image-card">
+                <div className="product-details-container">
 
-                        <img
+                    <Link to="/">
+                        Home
+                    </Link>
 
-                            src={
+                    <span>/</span>
 
-                                product.product_image
+                    <Link to="/products">
+                        Products
+                    </Link>
 
-                                    ?
+                    <span>/</span>
 
-                                    (
-
-                                        product.product_image.startsWith("http")
-
-                                            ?
-
-                                            product.product_image
-
-                                            :
-
-                                            `http://127.0.0.1:8000${product.product_image}`
-
-                                    )
-
-                                    :
-
-                                    "https://via.placeholder.com/500x500"
-
-                            }
-
-                            alt={product.product_name}
-
-                            className="img-fluid rounded"
-
-                        />
-
-                    </div>
+                    <strong>
+                        {product.product_name}
+                    </strong>
 
                 </div>
 
-                {/* Product Details */}
+            </div>
 
-                <div className="col-lg-7">
 
-                    <div className="product-info-card">
+            {/* =============================
+                PRODUCT SECTION
+            ============================= */}
 
-                        <div className="d-flex justify-content-between align-items-start">
+            <main className="product-details-container">
 
-                            <div>
+                <div className="product-details-grid">
 
-                                <h2 className="fw-bold">
 
-                                    {product.product_name}
+                    {/* =============================
+                        PRODUCT IMAGE
+                    ============================= */}
 
-                                </h2>
+                    <section className="product-gallery">
 
-                                <p className="text-muted">
+                        <div className="product-image-wrapper">
 
-                                    {product.brand_name}
+                            <div className="product-image-top">
 
-                                </p>
+                                <span className="product-category-badge">
+
+                                    <FaTag />
+
+                                    {product.category_name}
+
+                                </span>
+
+
+                                <button
+                                    className={
+                                        `wishlist-circle ${
+                                            inWishlist
+                                                ? "active"
+                                                : ""
+                                        }`
+                                    }
+                                    onClick={toggleWishlist}
+                                    aria-label="Toggle wishlist"
+                                >
+
+                                    {
+
+                                        inWishlist
+
+                                            ?
+
+                                            <FaHeart />
+
+                                            :
+
+                                            <FaRegHeart />
+
+                                    }
+
+                                </button>
 
                             </div>
 
-                            <button
 
-                                className="btn btn-light border"
+                            <img
+                                src={productImage}
+                                alt={product.product_name}
+                                className="main-product-image"
+                            />
 
-                                onClick={toggleWishlist}
 
-                            >
+                            <div className="image-bottom-info">
 
-                                {
+                                <span>
 
-                                    inWishlist
+                                    <FaPaw />
 
-                                        ?
+                                    {product.pet_type || "All Pets"}
 
-                                        <FaHeart
+                                </span>
 
-                                            color="red"
-
-                                            size={24}
-
-                                        />
-
-                                        :
-
-                                        <FaRegHeart
-
-                                            color="#666"
-
-                                            size={24}
-
-                                        />
-
-                                }
-
-                            </button>
+                            </div>
 
                         </div>
 
-                        {/* Rating */}
+                    </section>
 
-                        <div className="rating-section my-3">
 
-                            {
+                    {/* =============================
+                        PRODUCT INFORMATION
+                    ============================= */}
 
-                                [1, 2, 3, 4, 5].map((star) => (
+                    <section className="product-details-content">
 
-                                    <FaStar
 
-                                        key={star}
+                        {/* BRAND */}
 
-                                        className={
+                        <p className="product-brand">
 
-                                            star <= Math.round(product.average_rating || 0)
+                            {product.brand_name || "Zenve"}
 
-                                                ?
+                        </p>
 
-                                                "star-filled"
 
-                                                :
+                        {/* TITLE */}
 
-                                                "star-empty"
+                        <h1 className="product-title">
 
-                                        }
+                            {product.product_name}
 
-                                    />
+                        </h1>
 
-                                ))
 
-                            }
+                        {/* RATING */}
 
-                            <span className="ms-2">
+                        <div className="product-rating-row">
+
+                            <div className="product-stars">
+
+                                {
+
+                                    [1, 2, 3, 4, 5].map(
+                                        (star) => (
+
+                                            <FaStar
+                                                key={star}
+                                                className={
+                                                    star <=
+                                                    Math.round(
+                                                        product.average_rating || 0
+                                                    )
+
+                                                        ?
+
+                                                        "star-filled"
+
+                                                        :
+
+                                                        "star-empty"
+                                                }
+                                            />
+
+                                        )
+                                    )
+
+                                }
+
+                            </div>
+
+
+                            <span className="rating-value">
 
                                 {product.average_rating || 0}/5
 
                             </span>
 
-                        </div>
-
-                        {/* Price */}
-
-                        <h2 className="text-success fw-bold">
-
-                            ₹ {product.price}
-
-                        </h2>
-
-                        <hr />
-
-                        <h5>Description</h5>
-
-                        <p>
-
-                            {product.description}
-
-                        </p>
-
-                        {/* Product Info Table */}
-
-                        <table className="table table-bordered mt-3">
-
-                            <tbody>
-
-                                <tr>
-
-                                    <th width="180">
-
-                                        Category
-
-                                    </th>
-
-                                    <td>
-
-                                        {product.category_name}
-
-                                    </td>
-
-                                </tr>
-
-                                <tr>
-
-                                    <th>
-
-                                        Brand
-
-                                    </th>
-
-                                    <td>
-
-                                        {product.brand_name}
-
-                                    </td>
-
-                                </tr>
-
-                                <tr>
-
-                                    <th>
-
-                                        Pet Type
-
-                                    </th>
-
-                                    <td>
-
-                                        {product.pet_type}
-
-                                    </td>
-
-                                </tr>
-
-                                <tr>
-
-                                    <th>
-
-                                        Weight
-
-                                    </th>
-
-                                    <td>
-
-                                        {product.weight}
-
-                                    </td>
-
-                                </tr>
-
-                                <tr>
-
-                                    <th>
-
-                                        Stock
-
-                                    </th>
-
-                                    <td>
-
-                                        {
-
-                                            product.stock > 0
-
-                                                ?
-
-                                                <span className="text-success fw-bold">
-
-                                                    In Stock ({product.stock})
-
-                                                </span>
-
-                                                :
-
-                                                <span className="text-danger fw-bold">
-
-                                                    Out of Stock
-
-                                                </span>
-
-                                        }
-
-                                    </td>
-
-                                </tr>
-
-                            </tbody>
-
-                        </table>
-                                {/* Quantity */}
-
-                        <div className="mt-4">
-
-                            <label className="form-label">
-
-                                <strong>Quantity</strong>
-
-                            </label>
-
-                            <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
-
-                                <div className="d-flex align-items-center">
-
-                                    <button
-                                        className="btn btn-outline-secondary"
-                                        onClick={decreaseQuantity}
-                                        disabled={quantity === 1}
-                                    >
-                                        -
-                                    </button>
-
-                                    <input
-                                        type="text"
-                                        readOnly
-                                        value={quantity}
-                                        className="form-control text-center mx-2"
-                                        style={{ width: "70px",
-                                        marginTop:"0px"}}
-                                    />
-
-                                    <button
-                                        className="btn btn-outline-secondary"
-                                        onClick={increaseQuantity}
-                                        disabled={quantity >= product.stock}
-                                    >
-                                        +
-                                    </button>
-
-                                </div>
-
-                                <div className="btn btn-outline-primary">
-
-                                    <strong>Total Price :</strong>
-
-                                    {" "}
-
-                                    ₹ {totalPrice.toFixed(2)}
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        {/* Action Buttons */}
-
-                        <div className="d-flex flex-wrap gap-3 mt-4">
-
-                            <button
-
-                                className="btn btn-warning"
-
-                                onClick={addToCart}
-
-                                disabled={product.stock === 0}
-
-                            >
-
-                                <FaShoppingCart />
-
-                                {" "}
-
-                                Add To Cart
-
-                            </button>
-
-                            <button
-
-                                className="btn btn-success"
-
-                                onClick={buyNow}
-
-                                disabled={product.stock === 0}
-
-                            >
-
-                                <FaBolt />
-
-                                {" "}
-
-                                Buy Now
-
-                            </button>
 
                             <Link
-
                                 to={`/products/${id}/reviews`}
-
-                                className="btn btn-primary"
-
+                                className="review-link"
                             >
 
-                                Reviews
-
-                            </Link>
-
-                            <Link
-
-                                to="/products"
-
-                                className="btn btn-secondary"
-
-                            >
-
-                                Back
+                                See Reviews
 
                             </Link>
 
                         </div>
 
-                    </div>
 
-                </div>
+                        {/* PRICE */}
 
-            </div>
-            {/* Related Products */}
+                        <div className="product-price-section">
 
-            <div className="container mt-5">
+                            <span className="price-label">
 
-                <h3 className="fw-bold mb-4">
+                                Price
 
-                    Related Products
+                            </span>
 
-                </h3>
+                            <h2>
 
-                <div className="row">
+                                ₹ {Number(product.price).toFixed(2)}
 
-                    {
+                            </h2>
 
-                        relatedProducts.length > 0 ?
+                        </div>
 
-                        relatedProducts.map((item) => (
 
-                            <div
-                                className="col-lg-3 col-md-4 col-sm-6 col-6 mb-4"
-                                key={item.id}
-                            >
+                        {/* STOCK */}
 
-                                <ProductCard
-                                    product={item}
-                                />
+                        <div
+                            className={
+                                `stock-status ${
+                                    product.stock > 0
+                                        ? "in-stock"
+                                        : "out-stock"
+                                }`
+                            }
+                        >
 
-                            </div>
+                            {
 
-                        ))
+                                product.stock > 0
 
-                        :
+                                    ?
 
-                        <div className="col-12">
+                                    <>
 
-                            <p className="text-muted">
+                                        <FaCheckCircle />
 
-                                No related products found.
+                                        In Stock
+
+                                        <span>
+
+                                            Only {product.stock}
+                                            {" "}available
+
+                                        </span>
+
+                                    </>
+
+                                    :
+
+                                    "Out of Stock"
+
+                            }
+
+                        </div>
+
+
+                        {/* DESCRIPTION */}
+
+                        <div className="product-description-section">
+
+                            <h3>
+
+                                About this product
+
+                            </h3>
+
+                            <p>
+
+                                {product.description ||
+                                    "No product description available."}
 
                             </p>
 
                         </div>
 
-                    }
+
+                        {/* PRODUCT INFORMATION */}
+
+                        <div className="product-meta-grid">
+
+
+                            <div className="product-meta-item">
+
+                                <span>
+                                    Category
+                                </span>
+
+                                <strong>
+                                    {product.category_name || "-"}
+                                </strong>
+
+                            </div>
+
+
+                            <div className="product-meta-item">
+
+                                <span>
+                                    Brand
+                                </span>
+
+                                <strong>
+                                    {product.brand_name || "-"}
+                                </strong>
+
+                            </div>
+
+
+                            <div className="product-meta-item">
+
+                                <span>
+                                    Pet Type
+                                </span>
+
+                                <strong>
+                                    {product.pet_type || "All"}
+                                </strong>
+
+                            </div>
+
+
+                            <div className="product-meta-item">
+
+                                <span>
+                                    Weight
+                                </span>
+
+                                <strong>
+                                    {product.weight || "-"}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        {/* QUANTITY */}
+
+                        <div className="purchase-section">
+
+
+                            <div className="quantity-section">
+
+                                <span className="quantity-label">
+
+                                    Quantity
+
+                                </span>
+
+
+                                <div className="quantity-control">
+
+                                    <button
+                                        onClick={decreaseQuantity}
+                                        disabled={quantity === 1}
+                                        aria-label="Decrease quantity"
+                                    >
+
+                                        <FaMinus />
+
+                                    </button>
+
+
+                                    <span>
+
+                                        {quantity}
+
+                                    </span>
+
+
+                                    <button
+                                        onClick={increaseQuantity}
+                                        disabled={
+                                            quantity >= product.stock
+                                        }
+                                        aria-label="Increase quantity"
+                                    >
+
+                                        <FaPlus />
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <div className="total-price-box">
+
+                                <span>
+                                    Total
+                                </span>
+
+                                <strong>
+
+                                    ₹ {totalPrice.toFixed(2)}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        {/* ACTION BUTTONS */}
+
+                        <div className="product-action-buttons">
+
+
+                            <button
+                                className="add-cart-btn"
+                                onClick={addToCart}
+                                disabled={product.stock === 0}
+                            >
+
+                                <FaShoppingCart />
+
+                                Add to Cart
+
+                            </button>
+
+
+                            <button
+                                className="buy-now-btn"
+                                onClick={buyNow}
+                                disabled={product.stock === 0}
+                            >
+
+                                <FaBolt />
+
+                                Buy Now
+
+                            </button>
+
+                        </div>
+
+
+                        {/* EXTRA LINKS */}
+
+                        <div className="product-extra-actions">
+
+                            <Link
+                                to={`/products/${id}/reviews`}
+                            >
+
+                                <FaStar />
+
+                                Customer Reviews
+
+                            </Link>
+
+
+                            <Link
+                                to="/products"
+                            >
+
+                                <FaArrowLeft />
+
+                                Continue Shopping
+
+                            </Link>
+
+                        </div>
+
+
+                    </section>
 
                 </div>
 
-            </div>
-        </div>
 
+                {/* =============================
+                    RELATED PRODUCTS
+                ============================= */}
+
+                <section className="related-products-section">
+
+                    <div className="related-products-header">
+
+                        <div>
+
+                            <span>
+                                YOU MAY ALSO LIKE
+                            </span>
+
+                            <h2>
+                                Related Products
+                            </h2>
+
+                        </div>
+
+
+                        <Link
+                            to="/products"
+                            className="view-all-products"
+                        >
+
+                            View All Products
+
+                        </Link>
+
+                    </div>
+
+
+                    {
+
+                        relatedProducts.length > 0
+
+                            ?
+
+                            <div className="related-products-grid">
+
+                                {
+
+                                    relatedProducts.map((item) => (
+
+                                        <ProductCard
+                                            key={item.id}
+                                            product={item}
+                                        />
+
+                                    ))
+
+                                }
+
+                            </div>
+
+                            :
+
+                            <div className="no-related-products">
+
+                                <FaBox />
+
+                                <p>
+                                    No related products found.
+                                </p>
+
+                            </div>
+
+                    }
+
+                </section>
+
+            </main>
+
+        </div>
 
     );
 
 }
+
 
 export default ProductDetails;

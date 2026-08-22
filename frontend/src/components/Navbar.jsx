@@ -14,7 +14,7 @@ import {
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import logo from "../assets/logo/Zenve - 01 (1).png";
 import "../styles/Navbar.css";
 
 
@@ -526,23 +526,21 @@ function Navbar({ toggleSidebar }) {
                     ADMIN LOGO
                 ================================================= */}
 
-                <div className="logo">
-
+              <div className="logo">
                     <Link
                         to="/products/manage"
                         className="logo-link"
                     >
+                        <img
+                            src={logo}
+                            alt="Zenve"
+                            className="navbar-logo"
+                        />
 
-                        <span className="company-name">
-                            🐾Zenve
-                        </span>
-
-                        <span className="marketplace-name">
-                            MarketPlace
-                        </span>
-
+                        {/*<span className="marketplace-name">*/}
+                        {/*    MarketPlace*/}
+                        {/*</span>*/}
                     </Link>
-
                 </div>
 
 
@@ -668,23 +666,21 @@ function Navbar({ toggleSidebar }) {
 
                 {/* LOGO */}
 
-                <div className="logo">
-
+               <div className="logo">
                     <Link
-                        to="/"
+                        to="/home"
                         className="logo-link"
                     >
+                        <img
+                            src={logo}
+                            alt="Zenve"
+                            className="navbar-logo"
+                        />
 
-                        <span className="company-name">
-                            🐾Zenve
-                        </span>
-
-                        <span className="marketplace-name">
-                            MarketPlace
-                        </span>
-
+                        {/*<span className="marketplace-name">*/}
+                        {/*    MarketPlace*/}
+                        {/*</span>*/}
                     </Link>
-
                 </div>
 
 
