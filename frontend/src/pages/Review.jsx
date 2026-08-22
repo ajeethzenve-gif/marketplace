@@ -1,527 +1,950 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
-import { FaStar } from "react-icons/fa";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+    FaStar,
+    FaRegStar,
+    FaTrash,
+    FaUserCircle,
+    FaArrowLeft,
+    FaBoxOpen,
+} from "react-icons/fa";
 
+import api from "../api/api";
+
+import "../styles/Review.css";
 
 function Review() {
-
-
     const { id } = useParams();
+    const navigate = useNavigate();
 
+    const [product, setProduct] = useState(null);
+    const [productLoading, setProductLoading] = useState(true);
 
-    const [reviews,setReviews] = useState([]);
+    const [reviews, setReviews] = useState([]);
+    const [rating, setRating] = useState(5);
+    const [review, setReview] = useState("");
 
-    const [rating,setRating] = useState(5);
-
-    const [review,setReview] = useState("");
-
-    const [loading,setLoading] = useState(false);
-
+    const [loading, setLoading] = useState(false);
+    const [reviewsLoading, setReviewsLoading] = useState(true);
+    const [hoverRating, setHoverRating] = useState(0);
 
     const token = localStorage.getItem("access");
-
     const username = localStorage.getItem("username");
 
+    /* =====================================================
+       LOAD PRODUCT + REVIEWS
+    ===================================================== */
 
-
-    useEffect(()=>{
-
+    useEffect(() => {
+        loadProduct();
         loadReviews();
 
-    },[id]);
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+    }, [id]);
 
+    /* =====================================================
+       LOAD PRODUCT
+    ===================================================== */
 
+    const loadProduct = async () => {
+        try {
+            setProductLoading(true);
 
-
-    const loadReviews = async()=>{
-
-
-        try{
-
-
-            const response = await axios.get(
-
-                `http://127.0.0.1:8000/api/reviews/${id}/`
-
+            const response = await api.get(
+                `products/${id}/`
             );
 
-
-            setReviews(response.data);
-
-
-        }
-
-        catch(error){
-
-            console.log(
-                "Review loading error:",
-                error.response?.data
+            setProduct(response.data);
+        } catch (error) {
+            console.error(
+                "Product loading error:",
+                error.response?.data || error.message
             );
 
+            setProduct(null);
+        } finally {
+            setProductLoading(false);
         }
-
     };
 
+    /* =====================================================
+       LOAD REVIEWS
+    ===================================================== */
 
+    const loadReviews = async () => {
+        try {
+            setReviewsLoading(true);
 
-
-
-    const submitReview = async()=>{
-
-
-        if(!token){
-
-            alert(
-                "Please login first"
+            const response = await api.get(
+                `reviews/${id}/`
             );
 
-            return;
+            const data = Array.isArray(response.data)
+                ? response.data
+                : response.data?.results || [];
 
-        }
-
-
-
-        if(!review.trim()){
-
-            alert(
-                "Please write a review"
+            setReviews(data);
+        } catch (error) {
+            console.error(
+                "Review loading error:",
+                error.response?.data || error.message
             );
 
-            return;
+            setReviews([]);
+        } finally {
+            setReviewsLoading(false);
+        }
+    };
 
+    /* =====================================================
+       SUBMIT REVIEW
+    ===================================================== */
+
+    const submitReview = async (e) => {
+        e.preventDefault();
+
+        if (!token) {
+            alert(
+                "Please login first to write a review."
+            );
+
+            navigate("/login");
+            return;
         }
 
+        if (!review.trim()) {
+            alert("Please write a review.");
+            return;
+        }
 
-
-        try{
-
-
+        try {
             setLoading(true);
 
-
-
-            await axios.post(
-
-                "http://127.0.0.1:8000/api/reviews/add/",
-
+            await api.post(
+                "reviews/add/",
                 {
-
-                    product_id:id,
-
-                    rating:rating,
-
-                    review:review
-
+                    product_id: id,
+                    rating: rating,
+                    review: review.trim(),
                 },
-
-
                 {
-
-                    headers:{
-
+                    headers: {
                         Authorization:
-                        `Bearer ${token}`
-
-                    }
-
+                            `Bearer ${token}`,
+                    },
                 }
-
             );
-
-
 
             alert(
-                "Review added successfully"
+                "Thank you! Your review was added successfully."
             );
-
-
 
             setReview("");
-
             setRating(5);
 
-
-
             loadReviews();
-
-
-
-        }
-
-        catch(error){
-
-
-            console.log(
+        } catch (error) {
+            console.error(
                 "Add review error:",
-                error.response?.data
+                error.response?.data || error.message
             );
 
-
-        }
-
-        finally{
-
-
+            alert(
+                error.response?.data?.detail ||
+                "Failed to submit your review."
+            );
+        } finally {
             setLoading(false);
-
-
         }
-
     };
 
+    /* =====================================================
+       DELETE REVIEW
+    ===================================================== */
 
+    const deleteReview = async (reviewId) => {
+        const confirmed = window.confirm(
+            "Are you sure you want to delete this review?"
+        );
 
+        if (!confirmed) {
+            return;
+        }
 
-
-
-
-    const deleteReview = async(reviewId)=>{
-
-
-        try{
-
-
-            await axios.delete(
-
-
-                `http://127.0.0.1:8000/api/reviews/delete/${reviewId}/`,
-
-
+        try {
+            await api.delete(
+                `reviews/delete/${reviewId}/`,
                 {
-
-                    headers:{
-
+                    headers: {
                         Authorization:
-                        `Bearer ${token}`
-
-                    }
-
+                            `Bearer ${token}`,
+                    },
                 }
-
-
             );
 
-
-
-            loadReviews();
-
-
-
-        }
-
-        catch(error){
-
-
-            console.log(
-                "Delete error:",
-                error.response?.data
+            setReviews((previousReviews) =>
+                previousReviews.filter(
+                    (item) =>
+                        item.id !== reviewId
+                )
+            );
+        } catch (error) {
+            console.error(
+                "Delete review error:",
+                error.response?.data || error.message
             );
 
-
+            alert(
+                error.response?.data?.detail ||
+                "Failed to delete review."
+            );
         }
-
-
     };
 
+    /* =====================================================
+       CALCULATE RATING
+    ===================================================== */
+
+    const totalReviews = reviews.length;
+
+    const averageRating =
+        totalReviews > 0
+            ? reviews.reduce(
+                  (total, item) =>
+                      total +
+                      Number(item.rating || 0),
+                  0
+              ) / totalReviews
+            : 0;
+
+    const ratingPercentage = (star) => {
+        if (totalReviews === 0) {
+            return 0;
+        }
+
+        const count = reviews.filter(
+            (item) =>
+                Number(item.rating) === star
+        ).length;
+
+        return Math.round(
+            (count / totalReviews) * 100
+        );
+    };
+
+    /* =====================================================
+       RENDER STARS
+    ===================================================== */
+
+    const renderStars = (value) => {
+        return [1, 2, 3, 4, 5].map(
+            (star) => (
+                <span
+                    className="display-star"
+                    key={star}
+                >
+                    {star <=
+                    Math.round(Number(value)) ? (
+                        <FaStar />
+                    ) : (
+                        <FaRegStar />
+                    )}
+                </span>
+            )
+        );
+    };
+
+    /* =====================================================
+       PRODUCT IMAGE
+    ===================================================== */
+
+    const getProductImage = () => {
+        if (!product?.image) {
+            return null;
+        }
+
+        if (
+            product.image.startsWith("http")
+        ) {
+            return product.image;
+        }
+
+        return product.image;
+    };
+
+    /* =====================================================
+       LOADING PRODUCT
+    ===================================================== */
+
+    if (productLoading) {
+        return (
+            <main className="review-page">
+
+                <div className="review-product-loading">
+
+                    <div className="review-spinner" />
+
+                    <p>
+                        Loading product details...
+                    </p>
+
+                </div>
+
+            </main>
+        );
+    }
+
+    /* =====================================================
+       PRODUCT NOT FOUND
+    ===================================================== */
+
+    if (!product) {
+        return (
+            <main className="review-page">
+
+                <div className="review-product-not-found">
+
+                    <FaBoxOpen />
+
+                    <h2>
+                        Product Not Found
+                    </h2>
+
+                    <p>
+                        The product you are looking for
+                        does not exist.
+                    </p>
+
+                    <button
+                        type="button"
+                        onClick={() =>
+                            navigate("/products")
+                        }
+                    >
+                        Browse Products
+                    </button>
+
+                </div>
+
+            </main>
+        );
+    }
+
+    return (
+        <main className="review-page">
+
+            {/* =================================================
+                PRODUCT DETAILS
+            ================================================= */}
+
+            <section className="review-product-section">
+
+                <div className="review-product-container">
+
+                    {/* BACK BUTTON */}
+
+                    <button
+                        type="button"
+                        className="back-product-btn"
+                        onClick={() =>
+                            navigate(`/products/${id}`)
+                        }
+                    >
+                        <FaArrowLeft />
+
+                        Back to Product
+
+                    </button>
+
+                    <div className="review-product-card">
+
+                        {/* PRODUCT IMAGE */}
+
+                        <div className="review-product-image">
+
+                            {getProductImage() ? (
+
+                                <img
+                                    src={
+                                        getProductImage()
+                                    }
+                                    alt={
+                                        product.product_name
+                                    }
+                                />
+
+                            ) : (
+
+                                <div className="review-no-image">
+
+                                    <FaBoxOpen />
+
+                                </div>
+
+                            )}
+
+                        </div>
+
+                        {/* PRODUCT INFO */}
+
+                        <div className="review-product-info">
+
+                            {product.category && (
+
+                                <span className="review-product-category">
+
+                                    {typeof product.category ===
+                                    "object"
+                                        ? product.category.name
+                                        : product.category}
+
+                                </span>
+
+                            )}
+
+                            <h1>
+
+                                {product.product_name}
+
+                            </h1>
+
+                            {/* BRAND */}
+
+                            {product.brand && (
+
+                                <p className="review-product-brand">
+
+                                    Brand:
+
+                                    <strong>
+
+                                        {" "}
+
+                                        {typeof product.brand ===
+                                        "object"
+                                            ? product.brand.name
+                                            : product.brand}
+
+                                    </strong>
+
+                                </p>
+
+                            )}
+
+                            {/* PRICE */}
+
+                            {product.price && (
+
+                                <div className="review-product-price">
+
+                                    ₹{product.price}
+
+                                </div>
+
+                            )}
+
+                            {/* RATING */}
+
+                            <div className="review-product-rating">
+
+                                <div>
+
+                                    {renderStars(
+                                        averageRating
+                                    )}
+
+                                </div>
+
+                                <strong>
+
+                                    {totalReviews > 0
+                                        ? averageRating.toFixed(
+                                            1
+                                        )
+                                        : "No Rating"}
+
+                                </strong>
+
+                                <span>
+
+                                    (
+                                    {totalReviews}{" "}
+
+                                    {totalReviews === 1
+                                        ? "Review"
+                                        : "Reviews"}
+
+                                    )
+
+                                </span>
+
+                            </div>
+
+                            {/* PRODUCT DESCRIPTION */}
+
+                            {product.description && (
+
+                                <p className="review-product-description">
+
+                                    {
+                                        product.description
+                                    }
+
+                                </p>
+
+                            )}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            {/* =================================================
+                REVIEW HERO
+            ================================================= */}
 
 
+            <div className="review-container">
 
+                {/* =================================================
+                    RATING SUMMARY
+                ================================================= */}
 
+                <section className="rating-summary">
 
-return (
+                    <div className="rating-overview">
 
-<div className="container mt-4">
+                        <div className="average-rating">
 
+                            <strong>
 
-<h2>
-    Product Reviews
-</h2>
+                                {averageRating.toFixed(1)}
 
+                            </strong>
 
+                            <div className="average-stars">
 
-<div className="card p-4 mb-4">
+                                {renderStars(
+                                    averageRating
+                                )}
 
+                            </div>
 
-<h4>
-    Add Your Review
-</h4>
+                            <span>
 
+                                Based on {totalReviews}{" "}
 
+                                {totalReviews === 1
+                                    ? "review"
+                                    : "reviews"}
 
-<div>
+                            </span>
 
+                        </div>
 
-{
+                    </div>
 
-[1,2,3,4,5].map((star)=>(
+                    <div className="rating-breakdown">
 
+                        {[5, 4, 3, 2, 1].map(
+                            (star) => (
 
-<FaStar
+                                <div
+                                    className="rating-row"
+                                    key={star}
+                                >
 
-key={star}
+                                    <span>
 
-size={30}
+                                        {star}
 
-style={{
+                                        <FaStar />
 
-cursor:"pointer",
+                                    </span>
 
-marginRight:"8px"
+                                    <div className="rating-progress">
 
-}}
+                                        <div
+                                            className="rating-progress-fill"
+                                            style={{
 
-color={
+                                                width:
+                                                    `${ratingPercentage(
+                                                        star
+                                                    )}%`,
 
-star<=rating
+                                            }}
+                                        />
 
-?
+                                    </div>
 
-"orange"
+                                    <small>
 
-:
+                                        {ratingPercentage(
+                                            star
+                                        )}
 
-"#ccc"
+                                        %
 
+                                    </small>
+
+                                </div>
+
+                            )
+                        )}
+
+                    </div>
+
+                </section>
+
+                {/* =================================================
+                    WRITE REVIEW
+                ================================================= */}
+
+                <section className="write-review-card">
+
+                    <div className="write-review-header">
+
+                        <div className="write-review-icon">
+
+                            ⭐
+
+                        </div>
+
+                        <div>
+
+                            <h2>
+
+                                Share Your Experience
+
+                            </h2>
+
+                            <p>
+
+                                How was your experience
+                                with this product?
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <form onSubmit={submitReview}>
+
+                        <div className="rating-selector">
+
+                            <span>
+
+                                Your Rating
+
+                            </span>
+
+                            <div className="interactive-stars">
+
+                                {[1, 2, 3, 4, 5].map(
+                                    (star) => (
+
+                                        <button
+                                            key={star}
+                                            type="button"
+                                            className="star-button"
+                                            onClick={() =>
+                                                setRating(
+                                                    star
+                                                )
+                                            }
+                                            onMouseEnter={() =>
+                                                setHoverRating(
+                                                    star
+                                                )
+                                            }
+                                            onMouseLeave={() =>
+                                                setHoverRating(
+                                                    0
+                                                )
+                                            }
+                                        >
+
+                                            <FaStar
+                                                className={
+                                                    star <=
+                                                    (hoverRating ||
+                                                        rating)
+                                                        ? "selected"
+                                                        : ""
+                                                }
+                                            />
+
+                                        </button>
+
+                                    )
+                                )}
+
+                            </div>
+
+                            <strong className="rating-text">
+
+                                {rating === 1 &&
+                                    "Poor"}
+
+                                {rating === 2 &&
+                                    "Fair"}
+
+                                {rating === 3 &&
+                                    "Good"}
+
+                                {rating === 4 &&
+                                    "Very Good"}
+
+                                {rating === 5 &&
+                                    "Excellent!"}
+
+                            </strong>
+
+                        </div>
+
+                        <div className="review-input-group">
+
+                            <label htmlFor="review">
+
+                                Tell us what you think
+
+                            </label>
+
+                            <textarea
+                                id="review"
+                                rows="5"
+                                placeholder="Share your experience with this product..."
+                                value={review}
+                                onChange={(e) =>
+                                    setReview(
+                                        e.target.value
+                                    )
+                                }
+                                maxLength="1000"
+                            />
+
+                            <div className="review-character-count">
+
+                                {review.length}/1000
+
+                            </div>
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="submit-review-btn"
+                            disabled={loading}
+                        >
+
+                            {loading
+                                ? "Submitting Review..."
+                                : "Submit Your Review →"}
+
+                        </button>
+
+                    </form>
+
+                </section>
+
+                {/* =================================================
+                    CUSTOMER REVIEWS
+                ================================================= */}
+
+                <section className="customer-reviews">
+
+                    <div className="customer-reviews-header">
+
+                        <div>
+
+                            <h2>
+
+                                Customer Reviews
+
+                            </h2>
+
+                            <p>
+
+                                {totalReviews}{" "}
+
+                                {totalReviews === 1
+                                    ? "review"
+                                    : "reviews"}
+
+                                {" "}from pet parents
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    {reviewsLoading ? (
+
+                        <div className="reviews-loading">
+
+                            <div className="review-spinner" />
+
+                            <p>
+                                Loading reviews...
+                            </p>
+
+                        </div>
+
+                    ) : totalReviews === 0 ? (
+
+                        <div className="no-reviews">
+
+                            <div className="no-reviews-icon">
+
+                                💬
+
+                            </div>
+
+                            <h3>
+
+                                No Reviews Yet
+
+                            </h3>
+
+                            <p>
+
+                                Be the first pet parent
+                                to share your experience!
+
+                            </p>
+
+                        </div>
+
+                    ) : (
+
+                        <div className="reviews-list">
+
+                            {reviews.map(
+                                (item) => (
+
+                                    <article
+                                        className="modern-review-card"
+                                        key={item.id}
+                                    >
+
+                                        <div className="modern-review-header">
+
+                                            <div className="review-profile">
+
+                                                <div className="review-avatar">
+
+                                                    {item.customer_name
+                                                        ? item.customer_name
+                                                            .charAt(
+                                                                0
+                                                            )
+                                                            .toUpperCase()
+                                                        : (
+                                                            <FaUserCircle />
+                                                        )}
+
+                                                </div>
+
+                                                <div>
+
+                                                    <h3>
+
+                                                        {item.customer_name ||
+                                                            "Pet Parent"}
+
+                                                    </h3>
+
+                                                    <span className="verified-review">
+
+                                                        ✓ Verified Customer
+
+                                                    </span>
+
+                                                </div>
+
+                                            </div>
+
+                                            {item.customer_name ===
+                                                username && (
+
+                                                <button
+                                                    type="button"
+                                                    className="delete-review-btn"
+                                                    onClick={() =>
+                                                        deleteReview(
+                                                            item.id
+                                                        )
+                                                    }
+                                                    title="Delete Review"
+                                                >
+
+                                                    <FaTrash />
+
+                                                </button>
+
+                                            )}
+
+                                        </div>
+
+                                        <div className="review-rating-row">
+
+                                            <div className="review-stars">
+
+                                                {renderStars(
+                                                    item.rating
+                                                )}
+
+                                            </div>
+
+                                            <span className="review-date">
+
+                                                {item.created_at
+                                                    ? new Date(
+                                                        item.created_at
+                                                    ).toLocaleDateString(
+                                                        "en-IN",
+                                                        {
+                                                            day: "numeric",
+                                                            month: "short",
+                                                            year: "numeric",
+                                                        }
+                                                    )
+                                                    : ""}
+
+                                            </span>
+
+                                        </div>
+
+                                        <p className="modern-review-text">
+
+                                            {item.review}
+
+                                        </p>
+
+                                    </article>
+
+                                )
+                            )}
+
+                        </div>
+
+                    )}
+
+                </section>
+
+            </div>
+
+        </main>
+    );
 }
-
-
-onClick={()=>setRating(star)}
-
-
-/>
-
-
-))
-
-}
-
-
-</div>
-
-
-
-
-<textarea
-
-className="form-control mt-3 mb-3"
-
-rows="4"
-
-placeholder="Write your review"
-
-value={review}
-
-onChange={(e)=>setReview(e.target.value)}
-
-
-/>
-
-
-
-
-<button
-
-className="btn btn-primary"
-
-onClick={submitReview}
-
-disabled={loading}
-
-
->
-
-
-{
-
-loading
-
-?
-
-"Submitting..."
-
-:
-
-"Submit Review"
-
-}
-
-
-</button>
-
-
-
-</div>
-
-
-
-
-
-<h3>
-Customer Reviews
-</h3>
-
-
-
-
-{
-
-reviews.length===0
-
-?
-
-<p>
-No Reviews Yet
-</p>
-
-
-:
-
-
-reviews.map((item)=>(
-
-
-<div
-
-className="card p-3 mb-3"
-
-key={item.id}
-
->
-
-
-
-<div className="d-flex justify-content-between">
-
-
-<div>
-
-
-<h5>
-
-{item.customer_name}
-
-</h5>
-
-
-
-<div>
-
-
-{
-
-[1,2,3,4,5].map((star)=>(
-
-
-<FaStar
-
-key={star}
-
-color={
-
-star <= item.rating
-
-?
-
-"orange"
-
-:
-
-"#ddd"
-
-}
-
-
-/>
-
-
-))
-
-}
-
-
-</div>
-
-
-</div>
-
-
-
-
-{
-
-
-item.customer_name === username &&
-
-
-<button
-
-className="btn btn-danger btn-sm"
-
-onClick={()=>deleteReview(item.id)}
-
->
-
-Delete
-
-</button>
-
-
-}
-
-
-
-
-</div>
-
-
-
-
-
-<p className="mt-3">
-
-{item.review}
-
-</p>
-
-
-
-<small>
-
-{
-
-new Date(
-
-item.created_at
-
-).toLocaleString()
-
-}
-
-
-</small>
-
-
-
-</div>
-
-
-
-))
-
-
-}
-
-
-
-
-</div>
-
-
-);
-
-
-}
-
 
 export default Review;
