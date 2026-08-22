@@ -2,7 +2,7 @@
    PRODUCT LIST PAGE
    - No top filter
    - No search bar
-   - Sidebar with independent scroll
+   - Sidebar WITHOUT independent scroll
    - Product section with independent scroll
    - 4 products per row
    - Advertisement after every row
@@ -16,7 +16,9 @@
 .products-page {
     width: 100%;
     min-height: 100vh;
+
     background: #f3f5f9;
+
     padding: 24px 0 60px;
 
     font-family:
@@ -33,14 +35,15 @@
 .products-main-container {
     width: 100%;
     max-width: 1500px;
+
     margin: 0 auto;
+
     padding: 0 20px;
 }
 
+
 /* =====================================================
    MAIN LAYOUT
-
-   Sidebar and product content have their own scroll.
 ===================================================== */
 
 .products-layout {
@@ -57,26 +60,25 @@
     align-items: start;
 }
 
+
 /* =====================================================
    SIDEBAR
-
-   Sidebar has its own vertical scroll.
+   NO DESKTOP SCROLLBAR
 ===================================================== */
 
 .products-sidebar {
     width: 220px;
 
-    height: calc(100vh - 36px);
-
     position: sticky;
+
     top: 18px;
 
-    overflow-y: auto;
-    overflow-x: hidden;
+    align-self: start;
 
-    background: #fff;
+    background: #ffffff;
 
     border: 1px solid #e7ebf3;
+
     border-radius: 14px;
 
     padding: 18px;
@@ -84,28 +86,19 @@
     box-shadow:
         0 8px 24px rgba(15, 23, 42, 0.04);
 
-    scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 transparent;
+    /*
+       IMPORTANT:
+       No fixed height
+       No overflow-y
+    */
+
+    height: auto;
+
+    max-height: none;
+
+    overflow: visible;
 }
 
-/* Chrome / Edge scrollbar */
-
-.products-sidebar::-webkit-scrollbar {
-    width: 6px;
-}
-
-.products-sidebar::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.products-sidebar::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 10px;
-}
-
-.products-sidebar::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-}
 
 /* =====================================================
    SIDEBAR MOBILE HEADER
@@ -115,6 +108,7 @@
     display: none;
 
     align-items: center;
+
     justify-content: space-between;
 
     margin-bottom: 20px;
@@ -122,7 +116,10 @@
 
 .sidebar-mobile-header strong {
     color: #111827;
+
     font-size: 17px;
+
+    font-weight: 700;
 }
 
 .sidebar-mobile-header button {
@@ -130,17 +127,26 @@
     height: 32px;
 
     border: 0;
+
     border-radius: 7px;
 
     background: #fee2e2;
+
     color: #dc2626;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     cursor: pointer;
 }
+
+.sidebar-mobile-header button:hover {
+    background: #fecaca;
+}
+
 
 /* =====================================================
    SIDEBAR SECTION
@@ -148,6 +154,7 @@
 
 .sidebar-section {
     padding-bottom: 18px;
+
     margin-bottom: 18px;
 
     border-bottom:
@@ -157,6 +164,7 @@
 .sidebar-section:last-of-type {
     margin-bottom: 0;
 }
+
 
 /* =====================================================
    SIDEBAR TITLE
@@ -169,8 +177,10 @@
     color: #111827;
 
     font-size: 14px;
+
     font-weight: 800;
 }
+
 
 /* =====================================================
    CATEGORY BUTTONS
@@ -180,9 +190,11 @@
     width: 100%;
 
     padding: 8px 9px;
+
     margin-bottom: 3px;
 
     border: 0;
+
     border-radius: 7px;
 
     background: transparent;
@@ -196,42 +208,51 @@
     cursor: pointer;
 
     transition:
-        background .2s ease,
-        color .2s ease;
+        background 0.2s ease,
+        color 0.2s ease;
 }
 
 .sidebar-section > button:not(.view-more-btn):hover {
     background: #eef4ff;
+
     color: #2563eb;
 }
 
 .sidebar-section > button.active {
     background: #eef4ff;
+
     color: #2563eb;
+
     font-weight: 700;
 }
 
+
 /* =====================================================
-   PRICE
+   PRICE RANGE
 ===================================================== */
 
 .sidebar-title-row {
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 }
 
 .range-values {
     display: flex;
+
     justify-content: space-between;
 
     color: #2563eb;
 
     font-size: 11px;
+
     font-weight: 700;
 
     margin-bottom: 7px;
 }
+
 
 /* =====================================================
    RANGE SLIDER
@@ -241,6 +262,7 @@
     position: relative;
 
     width: 100%;
+
     height: 30px;
 }
 
@@ -250,6 +272,7 @@
     left: 0;
 
     width: 100%;
+
     height: 30px;
 
     margin: 0;
@@ -261,6 +284,9 @@
     background: transparent;
 }
 
+
+/* Chrome / Edge track */
+
 .range-slider input::-webkit-slider-runnable-track {
     height: 4px;
 
@@ -268,6 +294,9 @@
 
     background: #dbe4f3;
 }
+
+
+/* Firefox track */
 
 .range-slider input::-moz-range-track {
     height: 4px;
@@ -277,21 +306,24 @@
     background: #dbe4f3;
 }
 
+
+/* Chrome / Edge thumb */
+
 .range-slider input::-webkit-slider-thumb {
     width: 15px;
+
     height: 15px;
 
     margin-top: -5px;
 
-    border:
-        2px solid #fff;
+    border: 2px solid #ffffff;
 
     border-radius: 50%;
 
     background: #2563eb;
 
     box-shadow:
-        0 1px 5px rgba(0, 0, 0, .2);
+        0 1px 5px rgba(0, 0, 0, 0.2);
 
     pointer-events: auto;
 
@@ -300,50 +332,61 @@
     appearance: none;
 }
 
+
+/* Firefox thumb */
+
 .range-slider input::-moz-range-thumb {
     width: 15px;
+
     height: 15px;
 
-    border:
-        2px solid #fff;
+    border: 2px solid #ffffff;
 
     border-radius: 50%;
 
     background: #2563eb;
 
     box-shadow:
-        0 1px 5px rgba(0, 0, 0, .2);
+        0 1px 5px rgba(0, 0, 0, 0.2);
 
     pointer-events: auto;
 
     cursor: pointer;
 }
 
+
 /* =====================================================
-   APPLY PRICE
+   APPLY PRICE BUTTON
 ===================================================== */
 
 .apply-price-btn {
     width: 100%;
+
     height: 34px;
 
     margin-top: 6px;
 
     border: 0;
+
     border-radius: 7px;
 
     background: #2563eb;
-    color: #fff;
+
+    color: #ffffff;
 
     font-size: 11.5px;
+
     font-weight: 700;
 
     cursor: pointer;
+
+    transition: background 0.2s ease;
 }
 
 .apply-price-btn:hover {
     background: #1d4ed8;
 }
+
 
 /* =====================================================
    BRANDS
@@ -351,6 +394,7 @@
 
 .brand-option {
     display: flex;
+
     align-items: center;
 
     gap: 8px;
@@ -364,10 +408,20 @@
     cursor: pointer;
 }
 
+.brand-option:hover {
+    color: #2563eb;
+}
+
 .brand-option input {
+    width: 14px;
+
+    height: 14px;
+
     accent-color: #2563eb;
 
     cursor: pointer;
+
+    flex-shrink: 0;
 }
 
 .brand-option span {
@@ -386,6 +440,7 @@
     font-size: 11px;
 }
 
+
 /* =====================================================
    VIEW MORE
 ===================================================== */
@@ -400,25 +455,30 @@
     padding: 7px 0;
 
     font-size: 12px;
+
     font-weight: 700;
 
     cursor: pointer;
 }
 
+.view-more-btn:hover {
+    color: #1d4ed8;
+}
+
+
 /* =====================================================
    SORT PRODUCTS
-
-   IMPORTANT:
-   NO SELECT / NO DROPDOWN
 ===================================================== */
 
 .sidebar-sort {
     padding-top: 2px;
+
     margin-bottom: 18px;
 }
 
 .sidebar-sort-title {
     display: flex;
+
     align-items: center;
 
     gap: 8px;
@@ -437,6 +497,7 @@
 
     font-size: 14px;
 }
+
 
 /* =====================================================
    SORT BUTTONS
@@ -457,17 +518,18 @@
 
     padding: 8px 10px;
 
-    border:
-        1px solid #e5e7eb;
+    border: 1px solid #e5e7eb;
 
     border-radius: 8px;
 
-    background: #fff;
+    background: #ffffff;
 
     color: #64748b;
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
     text-align: left;
@@ -477,9 +539,9 @@
     cursor: pointer;
 
     transition:
-        background .2s ease,
-        border-color .2s ease,
-        color .2s ease;
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
 }
 
 .sort-option:hover {
@@ -506,46 +568,51 @@
     flex-shrink: 0;
 }
 
+
 /* =====================================================
    CLEAR FILTERS
 ===================================================== */
 
 .sidebar-clear-btn {
     width: 100%;
+
     height: 36px;
 
     margin-top: 4px;
 
     border: 0;
+
     border-radius: 8px;
 
     background: #fee2e2;
+
     color: #dc2626;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     gap: 7px;
 
     font-size: 11.5px;
+
     font-weight: 700;
 
     cursor: pointer;
+
+    transition: background 0.2s ease;
 }
 
 .sidebar-clear-btn:hover {
     background: #fecaca;
 }
 
+
 /* =====================================================
    PRODUCT CONTENT
-
-   IMPORTANT:
-   Product section has independent scroll.
-
-   Sidebar scroll reaches bottom independently.
-   Product section scrolls independently.
+   INDEPENDENT SCROLL
 ===================================================== */
 
 .products-content {
@@ -554,15 +621,20 @@
     height: calc(100vh - 36px);
 
     overflow-y: auto;
+
     overflow-x: hidden;
 
     padding-right: 5px;
 
     scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 transparent;
+
+    scrollbar-color:
+        #cbd5e1
+        transparent;
 }
 
-/* Chrome / Edge */
+
+/* Chrome / Edge scrollbar */
 
 .products-content::-webkit-scrollbar {
     width: 6px;
@@ -581,6 +653,7 @@
 .products-content::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
 }
+
 
 /* =====================================================
    RESULT HEADER
@@ -626,6 +699,7 @@
     font-size: 12px;
 }
 
+
 /* =====================================================
    PAGE INDICATOR
 ===================================================== */
@@ -637,10 +711,9 @@
 
     border-radius: 999px;
 
-    background: #fff;
+    background: #ffffff;
 
-    border:
-        1px solid #e7ebf3;
+    border: 1px solid #e7ebf3;
 
     color: #475569;
 
@@ -649,6 +722,7 @@
     font-weight: 700;
 }
 
+
 /* =====================================================
    PRODUCTS CONTAINER
 ===================================================== */
@@ -656,6 +730,7 @@
 .products-ad-grid {
     width: 100%;
 }
+
 
 /* =====================================================
    EXACTLY 4 PRODUCTS PER ROW
@@ -688,6 +763,7 @@
     max-width: 100%;
 }
 
+
 /* =====================================================
    ADVERTISEMENT
 ===================================================== */
@@ -701,8 +777,7 @@
 
     padding: 18px 24px;
 
-    border:
-        1px solid #dbe7fb;
+    border: 1px solid #dbe7fb;
 
     border-radius: 14px;
 
@@ -728,20 +803,23 @@
     flex: 0 0 62px;
 
     width: 62px;
+
     height: 62px;
 
     border-radius: 50%;
 
-    background: #fff;
+    background: #ffffff;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     font-size: 30px;
 
     box-shadow:
-        0 6px 18px rgba(37, 99, 235, .10);
+        0 6px 18px rgba(37, 99, 235, 0.1);
 }
 
 .row-ad-copy {
@@ -759,13 +837,13 @@
 
     background: #2563eb;
 
-    color: #fff;
+    color: #ffffff;
 
     font-size: 8px;
 
     font-weight: 800;
 
-    letter-spacing: .5px;
+    letter-spacing: 0.5px;
 }
 
 .row-ad-copy h3 {
@@ -801,18 +879,25 @@
 
     background: #111827;
 
-    color: #fff;
+    color: #ffffff;
 
     font-size: 11px;
 
     font-weight: 700;
 
     cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
 .row-ad-button:hover {
     background: #2563eb;
+
+    transform: translateY(-1px);
 }
+
 
 /* =====================================================
    LOADING
@@ -836,17 +921,17 @@
 
 .loading-spinner {
     width: 38px;
+
     height: 38px;
 
     border-radius: 50%;
 
-    border:
-        4px solid #e5e9f2;
+    border: 4px solid #e5e9f2;
 
     border-top-color: #2563eb;
 
     animation:
-        spin .75s linear infinite;
+        spin 0.75s linear infinite;
 }
 
 @keyframes spin {
@@ -855,6 +940,7 @@
     }
 }
 
+
 /* =====================================================
    NO PRODUCTS
 ===================================================== */
@@ -862,10 +948,9 @@
 .no-products {
     min-height: 320px;
 
-    background: #fff;
+    background: #ffffff;
 
-    border:
-        1px solid #e7ebf3;
+    border: 1px solid #e7ebf3;
 
     border-radius: 14px;
 
@@ -884,6 +969,7 @@
 
 .no-products-icon {
     width: 64px;
+
     height: 64px;
 
     border-radius: 50%;
@@ -891,6 +977,7 @@
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
     background: #eef4ff;
@@ -931,14 +1018,21 @@
 
     background: #2563eb;
 
-    color: #fff;
+    color: #ffffff;
 
     font-size: 13px;
 
     font-weight: 700;
 
     cursor: pointer;
+
+    transition: background 0.2s ease;
 }
+
+.no-products button:hover {
+    background: #1d4ed8;
+}
+
 
 /* =====================================================
    PAGINATION
@@ -954,6 +1048,7 @@
     justify-content: center;
 }
 
+
 /* =====================================================
    BENEFITS
 ===================================================== */
@@ -963,10 +1058,9 @@
 
     padding: 22px;
 
-    background: #fff;
+    background: #ffffff;
 
-    border:
-        1px solid #e7ebf3;
+    border: 1px solid #e7ebf3;
 
     border-radius: 14px;
 
@@ -990,6 +1084,7 @@
     flex-shrink: 0;
 
     width: 44px;
+
     height: 44px;
 
     border-radius: 10px;
@@ -997,6 +1092,7 @@
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
     background: #eef4ff;
@@ -1040,8 +1136,9 @@
     line-height: 1.5;
 }
 
+
 /* =====================================================
-   TABLET
+   LARGE TABLET
 ===================================================== */
 
 @media (max-width: 1200px) {
@@ -1064,8 +1161,9 @@
     }
 }
 
+
 /* =====================================================
-   992px
+   TABLET
 ===================================================== */
 
 @media (max-width: 992px) {
@@ -1098,6 +1196,7 @@
     }
 }
 
+
 /* =====================================================
    MOBILE
 ===================================================== */
@@ -1116,7 +1215,10 @@
         display: block;
     }
 
-    /* Mobile sidebar */
+
+    /* =========================================
+       MOBILE SIDEBAR
+    ========================================= */
 
     .products-sidebar {
         display: none;
@@ -1126,13 +1228,18 @@
         z-index: 1000;
 
         top: 0;
+
         left: 0;
 
         width: min(300px, 88vw);
 
         height: 100vh;
 
+        max-height: 100vh;
+
         overflow-y: auto;
+
+        overflow-x: hidden;
 
         border-radius:
             0 14px 14px 0;
@@ -1140,7 +1247,7 @@
         padding: 18px;
 
         box-shadow:
-            10px 0 30px rgba(0, 0, 0, .15);
+            10px 0 30px rgba(0, 0, 0, 0.15);
     }
 
     .products-sidebar.sidebar-open {
@@ -1151,7 +1258,10 @@
         display: flex;
     }
 
-    /* Product section on mobile */
+
+    /* =========================================
+       MOBILE PRODUCT CONTENT
+    ========================================= */
 
     .products-content {
         width: 100%;
@@ -1169,12 +1279,22 @@
         align-items: flex-start;
     }
 
+
+    /* =========================================
+       MOBILE PRODUCTS
+    ========================================= */
+
     .product-row {
         grid-template-columns:
             repeat(2, minmax(0, 1fr));
 
         gap: 10px;
     }
+
+
+    /* =========================================
+       MOBILE AD
+    ========================================= */
 
     .product-row-ad {
         padding: 16px;
@@ -1188,6 +1308,7 @@
         flex-basis: 52px;
 
         width: 52px;
+
         height: 52px;
 
         font-size: 25px;
@@ -1201,10 +1322,16 @@
         width: 100%;
     }
 
+
+    /* =========================================
+       BENEFITS
+    ========================================= */
+
     .shopping-benefits {
         margin-top: 20px;
     }
 }
+
 
 /* =====================================================
    SMALL MOBILE
@@ -1219,6 +1346,8 @@
     .product-row {
         grid-template-columns:
             repeat(2, minmax(0, 1fr));
+
+        gap: 8px;
     }
 
     .product-row-ad {
