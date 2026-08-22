@@ -1,9 +1,8 @@
 /* =====================================================
    PRODUCT LIST PAGE
-   - No top filter
-   - No search bar
-   - Sidebar WITHOUT independent scroll
-   - Product section with independent scroll
+   - Fixed sidebar height based on body/content
+   - NO sidebar scrollbar
+   - Product content follows normal page height
    - 4 products per row
    - Advertisement after every row
    - Sort buttons instead of dropdown
@@ -13,14 +12,17 @@
     box-sizing: border-box;
 }
 
-.products-page {
+html,
+body,
+#root {
     width: 100%;
-    min-height: 100vh;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+}
 
-    background: #f3f5f9;
-
-    padding: 24px 0 60px;
-
+body {
+    overflow-x: hidden;
     font-family:
         ui-sans-serif,
         system-ui,
@@ -32,6 +34,23 @@
         sans-serif;
 }
 
+/* =====================================================
+   PRODUCT PAGE
+===================================================== */
+
+.products-page {
+    width: 100%;
+    min-height: 100vh;
+
+    background: #f3f5f9;
+
+    padding: 24px 0 60px;
+}
+
+/* =====================================================
+   MAIN CONTAINER
+===================================================== */
+
 .products-main-container {
     width: 100%;
     max-width: 1500px;
@@ -41,9 +60,11 @@
     padding: 0 20px;
 }
 
-
 /* =====================================================
    MAIN LAYOUT
+
+   Sidebar + Products
+   Both follow the body height.
 ===================================================== */
 
 .products-layout {
@@ -60,10 +81,14 @@
     align-items: start;
 }
 
-
 /* =====================================================
    SIDEBAR
-   NO DESKTOP SCROLLBAR
+
+   IMPORTANT:
+   - NO fixed height
+   - NO overflow-y
+   - NO sidebar scrollbar
+   - Content determines height
 ===================================================== */
 
 .products-sidebar {
@@ -73,9 +98,13 @@
 
     top: 18px;
 
-    align-self: start;
+    height: auto;
 
-    background: #ffffff;
+    max-height: none;
+
+    overflow: visible;
+
+    background: #fff;
 
     border: 1px solid #e7ebf3;
 
@@ -85,20 +114,7 @@
 
     box-shadow:
         0 8px 24px rgba(15, 23, 42, 0.04);
-
-    /*
-       IMPORTANT:
-       No fixed height
-       No overflow-y
-    */
-
-    height: auto;
-
-    max-height: none;
-
-    overflow: visible;
 }
-
 
 /* =====================================================
    SIDEBAR MOBILE HEADER
@@ -118,8 +134,6 @@
     color: #111827;
 
     font-size: 17px;
-
-    font-weight: 700;
 }
 
 .sidebar-mobile-header button {
@@ -143,11 +157,6 @@
     cursor: pointer;
 }
 
-.sidebar-mobile-header button:hover {
-    background: #fecaca;
-}
-
-
 /* =====================================================
    SIDEBAR SECTION
 ===================================================== */
@@ -165,7 +174,6 @@
     margin-bottom: 0;
 }
 
-
 /* =====================================================
    SIDEBAR TITLE
 ===================================================== */
@@ -180,7 +188,6 @@
 
     font-weight: 800;
 }
-
 
 /* =====================================================
    CATEGORY BUTTONS
@@ -226,9 +233,8 @@
     font-weight: 700;
 }
 
-
 /* =====================================================
-   PRICE RANGE
+   PRICE
 ===================================================== */
 
 .sidebar-title-row {
@@ -252,7 +258,6 @@
 
     margin-bottom: 7px;
 }
-
 
 /* =====================================================
    RANGE SLIDER
@@ -284,9 +289,6 @@
     background: transparent;
 }
 
-
-/* Chrome / Edge track */
-
 .range-slider input::-webkit-slider-runnable-track {
     height: 4px;
 
@@ -294,9 +296,6 @@
 
     background: #dbe4f3;
 }
-
-
-/* Firefox track */
 
 .range-slider input::-moz-range-track {
     height: 4px;
@@ -306,9 +305,6 @@
     background: #dbe4f3;
 }
 
-
-/* Chrome / Edge thumb */
-
 .range-slider input::-webkit-slider-thumb {
     width: 15px;
 
@@ -316,7 +312,7 @@
 
     margin-top: -5px;
 
-    border: 2px solid #ffffff;
+    border: 2px solid #fff;
 
     border-radius: 50%;
 
@@ -332,15 +328,12 @@
     appearance: none;
 }
 
-
-/* Firefox thumb */
-
 .range-slider input::-moz-range-thumb {
     width: 15px;
 
     height: 15px;
 
-    border: 2px solid #ffffff;
+    border: 2px solid #fff;
 
     border-radius: 50%;
 
@@ -354,9 +347,8 @@
     cursor: pointer;
 }
 
-
 /* =====================================================
-   APPLY PRICE BUTTON
+   APPLY PRICE
 ===================================================== */
 
 .apply-price-btn {
@@ -372,21 +364,18 @@
 
     background: #2563eb;
 
-    color: #ffffff;
+    color: #fff;
 
     font-size: 11.5px;
 
     font-weight: 700;
 
     cursor: pointer;
-
-    transition: background 0.2s ease;
 }
 
 .apply-price-btn:hover {
     background: #1d4ed8;
 }
-
 
 /* =====================================================
    BRANDS
@@ -408,20 +397,10 @@
     cursor: pointer;
 }
 
-.brand-option:hover {
-    color: #2563eb;
-}
-
 .brand-option input {
-    width: 14px;
-
-    height: 14px;
-
     accent-color: #2563eb;
 
     cursor: pointer;
-
-    flex-shrink: 0;
 }
 
 .brand-option span {
@@ -439,7 +418,6 @@
 
     font-size: 11px;
 }
-
 
 /* =====================================================
    VIEW MORE
@@ -461,13 +439,8 @@
     cursor: pointer;
 }
 
-.view-more-btn:hover {
-    color: #1d4ed8;
-}
-
-
 /* =====================================================
-   SORT PRODUCTS
+   SORT
 ===================================================== */
 
 .sidebar-sort {
@@ -498,7 +471,6 @@
     font-size: 14px;
 }
 
-
 /* =====================================================
    SORT BUTTONS
 ===================================================== */
@@ -522,7 +494,7 @@
 
     border-radius: 8px;
 
-    background: #ffffff;
+    background: #fff;
 
     color: #64748b;
 
@@ -568,7 +540,6 @@
     flex-shrink: 0;
 }
 
-
 /* =====================================================
    CLEAR FILTERS
 ===================================================== */
@@ -601,59 +572,33 @@
     font-weight: 700;
 
     cursor: pointer;
-
-    transition: background 0.2s ease;
 }
 
 .sidebar-clear-btn:hover {
     background: #fecaca;
 }
 
-
 /* =====================================================
    PRODUCT CONTENT
-   INDEPENDENT SCROLL
+
+   IMPORTANT:
+   No independent scrollbar.
+   Body/page controls scrolling.
 ===================================================== */
 
 .products-content {
     min-width: 0;
 
-    height: calc(100vh - 36px);
+    width: 100%;
 
-    overflow-y: auto;
+    height: auto;
 
-    overflow-x: hidden;
+    min-height: 0;
+
+    overflow: visible;
 
     padding-right: 5px;
-
-    scrollbar-width: thin;
-
-    scrollbar-color:
-        #cbd5e1
-        transparent;
 }
-
-
-/* Chrome / Edge scrollbar */
-
-.products-content::-webkit-scrollbar {
-    width: 6px;
-}
-
-.products-content::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.products-content::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-
-    border-radius: 10px;
-}
-
-.products-content::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-}
-
 
 /* =====================================================
    RESULT HEADER
@@ -669,12 +614,6 @@
     gap: 14px;
 
     margin: 2px 0 14px;
-
-    position: sticky;
-
-    top: 0;
-
-    z-index: 5;
 
     padding: 8px 0;
 
@@ -699,7 +638,6 @@
     font-size: 12px;
 }
 
-
 /* =====================================================
    PAGE INDICATOR
 ===================================================== */
@@ -711,7 +649,7 @@
 
     border-radius: 999px;
 
-    background: #ffffff;
+    background: #fff;
 
     border: 1px solid #e7ebf3;
 
@@ -722,19 +660,13 @@
     font-weight: 700;
 }
 
-
 /* =====================================================
-   PRODUCTS CONTAINER
+   PRODUCTS
 ===================================================== */
 
 .products-ad-grid {
     width: 100%;
 }
-
-
-/* =====================================================
-   EXACTLY 4 PRODUCTS PER ROW
-===================================================== */
 
 .product-row {
     width: 100%;
@@ -762,7 +694,6 @@
 
     max-width: 100%;
 }
-
 
 /* =====================================================
    ADVERTISEMENT
@@ -808,7 +739,7 @@
 
     border-radius: 50%;
 
-    background: #ffffff;
+    background: #fff;
 
     display: flex;
 
@@ -837,7 +768,7 @@
 
     background: #2563eb;
 
-    color: #ffffff;
+    color: #fff;
 
     font-size: 8px;
 
@@ -879,25 +810,18 @@
 
     background: #111827;
 
-    color: #ffffff;
+    color: #fff;
 
     font-size: 11px;
 
     font-weight: 700;
 
     cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        transform 0.2s ease;
 }
 
 .row-ad-button:hover {
     background: #2563eb;
-
-    transform: translateY(-1px);
 }
-
 
 /* =====================================================
    LOADING
@@ -940,7 +864,6 @@
     }
 }
 
-
 /* =====================================================
    NO PRODUCTS
 ===================================================== */
@@ -948,7 +871,7 @@
 .no-products {
     min-height: 320px;
 
-    background: #ffffff;
+    background: #fff;
 
     border: 1px solid #e7ebf3;
 
@@ -1018,21 +941,14 @@
 
     background: #2563eb;
 
-    color: #ffffff;
+    color: #fff;
 
     font-size: 13px;
 
     font-weight: 700;
 
     cursor: pointer;
-
-    transition: background 0.2s ease;
 }
-
-.no-products button:hover {
-    background: #1d4ed8;
-}
-
 
 /* =====================================================
    PAGINATION
@@ -1048,7 +964,6 @@
     justify-content: center;
 }
 
-
 /* =====================================================
    BENEFITS
 ===================================================== */
@@ -1058,7 +973,7 @@
 
     padding: 22px;
 
-    background: #ffffff;
+    background: #fff;
 
     border: 1px solid #e7ebf3;
 
@@ -1102,15 +1017,13 @@
     font-size: 18px;
 }
 
-.benefit-item:nth-child(2)
-.benefit-icon {
+.benefit-item:nth-child(2) .benefit-icon {
     background: #fff7e6;
 
     color: #f59e0b;
 }
 
-.benefit-item:nth-child(3)
-.benefit-icon {
+.benefit-item:nth-child(3) .benefit-icon {
     background: #ffecec;
 
     color: #ef4444;
@@ -1136,9 +1049,8 @@
     line-height: 1.5;
 }
 
-
 /* =====================================================
-   LARGE TABLET
+   TABLET
 ===================================================== */
 
 @media (max-width: 1200px) {
@@ -1161,9 +1073,8 @@
     }
 }
 
-
 /* =====================================================
-   TABLET
+   992px
 ===================================================== */
 
 @media (max-width: 992px) {
@@ -1196,7 +1107,6 @@
     }
 }
 
-
 /* =====================================================
    MOBILE
 ===================================================== */
@@ -1215,10 +1125,9 @@
         display: block;
     }
 
-
-    /* =========================================
+    /* ---------------------------------------------
        MOBILE SIDEBAR
-    ========================================= */
+    --------------------------------------------- */
 
     .products-sidebar {
         display: none;
@@ -1239,8 +1148,6 @@
 
         overflow-y: auto;
 
-        overflow-x: hidden;
-
         border-radius:
             0 14px 14px 0;
 
@@ -1258,10 +1165,9 @@
         display: flex;
     }
 
-
-    /* =========================================
-       MOBILE PRODUCT CONTENT
-    ========================================= */
+    /* ---------------------------------------------
+       PRODUCT CONTENT
+    --------------------------------------------- */
 
     .products-content {
         width: 100%;
@@ -1279,10 +1185,9 @@
         align-items: flex-start;
     }
 
-
-    /* =========================================
-       MOBILE PRODUCTS
-    ========================================= */
+    /* ---------------------------------------------
+       PRODUCTS
+    --------------------------------------------- */
 
     .product-row {
         grid-template-columns:
@@ -1291,10 +1196,9 @@
         gap: 10px;
     }
 
-
-    /* =========================================
-       MOBILE AD
-    ========================================= */
+    /* ---------------------------------------------
+       AD
+    --------------------------------------------- */
 
     .product-row-ad {
         padding: 16px;
@@ -1322,16 +1226,10 @@
         width: 100%;
     }
 
-
-    /* =========================================
-       BENEFITS
-    ========================================= */
-
     .shopping-benefits {
         margin-top: 20px;
     }
 }
-
 
 /* =====================================================
    SMALL MOBILE
@@ -1346,8 +1244,6 @@
     .product-row {
         grid-template-columns:
             repeat(2, minmax(0, 1fr));
-
-        gap: 8px;
     }
 
     .product-row-ad {
