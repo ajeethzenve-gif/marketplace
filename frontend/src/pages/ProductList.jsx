@@ -80,7 +80,7 @@ function ProductList() {
         "Medicine",
         "Supplements",
         "Food",
-        "Accessory",
+        "Accessories",
         "Grooming",
     ];
 

@@ -145,8 +145,8 @@ function AddProduct() {
         },
 
         {
-            value: "Supplement",
-            label: "Supplement",
+            value: "Supplements",
+            label: "Supplements",
         },
 
         {

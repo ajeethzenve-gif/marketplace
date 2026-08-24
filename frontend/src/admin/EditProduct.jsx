@@ -882,7 +882,7 @@ function EditProduct() {
     const productTypes = [
 
         ["Medicine", "Medicine"],
-        ["Supplement", "Supplement"],
+        ["Supplements", "Supplements"],
         ["Food", "Food"],
         ["Treat", "Treats"],
         ["Grooming", "Grooming"],
