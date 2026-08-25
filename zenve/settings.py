@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'reviews',
     'coupons',
     'prescriptions',
+    'payments'
 
 ]
 SITE_ID = 1
@@ -251,3 +252,13 @@ CACHES = {
             "petcare-password-reset-cache",
     }
 }
+
+RAZORPAY_KEY_ID = os.environ.get(
+    "RAZORPAY_KEY_ID",
+    "rzp_test_your_key_id"
+)
+
+RAZORPAY_KEY_SECRET = os.environ.get(
+    "RAZORPAY_KEY_SECRET",
+    "your_key_secret"
+)

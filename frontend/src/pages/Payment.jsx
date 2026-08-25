@@ -15,7 +15,6 @@ import {
 import "../styles/Payment.css";
 
 function Payment() {
-
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -48,6 +47,7 @@ function Payment() {
     const [loadingAddress, setLoadingAddress] =
         useState(true);
 
+    // Only the default address will be stored here
     const [addresses, setAddresses] =
         useState([]);
 
@@ -66,11 +66,11 @@ function Payment() {
         state: "",
         country: "India",
         postal_code: "",
-        is_default: false,
+        is_default: true,
     });
 
     // =====================================
-    // COUPON
+    // COUPON STATES
     // =====================================
 
     const [couponCode, setCouponCode] =
@@ -92,33 +92,57 @@ function Payment() {
         useState("");
 
     // =====================================
-    // LOAD ADDRESSES
+    // LOAD RAZORPAY SCRIPT
+    // =====================================
+
+    const loadRazorpayScript = () => {
+        return new Promise((resolve) => {
+            if (window.Razorpay) {
+                resolve(true);
+                return;
+            }
+
+            const script =
+                document.createElement("script");
+
+            script.src =
+                "https://checkout.razorpay.com/v1/checkout.js";
+
+            script.async = true;
+
+            script.onload = () => {
+                resolve(true);
+            };
+
+            script.onerror = () => {
+                resolve(false);
+            };
+
+            document.body.appendChild(script);
+        });
+    };
+
+    // =====================================
+    // LOAD DEFAULT ADDRESS
     // =====================================
 
     useEffect(() => {
-
         if (!token) {
-
             navigate("/login");
-
             return;
-
         }
 
         fetchAddresses();
-
     }, []);
 
     // =====================================
-    // FETCH ADDRESSES
+    // FETCH ONLY DEFAULT ADDRESS
     // =====================================
 
     const fetchAddresses = async () => {
-
         setLoadingAddress(true);
 
         try {
-
             const response = await axios.get(
                 "http://127.0.0.1:8000/api/accounts/addresses/",
                 {
@@ -132,44 +156,40 @@ function Payment() {
                 ? response.data
                 : response.data.results || [];
 
-            setAddresses(addressData);
+            // Find only default address
+            const defaultAddress =
+                addressData.find(
+                    (item) => item.is_default === true
+                );
 
-            if (addressData.length > 0) {
+            if (defaultAddress) {
+                // Store only default address
+                setAddresses([defaultAddress]);
 
-                const defaultAddress =
-                    addressData.find(
-                        item => item.is_default
-                    );
+                // Automatically select default address
+                setSelectedAddress(
+                    defaultAddress.id
+                );
 
-                if (defaultAddress) {
+                setShowAddressForm(false);
 
-                    setSelectedAddress(
-                        defaultAddress.id
-                    );
-
-                } else {
-
-                    setSelectedAddress(
-                        addressData[0].id
-                    );
-
-                }
-
+            } else {
+                setAddresses([]);
+                setSelectedAddress(null);
             }
 
         } catch (error) {
-
             console.error(
                 "Address loading error:",
                 error.response?.data || error.message
             );
 
+            setAddresses([]);
+            setSelectedAddress(null);
+
         } finally {
-
             setLoadingAddress(false);
-
         }
-
     };
 
     // =====================================
@@ -177,7 +197,6 @@ function Payment() {
     // =====================================
 
     const handleAddressChange = (e) => {
-
         const {
             name,
             value,
@@ -193,28 +212,33 @@ function Payment() {
                     ? checked
                     : value,
         });
-
     };
 
     // =====================================
-    // SAVE ADDRESS
+    // SAVE DEFAULT ADDRESS
     // =====================================
 
     const saveAddress = async () => {
-
         try {
+            const dataToSend = {
+                ...addressForm,
+                is_default: true,
+            };
 
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/accounts/addresses/",
-                addressForm,
+                dataToSend,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization:
+                            `Bearer ${token}`,
                     },
                 }
             );
 
-            alert("Address added successfully.");
+            alert(
+                "Default address added successfully."
+            );
 
             setShowAddressForm(false);
 
@@ -227,83 +251,75 @@ function Payment() {
                 state: "",
                 country: "India",
                 postal_code: "",
-                is_default: false,
+                is_default: true,
             });
 
             await fetchAddresses();
 
             if (response.data?.id) {
-
                 setSelectedAddress(
                     response.data.id
                 );
-
             }
 
         } catch (error) {
-
             console.error(
                 "Save address error:",
                 error.response?.data || error.message
             );
 
-            if (error.response) {
-
-                alert(
-                    error.response.data.message ||
-                    JSON.stringify(error.response.data)
-                );
-
-            } else {
-
-                alert("Unable to save address.");
-
-            }
-
+            alert(
+                error.response?.data?.message ||
+                JSON.stringify(
+                    error.response?.data
+                ) ||
+                "Unable to save address."
+            );
         }
-
     };
 
     // =====================================
-    // DELETE ADDRESS
+    // DELETE DEFAULT ADDRESS
     // =====================================
 
     const deleteAddress = async (id) => {
-
-        const confirmDelete = window.confirm(
-            "Are you sure you want to delete this address?"
-        );
+        const confirmDelete =
+            window.confirm(
+                "Are you sure you want to delete your default address?"
+            );
 
         if (!confirmDelete) {
             return;
         }
 
         try {
-
             await axios.delete(
                 `http://127.0.0.1:8000/api/accounts/addresses/${id}/`,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization:
+                            `Bearer ${token}`,
                     },
                 }
             );
 
-            alert("Address deleted successfully.");
+            setAddresses([]);
+            setSelectedAddress(null);
 
-            await fetchAddresses();
+            alert(
+                "Default address deleted successfully."
+            );
 
         } catch (error) {
-
             console.error(
                 "Delete address error:",
                 error.response?.data || error.message
             );
 
-            alert("Unable to delete address.");
-
+            alert(
+                "Unable to delete address."
+            );
         }
-
     };
 
     // =====================================
@@ -311,22 +327,13 @@ function Payment() {
     // =====================================
 
     const clearCartAfterOrder = async () => {
-
         try {
-
-            /*
-             * Get the current cart first.
-             *
-             * We do this instead of relying only on
-             * localStorage because the real cart is
-             * stored in the backend/database.
-             */
-
             const response = await axios.get(
                 "http://127.0.0.1:8000/api/cart/",
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization:
+                            `Bearer ${token}`,
                     },
                 }
             );
@@ -334,39 +341,30 @@ function Payment() {
             let cartItems = [];
 
             if (Array.isArray(response.data)) {
-
                 cartItems = response.data;
 
             } else if (
                 Array.isArray(response.data.results)
             ) {
-
                 cartItems = response.data.results;
 
             } else if (
                 Array.isArray(response.data.items)
             ) {
-
                 cartItems = response.data.items;
 
             } else if (
-                Array.isArray(response.data.cart_items)
+                Array.isArray(
+                    response.data.cart_items
+                )
             ) {
-
-                cartItems = response.data.cart_items;
-
+                cartItems =
+                    response.data.cart_items;
             }
 
-            /*
-             * Delete every cart item.
-             */
-
             if (cartItems.length > 0) {
-
                 await Promise.all(
-
                     cartItems.map(async (item) => {
-
                         const productId =
                             item.product_id ||
                             item.product?.id ||
@@ -377,7 +375,6 @@ function Payment() {
                         }
 
                         try {
-
                             await axios.delete(
                                 `http://127.0.0.1:8000/api/cart/remove/${productId}/`,
                                 {
@@ -389,55 +386,32 @@ function Payment() {
                             );
 
                         } catch (error) {
-
                             console.error(
                                 `Unable to remove cart item ${productId}:`,
                                 error.response?.data ||
                                 error.message
                             );
-
                         }
-
                     })
-
                 );
-
             }
-
-            /*
-             * Reset frontend cart count.
-             */
 
             localStorage.setItem(
                 "cartCount",
                 "0"
             );
 
-            /*
-             * Send a browser event so Navbar/cart
-             * can update immediately.
-             */
-
             window.dispatchEvent(
                 new Event("cartUpdated")
             );
 
         } catch (error) {
-
             console.error(
                 "Cart clearing error:",
                 error.response?.data ||
                 error.message
             );
-
-            /*
-             * Even if the cart GET fails, don't
-             * prevent the successful order from
-             * completing.
-             */
-
         }
-
     };
 
     // =====================================
@@ -445,33 +419,28 @@ function Payment() {
     // =====================================
 
     const applyCoupon = async () => {
-
         if (!couponCode.trim()) {
-
             alert(
                 "Please enter a coupon code."
             );
 
             return;
-
         }
 
         setCouponLoading(true);
         setCouponMessage("");
 
         try {
-
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/coupons/apply/",
                 {
-                    code: couponCode.trim().toUpperCase(),
+                    code:
+                        couponCode
+                            .trim()
+                            .toUpperCase(),
 
-                    /*
-                     * Use subtotal as the cart value
-                     * because shipping should normally
-                     * not be discounted.
-                     */
-                    cart_total: Number(subtotal),
+                    cart_total:
+                        Number(subtotal),
                 },
                 {
                     headers: {
@@ -482,17 +451,19 @@ function Payment() {
             );
 
             const discount =
-                Number(response.data.discount) || 0;
+                Number(
+                    response.data.discount
+                ) || 0;
 
             const backendFinal =
-                Number(response.data.final_total);
-
-            /*
-             * Prefer backend calculated final total.
-             */
+                Number(
+                    response.data.final_total
+                );
 
             const calculatedFinal =
-                Number.isFinite(backendFinal)
+                Number.isFinite(
+                    backendFinal
+                )
                     ? backendFinal
                     : Math.max(
                         0,
@@ -516,7 +487,6 @@ function Payment() {
             );
 
         } catch (error) {
-
             console.error(
                 "Coupon error:",
                 error.response?.data ||
@@ -537,11 +507,8 @@ function Payment() {
             );
 
         } finally {
-
             setCouponLoading(false);
-
         }
-
     };
 
     // =====================================
@@ -549,71 +516,41 @@ function Payment() {
     // =====================================
 
     const removeCoupon = () => {
-
         setCouponCode("");
-
         setCouponDiscount(0);
-
         setAppliedCoupon(null);
-
-        setFinalAmount(
-            Number(total)
-        );
-
+        setFinalAmount(Number(total));
         setCouponMessage("");
-
     };
 
     // =====================================
-    // PLACE ORDER
+    // RAZORPAY UPI PAYMENT
     // =====================================
 
-    const placeOrder = async () => {
-
+    const handleRazorpayPayment = async () => {
         if (!selectedAddress) {
-
             alert(
-                "Please select a delivery address."
+                "Please add a default delivery address."
             );
 
             return;
-
         }
-
-        /*
-         * Prevent accidental multiple orders.
-         */
-
-        if (loading) {
-            return;
-        }
-
-        /*
-         * Buy Now requires a product.
-         */
 
         if (
             checkoutType === "buy_now" &&
             !product
         ) {
-
             alert(
                 "Product information is missing."
             );
 
             return;
-
         }
-
-        /*
-         * Cart checkout requires products.
-         */
 
         if (
             checkoutType !== "buy_now" &&
             products.length === 0
         ) {
-
             alert(
                 "Your cart is empty."
             );
@@ -621,23 +558,344 @@ function Payment() {
             navigate("/cart");
 
             return;
+        }
 
+        try {
+            setLoading(true);
+
+            const razorpayLoaded =
+                await loadRazorpayScript();
+
+            if (!razorpayLoaded) {
+                alert(
+                    "Razorpay failed to load. Please check your internet connection."
+                );
+
+                setLoading(false);
+                return;
+            }
+
+            // =====================================
+            // CREATE RAZORPAY ORDER
+            // =====================================
+
+            const response = await axios.post(
+                "http://127.0.0.1:8000/api/payments/create-order/",
+                {
+                    amount:
+                        Number(finalAmount),
+                    currency: "INR",
+                },
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`,
+                    },
+                }
+            );
+
+            const data = response.data;
+
+            if (
+                !data.razorpay_order_id ||
+                !data.amount ||
+                !data.key
+            ) {
+                alert(
+                    "Invalid Razorpay order response."
+                );
+
+                setLoading(false);
+                return;
+            }
+
+            // =====================================
+            // RAZORPAY CHECKOUT OPTIONS
+            // =====================================
+
+            const options = {
+                key: data.key,
+
+                amount: data.amount,
+
+                currency:
+                    data.currency || "INR",
+
+                name: "Zenve MarketPlace",
+
+                description:
+                    "UPI Payment",
+
+                order_id:
+                    data.razorpay_order_id,
+
+                handler: async function (
+                    razorpayResponse
+                ) {
+                    try {
+                        // =====================================
+                        // VERIFY PAYMENT
+                        // =====================================
+
+                        const verifyResponse =
+                            await axios.post(
+                                "http://127.0.0.1:8000/api/payments/verify/",
+                                {
+                                    razorpay_payment_id:
+                                        razorpayResponse.razorpay_payment_id,
+
+                                    razorpay_order_id:
+                                        razorpayResponse.razorpay_order_id,
+
+                                    razorpay_signature:
+                                        razorpayResponse.razorpay_signature,
+
+                                    checkout_type:
+                                        checkoutType,
+
+                                    shipping_address:
+                                        selectedAddress,
+
+                                    payment_method:
+                                        "UPI",
+
+                                    coupon_code:
+                                        appliedCoupon
+                                            ? couponCode
+                                            : null,
+
+                                    subtotal:
+                                        Number(subtotal),
+
+                                    shipping_charge:
+                                        Number(shipping),
+
+                                    discount_amount:
+                                        Number(
+                                            couponDiscount
+                                        ),
+
+                                    total_amount:
+                                        Number(
+                                            finalAmount
+                                        ),
+
+                                    product_id:
+                                        checkoutType ===
+                                        "buy_now"
+                                            ? product?.id
+                                            : null,
+
+                                    quantity:
+                                        checkoutType ===
+                                        "buy_now"
+                                            ? product?.quantity
+                                            : null,
+                                },
+                                {
+                                    headers: {
+                                        Authorization:
+                                            `Bearer ${token}`,
+                                    },
+                                }
+                            );
+
+                        console.log(
+                            "Payment verification:",
+                            verifyResponse.data
+                        );
+
+                        // =====================================
+                        // CLEAR CART AFTER SUCCESS
+                        // =====================================
+
+                        if (
+                            checkoutType !==
+                            "buy_now"
+                        ) {
+                            await clearCartAfterOrder();
+                        }
+
+                        alert(
+                            "Payment successful! Order placed successfully."
+                        );
+
+                        navigate(
+                            "/orders",
+                            {
+                                replace: true,
+                            }
+                        );
+
+                    } catch (error) {
+                        console.error(
+                            "Payment verification error:",
+                            error.response?.data ||
+                            error.message
+                        );
+
+                        alert(
+                            error.response?.data?.message ||
+                            "Payment verification failed."
+                        );
+
+                    } finally {
+                        setLoading(false);
+                    }
+                },
+
+                modal: {
+                    ondismiss: function () {
+                        setLoading(false);
+                    },
+                },
+
+                prefill: {
+                    name:
+                        addresses[0]?.full_name ||
+                        "",
+
+                    contact:
+                        addresses[0]?.phone_number ||
+                        "",
+                },
+
+                notes: {
+                    checkout_type:
+                        checkoutType || "cart",
+
+                    shipping_address:
+                        selectedAddress,
+                },
+
+                theme: {
+                    color: "#0D6EFD",
+                },
+
+                // UPI ONLY
+                method: {
+                    upi: true,
+
+                    card: false,
+
+                    netbanking: false,
+
+                    wallet: false,
+
+                    emi: false,
+
+                    paylater: false,
+                },
+            };
+
+            const razorpay =
+                new window.Razorpay(
+                    options
+                );
+
+            razorpay.on(
+                "payment.failed",
+                function (response) {
+                    console.error(
+                        "Payment failed:",
+                        response.error
+                    );
+
+                    alert(
+                        response.error.description ||
+                        "Payment failed. Please try again."
+                    );
+
+                    setLoading(false);
+                }
+            );
+
+            razorpay.open();
+
+        } catch (error) {
+            console.error(
+                "Razorpay payment error:",
+                error.response?.data ||
+                error.message
+            );
+
+            alert(
+                error.response?.data?.message ||
+                "Unable to start Razorpay payment."
+            );
+
+            setLoading(false);
+        }
+    };
+
+    // =====================================
+    // PLACE ORDER
+    // =====================================
+
+    const placeOrder = async () => {
+        if (!selectedAddress) {
+            alert(
+                "Please add a default delivery address."
+            );
+
+            return;
+        }
+
+        if (loading) {
+            return;
+        }
+
+        // =====================================
+        // UPI → OPEN RAZORPAY POPUP
+        // =====================================
+
+        if (paymentMethod === "UPI") {
+            await handleRazorpayPayment();
+            return;
+        }
+
+        // =====================================
+        // BUY NOW VALIDATION
+        // =====================================
+
+        if (
+            checkoutType === "buy_now" &&
+            !product
+        ) {
+            alert(
+                "Product information is missing."
+            );
+
+            return;
+        }
+
+        // =====================================
+        // CART VALIDATION
+        // =====================================
+
+        if (
+            checkoutType !== "buy_now" &&
+            products.length === 0
+        ) {
+            alert(
+                "Your cart is empty."
+            );
+
+            navigate("/cart");
+
+            return;
         }
 
         setLoading(true);
 
         try {
-
             // =====================================
             // BUY NOW
             // =====================================
 
             if (checkoutType === "buy_now") {
-
                 await axios.post(
-
                     "http://127.0.0.1:8000/api/orders/place/",
-
                     {
                         product_id:
                             product.id,
@@ -668,28 +926,22 @@ function Payment() {
                         total_amount:
                             Number(finalAmount),
                     },
-
                     {
                         headers: {
                             Authorization:
                                 `Bearer ${token}`,
                         },
                     }
-
                 );
 
-            }
+            } else {
 
-            // =====================================
-            // CART CHECKOUT
-            // =====================================
-
-            else {
+                // =====================================
+                // CART CHECKOUT
+                // =====================================
 
                 await axios.post(
-
                     "http://127.0.0.1:8000/api/orders/place-cart/",
-
                     {
                         shipping_address:
                             selectedAddress,
@@ -714,78 +966,43 @@ function Payment() {
                         total_amount:
                             Number(finalAmount),
                     },
-
                     {
                         headers: {
                             Authorization:
                                 `Bearer ${token}`,
                         },
                     }
-
                 );
 
-                /*
-                 * IMPORTANT:
-                 *
-                 * Order was successfully created.
-                 *
-                 * Now remove the purchased products
-                 * from the backend cart.
-                 */
-
                 await clearCartAfterOrder();
-
             }
-
-            // =====================================
-            // SUCCESS
-            // =====================================
 
             alert(
                 "Order placed successfully!"
             );
-
-            /*
-             * Clear checkout state so the user
-             * cannot accidentally reuse the same
-             * payment page.
-             */
 
             navigate("/orders", {
                 replace: true,
             });
 
         } catch (error) {
-
             console.error(
                 "Place order error:",
                 error.response?.data ||
                 error.message
             );
 
-            if (error.response) {
-
-                alert(
-                    error.response.data.message ||
-                    JSON.stringify(
-                        error.response.data
-                    )
-                );
-
-            } else {
-
-                alert(
-                    "Server not responding."
-                );
-
-            }
+            alert(
+                error.response?.data?.message ||
+                JSON.stringify(
+                    error.response?.data
+                ) ||
+                "Unable to place order."
+            );
 
         } finally {
-
             setLoading(false);
-
         }
-
     };
 
     // =====================================
@@ -793,22 +1010,17 @@ function Payment() {
     // =====================================
 
     return (
-
         <div className="payment-page">
-
             <div className="container py-5">
-
                 <div className="row g-4">
 
-                    {/* =================================
+                    {/* ============================
                         LEFT SIDE
-                    ================================= */}
+                    ============================ */}
 
                     <div className="col-lg-8">
 
-                        {/* =================================
-                            DELIVERY ADDRESS
-                        ================================= */}
+                        {/* DELIVERY ADDRESS */}
 
                         <div className="premium-card">
 
@@ -818,8 +1030,7 @@ function Payment() {
                                     Delivery Address
                                 </h3>
 
-                                {addresses.length > 0 && (
-
+                                {addresses.length === 0 && (
                                     <button
                                         type="button"
                                         className="btn btn-primary"
@@ -829,13 +1040,10 @@ function Payment() {
                                             )
                                         }
                                     >
-
                                         {showAddressForm
                                             ? "Cancel"
-                                            : "Add New Address"}
-
+                                            : "Add Default Address"}
                                     </button>
-
                                 )}
 
                             </div>
@@ -843,50 +1051,16 @@ function Payment() {
                             {loadingAddress ? (
 
                                 <p>
-                                    Loading addresses...
+                                    Loading address...
                                 </p>
 
                             ) : (
 
                                 <>
-
-                                    {/* =================================
-                                        NO ADDRESS
-                                    ================================= */}
-
-                                    {addresses.length === 0 &&
-                                        !showAddressForm && (
-
-                                            <div>
-
-                                                <p>
-                                                    No saved address
-                                                    found.
-                                                </p>
-
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-primary"
-                                                    onClick={() =>
-                                                        setShowAddressForm(
-                                                            true
-                                                        )
-                                                    }
-                                                >
-                                                    Add Address
-                                                </button>
-
-                                            </div>
-
-                                        )}
-
-                                    {/* =================================
-                                        ADDRESS LIST
-                                    ================================= */}
+                                    {/* SHOW ONLY DEFAULT ADDRESS */}
 
                                     {addresses.map(
                                         (item) => (
-
                                             <div
                                                 key={item.id}
                                                 className="address-card border rounded p-3 mb-3"
@@ -894,35 +1068,15 @@ function Payment() {
 
                                                 <div className="d-flex justify-content-between align-items-start">
 
-                                                    <label>
-
-                                                        <input
-                                                            type="radio"
-                                                            name="shippingAddress"
-                                                            checked={
-                                                                selectedAddress ===
-                                                                item.id
-                                                            }
-                                                            onChange={() =>
-                                                                setSelectedAddress(
-                                                                    item.id
-                                                                )
-                                                            }
-                                                        />
-
-                                                        <strong className="ms-2">
+                                                    <div>
+                                                        <strong>
                                                             {item.full_name}
                                                         </strong>
 
-                                                        {item.is_default && (
-
-                                                            <span className="badge bg-success ms-2">
-                                                                Default
-                                                            </span>
-
-                                                        )}
-
-                                                    </label>
+                                                        <span className="badge bg-success ms-2">
+                                                            Default Address
+                                                        </span>
+                                                    </div>
 
                                                     <button
                                                         type="button"
@@ -938,16 +1092,14 @@ function Payment() {
 
                                                 </div>
 
-                                                <p>
+                                                <p className="mt-3">
                                                     {item.address_line1}
                                                 </p>
 
                                                 {item.address_line2 && (
-
                                                     <p>
                                                         {item.address_line2}
                                                     </p>
-
                                                 )}
 
                                                 <p>
@@ -962,13 +1114,32 @@ function Payment() {
                                                 </p>
 
                                             </div>
-
                                         )
                                     )}
 
-                                    {/* =================================
-                                        ADDRESS FORM
-                                    ================================= */}
+                                    {/* NO DEFAULT ADDRESS */}
+
+                                    {addresses.length === 0 &&
+                                        !showAddressForm && (
+
+                                        <div>
+                                            <p>
+                                                No default delivery address found.
+                                            </p>
+
+                                            <button
+                                                type="button"
+                                                className="btn btn-primary"
+                                                onClick={() =>
+                                                    setShowAddressForm(true)
+                                                }
+                                            >
+                                                Add Default Address
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {/* ADD ADDRESS FORM */}
 
                                     {showAddressForm && (
 
@@ -977,7 +1148,7 @@ function Payment() {
                                             <hr />
 
                                             <h4 className="mb-3">
-                                                Add New Address
+                                                Add Default Address
                                             </h4>
 
                                             <div className="row">
@@ -989,12 +1160,8 @@ function Payment() {
                                                         name="full_name"
                                                         className="form-control"
                                                         placeholder="Full Name"
-                                                        value={
-                                                            addressForm.full_name
-                                                        }
-                                                        onChange={
-                                                            handleAddressChange
-                                                        }
+                                                        value={addressForm.full_name}
+                                                        onChange={handleAddressChange}
                                                     />
 
                                                 </div>
@@ -1006,12 +1173,8 @@ function Payment() {
                                                         name="phone_number"
                                                         className="form-control"
                                                         placeholder="Phone Number"
-                                                        value={
-                                                            addressForm.phone_number
-                                                        }
-                                                        onChange={
-                                                            handleAddressChange
-                                                        }
+                                                        value={addressForm.phone_number}
+                                                        onChange={handleAddressChange}
                                                     />
 
                                                 </div>
@@ -1025,12 +1188,8 @@ function Payment() {
                                                     name="address_line1"
                                                     className="form-control"
                                                     placeholder="Address Line 1"
-                                                    value={
-                                                        addressForm.address_line1
-                                                    }
-                                                    onChange={
-                                                        handleAddressChange
-                                                    }
+                                                    value={addressForm.address_line1}
+                                                    onChange={handleAddressChange}
                                                 />
 
                                             </div>
@@ -1041,13 +1200,9 @@ function Payment() {
                                                     type="text"
                                                     name="address_line2"
                                                     className="form-control"
-                                                    placeholder="Address Line 2"
-                                                    value={
-                                                        addressForm.address_line2
-                                                    }
-                                                    onChange={
-                                                        handleAddressChange
-                                                    }
+                                                    placeholder="Address Line 2 (Optional)"
+                                                    value={addressForm.address_line2}
+                                                    onChange={handleAddressChange}
                                                 />
 
                                             </div>
@@ -1061,12 +1216,8 @@ function Payment() {
                                                         name="city"
                                                         className="form-control"
                                                         placeholder="City"
-                                                        value={
-                                                            addressForm.city
-                                                        }
-                                                        onChange={
-                                                            handleAddressChange
-                                                        }
+                                                        value={addressForm.city}
+                                                        onChange={handleAddressChange}
                                                     />
 
                                                 </div>
@@ -1078,12 +1229,8 @@ function Payment() {
                                                         name="state"
                                                         className="form-control"
                                                         placeholder="State"
-                                                        value={
-                                                            addressForm.state
-                                                        }
-                                                        onChange={
-                                                            handleAddressChange
-                                                        }
+                                                        value={addressForm.state}
+                                                        onChange={handleAddressChange}
                                                     />
 
                                                 </div>
@@ -1095,12 +1242,8 @@ function Payment() {
                                                         name="postal_code"
                                                         className="form-control"
                                                         placeholder="Postal Code"
-                                                        value={
-                                                            addressForm.postal_code
-                                                        }
-                                                        onChange={
-                                                            handleAddressChange
-                                                        }
+                                                        value={addressForm.postal_code}
+                                                        onChange={handleAddressChange}
                                                     />
 
                                                 </div>
@@ -1113,33 +1256,9 @@ function Payment() {
                                                     type="text"
                                                     name="country"
                                                     className="form-control"
-                                                    value={
-                                                        addressForm.country
-                                                    }
-                                                    onChange={
-                                                        handleAddressChange
-                                                    }
+                                                    value={addressForm.country}
+                                                    onChange={handleAddressChange}
                                                 />
-
-                                            </div>
-
-                                            <div className="form-check mb-3">
-
-                                                <input
-                                                    type="checkbox"
-                                                    className="form-check-input"
-                                                    name="is_default"
-                                                    checked={
-                                                        addressForm.is_default
-                                                    }
-                                                    onChange={
-                                                        handleAddressChange
-                                                    }
-                                                />
-
-                                                <label className="form-check-label">
-                                                    Set as Default Address
-                                                </label>
 
                                             </div>
 
@@ -1148,20 +1267,16 @@ function Payment() {
                                                 <button
                                                     type="button"
                                                     className="btn btn-success"
-                                                    onClick={
-                                                        saveAddress
-                                                    }
+                                                    onClick={saveAddress}
                                                 >
-                                                    Save Address
+                                                    Save Default Address
                                                 </button>
 
                                                 <button
                                                     type="button"
                                                     className="btn btn-secondary"
                                                     onClick={() =>
-                                                        setShowAddressForm(
-                                                            false
-                                                        )
+                                                        setShowAddressForm(false)
                                                     }
                                                 >
                                                     Cancel
@@ -1170,7 +1285,6 @@ function Payment() {
                                             </div>
 
                                         </div>
-
                                     )}
 
                                 </>
@@ -1179,9 +1293,7 @@ function Payment() {
 
                         </div>
 
-                        {/* =================================
-                            PAYMENT METHOD
-                        ================================= */}
+                        {/* PAYMENT METHOD */}
 
                         <div className="premium-card mt-4">
 
@@ -1193,13 +1305,11 @@ function Payment() {
 
                                 <label
                                     className={
-                                        paymentMethod ===
-                                        "Credit Card"
+                                        paymentMethod === "Credit Card"
                                             ? "payment-option active"
                                             : "payment-option"
                                     }
                                 >
-
                                     <input
                                         type="radio"
                                         value="Credit Card"
@@ -1219,7 +1329,6 @@ function Payment() {
                                     <span>
                                         Credit / Debit Card
                                     </span>
-
                                 </label>
 
                                 <label
@@ -1229,13 +1338,11 @@ function Payment() {
                                             : "payment-option"
                                     }
                                 >
-
                                     <input
                                         type="radio"
                                         value="UPI"
                                         checked={
-                                            paymentMethod ===
-                                            "UPI"
+                                            paymentMethod === "UPI"
                                         }
                                         onChange={(e) =>
                                             setPaymentMethod(
@@ -1249,18 +1356,15 @@ function Payment() {
                                     <span>
                                         UPI Payment
                                     </span>
-
                                 </label>
 
                                 <label
                                     className={
-                                        paymentMethod ===
-                                        "Net Banking"
+                                        paymentMethod === "Net Banking"
                                             ? "payment-option active"
                                             : "payment-option"
                                     }
                                 >
-
                                     <input
                                         type="radio"
                                         value="Net Banking"
@@ -1280,7 +1384,6 @@ function Payment() {
                                     <span>
                                         Net Banking
                                     </span>
-
                                 </label>
 
                                 <label
@@ -1291,7 +1394,6 @@ function Payment() {
                                             : "payment-option"
                                     }
                                 >
-
                                     <input
                                         type="radio"
                                         value="Cash on Delivery"
@@ -1311,7 +1413,6 @@ function Payment() {
                                     <span>
                                         Cash on Delivery
                                     </span>
-
                                 </label>
 
                             </div>
@@ -1320,9 +1421,9 @@ function Payment() {
 
                     </div>
 
-                    {/* =================================
-                        RIGHT SIDE
-                    ================================= */}
+                    {/* ============================
+                        RIGHT SIDE - ORDER SUMMARY
+                    ============================ */}
 
                     <div className="col-lg-4">
 
@@ -1332,9 +1433,7 @@ function Payment() {
                                 Order Summary
                             </h3>
 
-                            {/* =================================
-                                COUPON
-                            ================================= */}
+                            {/* COUPON */}
 
                             <div className="coupon-box">
 
@@ -1360,12 +1459,8 @@ function Payment() {
 
                                         <button
                                             type="button"
-                                            onClick={
-                                                applyCoupon
-                                            }
-                                            disabled={
-                                                couponLoading
-                                            }
+                                            onClick={applyCoupon}
+                                            disabled={couponLoading}
                                         >
                                             {couponLoading
                                                 ? "Applying..."
@@ -1376,9 +1471,7 @@ function Payment() {
 
                                         <button
                                             type="button"
-                                            onClick={
-                                                removeCoupon
-                                            }
+                                            onClick={removeCoupon}
                                         >
                                             Remove
                                         </button>
@@ -1391,12 +1484,10 @@ function Payment() {
 
                                     <p
                                         style={{
-                                            color:
-                                                appliedCoupon
-                                                    ? "green"
-                                                    : "red",
-                                            marginTop:
-                                                "8px",
+                                            color: appliedCoupon
+                                                ? "green"
+                                                : "red",
+                                            marginTop: "8px",
                                         }}
                                     >
                                         {couponMessage}
@@ -1406,14 +1497,11 @@ function Payment() {
 
                             </div>
 
-                            {/* =================================
-                                PRODUCTS
-                            ================================= */}
+                            {/* PRODUCTS */}
 
                             <div className="summary-products">
 
-                                {checkoutType ===
-                                "buy_now" ? (
+                                {checkoutType === "buy_now" ? (
 
                                     product && (
 
@@ -1424,10 +1512,7 @@ function Payment() {
                                             </span>
 
                                             <span>
-                                                ×{" "}
-                                                {
-                                                    product.quantity
-                                                }
+                                                × {product.quantity}
                                             </span>
 
                                         </div>
@@ -1436,34 +1521,27 @@ function Payment() {
 
                                 ) : (
 
-                                    products.map(
-                                        (item) => (
+                                    products.map((item) => (
 
-                                            <div
-                                                key={
-                                                    item.product_id ||
-                                                    item.id
-                                                }
-                                                className="summary-product"
-                                            >
+                                        <div
+                                            key={
+                                                item.product_id ||
+                                                item.id
+                                            }
+                                            className="summary-product"
+                                        >
 
-                                                <span>
-                                                    {
-                                                        item.product_name
-                                                    }
-                                                </span>
+                                            <span>
+                                                {item.product_name}
+                                            </span>
 
-                                                <span>
-                                                    ×{" "}
-                                                    {
-                                                        item.quantity
-                                                    }
-                                                </span>
+                                            <span>
+                                                × {item.quantity}
+                                            </span>
 
-                                            </div>
+                                        </div>
 
-                                        )
-                                    )
+                                    ))
 
                                 )}
 
@@ -1471,63 +1549,24 @@ function Payment() {
 
                             <hr />
 
-                            {/* =================================
-                                TOTAL ITEMS
-                            ================================= */}
-
                             <div className="summary-row">
-
-                                <span>
-                                    Total Items
-                                </span>
-
-                                <span>
-                                    {totalItems}
-                                </span>
-
+                                <span>Total Items</span>
+                                <span>{totalItems}</span>
                             </div>
 
-                            {/* =================================
-                                SUBTOTAL
-                            ================================= */}
-
                             <div className="summary-row">
-
+                                <span>Subtotal</span>
                                 <span>
-                                    Subtotal
+                                    ₹ {Number(subtotal).toFixed(2)}
                                 </span>
-
-                                <span>
-                                    ₹{" "}
-                                    {Number(
-                                        subtotal
-                                    ).toFixed(2)}
-                                </span>
-
                             </div>
 
-                            {/* =================================
-                                SHIPPING
-                            ================================= */}
-
                             <div className="summary-row">
-
+                                <span>Shipping</span>
                                 <span>
-                                    Shipping
+                                    ₹ {Number(shipping).toFixed(2)}
                                 </span>
-
-                                <span>
-                                    ₹{" "}
-                                    {Number(
-                                        shipping
-                                    ).toFixed(2)}
-                                </span>
-
                             </div>
-
-                            {/* =================================
-                                DISCOUNT
-                            ================================= */}
 
                             {couponDiscount > 0 && (
 
@@ -1539,8 +1578,7 @@ function Payment() {
 
                                     <span
                                         style={{
-                                            color:
-                                                "green",
+                                            color: "green",
                                         }}
                                     >
                                         - ₹{" "}
@@ -1554,10 +1592,6 @@ function Payment() {
                             )}
 
                             <hr />
-
-                            {/* =================================
-                                FINAL TOTAL
-                            ================================= */}
 
                             <div className="summary-total">
 
@@ -1574,28 +1608,35 @@ function Payment() {
 
                             </div>
 
-                            {/* =================================
-                                PLACE ORDER
-                            ================================= */}
+                            {/* PLACE ORDER / PAY */}
 
                             <button
                                 type="button"
                                 className="place-order-btn"
-                                onClick={
-                                    placeOrder
+                                onClick={placeOrder}
+                                disabled={
+                                    loading ||
+                                    !selectedAddress
                                 }
-                                disabled={loading}
                             >
 
                                 {loading
                                     ? "Processing..."
-                                    : "Place Order"}
+
+                                    : !selectedAddress
+                                        ? "Add Default Address"
+
+                                        : paymentMethod === "UPI"
+                                            ? `Pay ₹${Number(
+                                                finalAmount
+                                            ).toFixed(2)}`
+
+                                            : "Place Order"
+                                }
 
                             </button>
 
-                            {/* =================================
-                                SECURE PAYMENT
-                            ================================= */}
+                            {/* SECURE PAYMENT */}
 
                             <div className="secure-box">
 
@@ -1631,9 +1672,7 @@ function Payment() {
 
                             </div>
 
-                            {/* =================================
-                                OFFERS
-                            ================================= */}
+                            {/* OFFERS */}
 
                             <div className="offer-box">
 
@@ -1663,13 +1702,9 @@ function Payment() {
                     </div>
 
                 </div>
-
             </div>
-
         </div>
-
     );
-
 }
 
 export default Payment;

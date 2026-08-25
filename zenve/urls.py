@@ -32,6 +32,7 @@ urlpatterns = [
     path("api/reviews/",include("reviews.urls")),
     path("api/coupons/",include("coupons.urls")),
     path("api/prescriptions/",include("prescriptions.urls")),
+    path("api/payments/",include("payments.urls")),
 ]
 if settings.DEBUG:
     urlpatterns += static(
