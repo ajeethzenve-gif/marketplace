@@ -71,11 +71,11 @@ function Footer() {
                         All Products
                     </a>
 
-                    <a href="/medicines">
+                    <a href="/products?product_type=Medicine&product_type=Supplements">
                         Medicines & Supplements
                     </a>
 
-                    <a href="/pet-food">
+                    <a href="/products?product_type=food&product_type=Other">
                         Pet Food & Products
                     </a>
 
@@ -83,7 +83,7 @@ function Footer() {
                         Offers
                     </a>
 
-                    <a href="/wishlist">
+                    <a href="/wishlists">
                         Wishlist
                     </a>
 
@@ -97,7 +97,7 @@ function Footer() {
                         Pet Services
                     </h3>
 
-                    <a href="/vet-equipment">
+                    <a href="/products?product_type=VetEquipment">
                         Vet Equipment
                     </a>
 
@@ -109,11 +109,11 @@ function Footer() {
                         Adoption Platform
                     </a>
 
-                    <a href="/upload-prescription">
+                    <a href="/prescription/upload">
                         Upload Prescription
                     </a>
 
-                    <a href="/track-order">
+                    <a href="/orders">
                         Track Order
                     </a>
 
@@ -131,27 +131,27 @@ function Footer() {
                         Customer Service
                     </h3>
 
-                    <a href="/contact">
+                    <a href="">
                         Contact Us
                     </a>
 
-                    <a href="/faq">
+                    <a href="">
                         FAQs
                     </a>
 
-                    <a href="/shipping">
+                    <a href="">
                         Shipping & Delivery
                     </a>
 
-                    <a href="/returns">
+                    <a href="/refund-return">
                         Returns & Refunds
                     </a>
 
-                    <a href="/privacy">
+                    <a href="">
                         Privacy Policy
                     </a>
 
-                    <a href="/terms">
+                    <a href="">
                         Terms & Conditions
                     </a>
 

@@ -7,11 +7,13 @@ from .views import (RegisterAPIView,
                     CustomerListAPIView,
                     CustomerAddressListCreateAPIView,
                     CustomerAddressDetailAPIView,
+                    SetDefaultAddressAPIView,
                     PetProfileListCreateAPIView,
                     PetProfileDetailAPIView,
                     ForgotPasswordAPIView,
                     VerifyPasswordOTPAPIView,
                     ResetPasswordAPIView,
+
                     )
 
 urlpatterns = [
@@ -35,6 +37,11 @@ urlpatterns = [
     path(
         "addresses/<int:pk>/",
         CustomerAddressDetailAPIView.as_view()
+    ),
+    path(
+        "addresses/<int:pk>/set-default/",
+        SetDefaultAddressAPIView.as_view(),
+        name="set-default-address"
     ),
     path(
         "pets/",

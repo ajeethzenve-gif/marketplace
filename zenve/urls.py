@@ -25,14 +25,14 @@ urlpatterns = [
     path("api/", include("products.urls")),
     path("api/accounts/", include("accounts.urls")),
     path("api/cart/", include("cart.urls")),
-
     path("api/orders/", include("orders.urls")),
-
     path("api/wishlist/", include("wishlist.urls")),
     path("api/reviews/",include("reviews.urls")),
     path("api/coupons/",include("coupons.urls")),
     path("api/prescriptions/",include("prescriptions.urls")),
     path("api/payments/",include("payments.urls")),
+    path("api/membership/",include("membership.urls")),
+    path("api/wallet/", include("wallet.urls")),
 ]
 if settings.DEBUG:
     urlpatterns += static(

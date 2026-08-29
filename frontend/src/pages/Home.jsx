@@ -21,6 +21,7 @@ function Home() {
     // =====================================================
 
     const [products, setProducts] = useState([]);
+    const [productsLoading, setProductsLoading] = useState(true);
 
     // =====================================================
     // PET MODAL
@@ -40,37 +41,219 @@ function Home() {
     });
 
     // =====================================================
-    // LOAD PRODUCTS
+    // LOAD ALL PRODUCTS
     // =====================================================
 
     useEffect(() => {
-        loadProducts();
+        loadAllProducts();
     }, []);
 
-    const loadProducts = async () => {
+    const loadAllProducts = async () => {
         try {
-            const response = await api.get("products/?page=1");
+            setProductsLoading(true);
 
-            const data =
-                response.data?.results ||
-                response.data ||
-                [];
+            let allProducts = [];
+            let page = 1;
 
-            setProducts(
-                Array.isArray(data)
-                    ? data.slice(0, 5)
-                    : []
+            while (true) {
+                const response = await api.get(
+                    `products/?page=${page}`
+                );
+
+                const responseData = response.data;
+
+                // ---------------------------------------------
+                // PAGINATED RESPONSE
+                // ---------------------------------------------
+
+                if (
+                    responseData &&
+                    Array.isArray(responseData.results)
+                ) {
+                    allProducts = [
+                        ...allProducts,
+                        ...responseData.results,
+                    ];
+
+                    if (responseData.next) {
+                        page += 1;
+                        continue;
+                    }
+
+                    break;
+                }
+
+                // ---------------------------------------------
+                // NON PAGINATED RESPONSE
+                // ---------------------------------------------
+
+                if (Array.isArray(responseData)) {
+                    allProducts = responseData;
+                }
+
+                break;
+            }
+
+            // ---------------------------------------------
+            // REMOVE DUPLICATES
+            // ---------------------------------------------
+
+            const uniqueProducts = [];
+            const productIds = new Set();
+
+            allProducts.forEach((product) => {
+                if (!product || product.id == null) {
+                    return;
+                }
+
+                if (!productIds.has(product.id)) {
+                    productIds.add(product.id);
+                    uniqueProducts.push(product);
+                }
+            });
+
+            console.log(
+                "TOTAL PRODUCTS:",
+                uniqueProducts.length
             );
+
+            console.log(
+                "PRODUCT DATA:",
+                uniqueProducts
+            );
+
+            setProducts(uniqueProducts);
         } catch (error) {
             console.error(
-                "Products loading error:",
+                "PRODUCT LOAD ERROR:",
                 error.response?.data || error
             );
+
+            setProducts([]);
+        } finally {
+            setProductsLoading(false);
         }
     };
 
     // =====================================================
-    // PET INPUT CHANGE
+    // NORMALIZE PRODUCT TYPE
+    // =====================================================
+
+    const getProductType = (product) => {
+        return String(product?.product_type || "")
+            .trim()
+            .toLowerCase()
+            .replace(/[\s_-]/g, "");
+    };
+
+    // =====================================================
+    // MEDICINE + SUPPLEMENTS
+    // =====================================================
+
+    const medicineProducts = products
+        .filter((product) => {
+            const type = getProductType(product);
+
+            return (
+                type === "medicine" ||
+                type === "supplement" ||
+                type === "supplements"
+            );
+        })
+        .slice(0, 5);
+
+    // =====================================================
+    // FOOD + OTHER
+    // =====================================================
+
+    const foodAndOtherProducts = products
+        .filter((product) => {
+            const type = getProductType(product);
+
+            return (
+                type === "food" ||
+                type === "treats" ||
+                type === "grooming" ||
+                type === "hygiene" ||
+                type === "fleatick" ||
+                type === "deworming" ||
+                type === "dentalcare" ||
+                type === "skincare" ||
+                type === "jointcare" ||
+                type === "vitamins" ||
+                type === "accessories" ||
+                type === "toys" ||
+                type === "beds" ||
+                type === "leashes" ||
+                type === "clothing" ||
+                type === "feeding" ||
+                type === "aquarium" ||
+                type === "birdcare" ||
+                type === "other"
+            );
+        })
+        .slice(0, 5);
+
+    // =====================================================
+    // VET EQUIPMENT
+    // =====================================================
+
+    const vetEquipmentProducts = products
+        .filter((product) => {
+            const type = getProductType(product);
+
+            return (
+                type === "vetequipment" ||
+                type === "veterinaryequipment"
+            );
+        })
+        .slice(0, 5);
+
+    // =====================================================
+    // FARM SUPPLIES
+    // =====================================================
+
+    const farmSupplyProducts = products
+        .filter((product) => {
+            const type = getProductType(product);
+
+            return (
+                type === "farmsupply" ||
+                type === "farmsupplies"
+            );
+        })
+        .slice(0, 5);
+
+    // =====================================================
+    // DEBUG
+    // =====================================================
+
+    useEffect(() => {
+        if (!products.length) return;
+
+        console.log(
+            "MEDICINE + SUPPLEMENT:",
+            medicineProducts.length
+        );
+
+        console.log(
+            "FOOD + OTHER:",
+            foodAndOtherProducts.length
+        );
+
+        console.log(
+            "VET EQUIPMENT:",
+            vetEquipmentProducts.length
+        );
+
+        console.log(
+            "FARM SUPPLIES:",
+            farmSupplyProducts.length
+        );
+    }, [products]);
+
+    // =====================================================
+    // PET CHANGE
     // =====================================================
 
     const handlePetChange = (e) => {
@@ -83,7 +266,7 @@ function Home() {
     };
 
     // =====================================================
-    // SAVE PET DETAILS
+    // SAVE PET
     // =====================================================
 
     const savePetDetails = async (e) => {
@@ -115,7 +298,10 @@ function Home() {
                 }
             );
 
-            console.log("Pet created:", response.data);
+            console.log(
+                "Pet created:",
+                response.data
+            );
 
             alert(
                 `${petDetails.pet_name} details saved successfully!`
@@ -144,11 +330,8 @@ function Home() {
                 );
 
                 localStorage.removeItem("access");
+
                 navigate("/login");
-            } else if (error.response?.status === 403) {
-                alert(
-                    "You do not have permission to add pet details."
-                );
             } else {
                 alert(
                     error.response?.data?.detail ||
@@ -161,21 +344,7 @@ function Home() {
     };
 
     // =====================================================
-    // PET MODAL
-    // =====================================================
-
-    const openPetModal = () => {
-        setShowPetModal(true);
-    };
-
-    const closePetModal = () => {
-        if (!savingPet) {
-            setShowPetModal(false);
-        }
-    };
-
-    // =====================================================
-    // HERO SLIDER
+    // HERO SLIDES
     // =====================================================
 
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -194,9 +363,11 @@ function Home() {
             description:
                 "Everything your pet needs in one place. Discover food, medicines, supplements, grooming products and expert veterinary care.",
             primaryText: "Shop for Your Pet",
-            primaryAction: () => navigate("/products"),
+            primaryAction: () =>
+                navigate("/products"),
             secondaryText: "🐾 Add Your Pet Details",
-            secondaryAction: openPetModal,
+            secondaryAction: () =>
+                setShowPetModal(true),
             smartText:
                 "✨ Get smarter recommendations based on your pet",
             image: productImage,
@@ -216,9 +387,11 @@ function Home() {
             description:
                 "Give a loving pet a forever home. Explore adorable pets waiting for their perfect family.",
             primaryText: "View Pets",
-            primaryAction: () => navigate("/adoption"),
+            primaryAction: () =>
+                navigate("/adoption"),
             secondaryText: "🐾 Start Adoption",
-            secondaryAction: () => navigate("/adoption"),
+            secondaryAction: () =>
+                navigate("/adoption"),
             smartText:
                 "❤️ Give a pet the loving home they deserve",
             image: petAdoption,
@@ -242,7 +415,9 @@ function Home() {
                 navigate("/prescription-upload"),
             secondaryText: "View Medicines",
             secondaryAction: () =>
-                navigate("/products?category=Medicines"),
+                navigate(
+                    "/products?category=Medicine"
+                ),
             smartText:
                 "📄 Simple prescription upload and medicine matching",
             image: prescriptionUpload,
@@ -262,9 +437,11 @@ function Home() {
             description:
                 "Book experienced veterinary professionals for health checkups, vaccinations, grooming and pet care at home.",
             primaryText: "Book a Home Visit",
-            primaryAction: () => navigate("/services"),
+            primaryAction: () =>
+                navigate("/services"),
             secondaryText: "Explore Services",
-            secondaryAction: () => navigate("/services"),
+            secondaryAction: () =>
+                navigate("/services"),
             smartText:
                 "🏠 Professional pet care without leaving home",
             image: homeService,
@@ -284,9 +461,11 @@ function Home() {
             description:
                 "Save more on pet food, medicines, supplements and everyday essentials with exciting special offers.",
             primaryText: "Shop Offers",
-            primaryAction: () => navigate("/products"),
+            primaryAction: () =>
+                navigate("/products"),
             secondaryText: "Browse Products",
-            secondaryAction: () => navigate("/products"),
+            secondaryAction: () =>
+                navigate("/products"),
             smartText:
                 "🎉 New deals and savings for every pet parent",
             image: offerProduct,
@@ -295,7 +474,7 @@ function Home() {
     ];
 
     // =====================================================
-    // AUTO SLIDER
+    // HERO AUTO SLIDER
     // =====================================================
 
     useEffect(() => {
@@ -309,10 +488,6 @@ function Home() {
 
         return () => clearInterval(slider);
     }, [heroSlides.length]);
-
-    // =====================================================
-    // SLIDER CONTROLS
-    // =====================================================
 
     const nextSlide = () => {
         setCurrentSlide((previous) =>
@@ -335,15 +510,148 @@ function Home() {
     };
 
     // =====================================================
+    // PRODUCT ROW
+    // =====================================================
+
+    const ProductRow = ({
+        title,
+        products: rowProducts,
+        viewLink,
+    }) => {
+        return (
+            <section className="home-section product-category-section">
+
+                <div className="section-heading">
+
+                    <h2>{title}</h2>
+
+                    <Link to={viewLink}>
+                        View All →
+                    </Link>
+
+                </div>
+
+                <div className="category-product-grid">
+
+                    {productsLoading ? (
+
+                        <div className="category-products-loading">
+
+                            <div className="loading-spinner"></div>
+
+                            <p>
+                                Loading products...
+                            </p>
+
+                        </div>
+
+                    ) : rowProducts.length > 0 ? (
+
+                        rowProducts
+                            .slice(0, 5)
+                            .map((product) => (
+                                <ProductCard
+                                    key={product.id}
+                                    product={product}
+                                />
+                            ))
+
+                    ) : (
+
+                        <div className="category-products-empty">
+
+                            <div className="empty-product-icon">
+                                🐾
+                            </div>
+
+                            <p>
+                                No products available
+                                in this category.
+                            </p>
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    navigate("/products")
+                                }
+                            >
+                                Browse All Products
+                            </button>
+
+                        </div>
+
+                    )}
+
+                </div>
+
+            </section>
+        );
+    };
+
+    // =====================================================
+    // ADVERTISEMENT
+    // =====================================================
+
+    const AdvertisementBanner = ({
+        icon,
+        title,
+        subtitle,
+        buttonText,
+        onClick,
+    }) => {
+        return (
+            <section className="home-advertisement">
+
+                <div className="advertisement-left">
+
+                    <div className="advertisement-icon">
+                        {icon}
+                    </div>
+
+                    <div>
+
+                        <span className="advertisement-label">
+                            SPECIAL OFFER
+                        </span>
+
+                        <h2>{title}</h2>
+
+                        <p>{subtitle}</p>
+
+                    </div>
+
+                </div>
+
+                <button
+                    type="button"
+                    className="advertisement-button"
+                    onClick={onClick}
+                >
+                    {buttonText} →
+                </button>
+
+            </section>
+        );
+    };
+
+    // =====================================================
+    // AI CHAT
+    // =====================================================
+
+    const openAIChat = () => {
+        window.location.href = "https://zynvo.ai/";
+    };
+
+    // =====================================================
     // RENDER
     // =====================================================
 
     return (
         <main className="home-body">
 
-            {/* =====================================================
-                HERO SECTION
-            ===================================================== */}
+            {/* =================================================
+                HERO
+            ================================================= */}
 
             <section
                 className={`hero-section hero-slider ${heroSlides[currentSlide].key}-slide`}
@@ -351,12 +659,8 @@ function Home() {
 
                 <div
                     className="hero-slide"
-                    key={currentSlide}
+                    key={heroSlides[currentSlide].key}
                 >
-
-                    {/* =================================================
-                        HERO CONTENT
-                    ================================================= */}
 
                     <div className="hero-content">
 
@@ -372,15 +676,12 @@ function Home() {
                             {heroSlides[currentSlide].description}
                         </p>
 
-                        {/* HERO FEATURES */}
-
                         <div className="hero-features">
 
                             <div className="hero-feature">
                                 <span className="feature-icon">
                                     🐾
                                 </span>
-
                                 <span>
                                     <b>Personalized</b>
                                     <br />
@@ -392,7 +693,6 @@ function Home() {
                                 <span className="feature-icon">
                                     🩺
                                 </span>
-
                                 <span>
                                     <b>Expert Vet</b>
                                     <br />
@@ -404,7 +704,6 @@ function Home() {
                                 <span className="feature-icon">
                                     ⚡
                                 </span>
-
                                 <span>
                                     <b>Fast & Safe</b>
                                     <br />
@@ -416,7 +715,6 @@ function Home() {
                                 <span className="feature-icon">
                                     ❤️
                                 </span>
-
                                 <span>
                                     <b>Complete</b>
                                     <br />
@@ -425,8 +723,6 @@ function Home() {
                             </div>
 
                         </div>
-
-                        {/* HERO BUTTONS */}
 
                         <div className="hero-buttons">
 
@@ -468,10 +764,6 @@ function Home() {
 
                     </div>
 
-                    {/* =================================================
-                        HERO IMAGE
-                    ================================================= */}
-
                     <div className="hero-visual">
 
                         <div className="hero-circle"></div>
@@ -496,10 +788,6 @@ function Home() {
 
                 </div>
 
-                {/* =====================================================
-                    SLIDER ARROWS
-                ===================================================== */}
-
                 <button
                     type="button"
                     className="slider-arrow slider-prev"
@@ -518,40 +806,46 @@ function Home() {
                     ❯
                 </button>
 
-                {/* =====================================================
-                    SLIDER DOTS
-                ===================================================== */}
-
                 <div className="slider-dots">
 
-                    {heroSlides.map((slide, index) => (
-                        <button
-                            key={slide.key}
-                            type="button"
-                            aria-label={`Go to ${slide.label}`}
-                            onClick={() =>
-                                goToSlide(index)
-                            }
-                            className={
-                                currentSlide === index
-                                    ? "slider-dot active"
-                                    : "slider-dot"
-                            }
-                        />
-                    ))}
+                    {heroSlides.map(
+                        (slide, index) => (
+                            <button
+                                key={slide.key}
+                                type="button"
+                                className={
+                                    currentSlide === index
+                                        ? "slider-dot active"
+                                        : "slider-dot"
+                                }
+                                onClick={() =>
+                                    goToSlide(index)
+                                }
+                                aria-label={`Go to slide ${
+                                    index + 1
+                                }`}
+                            />
+                        )
+                    )}
 
                 </div>
 
             </section>
 
-            {/* =====================================================
-                PET DETAILS MODAL
-            ===================================================== */}
+
+            {/* =================================================
+                PET MODAL
+            ================================================= */}
 
             {showPetModal && (
+
                 <div
                     className="pet-modal-overlay"
-                    onClick={closePetModal}
+                    onClick={() => {
+                        if (!savingPet) {
+                            setShowPetModal(false);
+                        }
+                    }}
                 >
 
                     <div
@@ -586,9 +880,10 @@ function Home() {
                             <button
                                 type="button"
                                 className="pet-modal-close"
-                                onClick={closePetModal}
+                                onClick={() =>
+                                    setShowPetModal(false)
+                                }
                                 disabled={savingPet}
-                                aria-label="Close"
                             >
                                 ×
                             </button>
@@ -639,7 +934,6 @@ function Home() {
                                         onChange={
                                             handlePetChange
                                         }
-                                        required
                                     >
 
                                         <option value="Dog">
@@ -798,7 +1092,9 @@ function Home() {
                                 <button
                                     type="button"
                                     className="pet-cancel-btn"
-                                    onClick={closePetModal}
+                                    onClick={() =>
+                                        setShowPetModal(false)
+                                    }
                                     disabled={savingPet}
                                 >
                                     Cancel
@@ -821,11 +1117,13 @@ function Home() {
                     </div>
 
                 </div>
+
             )}
 
-            {/* =====================================================
+
+            {/* =================================================
                 SHOP BY CATEGORIES
-            ===================================================== */}
+            ================================================= */}
 
             <section className="home-section">
 
@@ -835,7 +1133,7 @@ function Home() {
                         Shop by Categories
                     </h2>
 
-                    <Link to="">
+                    <Link to="/products">
                         View All Categories →
                     </Link>
 
@@ -843,8 +1141,10 @@ function Home() {
 
                 <div className="category-grid">
 
+                    {/* MEDICINE */}
+
                     <Link
-                        to="/products?category=Medicines"
+                        to="/products?product_type=Medicine&product_type=Supplements"
                         className="category-card"
                     >
                         <div className="category-image">
@@ -858,8 +1158,11 @@ function Home() {
                         </h3>
                     </Link>
 
+
+                    {/* FOOD */}
+
                     <Link
-                        to="/products?category=Pet Food"
+                        to="/products?product_type=food&product_type=Other"
                         className="category-card"
                     >
                         <div className="category-image">
@@ -873,8 +1176,11 @@ function Home() {
                         </h3>
                     </Link>
 
+
+                    {/* FARM */}
+
                     <Link
-                        to="/products?category=Farm"
+                        to="/products?product_type=FarmSupplies"
                         className="category-card"
                     >
                         <div className="category-image">
@@ -888,8 +1194,11 @@ function Home() {
                         </h3>
                     </Link>
 
+
+                    {/* VET */}
+
                     <Link
-                        to="/products?category=Vet"
+                        to="/products?product_type=VetEquipment"
                         className="category-card"
                     >
                         <div className="category-image">
@@ -902,6 +1211,9 @@ function Home() {
                             Equipment
                         </h3>
                     </Link>
+
+
+                    {/* HOME SERVICE */}
 
                     <Link
                         to="/services"
@@ -917,6 +1229,9 @@ function Home() {
                             Service
                         </h3>
                     </Link>
+
+
+                    {/* ADOPTION */}
 
                     <Link
                         to="/adoption"
@@ -937,296 +1252,268 @@ function Home() {
 
             </section>
 
-            {/* =====================================================
-                MEGA SAVINGS
-            ===================================================== */}
+            {/* =================================================
+                AI CHAT
+            ================================================= */}
 
-            <section className="offer-banner">
+            <section className="ai-chat-section">
 
-                <div className="offer-content">
+                <div className="ai-chat-content">
 
-                    <span>
-                        Mega Savings
-                    </span>
+                    <div className="ai-chat-badge">
+                        ✨ SMART PET CARE
+                    </div>
 
                     <h2>
-                        Upto 30% OFF
+                        Meet Our Zynvo AI Pet Care Assistant
                     </h2>
 
                     <p>
-                        On Selected Products
+                        Have questions about your pet?
+                        Our AI assistant helps you understand
+                        your pet's needs, discover suitable
+                        products and get quick pet-care guidance.
                     </p>
+
+                    <div className="ai-chat-features">
+
+                        <div>
+                            <span>🐾</span>
+                            <strong>
+                                Pet Care Guidance
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>💊</span>
+                            <strong>
+                                Product Assistance
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>🧠</span>
+                            <strong>
+                                Smart Recommendations
+                            </strong>
+                        </div>
+
+                    </div>
 
                     <button
                         type="button"
-                        onClick={() =>
-                            navigate("/products")
-                        }
+                        className="ai-chat-button"
+                        onClick={openAIChat}
                     >
-                        Shop Offers →
+                        💬 Chat With Our AI
                     </button>
 
                 </div>
 
-                <div className="offer-image">
+                <div className="ai-chat-visual">
 
-                    <img
-                        src={offerProduct}
-                        alt="Special offers"
-                    />
-
-                </div>
-
-                <div className="countdown-box">
-
-                    <strong>
-                        Offer Ends In
-                    </strong>
-
-                    <div className="countdown-time">
-
-                        <span>02</span>
-                        :
-                        <span>18</span>
-                        :
-                        <span>45</span>
-                        :
-                        <span>30</span>
-
+                    <div className="ai-chat-circle">
+                        🤖
                     </div>
 
-                    <div className="countdown-labels">
+                    <div className="ai-floating-card ai-card-one">
+                        🐶
+                        <span>
+                            Pet Questions
+                        </span>
+                    </div>
 
-                        <span>Days</span>
-                        <span>Hrs</span>
-                        <span>Mins</span>
-                        <span>Secs</span>
+                    <div className="ai-floating-card ai-card-two">
+                        💡
+                        <span>
+                            Smart Advice
+                        </span>
+                    </div>
 
+                    <div className="ai-floating-card ai-card-three">
+                        ❤️
+                        <span>
+                            Pet Wellness
+                        </span>
                     </div>
 
                 </div>
 
             </section>
 
-            {/* =====================================================
-                BEST SELLERS
-            ===================================================== */}
+            {/*/!* =================================================*/}
+            {/*    OFFER*/}
+            {/*================================================= *!/*/}
 
-            <section className="home-section">
+            {/*<section className="offer-banner">*/}
 
-                <div className="section-heading">
+            {/*    <div className="offer-content">*/}
 
-                    <h2>
-                        Best Sellers
-                    </h2>
+            {/*        <span>*/}
+            {/*            Mega Savings*/}
+            {/*        </span>*/}
 
-                    <Link to="/products">
-                        View All →
-                    </Link>
+            {/*        <h2>*/}
+            {/*            Upto 30% OFF*/}
+            {/*        </h2>*/}
 
-                </div>
+            {/*        <p>*/}
+            {/*            On Selected Products*/}
+            {/*        </p>*/}
 
-                <div className="best-seller-grid">
+            {/*        <button*/}
+            {/*            type="button"*/}
+            {/*            onClick={() =>*/}
+            {/*                navigate("/products")*/}
+            {/*            }*/}
+            {/*        >*/}
+            {/*            Shop Offers →*/}
+            {/*        </button>*/}
 
-                    {products.length > 0 ? (
-                        products.map((product) => (
-                            <ProductCard
-                                key={product.id}
-                                product={product}
-                            />
-                        ))
-                    ) : (
-                        <div className="home-products-loading">
-                            <p>
-                                No products available.
-                            </p>
-                        </div>
-                    )}
+            {/*    </div>*/}
 
-                </div>
+            {/*    <div className="offer-image">*/}
 
-            </section>
+            {/*        <img*/}
+            {/*            src={offerProduct}*/}
+            {/*            alt="Special offers"*/}
+            {/*        />*/}
 
-            {/* =====================================================
-                POPULAR SERVICES
-            ===================================================== */}
+            {/*    </div>*/}
 
-            <section className="home-section">
+            {/*    <div className="countdown-box">*/}
 
-                <div className="section-heading">
+            {/*        <strong>*/}
+            {/*            Offer Ends In*/}
+            {/*        </strong>*/}
 
-                    <h2>
-                        Popular Services
-                    </h2>
+            {/*        <div className="countdown-time">*/}
 
-                    <Link to="/services">
-                        View All Services →
-                    </Link>
+            {/*            <span>02</span>*/}
+            {/*            :*/}
+            {/*            <span>18</span>*/}
+            {/*            :*/}
+            {/*            <span>45</span>*/}
+            {/*            :*/}
+            {/*            <span>30</span>*/}
 
-                </div>
+            {/*        </div>*/}
 
-                <div className="services-grid">
+            {/*        <div className="countdown-labels">*/}
 
-                    <div className="service-card">
+            {/*            <span>Days</span>*/}
+            {/*            <span>Hrs</span>*/}
+            {/*            <span>Mins</span>*/}
+            {/*            <span>Secs</span>*/}
 
-                        <div className="service-placeholder">
-                            🏠
-                        </div>
+            {/*        </div>*/}
 
-                        <div className="service-info">
+            {/*    </div>*/}
 
-                            <h3>
-                                Home Visit
-                                <br />
-                                by Vet
-                            </h3>
+            {/*</section>*/}
 
-                            <span>
-                                Starting at ₹499
-                            </span>
 
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    navigate("/services")
-                                }
-                            >
-                                →
-                            </button>
+            {/* =================================================
+                MEDICINE + SUPPLEMENT
+            ================================================= */}
 
-                        </div>
+            <ProductRow
+                title="Medicine & Supplements"
+                products={medicineProducts}
+                viewLink="/products?product_type=Medicine&product_type=Supplements"
+            />
 
-                    </div>
 
-                    <div className="service-card">
+            <AdvertisementBanner
+                icon="💊"
+                title="Complete Care for Your Pet"
+                subtitle="Trusted medicines and supplements for your pet's everyday health."
+                buttonText="Shop Medicines"
+                onClick={() =>
+                    navigate(
+                        "/products?category=Medicine"
+                    )
+                }
+            />
 
-                        <div className="service-placeholder">
-                            💉
-                        </div>
 
-                        <div className="service-info">
+            {/* =================================================
+                FOOD + OTHER
+            ================================================= */}
 
-                            <h3>
-                                Vaccination &
-                                <br />
-                                Deworming
-                            </h3>
+            <ProductRow
+                title="Food & Other"
+                products={foodAndOtherProducts}
+                viewLink="/products?product_type=food&product_type=Other"
+            />
 
-                            <span>
-                                Starting at ₹299
-                            </span>
 
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    navigate("/services")
-                                }
-                            >
-                                →
-                            </button>
+            <AdvertisementBanner
+                icon="🥣"
+                title="Healthy Food & Everyday Essentials"
+                subtitle="Discover nutritious food, treats and everyday products for your pets."
+                buttonText="Shop Products"
+                onClick={() =>
+                    navigate(
+                        "/products?category=Food"
+                    )
+                }
+            />
 
-                        </div>
 
-                    </div>
+            {/* =================================================
+                VET EQUIPMENT
+            ================================================= */}
 
-                    <div className="service-card">
+            <ProductRow
+                title="Vet Equipment"
+                products={vetEquipmentProducts}
+                viewLink="/products?product_type=VetEquipment"
+            />
 
-                        <div className="service-placeholder">
-                            ✂️
-                        </div>
 
-                        <div className="service-info">
+            <AdvertisementBanner
+                icon="🩺"
+                title="Professional Veterinary Equipment"
+                subtitle="Quality equipment and supplies for professional veterinary care."
+                buttonText="View Equipment"
+                onClick={() =>
+                    navigate(
+                        "/products?category=VetEquipment"
+                    )
+                }
+            />
 
-                            <h3>
-                                Pet Grooming
-                                <br />
-                                at Home
-                            </h3>
 
-                            <span>
-                                Starting at ₹599
-                            </span>
+            {/* =================================================
+                FARM SUPPLIES
+            ================================================= */}
 
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    navigate("/services")
-                                }
-                            >
-                                →
-                            </button>
+            <ProductRow
+                title="Farm Supplies"
+                products={farmSupplyProducts}
+                viewLink="/products?product_type=FarmSupplies"
+            />
 
-                        </div>
 
-                    </div>
+            <AdvertisementBanner
+                icon="🐄"
+                title="Farm & Livestock Supplies"
+                subtitle="Reliable products for farm, livestock and agricultural care."
+                buttonText="Shop Farm Supplies"
+                onClick={() =>
+                    navigate(
+                        "/products?category=FarmSupplies"
+                    )
+                }
+            />
 
-                    <div className="service-card">
 
-                        <div className="service-placeholder">
-                            🩺
-                        </div>
 
-                        <div className="service-info">
 
-                            <h3>
-                                Health Checkup
-                                <br />
-                                at Home
-                            </h3>
-
-                            <span>
-                                Starting at ₹699
-                            </span>
-
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    navigate("/services")
-                                }
-                            >
-                                →
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                    <div className="service-card">
-
-                        <div className="service-placeholder">
-                            🚑
-                        </div>
-
-                        <div className="service-info">
-
-                            <h3>
-                                Emergency Care
-                            </h3>
-
-                            <span>
-                                Starting at ₹999
-                            </span>
-
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    navigate("/services")
-                                }
-                            >
-                                →
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-            {/* =====================================================
+            {/* =================================================
                 FEATURED PETS
-            ===================================================== */}
+            ================================================= */}
 
             <section className="home-section">
 
@@ -1268,9 +1555,7 @@ function Home() {
 
                         <div className="pet-info">
 
-                            <h3>
-                                Bruno
-                            </h3>
+                            <h3>Bruno</h3>
 
                             <p>
                                 2 Years · Male · Labrador
@@ -1283,6 +1568,7 @@ function Home() {
                         </div>
 
                     </div>
+
 
                     <div className="pet-card">
 
@@ -1308,9 +1594,7 @@ function Home() {
 
                         <div className="pet-info">
 
-                            <h3>
-                                Luna
-                            </h3>
+                            <h3>Luna</h3>
 
                             <p>
                                 1 Year · Female · Indie
@@ -1323,6 +1607,7 @@ function Home() {
                         </div>
 
                     </div>
+
 
                     <div className="pet-card">
 
@@ -1348,9 +1633,7 @@ function Home() {
 
                         <div className="pet-info">
 
-                            <h3>
-                                Rocky
-                            </h3>
+                            <h3>Rocky</h3>
 
                             <p>
                                 3 Years · Male · German Shepherd
@@ -1363,6 +1646,7 @@ function Home() {
                         </div>
 
                     </div>
+
 
                     <div className="pet-card">
 
@@ -1388,9 +1672,7 @@ function Home() {
 
                         <div className="pet-info">
 
-                            <h3>
-                                Milo
-                            </h3>
+                            <h3>Milo</h3>
 
                             <p>
                                 8 Months · Male · Persian
@@ -1408,9 +1690,10 @@ function Home() {
 
             </section>
 
-            {/* =====================================================
+
+            {/* =================================================
                 TRUSTED BRANDS
-            ===================================================== */}
+            ================================================= */}
 
             <section className="home-section">
 
@@ -1434,21 +1717,24 @@ function Home() {
                         "Bayer",
                         "N&D",
                     ].map((brand) => (
+
                         <div
                             className="brand-placeholder"
                             key={brand}
                         >
                             {brand}
                         </div>
+
                     ))}
 
                 </div>
 
             </section>
 
-            {/* =====================================================
+
+            {/* =================================================
                 REVIEWS
-            ===================================================== */}
+            ================================================= */}
 
             <section className="reviews-section">
 
@@ -1472,7 +1758,7 @@ function Home() {
                             Zenve has everything my pet
                             needs — from medicines to healthy
                             food. Delivery is always on time
-                            and products are 100% genuine.
+                            and products are genuine.
                         </p>
 
                         <div className="review-user">
@@ -1496,6 +1782,7 @@ function Home() {
                         </div>
 
                     </div>
+
 
                     <div className="review-card">
 
@@ -1531,6 +1818,7 @@ function Home() {
                         </div>
 
                     </div>
+
 
                     <div className="review-card">
 

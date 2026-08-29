@@ -29,6 +29,10 @@ import Offers from "./pages/Offers";
 import PetAdoption from "./pages/PetAdoption";
 import HomeVisit from "./pages/HomeVisit";
 import Services from "./pages/Services";
+import Help from "./pages/Help";
+import Wallet from "./pages/Wallet";
+import AddMoney from "./pages/AddMoney";
+import RefundAndReturn from "./pages/RefundAndReturn";
 
 import Cart from "./pages/Card";
 import Orders from "./pages/Orders";
@@ -38,6 +42,7 @@ import PrescriptionUpload from "./pages/PrescriptionUpload.jsx";
 import PetProfile from "./pages/PetProfile.jsx";
 import RecommendedProducts from "./pages/RecommendedProducts";
 import Payment from "./pages/Payment.jsx";
+import Membership from "./pages/Membership";
 
 // ================= ADMIN =================
 
@@ -276,7 +281,10 @@ function AppContent() {
                 path="/services"
                 element={<Services />}
             />
-
+            <Route
+                path="/help"
+                element={<Help />}
+            />
             {/* =================================================
                 CART
             ================================================= */}
@@ -305,8 +313,18 @@ function AppContent() {
               path="/wishlists"
               element={<WishList />}
             />
+            <Route
+                path="/wallet"
+                element={<Wallet />}
+            />
+            <Route
+                path="/wallet/add-money"
+                element={<AddMoney />}
+            />
 
-
+              <Route path="/refund-return"
+                     element={<RefundAndReturn />}
+              />
             {/* =================================================
                 REVIEWS
             ================================================= */}
@@ -325,7 +343,10 @@ function AppContent() {
               path="/pets"
               element={<PetProfile />}
             />
-
+            <Route
+                path="/membership"
+                element={<Membership />}
+            />
 
             {/* =================================================
                 RECOMMENDED PRODUCTS

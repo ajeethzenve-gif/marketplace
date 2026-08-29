@@ -10,6 +10,12 @@ import {
     FaLock,
     FaShieldAlt,
     FaCheckCircle,
+    FaCrown,
+    FaMapMarkerAlt,
+    FaTrash,
+    FaStar,
+    FaArrowRight,
+    FaGift,
 } from "react-icons/fa";
 
 import "../styles/Payment.css";
@@ -21,7 +27,19 @@ function Payment() {
     const token = localStorage.getItem("access");
 
     // =====================================
-    // GET DATA FROM BUY NOW OR CART
+    // API CONFIG
+    // =====================================
+
+    const API_BASE_URL = "http://127.0.0.1:8000";
+
+    const WALLET_BALANCE_API_URL =
+        `${API_BASE_URL}/api/wallet/balance/`;
+
+    const WALLET_PAYMENT_API_URL =
+        `${API_BASE_URL}/api/payments/wallet-pay/`;
+
+    // =====================================
+    // GET CHECKOUT DATA
     // =====================================
 
     const {
@@ -35,7 +53,7 @@ function Payment() {
     } = location.state || {};
 
     // =====================================
-    // STATES
+    // PAYMENT STATES
     // =====================================
 
     const [paymentMethod, setPaymentMethod] =
@@ -44,10 +62,13 @@ function Payment() {
     const [loading, setLoading] =
         useState(false);
 
+    // =====================================
+    // ADDRESS STATES
+    // =====================================
+
     const [loadingAddress, setLoadingAddress] =
         useState(true);
 
-    // Only the default address will be stored here
     const [addresses, setAddresses] =
         useState([]);
 
@@ -68,6 +89,29 @@ function Payment() {
         postal_code: "",
         is_default: true,
     });
+
+    // =====================================
+    // MEMBERSHIP STATES
+    // =====================================
+
+    const [membershipLoading, setMembershipLoading] =
+        useState(true);
+
+    const [hasMembership, setHasMembership] =
+        useState(false);
+
+    const [membershipPlan, setMembershipPlan] =
+        useState(null);
+
+    const [
+        membershipDiscountPercentage,
+        setMembershipDiscountPercentage,
+    ] = useState(0);
+
+    const [
+        membershipDiscountAmount,
+        setMembershipDiscountAmount,
+    ] = useState(0);
 
     // =====================================
     // COUPON STATES
@@ -92,7 +136,270 @@ function Payment() {
         useState("");
 
     // =====================================
-    // LOAD RAZORPAY SCRIPT
+    // WALLET STATES
+    // =====================================
+
+    const [walletBalance, setWalletBalance] =
+        useState(0);
+
+    const [walletLoading, setWalletLoading] =
+        useState(true);
+
+    // =====================================
+    // CALCULATE MEMBERSHIP DISCOUNT
+    // =====================================
+
+    const calculateMembershipDiscount = (
+        percentage,
+        subtotalAmount
+    ) => {
+        const discountPercentage =
+            Number(percentage) || 0;
+
+        const subtotalValue =
+            Number(subtotalAmount) || 0;
+
+        if (
+            discountPercentage <= 0 ||
+            subtotalValue <= 0
+        ) {
+            return 0;
+        }
+
+        return (
+            subtotalValue *
+            discountPercentage /
+            100
+        );
+    };
+
+    // =====================================
+    // CALCULATE FINAL TOTAL
+    // =====================================
+
+    const calculateFinalAmount = (
+        membershipDiscount,
+        couponDiscountValue
+    ) => {
+        const subtotalValue =
+            Number(subtotal) || 0;
+
+        const shippingValue =
+            Number(shipping) || 0;
+
+        const membershipValue =
+            Number(membershipDiscount) || 0;
+
+        const couponValue =
+            Number(couponDiscountValue) || 0;
+
+        return Math.max(
+            0,
+            subtotalValue +
+            shippingValue -
+            membershipValue -
+            couponValue
+        );
+    };
+
+    // =====================================
+    // CHECK LOGIN + LOAD DATA
+    // =====================================
+
+    useEffect(() => {
+        if (!token) {
+            navigate("/login");
+            return;
+        }
+
+        fetchAddresses();
+        fetchMembership();
+        fetchWalletBalance();
+    }, [token, navigate]);
+
+    // =====================================
+    // LOAD CURRENT CUSTOMER MEMBERSHIP
+    // =====================================
+
+    const fetchMembership = async () => {
+        setMembershipLoading(true);
+
+        try {
+            const response = await axios.get(
+                `${API_BASE_URL}/api/membership/my-membership/`,
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`,
+                    },
+                }
+            );
+
+            const data =
+                response.data || {};
+
+            console.log(
+                "Current customer membership:",
+                data
+            );
+
+            if (
+                !data.has_membership ||
+                !data.membership
+            ) {
+                setHasMembership(false);
+                setMembershipPlan(null);
+                setMembershipDiscountPercentage(0);
+                setMembershipDiscountAmount(0);
+
+                return;
+            }
+
+            const membership =
+                data.membership;
+
+            const discountPercentage =
+                Number(
+                    data.discount_percentage ??
+                    data.plan?.discount_percentage ??
+                    membership.plan?.discount_percentage ??
+                    membership.discount_percentage ??
+                    0
+                );
+
+            setHasMembership(true);
+
+            setMembershipPlan(
+                membership
+            );
+
+            setMembershipDiscountPercentage(
+                discountPercentage
+            );
+
+            const discountAmount =
+                calculateMembershipDiscount(
+                    discountPercentage,
+                    subtotal
+                );
+
+            setMembershipDiscountAmount(
+                discountAmount
+            );
+
+            const newFinalAmount =
+                calculateFinalAmount(
+                    discountAmount,
+                    couponDiscount
+                );
+
+            setFinalAmount(
+                newFinalAmount
+            );
+
+        } catch (error) {
+            console.error(
+                "Membership loading error:",
+                error.response?.data ||
+                error.message
+            );
+
+            setHasMembership(false);
+            setMembershipPlan(null);
+            setMembershipDiscountPercentage(0);
+            setMembershipDiscountAmount(0);
+
+            setFinalAmount(
+                calculateFinalAmount(
+                    0,
+                    couponDiscount
+                )
+            );
+
+        } finally {
+            setMembershipLoading(false);
+        }
+    };
+
+    // =====================================
+    // LOAD WALLET BALANCE
+    // =====================================
+
+    const fetchWalletBalance = async () => {
+        setWalletLoading(true);
+
+        try {
+            const response =
+                await axios.get(
+                    WALLET_BALANCE_API_URL,
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
+
+            const balance =
+                Number(
+                    response.data?.balance ??
+                    response.data?.wallet_balance ??
+                    response.data?.amount ??
+                    0
+                );
+
+            setWalletBalance(
+                Math.max(0, balance)
+            );
+
+        } catch (error) {
+            console.error(
+                "Wallet balance loading error:",
+                error.response?.data ||
+                error.message
+            );
+
+            setWalletBalance(0);
+
+        } finally {
+            setWalletLoading(false);
+        }
+    };
+
+    // =====================================
+    // RECALCULATE WHEN TOTAL CHANGES
+    // =====================================
+
+    useEffect(() => {
+        const membershipDiscount =
+            calculateMembershipDiscount(
+                membershipDiscountPercentage,
+                subtotal
+            );
+
+        setMembershipDiscountAmount(
+            membershipDiscount
+        );
+
+        const newFinalAmount =
+            calculateFinalAmount(
+                membershipDiscount,
+                couponDiscount
+            );
+
+        setFinalAmount(
+            newFinalAmount
+        );
+
+    }, [
+        subtotal,
+        shipping,
+        membershipDiscountPercentage,
+        couponDiscount,
+    ]);
+
+    // =====================================
+    // LOAD RAZORPAY
     // =====================================
 
     const loadRazorpayScript = () => {
@@ -118,55 +425,47 @@ function Payment() {
                 resolve(false);
             };
 
-            document.body.appendChild(script);
+            document.body.appendChild(
+                script
+            );
         });
     };
 
     // =====================================
-    // LOAD DEFAULT ADDRESS
-    // =====================================
-
-    useEffect(() => {
-        if (!token) {
-            navigate("/login");
-            return;
-        }
-
-        fetchAddresses();
-    }, []);
-
-    // =====================================
-    // FETCH ONLY DEFAULT ADDRESS
+    // FETCH DEFAULT ADDRESS
     // =====================================
 
     const fetchAddresses = async () => {
         setLoadingAddress(true);
 
         try {
-            const response = await axios.get(
-                "http://127.0.0.1:8000/api/accounts/addresses/",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+            const response =
+                await axios.get(
+                    `${API_BASE_URL}/api/accounts/addresses/`,
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
 
-            const addressData = Array.isArray(response.data)
-                ? response.data
-                : response.data.results || [];
+            const addressData =
+                Array.isArray(response.data)
+                    ? response.data
+                    : response.data.results || [];
 
-            // Find only default address
             const defaultAddress =
                 addressData.find(
-                    (item) => item.is_default === true
+                    (item) =>
+                        item.is_default === true
                 );
 
             if (defaultAddress) {
-                // Store only default address
-                setAddresses([defaultAddress]);
+                setAddresses([
+                    defaultAddress,
+                ]);
 
-                // Automatically select default address
                 setSelectedAddress(
                     defaultAddress.id
                 );
@@ -181,7 +480,8 @@ function Payment() {
         } catch (error) {
             console.error(
                 "Address loading error:",
-                error.response?.data || error.message
+                error.response?.data ||
+                error.message
             );
 
             setAddresses([]);
@@ -193,7 +493,7 @@ function Payment() {
     };
 
     // =====================================
-    // HANDLE ADDRESS INPUT
+    // ADDRESS INPUT
     // =====================================
 
     const handleAddressChange = (e) => {
@@ -206,7 +506,6 @@ function Payment() {
 
         setAddressForm({
             ...addressForm,
-
             [name]:
                 type === "checkbox"
                     ? checked
@@ -215,26 +514,71 @@ function Payment() {
     };
 
     // =====================================
-    // SAVE DEFAULT ADDRESS
+    // SAVE ADDRESS
     // =====================================
 
     const saveAddress = async () => {
+        if (
+            !addressForm.full_name.trim() ||
+            !addressForm.phone_number.trim() ||
+            !addressForm.address_line1.trim() ||
+            !addressForm.city.trim() ||
+            !addressForm.state.trim() ||
+            !addressForm.postal_code.trim()
+        ) {
+            alert(
+                "Please fill all required address fields."
+            );
+
+            return;
+        }
+
         try {
             const dataToSend = {
                 ...addressForm,
+
+                full_name:
+                    addressForm.full_name.trim(),
+
+                phone_number:
+                    addressForm.phone_number.trim(),
+
+                address_line1:
+                    addressForm.address_line1.trim(),
+
+                address_line2:
+                    addressForm.address_line2.trim(),
+
+                city:
+                    addressForm.city.trim(),
+
+                state:
+                    addressForm.state.trim(),
+
+                country:
+                    addressForm.country.trim() ||
+                    "India",
+
+                postal_code:
+                    addressForm.postal_code.trim(),
+
                 is_default: true,
             };
 
-            const response = await axios.post(
-                "http://127.0.0.1:8000/api/accounts/addresses/",
-                dataToSend,
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`,
-                    },
-                }
-            );
+            const response =
+                await axios.post(
+                    `${API_BASE_URL}/api/accounts/addresses/`,
+                    dataToSend,
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+
+                            "Content-Type":
+                                "application/json",
+                        },
+                    }
+                );
 
             alert(
                 "Default address added successfully."
@@ -265,7 +609,8 @@ function Payment() {
         } catch (error) {
             console.error(
                 "Save address error:",
-                error.response?.data || error.message
+                error.response?.data ||
+                error.message
             );
 
             alert(
@@ -279,7 +624,7 @@ function Payment() {
     };
 
     // =====================================
-    // DELETE DEFAULT ADDRESS
+    // DELETE ADDRESS
     // =====================================
 
     const deleteAddress = async (id) => {
@@ -294,7 +639,7 @@ function Payment() {
 
         try {
             await axios.delete(
-                `http://127.0.0.1:8000/api/accounts/addresses/${id}/`,
+                `${API_BASE_URL}/api/accounts/addresses/${id}/`,
                 {
                     headers: {
                         Authorization:
@@ -313,45 +658,56 @@ function Payment() {
         } catch (error) {
             console.error(
                 "Delete address error:",
-                error.response?.data || error.message
+                error.response?.data ||
+                error.message
             );
 
             alert(
+                error.response?.data?.message ||
+                error.response?.data?.detail ||
                 "Unable to delete address."
             );
         }
     };
 
     // =====================================
-    // CLEAR CART AFTER SUCCESSFUL ORDER
+    // CLEAR CART
     // =====================================
 
     const clearCartAfterOrder = async () => {
         try {
-            const response = await axios.get(
-                "http://127.0.0.1:8000/api/cart/",
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`,
-                    },
-                }
-            );
+            const response =
+                await axios.get(
+                    `${API_BASE_URL}/api/cart/`,
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
 
             let cartItems = [];
 
             if (Array.isArray(response.data)) {
-                cartItems = response.data;
+                cartItems =
+                    response.data;
 
             } else if (
-                Array.isArray(response.data.results)
+                Array.isArray(
+                    response.data.results
+                )
             ) {
-                cartItems = response.data.results;
+                cartItems =
+                    response.data.results;
 
             } else if (
-                Array.isArray(response.data.items)
+                Array.isArray(
+                    response.data.items
+                )
             ) {
-                cartItems = response.data.items;
+                cartItems =
+                    response.data.items;
 
             } else if (
                 Array.isArray(
@@ -364,35 +720,36 @@ function Payment() {
 
             if (cartItems.length > 0) {
                 await Promise.all(
-                    cartItems.map(async (item) => {
-                        const productId =
-                            item.product_id ||
-                            item.product?.id ||
-                            item.id;
+                    cartItems.map(
+                        async (item) => {
+                            const productId =
+                                item.product_id ||
+                                item.product?.id ||
+                                item.id;
 
-                        if (!productId) {
-                            return;
+                            if (!productId) {
+                                return;
+                            }
+
+                            try {
+                                await axios.delete(
+                                    `${API_BASE_URL}/api/cart/remove/${productId}/`,
+                                    {
+                                        headers: {
+                                            Authorization:
+                                                `Bearer ${token}`,
+                                        },
+                                    }
+                                );
+                            } catch (error) {
+                                console.error(
+                                    `Unable to remove cart item ${productId}:`,
+                                    error.response?.data ||
+                                    error.message
+                                );
+                            }
                         }
-
-                        try {
-                            await axios.delete(
-                                `http://127.0.0.1:8000/api/cart/remove/${productId}/`,
-                                {
-                                    headers: {
-                                        Authorization:
-                                            `Bearer ${token}`,
-                                    },
-                                }
-                            );
-
-                        } catch (error) {
-                            console.error(
-                                `Unable to remove cart item ${productId}:`,
-                                error.response?.data ||
-                                error.message
-                            );
-                        }
-                    })
+                    )
                 );
             }
 
@@ -431,44 +788,30 @@ function Payment() {
         setCouponMessage("");
 
         try {
-            const response = await axios.post(
-                "http://127.0.0.1:8000/api/coupons/apply/",
-                {
-                    code:
-                        couponCode
-                            .trim()
-                            .toUpperCase(),
+            const response =
+                await axios.post(
+                    `${API_BASE_URL}/api/coupons/apply/`,
+                    {
+                        code:
+                            couponCode
+                                .trim()
+                                .toUpperCase(),
 
-                    cart_total:
-                        Number(subtotal),
-                },
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`,
+                        cart_total:
+                            Number(subtotal),
                     },
-                }
-            );
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
 
             const discount =
                 Number(
                     response.data.discount
                 ) || 0;
-
-            const backendFinal =
-                Number(
-                    response.data.final_total
-                );
-
-            const calculatedFinal =
-                Number.isFinite(
-                    backendFinal
-                )
-                    ? backendFinal
-                    : Math.max(
-                        0,
-                        Number(total) - discount
-                    );
 
             setAppliedCoupon(
                 response.data.coupon
@@ -478,8 +821,14 @@ function Payment() {
                 discount
             );
 
+            const newFinalAmount =
+                calculateFinalAmount(
+                    membershipDiscountAmount,
+                    discount
+                );
+
             setFinalAmount(
-                calculatedFinal
+                newFinalAmount
             );
 
             setCouponMessage(
@@ -494,11 +843,13 @@ function Payment() {
             );
 
             setAppliedCoupon(null);
-
             setCouponDiscount(0);
 
             setFinalAmount(
-                Number(total)
+                calculateFinalAmount(
+                    membershipDiscountAmount,
+                    0
+                )
             );
 
             setCouponMessage(
@@ -519,12 +870,19 @@ function Payment() {
         setCouponCode("");
         setCouponDiscount(0);
         setAppliedCoupon(null);
-        setFinalAmount(Number(total));
+
+        setFinalAmount(
+            calculateFinalAmount(
+                membershipDiscountAmount,
+                0
+            )
+        );
+
         setCouponMessage("");
     };
 
     // =====================================
-    // RAZORPAY UPI PAYMENT
+    // RAZORPAY PAYMENT
     // =====================================
 
     const handleRazorpayPayment = async () => {
@@ -575,26 +933,26 @@ function Payment() {
                 return;
             }
 
-            // =====================================
-            // CREATE RAZORPAY ORDER
-            // =====================================
+            const orderResponse =
+                await axios.post(
+                    `${API_BASE_URL}/api/payments/create-order/`,
+                    {
+                        amount:
+                            Number(finalAmount),
 
-            const response = await axios.post(
-                "http://127.0.0.1:8000/api/payments/create-order/",
-                {
-                    amount:
-                        Number(finalAmount),
-                    currency: "INR",
-                },
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`,
+                        currency:
+                            "INR",
                     },
-                }
-            );
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
 
-            const data = response.data;
+            const data =
+                orderResponse.data;
 
             if (
                 !data.razorpay_order_id ||
@@ -609,145 +967,158 @@ function Payment() {
                 return;
             }
 
-            // =====================================
-            // RAZORPAY CHECKOUT OPTIONS
-            // =====================================
+            const selectedMethod =
+                paymentMethod;
 
             const options = {
-                key: data.key,
+                key:
+                    data.key,
 
-                amount: data.amount,
+                amount:
+                    data.amount,
 
                 currency:
                     data.currency || "INR",
 
-                name: "Zenve MarketPlace",
+                name:
+                    "Zenve MarketPlace",
 
                 description:
-                    "UPI Payment",
+                    `Order Payment - ${selectedMethod}`,
 
                 order_id:
                     data.razorpay_order_id,
 
-                handler: async function (
-                    razorpayResponse
-                ) {
-                    try {
-                        // =====================================
-                        // VERIFY PAYMENT
-                        // =====================================
+                handler:
+                    async function (
+                        razorpayResponse
+                    ) {
+                        try {
+                            const verifyResponse =
+                                await axios.post(
+                                    `${API_BASE_URL}/api/payments/verify/`,
+                                    {
+                                        razorpay_payment_id:
+                                            razorpayResponse
+                                                .razorpay_payment_id,
 
-                        const verifyResponse =
-                            await axios.post(
-                                "http://127.0.0.1:8000/api/payments/verify/",
-                                {
-                                    razorpay_payment_id:
-                                        razorpayResponse.razorpay_payment_id,
+                                        razorpay_order_id:
+                                            razorpayResponse
+                                                .razorpay_order_id,
 
-                                    razorpay_order_id:
-                                        razorpayResponse.razorpay_order_id,
+                                        razorpay_signature:
+                                            razorpayResponse
+                                                .razorpay_signature,
 
-                                    razorpay_signature:
-                                        razorpayResponse.razorpay_signature,
+                                        checkout_type:
+                                            checkoutType,
 
-                                    checkout_type:
-                                        checkoutType,
+                                        shipping_address:
+                                            selectedAddress,
 
-                                    shipping_address:
-                                        selectedAddress,
+                                        payment_method:
+                                            selectedMethod,
 
-                                    payment_method:
-                                        "UPI",
+                                        coupon_code:
+                                            appliedCoupon
+                                                ? couponCode
+                                                : null,
 
-                                    coupon_code:
-                                        appliedCoupon
-                                            ? couponCode
-                                            : null,
+                                        subtotal:
+                                            Number(
+                                                subtotal
+                                            ),
 
-                                    subtotal:
-                                        Number(subtotal),
+                                        shipping_charge:
+                                            Number(
+                                                shipping
+                                            ),
 
-                                    shipping_charge:
-                                        Number(shipping),
+                                        membership_discount_percentage:
+                                            Number(
+                                                membershipDiscountPercentage
+                                            ),
 
-                                    discount_amount:
-                                        Number(
-                                            couponDiscount
-                                        ),
+                                        membership_discount_amount:
+                                            Number(
+                                                membershipDiscountAmount
+                                            ),
 
-                                    total_amount:
-                                        Number(
-                                            finalAmount
-                                        ),
+                                        discount_amount:
+                                            Number(
+                                                couponDiscount
+                                            ),
 
-                                    product_id:
-                                        checkoutType ===
-                                        "buy_now"
-                                            ? product?.id
-                                            : null,
+                                        total_amount:
+                                            Number(
+                                                finalAmount
+                                            ),
 
-                                    quantity:
-                                        checkoutType ===
-                                        "buy_now"
-                                            ? product?.quantity
-                                            : null,
-                                },
-                                {
-                                    headers: {
-                                        Authorization:
-                                            `Bearer ${token}`,
+                                        product_id:
+                                            checkoutType ===
+                                            "buy_now"
+                                                ? product?.id
+                                                : null,
+
+                                        quantity:
+                                            checkoutType ===
+                                            "buy_now"
+                                                ? product?.quantity
+                                                : null,
                                     },
+                                    {
+                                        headers: {
+                                            Authorization:
+                                                `Bearer ${token}`,
+                                        },
+                                    }
+                                );
+
+                            console.log(
+                                "Payment verification:",
+                                verifyResponse.data
+                            );
+
+                            if (
+                                checkoutType !==
+                                "buy_now"
+                            ) {
+                                await clearCartAfterOrder();
+                            }
+
+                            alert(
+                                "Payment successful! Order placed successfully."
+                            );
+
+                            navigate(
+                                "/orders",
+                                {
+                                    replace: true,
                                 }
                             );
 
-                        console.log(
-                            "Payment verification:",
-                            verifyResponse.data
-                        );
+                        } catch (error) {
+                            console.error(
+                                "Payment verification error:",
+                                error.response?.data ||
+                                error.message
+                            );
 
-                        // =====================================
-                        // CLEAR CART AFTER SUCCESS
-                        // =====================================
+                            alert(
+                                error.response?.data?.message ||
+                                "Payment verification failed."
+                            );
 
-                        if (
-                            checkoutType !==
-                            "buy_now"
-                        ) {
-                            await clearCartAfterOrder();
+                        } finally {
+                            setLoading(false);
                         }
-
-                        alert(
-                            "Payment successful! Order placed successfully."
-                        );
-
-                        navigate(
-                            "/orders",
-                            {
-                                replace: true,
-                            }
-                        );
-
-                    } catch (error) {
-                        console.error(
-                            "Payment verification error:",
-                            error.response?.data ||
-                            error.message
-                        );
-
-                        alert(
-                            error.response?.data?.message ||
-                            "Payment verification failed."
-                        );
-
-                    } finally {
-                        setLoading(false);
-                    }
-                },
+                    },
 
                 modal: {
-                    ondismiss: function () {
-                        setLoading(false);
-                    },
+                    ondismiss:
+                        function () {
+                            setLoading(false);
+                        },
                 },
 
                 prefill: {
@@ -762,29 +1133,19 @@ function Payment() {
 
                 notes: {
                     checkout_type:
-                        checkoutType || "cart",
+                        checkoutType ||
+                        "cart",
+
+                    payment_method:
+                        selectedMethod,
 
                     shipping_address:
                         selectedAddress,
                 },
 
                 theme: {
-                    color: "#0D6EFD",
-                },
-
-                // UPI ONLY
-                method: {
-                    upi: true,
-
-                    card: false,
-
-                    netbanking: false,
-
-                    wallet: false,
-
-                    emi: false,
-
-                    paylater: false,
+                    color:
+                        "#5b4bdb",
                 },
             };
 
@@ -797,12 +1158,12 @@ function Payment() {
                 "payment.failed",
                 function (response) {
                     console.error(
-                        "Payment failed:",
+                        "Razorpay payment failed:",
                         response.error
                     );
 
                     alert(
-                        response.error.description ||
+                        response.error?.description ||
                         "Payment failed. Please try again."
                     );
 
@@ -814,7 +1175,7 @@ function Payment() {
 
         } catch (error) {
             console.error(
-                "Razorpay payment error:",
+                "Razorpay error:",
                 error.response?.data ||
                 error.message
             );
@@ -824,6 +1185,178 @@ function Payment() {
                 "Unable to start Razorpay payment."
             );
 
+            setLoading(false);
+        }
+    };
+
+    // =====================================
+    // WALLET PAYMENT
+    // =====================================
+
+    const handleWalletPayment = async () => {
+        if (!selectedAddress) {
+            alert(
+                "Please add a default delivery address."
+            );
+
+            return;
+        }
+
+        const orderAmount =
+            Number(finalAmount) || 0;
+
+        const currentWalletBalance =
+            Number(walletBalance) || 0;
+
+        if (
+            currentWalletBalance <
+            orderAmount
+        ) {
+            alert(
+                `Insufficient wallet balance.\n\nWallet Balance: ₹${currentWalletBalance.toFixed(
+                    2
+                )}\nOrder Total: ₹${orderAmount.toFixed(
+                    2
+                )}`
+            );
+
+            return;
+        }
+
+        if (
+            checkoutType === "buy_now" &&
+            !product
+        ) {
+            alert(
+                "Product information is missing."
+            );
+
+            return;
+        }
+
+        if (
+            checkoutType !== "buy_now" &&
+            products.length === 0
+        ) {
+            alert(
+                "Your cart is empty."
+            );
+
+            navigate("/cart");
+
+            return;
+        }
+
+        if (loading) {
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const response =
+                await axios.post(
+                    WALLET_PAYMENT_API_URL,
+                    {
+                        checkout_type:
+                            checkoutType,
+
+                        shipping_address:
+                            selectedAddress,
+
+                        payment_method:
+                            "Wallet",
+
+                        coupon_code:
+                            appliedCoupon
+                                ? couponCode
+                                : null,
+
+                        subtotal:
+                            Number(subtotal),
+
+                        shipping_charge:
+                            Number(shipping),
+
+                        membership_discount_percentage:
+                            Number(
+                                membershipDiscountPercentage
+                            ),
+
+                        membership_discount_amount:
+                            Number(
+                                membershipDiscountAmount
+                            ),
+
+                        discount_amount:
+                            Number(
+                                couponDiscount
+                            ),
+
+                        total_amount:
+                            orderAmount,
+
+                        product_id:
+                            checkoutType ===
+                            "buy_now"
+                                ? product?.id
+                                : null,
+
+                        quantity:
+                            checkoutType ===
+                            "buy_now"
+                                ? product?.quantity
+                                : null,
+                    },
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
+
+            console.log(
+                "Wallet payment response:",
+                response.data
+            );
+
+            if (
+                checkoutType !==
+                "buy_now"
+            ) {
+                await clearCartAfterOrder();
+            }
+
+            // Refresh balance after payment
+            await fetchWalletBalance();
+
+            alert(
+                response.data?.message ||
+                "Payment successful! Order placed successfully using your wallet."
+            );
+
+            navigate(
+                "/orders",
+                {
+                    replace: true,
+                }
+            );
+
+        } catch (error) {
+            console.error(
+                "Wallet payment error:",
+                error.response?.data ||
+                error.message
+            );
+
+            alert(
+                error.response?.data?.message ||
+                error.response?.data?.detail ||
+                "Unable to complete wallet payment."
+            );
+
+        } finally {
             setLoading(false);
         }
     };
@@ -846,16 +1379,29 @@ function Payment() {
         }
 
         // =====================================
-        // UPI → OPEN RAZORPAY POPUP
+        // WALLET
         // =====================================
 
-        if (paymentMethod === "UPI") {
+        if (
+            paymentMethod === "Wallet"
+        ) {
+            await handleWalletPayment();
+            return;
+        }
+
+        // =====================================
+        // UPI
+        // =====================================
+
+        if (
+            paymentMethod === "UPI"
+        ) {
             await handleRazorpayPayment();
             return;
         }
 
         // =====================================
-        // BUY NOW VALIDATION
+        // BUY NOW
         // =====================================
 
         if (
@@ -870,7 +1416,7 @@ function Payment() {
         }
 
         // =====================================
-        // CART VALIDATION
+        // CART
         // =====================================
 
         if (
@@ -893,9 +1439,12 @@ function Payment() {
             // BUY NOW
             // =====================================
 
-            if (checkoutType === "buy_now") {
+            if (
+                checkoutType ===
+                "buy_now"
+            ) {
                 await axios.post(
-                    "http://127.0.0.1:8000/api/orders/place/",
+                    `${API_BASE_URL}/api/orders/place/`,
                     {
                         product_id:
                             product.id,
@@ -920,8 +1469,20 @@ function Payment() {
                         shipping_charge:
                             Number(shipping),
 
+                        membership_discount_percentage:
+                            Number(
+                                membershipDiscountPercentage
+                            ),
+
+                        membership_discount_amount:
+                            Number(
+                                membershipDiscountAmount
+                            ),
+
                         discount_amount:
-                            Number(couponDiscount),
+                            Number(
+                                couponDiscount
+                            ),
 
                         total_amount:
                             Number(finalAmount),
@@ -935,13 +1496,12 @@ function Payment() {
                 );
 
             } else {
-
                 // =====================================
                 // CART CHECKOUT
                 // =====================================
 
                 await axios.post(
-                    "http://127.0.0.1:8000/api/orders/place-cart/",
+                    `${API_BASE_URL}/api/orders/place-cart/`,
                     {
                         shipping_address:
                             selectedAddress,
@@ -960,8 +1520,20 @@ function Payment() {
                         shipping_charge:
                             Number(shipping),
 
+                        membership_discount_percentage:
+                            Number(
+                                membershipDiscountPercentage
+                            ),
+
+                        membership_discount_amount:
+                            Number(
+                                membershipDiscountAmount
+                            ),
+
                         discount_amount:
-                            Number(couponDiscount),
+                            Number(
+                                couponDiscount
+                            ),
 
                         total_amount:
                             Number(finalAmount),
@@ -981,9 +1553,12 @@ function Payment() {
                 "Order placed successfully!"
             );
 
-            navigate("/orders", {
-                replace: true,
-            });
+            navigate(
+                "/orders",
+                {
+                    replace: true,
+                }
+            );
 
         } catch (error) {
             console.error(
@@ -1006,310 +1581,84 @@ function Payment() {
     };
 
     // =====================================
+    // MEMBERSHIP PLAN NAME
+    // =====================================
+
+    const getMembershipPlanName = () => {
+        if (!membershipPlan) {
+            return "Zenve Premium";
+        }
+
+        return (
+            membershipPlan.plan_name ||
+            membershipPlan.name ||
+            membershipPlan.plan?.name ||
+            "Zenve Premium"
+        );
+    };
+
+    // =====================================
+    // WALLET CAN PAY
+    // =====================================
+
+    const walletCanPay =
+        Number(walletBalance) >=
+        Number(finalAmount);
+
+    // =====================================
     // JSX
     // =====================================
 
     return (
         <div className="payment-page">
+
             <div className="container py-5">
+
                 <div className="row g-4">
 
-                    {/* ============================
+                    {/* =================================================
                         LEFT SIDE
-                    ============================ */}
+                    ================================================= */}
 
                     <div className="col-lg-8">
 
-                        {/* DELIVERY ADDRESS */}
+                        {/* =================================================
+                            PAYMENT METHOD
+                        ================================================= */}
 
-                        <div className="premium-card">
+                        <div className="premium-card payment-method-card">
 
-                            <div className="d-flex justify-content-between align-items-center mb-3">
+                            <div className="section-heading">
 
-                                <h3 className="section-title">
-                                    Delivery Address
-                                </h3>
+                                <div className="heading-icon">
+                                    <FaWallet />
+                                </div>
 
-                                {addresses.length === 0 && (
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary"
-                                        onClick={() =>
-                                            setShowAddressForm(
-                                                !showAddressForm
-                                            )
-                                        }
-                                    >
-                                        {showAddressForm
-                                            ? "Cancel"
-                                            : "Add Default Address"}
-                                    </button>
-                                )}
+                                <div>
+                                    <span>
+                                        CHECKOUT
+                                    </span>
+
+                                    <h3>
+                                        Select Payment Method
+                                    </h3>
+                                </div>
 
                             </div>
 
-                            {loadingAddress ? (
-
-                                <p>
-                                    Loading address...
-                                </p>
-
-                            ) : (
-
-                                <>
-                                    {/* SHOW ONLY DEFAULT ADDRESS */}
-
-                                    {addresses.map(
-                                        (item) => (
-                                            <div
-                                                key={item.id}
-                                                className="address-card border rounded p-3 mb-3"
-                                            >
-
-                                                <div className="d-flex justify-content-between align-items-start">
-
-                                                    <div>
-                                                        <strong>
-                                                            {item.full_name}
-                                                        </strong>
-
-                                                        <span className="badge bg-success ms-2">
-                                                            Default Address
-                                                        </span>
-                                                    </div>
-
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-danger btn-sm"
-                                                        onClick={() =>
-                                                            deleteAddress(
-                                                                item.id
-                                                            )
-                                                        }
-                                                    >
-                                                        Delete
-                                                    </button>
-
-                                                </div>
-
-                                                <p className="mt-3">
-                                                    {item.address_line1}
-                                                </p>
-
-                                                {item.address_line2 && (
-                                                    <p>
-                                                        {item.address_line2}
-                                                    </p>
-                                                )}
-
-                                                <p>
-                                                    {item.city},{" "}
-                                                    {item.state} -{" "}
-                                                    {item.postal_code}
-                                                </p>
-
-                                                <p>
-                                                    📞{" "}
-                                                    {item.phone_number}
-                                                </p>
-
-                                            </div>
-                                        )
-                                    )}
-
-                                    {/* NO DEFAULT ADDRESS */}
-
-                                    {addresses.length === 0 &&
-                                        !showAddressForm && (
-
-                                        <div>
-                                            <p>
-                                                No default delivery address found.
-                                            </p>
-
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary"
-                                                onClick={() =>
-                                                    setShowAddressForm(true)
-                                                }
-                                            >
-                                                Add Default Address
-                                            </button>
-                                        </div>
-                                    )}
-
-                                    {/* ADD ADDRESS FORM */}
-
-                                    {showAddressForm && (
-
-                                        <div className="address-form mt-4">
-
-                                            <hr />
-
-                                            <h4 className="mb-3">
-                                                Add Default Address
-                                            </h4>
-
-                                            <div className="row">
-
-                                                <div className="col-md-6 mb-3">
-
-                                                    <input
-                                                        type="text"
-                                                        name="full_name"
-                                                        className="form-control"
-                                                        placeholder="Full Name"
-                                                        value={addressForm.full_name}
-                                                        onChange={handleAddressChange}
-                                                    />
-
-                                                </div>
-
-                                                <div className="col-md-6 mb-3">
-
-                                                    <input
-                                                        type="text"
-                                                        name="phone_number"
-                                                        className="form-control"
-                                                        placeholder="Phone Number"
-                                                        value={addressForm.phone_number}
-                                                        onChange={handleAddressChange}
-                                                    />
-
-                                                </div>
-
-                                            </div>
-
-                                            <div className="mb-3">
-
-                                                <input
-                                                    type="text"
-                                                    name="address_line1"
-                                                    className="form-control"
-                                                    placeholder="Address Line 1"
-                                                    value={addressForm.address_line1}
-                                                    onChange={handleAddressChange}
-                                                />
-
-                                            </div>
-
-                                            <div className="mb-3">
-
-                                                <input
-                                                    type="text"
-                                                    name="address_line2"
-                                                    className="form-control"
-                                                    placeholder="Address Line 2 (Optional)"
-                                                    value={addressForm.address_line2}
-                                                    onChange={handleAddressChange}
-                                                />
-
-                                            </div>
-
-                                            <div className="row">
-
-                                                <div className="col-md-4 mb-3">
-
-                                                    <input
-                                                        type="text"
-                                                        name="city"
-                                                        className="form-control"
-                                                        placeholder="City"
-                                                        value={addressForm.city}
-                                                        onChange={handleAddressChange}
-                                                    />
-
-                                                </div>
-
-                                                <div className="col-md-4 mb-3">
-
-                                                    <input
-                                                        type="text"
-                                                        name="state"
-                                                        className="form-control"
-                                                        placeholder="State"
-                                                        value={addressForm.state}
-                                                        onChange={handleAddressChange}
-                                                    />
-
-                                                </div>
-
-                                                <div className="col-md-4 mb-3">
-
-                                                    <input
-                                                        type="text"
-                                                        name="postal_code"
-                                                        className="form-control"
-                                                        placeholder="Postal Code"
-                                                        value={addressForm.postal_code}
-                                                        onChange={handleAddressChange}
-                                                    />
-
-                                                </div>
-
-                                            </div>
-
-                                            <div className="mb-3">
-
-                                                <input
-                                                    type="text"
-                                                    name="country"
-                                                    className="form-control"
-                                                    value={addressForm.country}
-                                                    onChange={handleAddressChange}
-                                                />
-
-                                            </div>
-
-                                            <div className="d-flex gap-2">
-
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-success"
-                                                    onClick={saveAddress}
-                                                >
-                                                    Save Default Address
-                                                </button>
-
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-secondary"
-                                                    onClick={() =>
-                                                        setShowAddressForm(false)
-                                                    }
-                                                >
-                                                    Cancel
-                                                </button>
-
-                                            </div>
-
-                                        </div>
-                                    )}
-
-                                </>
-
-                            )}
-
-                        </div>
-
-                        {/* PAYMENT METHOD */}
-
-                        <div className="premium-card mt-4">
-
-                            <h3 className="section-title">
-                                Select Payment Method
-                            </h3>
-
                             <div className="payment-options">
+
+                                {/* CREDIT CARD */}
 
                                 <label
                                     className={
-                                        paymentMethod === "Credit Card"
+                                        paymentMethod ===
+                                        "Credit Card"
                                             ? "payment-option active"
                                             : "payment-option"
                                     }
                                 >
+
                                     <input
                                         type="radio"
                                         value="Credit Card"
@@ -1324,25 +1673,39 @@ function Payment() {
                                         }
                                     />
 
-                                    <FaCreditCard className="payment-icon" />
+                                    <div className="payment-option-icon">
+                                        <FaCreditCard />
+                                    </div>
 
-                                    <span>
-                                        Credit / Debit Card
-                                    </span>
+                                    <div>
+                                        <strong>
+                                            Credit / Debit Card
+                                        </strong>
+
+                                        <small>
+                                            Pay securely using your card
+                                        </small>
+                                    </div>
+
                                 </label>
+
+                                {/* UPI */}
 
                                 <label
                                     className={
-                                        paymentMethod === "UPI"
+                                        paymentMethod ===
+                                        "UPI"
                                             ? "payment-option active"
                                             : "payment-option"
                                     }
                                 >
+
                                     <input
                                         type="radio"
                                         value="UPI"
                                         checked={
-                                            paymentMethod === "UPI"
+                                            paymentMethod ===
+                                            "UPI"
                                         }
                                         onChange={(e) =>
                                             setPaymentMethod(
@@ -1351,20 +1714,97 @@ function Payment() {
                                         }
                                     />
 
-                                    <FaWallet className="payment-icon" />
+                                    <div className="payment-option-icon">
+                                        <FaWallet />
+                                    </div>
 
-                                    <span>
-                                        UPI Payment
-                                    </span>
+                                    <div>
+                                        <strong>
+                                            UPI Payment
+                                        </strong>
+
+                                        <small>
+                                            Google Pay, PhonePe, Paytm and more
+                                        </small>
+                                    </div>
+
                                 </label>
+
+                                {/* WALLET */}
 
                                 <label
                                     className={
-                                        paymentMethod === "Net Banking"
+                                        paymentMethod ===
+                                        "Wallet"
+                                            ? "payment-option active wallet-payment-option"
+                                            : "payment-option wallet-payment-option"
+                                    }
+                                >
+
+                                    <input
+                                        type="radio"
+                                        value="Wallet"
+                                        checked={
+                                            paymentMethod ===
+                                            "Wallet"
+                                        }
+                                        onChange={(e) =>
+                                            setPaymentMethod(
+                                                e.target.value
+                                            )
+                                        }
+                                    />
+
+                                    <div className="payment-option-icon wallet-icon">
+                                        <FaWallet />
+                                    </div>
+
+                                    <div className="wallet-payment-info">
+
+                                        <strong>
+                                            Zenve Wallet
+                                        </strong>
+
+                                        <small>
+                                            {walletLoading
+                                                ? "Checking balance..."
+                                                : `Available Balance: ₹${Number(
+                                                    walletBalance
+                                                ).toFixed(2)}`
+                                            }
+                                        </small>
+
+                                    </div>
+
+                                    {paymentMethod ===
+                                        "Wallet" && (
+                                        <span
+                                            className={
+                                                walletCanPay
+                                                    ? "wallet-option-status available"
+                                                    : "wallet-option-status insufficient"
+                                            }
+                                        >
+                                            {walletCanPay
+                                                ? "Available"
+                                                : "Insufficient"
+                                            }
+                                        </span>
+                                    )}
+
+                                </label>
+
+                                {/* NET BANKING */}
+
+                                <label
+                                    className={
+                                        paymentMethod ===
+                                        "Net Banking"
                                             ? "payment-option active"
                                             : "payment-option"
                                     }
                                 >
+
                                     <input
                                         type="radio"
                                         value="Net Banking"
@@ -1379,12 +1819,23 @@ function Payment() {
                                         }
                                     />
 
-                                    <FaUniversity className="payment-icon" />
+                                    <div className="payment-option-icon">
+                                        <FaUniversity />
+                                    </div>
 
-                                    <span>
-                                        Net Banking
-                                    </span>
+                                    <div>
+                                        <strong>
+                                            Net Banking
+                                        </strong>
+
+                                        <small>
+                                            Pay directly through your bank
+                                        </small>
+                                    </div>
+
                                 </label>
+
+                                {/* COD */}
 
                                 <label
                                     className={
@@ -1394,6 +1845,7 @@ function Payment() {
                                             : "payment-option"
                                     }
                                 >
+
                                     <input
                                         type="radio"
                                         value="Cash on Delivery"
@@ -1408,46 +1860,448 @@ function Payment() {
                                         }
                                     />
 
-                                    <FaMoneyBillWave className="payment-icon" />
+                                    <div className="payment-option-icon">
+                                        <FaMoneyBillWave />
+                                    </div>
 
-                                    <span>
-                                        Cash on Delivery
-                                    </span>
+                                    <div>
+                                        <strong>
+                                            Cash on Delivery
+                                        </strong>
+
+                                        <small>
+                                            Pay when your order arrives
+                                        </small>
+                                    </div>
+
                                 </label>
 
                             </div>
 
                         </div>
 
+                        {/* =================================================
+                            DELIVERY ADDRESS
+                        ================================================= */}
+
+                        <div className="premium-card address-section">
+
+                            <div className="section-heading">
+
+                                <div className="heading-icon">
+                                    <FaMapMarkerAlt />
+                                </div>
+
+                                <div>
+                                    <span>
+                                        DELIVERY
+                                    </span>
+
+                                    <h3>
+                                        Delivery Address
+                                    </h3>
+                                </div>
+
+                            </div>
+
+                            {loadingAddress ? (
+
+                                <div className="address-loader">
+                                    Loading your address...
+                                </div>
+
+                            ) : (
+
+                                <>
+
+                                    {addresses.map(
+                                        (item) => (
+
+                                            <div
+                                                key={item.id}
+                                                className="selected-address-card"
+                                            >
+
+                                                <div className="address-top">
+
+                                                    <div className="address-name">
+
+                                                        <FaMapMarkerAlt />
+
+                                                        <strong>
+                                                            {item.full_name}
+                                                        </strong>
+
+                                                        <span className="default-badge">
+
+                                                            <FaStar />
+
+                                                            Default
+
+                                                        </span>
+
+                                                    </div>
+
+                                                    <button
+                                                        type="button"
+                                                        className="delete-address-btn"
+                                                        onClick={() =>
+                                                            deleteAddress(
+                                                                item.id
+                                                            )
+                                                        }
+                                                    >
+
+                                                        <FaTrash />
+
+                                                        Delete
+
+                                                    </button>
+
+                                                </div>
+
+                                                <div className="address-content">
+
+                                                    <p>
+                                                        {item.address_line1}
+                                                    </p>
+
+                                                    {item.address_line2 && (
+                                                        <p>
+                                                            {item.address_line2}
+                                                        </p>
+                                                    )}
+
+                                                    <p>
+                                                        {item.city},{" "}
+                                                        {item.state}
+                                                        {" - "}
+                                                        {item.postal_code}
+                                                    </p>
+
+                                                    <p>
+                                                        {item.country}
+                                                    </p>
+
+                                                    <p className="phone-line">
+                                                        📞{" "}
+                                                        {item.phone_number}
+                                                    </p>
+
+                                                </div>
+
+                                            </div>
+
+                                        )
+                                    )}
+
+                                    {addresses.length === 0 &&
+                                        !showAddressForm && (
+
+                                        <div className="no-address-box">
+
+                                            <FaMapMarkerAlt />
+
+                                            <h4>
+                                                No Default Address
+                                            </h4>
+
+                                            <p>
+                                                Add a delivery address
+                                                before placing your order.
+                                            </p>
+
+                                            <button
+                                                type="button"
+                                                className="add-address-main-btn"
+                                                onClick={() =>
+                                                    setShowAddressForm(
+                                                        true
+                                                    )
+                                                }
+                                            >
+                                                + Add Default Address
+                                            </button>
+
+                                        </div>
+
+                                    )}
+
+                                    {showAddressForm && (
+
+                                        <div className="address-form">
+
+                                            <div className="form-header">
+
+                                                <div>
+
+                                                    <h4>
+                                                        Add Default Address
+                                                    </h4>
+
+                                                    <p>
+                                                        Enter your delivery details
+                                                    </p>
+
+                                                </div>
+
+                                            </div>
+
+                                            <div className="row">
+
+                                                <div className="col-md-6 mb-3">
+
+                                                    <label>
+                                                        Full Name *
+                                                    </label>
+
+                                                    <input
+                                                        type="text"
+                                                        name="full_name"
+                                                        className="form-control"
+                                                        placeholder="Full Name"
+                                                        value={
+                                                            addressForm.full_name
+                                                        }
+                                                        onChange={
+                                                            handleAddressChange
+                                                        }
+                                                    />
+
+                                                </div>
+
+                                                <div className="col-md-6 mb-3">
+
+                                                    <label>
+                                                        Phone Number *
+                                                    </label>
+
+                                                    <input
+                                                        type="text"
+                                                        name="phone_number"
+                                                        className="form-control"
+                                                        placeholder="Phone Number"
+                                                        value={
+                                                            addressForm.phone_number
+                                                        }
+                                                        onChange={
+                                                            handleAddressChange
+                                                        }
+                                                    />
+
+                                                </div>
+
+                                            </div>
+
+                                            <div className="mb-3">
+
+                                                <label>
+                                                    Address Line 1 *
+                                                </label>
+
+                                                <input
+                                                    type="text"
+                                                    name="address_line1"
+                                                    className="form-control"
+                                                    placeholder="House number, street, area"
+                                                    value={
+                                                        addressForm.address_line1
+                                                    }
+                                                    onChange={
+                                                        handleAddressChange
+                                                    }
+                                                />
+
+                                            </div>
+
+                                            <div className="mb-3">
+
+                                                <label>
+                                                    Address Line 2
+                                                </label>
+
+                                                <input
+                                                    type="text"
+                                                    name="address_line2"
+                                                    className="form-control"
+                                                    placeholder="Apartment, landmark"
+                                                    value={
+                                                        addressForm.address_line2
+                                                    }
+                                                    onChange={
+                                                        handleAddressChange
+                                                    }
+                                                />
+
+                                            </div>
+
+                                            <div className="row">
+
+                                                <div className="col-md-4 mb-3">
+
+                                                    <label>
+                                                        City *
+                                                    </label>
+
+                                                    <input
+                                                        type="text"
+                                                        name="city"
+                                                        className="form-control"
+                                                        placeholder="City"
+                                                        value={
+                                                            addressForm.city
+                                                        }
+                                                        onChange={
+                                                            handleAddressChange
+                                                        }
+                                                    />
+
+                                                </div>
+
+                                                <div className="col-md-4 mb-3">
+
+                                                    <label>
+                                                        State *
+                                                    </label>
+
+                                                    <input
+                                                        type="text"
+                                                        name="state"
+                                                        className="form-control"
+                                                        placeholder="State"
+                                                        value={
+                                                            addressForm.state
+                                                        }
+                                                        onChange={
+                                                            handleAddressChange
+                                                        }
+                                                    />
+
+                                                </div>
+
+                                                <div className="col-md-4 mb-3">
+
+                                                    <label>
+                                                        Postal Code *
+                                                    </label>
+
+                                                    <input
+                                                        type="text"
+                                                        name="postal_code"
+                                                        className="form-control"
+                                                        placeholder="Postal Code"
+                                                        value={
+                                                            addressForm.postal_code
+                                                        }
+                                                        onChange={
+                                                            handleAddressChange
+                                                        }
+                                                    />
+
+                                                </div>
+
+                                            </div>
+
+                                            <div className="mb-3">
+
+                                                <label>
+                                                    Country
+                                                </label>
+
+                                                <input
+                                                    type="text"
+                                                    name="country"
+                                                    className="form-control"
+                                                    value={
+                                                        addressForm.country
+                                                    }
+                                                    onChange={
+                                                        handleAddressChange
+                                                    }
+                                                />
+
+                                            </div>
+
+                                            <div className="address-form-buttons">
+
+                                                <button
+                                                    type="button"
+                                                    className="cancel-address-btn"
+                                                    onClick={() =>
+                                                        setShowAddressForm(
+                                                            false
+                                                        )
+                                                    }
+                                                >
+                                                    Cancel
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="save-address-btn"
+                                                    onClick={
+                                                        saveAddress
+                                                    }
+                                                >
+                                                    Save Address
+                                                    <FaArrowRight />
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
+                                    )}
+
+                                </>
+
+                            )}
+
+                        </div>
+
                     </div>
 
-                    {/* ============================
-                        RIGHT SIDE - ORDER SUMMARY
-                    ============================ */}
+                    {/* =================================================
+                        RIGHT SIDE
+                    ================================================= */}
 
                     <div className="col-lg-4">
 
                         <div className="premium-summary">
 
-                            <h3 className="summary-title">
-                                Order Summary
-                            </h3>
+                            {/* =================================================
+                                COUPON
+                            ================================================= */}
 
-                            {/* COUPON */}
+                            <div className="coupon-section">
 
-                            <div className="coupon-box">
+                                <div className="coupon-header">
 
-                                <label className="coupon-title">
-                                    Have a Coupon?
-                                </label>
+                                    <FaGift />
+
+                                    <div>
+
+                                        <strong>
+                                            Have a Coupon?
+                                        </strong>
+
+                                        <small>
+                                            Save more on your order
+                                        </small>
+
+                                    </div>
+
+                                </div>
 
                                 <div className="coupon-input">
 
                                     <input
                                         type="text"
-                                        placeholder="Enter Coupon Code"
+                                        placeholder="Enter coupon code"
                                         value={couponCode}
-                                        disabled={!!appliedCoupon}
+                                        disabled={
+                                            !!appliedCoupon
+                                        }
                                         onChange={(e) =>
                                             setCouponCode(
                                                 e.target.value.toUpperCase()
@@ -1459,11 +2313,15 @@ function Payment() {
 
                                         <button
                                             type="button"
-                                            onClick={applyCoupon}
-                                            disabled={couponLoading}
+                                            onClick={
+                                                applyCoupon
+                                            }
+                                            disabled={
+                                                couponLoading
+                                            }
                                         >
                                             {couponLoading
-                                                ? "Applying..."
+                                                ? "..."
                                                 : "Apply"}
                                         </button>
 
@@ -1471,7 +2329,9 @@ function Payment() {
 
                                         <button
                                             type="button"
-                                            onClick={removeCoupon}
+                                            onClick={
+                                                removeCoupon
+                                            }
                                         >
                                             Remove
                                         </button>
@@ -1483,12 +2343,11 @@ function Payment() {
                                 {couponMessage && (
 
                                     <p
-                                        style={{
-                                            color: appliedCoupon
-                                                ? "green"
-                                                : "red",
-                                            marginTop: "8px",
-                                        }}
+                                        className={
+                                            appliedCoupon
+                                                ? "coupon-success"
+                                                : "coupon-error"
+                                        }
                                     >
                                         {couponMessage}
                                     </p>
@@ -1497,11 +2356,169 @@ function Payment() {
 
                             </div>
 
-                            {/* PRODUCTS */}
+                            {/* =================================================
+                                SUMMARY TITLE
+                            ================================================= */}
+
+                            <div className="summary-heading">
+
+                                <div>
+
+                                    <span>
+                                        YOUR ORDER
+                                    </span>
+
+                                    <h3>
+                                        Order Summary
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+                            {/* =================================================
+                                MEMBERSHIP
+                            ================================================= */}
+
+                            {membershipLoading ? (
+
+                                <div className="membership-loading">
+                                    Checking membership...
+                                </div>
+
+                            ) : hasMembership ? (
+
+                                <div className="membership-ad active-membership">
+
+                                    <div className="membership-ad-icon">
+                                        <FaCrown />
+                                    </div>
+
+                                    <div className="membership-ad-content">
+
+                                        <span className="membership-ad-label">
+                                            MEMBER BENEFIT
+                                        </span>
+
+                                        <h4>
+                                            {getMembershipPlanName()}
+                                        </h4>
+
+                                        <p>
+                                            You saved{" "}
+                                            <strong>
+                                                {membershipDiscountPercentage}%
+                                            </strong>{" "}
+                                            with your membership.
+                                        </p>
+
+                                    </div>
+
+                                    <div className="membership-percent">
+                                        {membershipDiscountPercentage}%
+                                    </div>
+
+                                </div>
+
+                            ) : (
+
+                                <div className="membership-ad">
+
+                                    <div className="membership-ad-icon">
+                                        <FaCrown />
+                                    </div>
+
+                                    <div className="membership-ad-content">
+
+                                        <span className="membership-ad-label">
+                                            ZENVE MEMBERSHIP
+                                        </span>
+
+                                        <h4>
+                                            Save More With Membership
+                                        </h4>
+
+                                        <p>
+                                            Unlock exclusive discounts
+                                            and pet care benefits.
+                                        </p>
+
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                navigate(
+                                                    "/membership"
+                                                )
+                                            }
+                                        >
+                                            Explore Membership
+                                            <FaArrowRight />
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            )}
+
+                            {/* =================================================
+                                WALLET BALANCE
+                            ================================================= */}
+
+                            <div className="wallet-summary-card">
+
+                                <div className="wallet-summary-left">
+
+                                    <div className="wallet-summary-icon">
+                                        <FaWallet />
+                                    </div>
+
+                                    <div>
+
+                                        <span className="wallet-summary-label">
+                                            WALLET BALANCE
+                                        </span>
+
+                                        <h4>
+                                            {walletLoading
+                                                ? "Loading..."
+                                                : `₹${Number(
+                                                    walletBalance
+                                                ).toFixed(2)}`
+                                            }
+                                        </h4>
+
+                                    </div>
+
+                                </div>
+
+                                {paymentMethod ===
+                                    "Wallet" && (
+
+                                    <div
+                                        className={
+                                            walletCanPay
+                                                ? "wallet-status available"
+                                                : "wallet-status insufficient"
+                                        }
+                                    >
+                                        {walletCanPay
+                                            ? "Available"
+                                            : "Insufficient"}
+                                    </div>
+
+                                )}
+
+                            </div>
+
+                            {/* =================================================
+                                PRODUCTS
+                            ================================================= */}
 
                             <div className="summary-products">
 
-                                {checkoutType === "buy_now" ? (
+                                {checkoutType ===
+                                "buy_now" ? (
 
                                     product && (
 
@@ -1512,7 +2529,10 @@ function Payment() {
                                             </span>
 
                                             <span>
-                                                × {product.quantity}
+                                                ×{" "}
+                                                {
+                                                    product.quantity
+                                                }
                                             </span>
 
                                         </div>
@@ -1521,27 +2541,34 @@ function Payment() {
 
                                 ) : (
 
-                                    products.map((item) => (
+                                    products.map(
+                                        (item) => (
 
-                                        <div
-                                            key={
-                                                item.product_id ||
-                                                item.id
-                                            }
-                                            className="summary-product"
-                                        >
+                                            <div
+                                                key={
+                                                    item.product_id ||
+                                                    item.id
+                                                }
+                                                className="summary-product"
+                                            >
 
-                                            <span>
-                                                {item.product_name}
-                                            </span>
+                                                <span>
+                                                    {
+                                                        item.product_name
+                                                    }
+                                                </span>
 
-                                            <span>
-                                                × {item.quantity}
-                                            </span>
+                                                <span>
+                                                    ×{" "}
+                                                    {
+                                                        item.quantity
+                                                    }
+                                                </span>
 
-                                        </div>
+                                            </div>
 
-                                    ))
+                                        )
+                                    )
 
                                 )}
 
@@ -1549,38 +2576,102 @@ function Payment() {
 
                             <hr />
 
-                            <div className="summary-row">
-                                <span>Total Items</span>
-                                <span>{totalItems}</span>
-                            </div>
+                            {/* =================================================
+                                TOTAL ITEMS
+                            ================================================= */}
 
                             <div className="summary-row">
-                                <span>Subtotal</span>
+
                                 <span>
-                                    ₹ {Number(subtotal).toFixed(2)}
+                                    Total Items
                                 </span>
+
+                                <span>
+                                    {totalItems}
+                                </span>
+
                             </div>
 
+                            {/* =================================================
+                                SUBTOTAL
+                            ================================================= */}
+
                             <div className="summary-row">
-                                <span>Shipping</span>
+
                                 <span>
-                                    ₹ {Number(shipping).toFixed(2)}
+                                    Subtotal
                                 </span>
+
+                                <span>
+                                    ₹{" "}
+                                    {Number(
+                                        subtotal
+                                    ).toFixed(2)}
+                                </span>
+
                             </div>
+
+                            {/* =================================================
+                                SHIPPING
+                            ================================================= */}
+
+                            <div className="summary-row">
+
+                                <span>
+                                    Shipping
+                                </span>
+
+                                <span>
+                                    ₹{" "}
+                                    {Number(
+                                        shipping
+                                    ).toFixed(2)}
+                                </span>
+
+                            </div>
+
+                            {/* =================================================
+                                MEMBERSHIP DISCOUNT
+                            ================================================= */}
+
+                            {membershipDiscountAmount >
+                                0 && (
+
+                                <div className="summary-row discount-row">
+
+                                    <span>
+                                        <FaCrown />
+
+                                        Membership Discount
+                                        ({membershipDiscountPercentage}%)
+                                    </span>
+
+                                    <span>
+                                        - ₹{" "}
+                                        {Number(
+                                            membershipDiscountAmount
+                                        ).toFixed(2)}
+                                    </span>
+
+                                </div>
+
+                            )}
+
+                            {/* =================================================
+                                COUPON DISCOUNT
+                            ================================================= */}
 
                             {couponDiscount > 0 && (
 
-                                <div className="summary-row">
+                                <div className="summary-row discount-row coupon-discount-row">
 
                                     <span>
+                                        <FaGift />
+
                                         Coupon Discount
                                     </span>
 
-                                    <span
-                                        style={{
-                                            color: "green",
-                                        }}
-                                    >
+                                    <span>
                                         - ₹{" "}
                                         {Number(
                                             couponDiscount
@@ -1592,6 +2683,10 @@ function Payment() {
                             )}
 
                             <hr />
+
+                            {/* =================================================
+                                FINAL TOTAL
+                            ================================================= */}
 
                             <div className="summary-total">
 
@@ -1608,41 +2703,105 @@ function Payment() {
 
                             </div>
 
-                            {/* PLACE ORDER / PAY */}
+                            {/* =================================================
+                                WALLET SHORTAGE
+                            ================================================= */}
+
+                            {paymentMethod ===
+                                "Wallet" &&
+                                !walletLoading &&
+                                !walletCanPay && (
+
+                                <div className="wallet-shortage-box">
+
+                                    <FaWallet />
+
+                                    <div>
+
+                                        <strong>
+                                            Insufficient Wallet Balance
+                                        </strong>
+
+                                        <p>
+                                            You need ₹
+                                            {(
+                                                Number(
+                                                    finalAmount
+                                                ) -
+                                                Number(
+                                                    walletBalance
+                                                )
+                                            ).toFixed(2)}
+                                            {" "}more in your wallet.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            )}
+
+                            {/* =================================================
+                                PLACE ORDER
+                            ================================================= */}
 
                             <button
                                 type="button"
                                 className="place-order-btn"
-                                onClick={placeOrder}
+                                onClick={
+                                    placeOrder
+                                }
                                 disabled={
                                     loading ||
-                                    !selectedAddress
+                                    !selectedAddress ||
+                                    (
+                                        paymentMethod ===
+                                        "Wallet" &&
+                                        (
+                                            walletLoading ||
+                                            !walletCanPay
+                                        )
+                                    )
                                 }
                             >
 
                                 {loading
+
                                     ? "Processing..."
 
                                     : !selectedAddress
+
                                         ? "Add Default Address"
 
-                                        : paymentMethod === "UPI"
+                                        : paymentMethod ===
+                                          "UPI"
+
                                             ? `Pay ₹${Number(
                                                 finalAmount
                                             ).toFixed(2)}`
 
-                                            : "Place Order"
+                                            : paymentMethod ===
+                                              "Wallet"
+
+                                                ? `Pay ₹${Number(
+                                                    finalAmount
+                                                ).toFixed(2)} from Wallet`
+
+                                                : "Place Order"
+
                                 }
 
                             </button>
 
-                            {/* SECURE PAYMENT */}
+                            {/* =================================================
+                                SECURITY
+                            ================================================= */}
 
                             <div className="secure-box">
 
                                 <div className="secure-item">
 
-                                    <FaLock className="secure-icon" />
+                                    <FaLock />
 
                                     <span>
                                         Secure SSL Checkout
@@ -1652,7 +2811,7 @@ function Payment() {
 
                                 <div className="secure-item">
 
-                                    <FaShieldAlt className="secure-icon" />
+                                    <FaShieldAlt />
 
                                     <span>
                                         100% Safe Payment
@@ -1662,7 +2821,7 @@ function Payment() {
 
                                 <div className="secure-item">
 
-                                    <FaCheckCircle className="secure-icon" />
+                                    <FaCheckCircle />
 
                                     <span>
                                         Easy Returns
@@ -1672,37 +2831,14 @@ function Payment() {
 
                             </div>
 
-                            {/* OFFERS */}
-
-                            <div className="offer-box">
-
-                                <h6>
-                                    🎁 Special Offers
-                                </h6>
-
-                                <p>
-                                    💳 10% Instant Cashback
-                                    on Credit Cards
-                                </p>
-
-                                <p>
-                                    ⚡ Flat ₹100 Cashback
-                                    on UPI Payments
-                                </p>
-
-                                <p>
-                                    🛡️ 100% Secure Payment
-                                    Guarantee
-                                </p>
-
-                            </div>
-
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
+
         </div>
     );
 }

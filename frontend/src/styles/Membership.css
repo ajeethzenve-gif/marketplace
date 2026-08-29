@@ -1,0 +1,281 @@
+.membership-page {
+    min-height: 100vh;
+    background: #f7f8fc;
+    padding-bottom: 80px;
+}
+
+/* =====================================
+   HERO
+===================================== */
+
+.membership-hero {
+    padding: 80px 20px;
+    text-align: center;
+    color: white;
+    background: linear-gradient(
+        135deg,
+        #111827,
+        #312e81
+    );
+}
+
+.membership-back-btn {
+    position: absolute;
+    left: 40px;
+    top: 130px;
+    border: none;
+    background: transparent;
+    color: white;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    cursor: pointer;
+}
+
+.membership-hero-icon {
+    width: 75px;
+    height: 75px;
+    margin: auto auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    border-radius: 50%;
+    background: #f59e0b;
+}
+
+.membership-hero span {
+    font-size: 13px;
+    letter-spacing: 2px;
+    font-weight: 700;
+    color: #fbbf24;
+}
+
+.membership-hero h1 {
+    margin-top: 15px;
+    font-size: 42px;
+    font-weight: 700;
+}
+
+.membership-hero p {
+    max-width: 600px;
+    margin: 15px auto 0;
+    color: #d1d5db;
+}
+
+/* =====================================
+   ACTIVE MEMBERSHIP
+===================================== */
+
+.active-membership-card {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 20px;
+    background: linear-gradient(
+        135deg,
+        #f59e0b,
+        #d97706
+    );
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.active-membership-card h2 {
+    margin-top: 10px;
+}
+
+.active-membership-card h2 svg {
+    margin-right: 10px;
+}
+
+.membership-info {
+    display: flex;
+    gap: 50px;
+}
+
+.membership-info div {
+    display: flex;
+    flex-direction: column;
+}
+
+.membership-info small {
+    opacity: 0.8;
+}
+
+/* =====================================
+   PLANS
+===================================== */
+
+.membership-plans {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+.membership-title {
+    text-align: center;
+    margin-bottom: 45px;
+}
+
+.membership-title span {
+    color: #0d6efd;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.membership-title h2 {
+    margin-top: 10px;
+    font-size: 32px;
+}
+
+.membership-title p {
+    color: #6b7280;
+}
+
+.plans-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(280px, 1fr)
+        );
+    gap: 25px;
+}
+
+.membership-plan-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow:
+        0 10px 30px
+        rgba(0, 0, 0, 0.06);
+    transition: 0.3s;
+}
+
+.membership-plan-card:hover {
+    transform: translateY(-8px);
+}
+
+.plan-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.plan-header svg {
+    color: #f59e0b;
+    font-size: 24px;
+}
+
+.plan-price {
+    margin-top: 25px;
+    display: flex;
+    align-items: baseline;
+}
+
+.plan-price span {
+    font-size: 22px;
+}
+
+.plan-price strong {
+    font-size: 42px;
+}
+
+.plan-duration {
+    color: #6b7280;
+    margin-bottom: 25px;
+}
+
+.plan-features {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-height: 130px;
+}
+
+.plan-features div {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.plan-features svg {
+    color: #22c55e;
+}
+
+.choose-plan-btn {
+    width: 100%;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    background: #0d6efd;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.choose-plan-btn:hover {
+    background: #0958c7;
+}
+
+.choose-plan-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.loading-page {
+    display: flex;
+    min-height: 70vh;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.spin-icon {
+    font-size: 35px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+/* =====================================
+   MOBILE
+===================================== */
+
+@media (max-width: 768px) {
+
+    .membership-back-btn {
+        position: static;
+        margin-bottom: 30px;
+    }
+
+    .membership-hero h1 {
+        font-size: 32px;
+    }
+
+    .active-membership-card {
+        margin: 25px 15px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 25px;
+    }
+
+    .membership-info {
+        gap: 30px;
+    }
+
+}

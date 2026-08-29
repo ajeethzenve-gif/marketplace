@@ -9,7 +9,8 @@ import {
 import {
     MdOutlineShoppingCart,
     MdOutlineFavoriteBorder,
-    MdOutlineLocalOffer
+    MdOutlineLocalOffer,
+    MdAccountBalanceWallet
 } from "react-icons/md";
 
 import { useEffect, useState } from "react";
@@ -383,11 +384,14 @@ function Navbar({ toggleSidebar }) {
                 const image =
                     response.data.profile_image;
 
+
                 if (image.startsWith("http")) {
 
                     setProfileImage(image);
 
-                } else {
+                }
+
+                else {
 
                     setProfileImage(
                         `http://127.0.0.1:8000${image}`
@@ -395,7 +399,9 @@ function Navbar({ toggleSidebar }) {
 
                 }
 
-            } else {
+            }
+
+            else {
 
                 setProfileImage("");
 
@@ -478,7 +484,9 @@ function Navbar({ toggleSidebar }) {
                 `/products?search=${encodeURIComponent(value)}`
             );
 
-        } else {
+        }
+
+        else {
 
             navigate("/products");
 
@@ -526,21 +534,21 @@ function Navbar({ toggleSidebar }) {
                     ADMIN LOGO
                 ================================================= */}
 
-              <div className="logo">
+                <div className="logo">
+
                     <Link
                         to="/products/manage"
                         className="logo-link"
                     >
+
                         <img
                             src={logo}
                             alt="Zenve"
                             className="navbar-logo"
                         />
 
-                        {/*<span className="marketplace-name">*/}
-                        {/*    MarketPlace*/}
-                        {/*</span>*/}
                     </Link>
+
                 </div>
 
 
@@ -666,55 +674,27 @@ function Navbar({ toggleSidebar }) {
 
                 {/* LOGO */}
 
-               <div className="logo">
+                <div className="logo">
+
                     <Link
                         to="/home"
                         className="logo-link"
                     >
+
                         <img
                             src={logo}
                             alt="Zenve"
                             className="navbar-logo"
                         />
 
-                        {/*<span className="marketplace-name">*/}
-                        {/*    MarketPlace*/}
-                        {/*</span>*/}
                     </Link>
+
                 </div>
 
 
                 {/* SEARCH */}
 
                 <div className="search-container">
-
-                    <select
-                        className="category-select"
-                        defaultValue="all"
-                    >
-
-                        <option value="all">
-                            All Categories
-                        </option>
-
-                        <option value="medicine">
-                            Medicines
-                        </option>
-
-                        <option value="food">
-                            Pet Food
-                        </option>
-
-                        <option value="farm">
-                            Farm Supplies
-                        </option>
-
-                        <option value="vet">
-                            Vet Equipment
-                        </option>
-
-                    </select>
-
 
                     <input
                         type="text"
@@ -811,6 +791,30 @@ function Navbar({ toggleSidebar }) {
                     </Link>
 
 
+                    {/* =================================================
+                        WALLET
+                    ================================================= */}
+
+                    {username && hasPet && (
+                    <Link
+                        to="/wallet"
+                        className="nav-count-link"
+                    >
+
+                        <div className="icon-wrapper">
+
+                            <MdAccountBalanceWallet />
+
+                        </div>
+
+                        <p>
+                            Wallet
+                        </p>
+
+                    </Link>
+                    )}
+
+
                     {/* PET PROFILE */}
 
                     {username && hasPet && (
@@ -880,6 +884,7 @@ function Navbar({ toggleSidebar }) {
                                         Hello, {username}
                                     </h4>
 
+
                                     <Link
                                         to="/profile"
                                         className="popup-btn"
@@ -905,6 +910,16 @@ function Navbar({ toggleSidebar }) {
                                         className="popup-btn"
                                     >
                                         My Orders
+                                    </Link>
+
+
+                                    {/* WALLET IN PROFILE MENU */}
+
+                                    <Link
+                                        to="/wallet"
+                                        className="popup-btn"
+                                    >
+                                        💳 My Wallet
                                     </Link>
 
 
@@ -961,6 +976,8 @@ function Navbar({ toggleSidebar }) {
                 BOTTOM MENU
             ================================================= */}
 
+            {/*
+
             <nav className="bottom-menu">
 
                 <Link to="/products?product_type=Medicine&product_type=Supplements">
@@ -995,6 +1012,8 @@ function Navbar({ toggleSidebar }) {
                 </Link>
 
             </nav>
+
+            */}
 
         </>
 

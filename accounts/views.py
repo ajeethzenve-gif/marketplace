@@ -23,7 +23,7 @@ from google.auth.transport import requests
 
 
 from django.shortcuts import get_object_or_404
-
+from django.db import transaction
 from .models import Customer, CustomerAddress, PetProfile
 from .serializers import CustomerAddressSerializer,PetProfileSerializer
 
@@ -523,9 +523,15 @@ class CustomerListAPIView(APIView):
             serializer.data
         )
 
-class CustomerAddressListCreateAPIView(APIView):
+#class CustomerAddressListCreateAPIView(APIView):
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [
+        IsAuthenticated
+    ]
+
+    # ======================================
+    # GET ALL ADDRESSES
+    # ======================================
 
     def get(self, request):
 
@@ -534,15 +540,30 @@ class CustomerAddressListCreateAPIView(APIView):
             user=request.user
         )
 
-        addresses = CustomerAddress.objects.filter(customer=customer)
+        addresses = (
+            CustomerAddress.objects
+            .filter(customer=customer)
+            .order_by(
+                "-is_default",
+                "-id"
+            )
+        )
 
         serializer = CustomerAddressSerializer(
             addresses,
             many=True
         )
 
-        return Response(serializer.data)
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )
 
+    # ======================================
+    # ADD NEW ADDRESS
+    # ======================================
+
+    @transaction.atomic
     def post(self, request):
 
         customer = get_object_or_404(
@@ -554,54 +575,498 @@ class CustomerAddressListCreateAPIView(APIView):
             data=request.data
         )
 
-        if serializer.is_valid():
+        serializer.is_valid(
+            raise_exception=True
+        )
 
-            serializer.save(customer=customer)
+        requested_default = (
+            request.data.get("is_default", False)
+        )
 
-            return Response(
-                serializer.data,
-                status=status.HTTP_201_CREATED
+        # Convert string values safely
+        if isinstance(requested_default, str):
+            requested_default = (
+                requested_default.lower()
+                in ["true", "1", "yes"]
+            )
+
+        # Check whether customer already has addresses
+        has_existing_address = (
+            CustomerAddress.objects
+            .filter(
+                customer=customer
+            )
+            .exists()
+        )
+
+        # ==========================================
+        # FIRST ADDRESS
+        # ==========================================
+
+        if not has_existing_address:
+
+            address = serializer.save(
+                customer=customer,
+                is_default=True
+            )
+
+        # ==========================================
+        # NEW ADDRESS REQUESTED AS DEFAULT
+        # ==========================================
+
+        elif requested_default:
+
+            # Remove default from previous address
+            CustomerAddress.objects.filter(
+                customer=customer,
+                is_default=True
+            ).update(
+                is_default=False
+            )
+
+            # Create new default address
+            address = serializer.save(
+                customer=customer,
+                is_default=True
+            )
+
+        # ==========================================
+        # NORMAL NEW ADDRESS
+        # ==========================================
+
+        else:
+
+            address = serializer.save(
+                customer=customer,
+                is_default=False
             )
 
         return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
+            CustomerAddressSerializer(
+                address
+            ).data,
+            status=status.HTTP_201_CREATED
         )
 
-class CustomerAddressDetailAPIView(APIView):
 
-    permission_classes = [IsAuthenticated]
+# ==========================================
+# ADDRESS LIST + CREATE
+# ==========================================
 
-    def put(self, request, pk):
+class CustomerAddressListCreateAPIView(APIView):
+
+    permission_classes = [
+        IsAuthenticated
+    ]
+
+    # ======================================
+    # GET ALL ADDRESSES
+    # ======================================
+
+    def get(self, request):
 
         customer = get_object_or_404(
             Customer,
             user=request.user
         )
 
-        address = get_object_or_404(
-            CustomerAddress,
-            id=pk,
-            customer=customer
+        addresses = (
+            CustomerAddress.objects
+            .filter(customer=customer)
+            .order_by(
+                "-is_default",
+                "-id"
+            )
         )
 
         serializer = CustomerAddressSerializer(
-            address,
+            addresses,
+            many=True
+        )
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )
+
+    # ======================================
+    # ADD NEW ADDRESS
+    # ======================================
+
+    @transaction.atomic
+    def post(self, request):
+
+        customer = get_object_or_404(
+            Customer,
+            user=request.user
+        )
+
+        serializer = CustomerAddressSerializer(
             data=request.data
         )
 
-        if serializer.is_valid():
-
-            serializer.save()
-
-            return Response(serializer.data)
-
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
+        serializer.is_valid(
+            raise_exception=True
         )
 
+        requested_default = (
+            request.data.get("is_default", False)
+        )
+
+        # Convert string values safely
+        if isinstance(requested_default, str):
+            requested_default = (
+                requested_default.lower()
+                in ["true", "1", "yes"]
+            )
+
+        # Check whether customer already has addresses
+        has_existing_address = (
+            CustomerAddress.objects
+            .filter(
+                customer=customer
+            )
+            .exists()
+        )
+
+        # ==========================================
+        # FIRST ADDRESS
+        # ==========================================
+
+        if not has_existing_address:
+
+            address = serializer.save(
+                customer=customer,
+                is_default=True
+            )
+
+        # ==========================================
+        # NEW ADDRESS REQUESTED AS DEFAULT
+        # ==========================================
+
+        elif requested_default:
+
+            # Remove default from previous address
+            CustomerAddress.objects.filter(
+                customer=customer,
+                is_default=True
+            ).update(
+                is_default=False
+            )
+
+            # Create new default address
+            address = serializer.save(
+                customer=customer,
+                is_default=True
+            )
+
+        # ==========================================
+        # NORMAL NEW ADDRESS
+        # ==========================================
+
+        else:
+
+            address = serializer.save(
+                customer=customer,
+                is_default=False
+            )
+
+        return Response(
+            CustomerAddressSerializer(
+                address
+            ).data,
+            status=status.HTTP_201_CREATED
+        )
+
+
+# ==========================================
+# ADDRESS UPDATE + DELETE
+# ==========================================
+
+class CustomerAddressDetailAPIView(APIView):
+
+    permission_classes = [
+        IsAuthenticated
+    ]
+
+    # ======================================
+    # GET CUSTOMER
+    # ======================================
+
+    def get_customer(self, request):
+
+        return get_object_or_404(
+            Customer,
+            user=request.user
+        )
+
+    # ======================================
+    # GET ADDRESS
+    # ======================================
+
+    def get_address(self, request, pk):
+
+        customer = self.get_customer(
+            request
+        )
+
+        return get_object_or_404(
+            CustomerAddress,
+            id=pk,
+            customer=customer
+        )
+
+    # ======================================
+    # UPDATE ADDRESS
+    # ======================================
+
+    @transaction.atomic
+    def put(self, request, pk):
+
+        customer = self.get_customer(
+            request
+        )
+
+        address = get_object_or_404(
+            CustomerAddress,
+            id=pk,
+            customer=customer
+        )
+
+        # ==========================================
+        # CHECK WHETHER THIS ADDRESS SHOULD
+        # BECOME DEFAULT
+        # ==========================================
+
+        requested_default = (
+            request.data.get(
+                "is_default",
+                address.is_default
+            )
+        )
+
+        if isinstance(requested_default, str):
+
+            requested_default = (
+                requested_default.lower()
+                in ["true", "1", "yes"]
+            )
+
+        # ==========================================
+        # MAKE THIS ADDRESS DEFAULT
+        # ==========================================
+
+        if requested_default:
+
+            # Remove default from every other address
+            CustomerAddress.objects.filter(
+                customer=customer,
+                is_default=True
+            ).exclude(
+                id=address.id
+            ).update(
+                is_default=False
+            )
+
+            # Update selected address
+            serializer = CustomerAddressSerializer(
+                address,
+                data=request.data,
+                partial=True
+            )
+
+            serializer.is_valid(
+                raise_exception=True
+            )
+
+            updated_address = serializer.save(
+                is_default=True
+            )
+
+        # ==========================================
+        # NORMAL UPDATE
+        # ==========================================
+
+        else:
+
+            serializer = CustomerAddressSerializer(
+                address,
+                data=request.data,
+                partial=True
+            )
+
+            serializer.is_valid(
+                raise_exception=True
+            )
+
+            updated_address = serializer.save()
+
+        return Response(
+            CustomerAddressSerializer(
+                updated_address
+            ).data,
+            status=status.HTTP_200_OK
+        )
+
+    # ======================================
+    # PATCH
+    # ======================================
+
+    @transaction.atomic
+    def patch(self, request, pk):
+
+        customer = self.get_customer(
+            request
+        )
+
+        address = get_object_or_404(
+            CustomerAddress,
+            id=pk,
+            customer=customer
+        )
+
+        requested_default = request.data.get(
+            "is_default",
+            None
+        )
+
+        if isinstance(requested_default, str):
+
+            requested_default = (
+                requested_default.lower()
+                in ["true", "1", "yes"]
+            )
+
+        # ==========================================
+        # SET DEFAULT
+        # ==========================================
+
+        if requested_default is True:
+
+            CustomerAddress.objects.filter(
+                customer=customer,
+                is_default=True
+            ).exclude(
+                id=address.id
+            ).update(
+                is_default=False
+            )
+
+        serializer = CustomerAddressSerializer(
+            address,
+            data=request.data,
+            partial=True
+        )
+
+        serializer.is_valid(
+            raise_exception=True
+        )
+
+        updated_address = serializer.save()
+
+        return Response(
+            CustomerAddressSerializer(
+                updated_address
+            ).data,
+            status=status.HTTP_200_OK
+        )
+
+    # ======================================
+    # DELETE ADDRESS
+    # ======================================
+
+    @transaction.atomic
     def delete(self, request, pk):
+
+        customer = self.get_customer(
+            request
+        )
+
+        address = get_object_or_404(
+            CustomerAddress,
+            id=pk,
+            customer=customer
+        )
+
+        addresses = CustomerAddress.objects.filter(
+            customer=customer
+        )
+
+        address_count = addresses.count()
+
+        # ==========================================
+        # DON'T ALLOW ZERO ADDRESSES
+        # ==========================================
+
+        if address_count <= 1:
+
+            return Response(
+                {
+                    "success": False,
+                    "message":
+                        "You must have at least one address."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        was_default = address.is_default
+
+        address.delete()
+
+        # ==========================================
+        # IF DEFAULT WAS DELETED
+        # MAKE ANOTHER ADDRESS DEFAULT
+        # ==========================================
+
+        if was_default:
+
+            new_default = (
+                CustomerAddress.objects
+                .filter(
+                    customer=customer
+                )
+                .order_by("-id")
+                .first()
+            )
+
+            if new_default:
+
+                CustomerAddress.objects.filter(
+                    customer=customer
+                ).update(
+                    is_default=False
+                )
+
+                new_default.is_default = True
+
+                new_default.save(
+                    update_fields=[
+                        "is_default"
+                    ]
+                )
+
+        return Response(
+            {
+                "success": True,
+                "message":
+                    "Address deleted successfully."
+            },
+            status=status.HTTP_200_OK
+        )
+
+
+# ==========================================
+# SET DEFAULT ADDRESS
+# ==========================================
+
+class SetDefaultAddressAPIView(APIView):
+
+    permission_classes = [
+        IsAuthenticated
+    ]
+
+    @transaction.atomic
+    def post(self, request, pk):
 
         customer = get_object_or_404(
             Customer,
@@ -614,11 +1079,59 @@ class CustomerAddressDetailAPIView(APIView):
             customer=customer
         )
 
-        address.delete()
+        # ==========================================
+        # CHECK IF ALREADY DEFAULT
+        # ==========================================
+
+        if address.is_default:
+
+            return Response(
+                {
+                    "success": True,
+                    "message":
+                        "This address is already the default address.",
+                    "address":
+                        CustomerAddressSerializer(
+                            address
+                        ).data
+                },
+                status=status.HTTP_200_OK
+            )
+
+        # ==========================================
+        # REMOVE DEFAULT FROM ALL OTHER ADDRESSES
+        # ==========================================
+
+        CustomerAddress.objects.filter(
+            customer=customer,
+            is_default=True
+        ).update(
+            is_default=False
+        )
+
+        # ==========================================
+        # MAKE SELECTED ADDRESS DEFAULT
+        # ==========================================
+
+        address.is_default = True
+
+        address.save(
+            update_fields=[
+                "is_default"
+            ]
+        )
 
         return Response(
-            {"message": "Address deleted successfully."},
-            status=status.HTTP_204_NO_CONTENT
+            {
+                "success": True,
+                "message":
+                    "Default address updated successfully.",
+                "address":
+                    CustomerAddressSerializer(
+                        address
+                    ).data
+            },
+            status=status.HTTP_200_OK
         )
 
 class PetProfileListCreateAPIView(APIView):
