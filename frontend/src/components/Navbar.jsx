@@ -1,31 +1,42 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 import {
     FaSearch,
     FaUserCircle,
-    FaPaw
+    FaPaw,
+    FaBars,
+    FaTimes,
+    FaHome,
+    FaTag,
+    FaPills,
+    FaShoppingCart,
+    FaHeart,
+    FaBox,
+    FaUser,
+    FaWallet,
+    FaHospital,
+    FaFilePrescription,
+    FaTractor,
+    FaStethoscope,
+    FaSignOutAlt,
 } from "react-icons/fa";
 
 import {
-    MdOutlineShoppingCart,
     MdOutlineFavoriteBorder,
     MdOutlineLocalOffer,
-    MdAccountBalanceWallet
+    MdAccountBalanceWallet,
 } from "react-icons/md";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
 import logo from "../assets/logo/Zenve - 01 (1).png";
+
 import "../styles/Navbar.css";
 
 
-function Navbar({ toggleSidebar }) {
+function Navbar() {
 
     const navigate = useNavigate();
-
-    // =====================================================
-    // LOCAL STORAGE
-    // =====================================================
 
     const username = localStorage.getItem("username");
     const role = localStorage.getItem("role");
@@ -36,9 +47,9 @@ function Navbar({ toggleSidebar }) {
         role === "Staff";
 
 
-    // =====================================================
-    // STATES
-    // =====================================================
+    /* =====================================================
+       STATES
+    ===================================================== */
 
     const [profileImage, setProfileImage] = useState("");
     const [search, setSearch] = useState("");
@@ -47,31 +58,28 @@ function Navbar({ toggleSidebar }) {
     const [cartCount, setCartCount] = useState(0);
     const [wishlistCount, setWishlistCount] = useState(0);
 
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    // =====================================================
-    // LOAD USER DATA
-    // =====================================================
+
+    /* =====================================================
+       LOAD USER DATA
+    ===================================================== */
 
     useEffect(() => {
 
         if (!token) {
 
+            setProfileImage("");
+            setHasPet(false);
             setCartCount(0);
             setWishlistCount(0);
-            setHasPet(false);
-            setProfileImage("");
 
             return;
         }
 
 
-        // Profile is required for both Customer and Admin/Staff
         loadProfile();
 
-
-        // =================================================
-        // CUSTOMER DATA ONLY
-        // =================================================
 
         if (!isAdminOrStaff) {
 
@@ -81,17 +89,12 @@ function Navbar({ toggleSidebar }) {
 
         } else {
 
-            // Make sure admin doesn't keep old customer data
+            setHasPet(false);
             setCartCount(0);
             setWishlistCount(0);
-            setHasPet(false);
 
         }
 
-
-        // =================================================
-        // CART EVENT
-        // =================================================
 
         const handleCartUpdate = () => {
 
@@ -101,10 +104,6 @@ function Navbar({ toggleSidebar }) {
 
         };
 
-
-        // =================================================
-        // WISHLIST EVENT
-        // =================================================
 
         const handleWishlistUpdate = () => {
 
@@ -126,10 +125,6 @@ function Navbar({ toggleSidebar }) {
         );
 
 
-        // =================================================
-        // CLEANUP
-        // =================================================
-
         return () => {
 
             window.removeEventListener(
@@ -147,19 +142,164 @@ function Navbar({ toggleSidebar }) {
     }, [token, isAdminOrStaff]);
 
 
-    // =====================================================
-    // LOAD CART COUNT
-    // =====================================================
+    /* =====================================================
+       CLOSE MOBILE MENU ON DESKTOP
+    ===================================================== */
 
-    const loadCartCount = async () => {
+    useEffect(() => {
 
-        if (!token) {
+        const handleResize = () => {
 
-            setCartCount(0);
+            if (window.innerWidth > 768) {
+                setMobileMenuOpen(false);
+            }
 
-            return;
+        };
+
+
+        window.addEventListener(
+            "resize",
+            handleResize
+        );
+
+
+        return () => {
+
+            window.removeEventListener(
+                "resize",
+                handleResize
+            );
+
+        };
+
+    }, []);
+
+
+    /* =====================================================
+       LOCK BODY SCROLL WHEN MENU OPEN
+    ===================================================== */
+
+    useEffect(() => {
+
+        if (mobileMenuOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
         }
 
+
+        return () => {
+            document.body.style.overflow = "";
+        };
+
+    }, [mobileMenuOpen]);
+
+
+    /* =====================================================
+       PROFILE
+    ===================================================== */
+
+    const loadProfile = async () => {
+
+        try {
+
+            const response = await axios.get(
+                "http://127.0.0.1:8000/api/accounts/profile/",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+
+            const image =
+                response.data?.profile_image;
+
+
+            if (!image) {
+
+                setProfileImage("");
+
+                return;
+            }
+
+
+            if (image.startsWith("http")) {
+
+                setProfileImage(image);
+
+            } else {
+
+                setProfileImage(
+                    `http://127.0.0.1:8000${image}`
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Profile loading error:",
+                error.response?.data || error.message
+            );
+
+            setProfileImage("");
+
+        }
+
+    };
+
+
+    /* =====================================================
+       PET DETAILS
+    ===================================================== */
+
+    const loadPetDetails = async () => {
+
+        try {
+
+            const response = await axios.get(
+                "http://127.0.0.1:8000/api/accounts/pets/",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+
+            const data = response.data;
+
+
+            const pets = Array.isArray(data)
+                ? data
+                : Array.isArray(data?.results)
+                    ? data.results
+                    : [];
+
+
+            setHasPet(pets.length > 0);
+
+        } catch (error) {
+
+            console.error(
+                "Pet loading error:",
+                error.response?.data || error.message
+            );
+
+            setHasPet(false);
+
+        }
+
+    };
+
+
+    /* =====================================================
+       CART COUNT
+    ===================================================== */
+
+    const loadCartCount = async () => {
 
         try {
 
@@ -178,75 +318,60 @@ function Navbar({ toggleSidebar }) {
 
             if (Array.isArray(data)) {
 
-                const totalQuantity =
-                    data.reduce(
-                        (total, item) =>
-                            total +
-                            Number(item.quantity || 1),
-                        0
-                    );
+                const count = data.reduce(
+                    (total, item) =>
+                        total +
+                        Number(item.quantity || 1),
+                    0
+                );
 
-                setCartCount(totalQuantity);
+                setCartCount(count);
 
-            }
+            } else if (Array.isArray(data?.items)) {
 
-            else if (Array.isArray(data.items)) {
+                const count = data.items.reduce(
+                    (total, item) =>
+                        total +
+                        Number(item.quantity || 1),
+                    0
+                );
 
-                const totalQuantity =
-                    data.items.reduce(
-                        (total, item) =>
-                            total +
-                            Number(item.quantity || 1),
-                        0
-                    );
+                setCartCount(count);
 
-                setCartCount(totalQuantity);
-
-            }
-
-            else if (
-                data.total_items !== undefined
+            } else if (
+                data?.total_items !== undefined
             ) {
 
                 setCartCount(
                     Number(data.total_items)
                 );
 
-            }
-
-            else if (
-                data.count !== undefined
+            } else if (
+                data?.count !== undefined
             ) {
 
                 setCartCount(
                     Number(data.count)
                 );
 
-            }
-
-            else {
+            } else {
 
                 setCartCount(0);
 
             }
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
-                "Cart count loading error:",
-                error.response?.data ||
-                error.message
+                "Cart count error:",
+                error.response?.data || error.message
             );
 
-
-            const savedCartCount =
+            const saved =
                 localStorage.getItem("cartCount");
 
-
             setCartCount(
-                Number(savedCartCount || 0)
+                Number(saved || 0)
             );
 
         }
@@ -254,19 +379,11 @@ function Navbar({ toggleSidebar }) {
     };
 
 
-    // =====================================================
-    // LOAD WISHLIST COUNT
-    // =====================================================
+    /* =====================================================
+       WISHLIST COUNT
+    ===================================================== */
 
     const loadWishlistCount = async () => {
-
-        if (!token) {
-
-            setWishlistCount(0);
-
-            return;
-        }
-
 
         try {
 
@@ -287,73 +404,46 @@ function Navbar({ toggleSidebar }) {
 
                 setWishlistCount(data.length);
 
-            }
-
-            else if (
-                Array.isArray(data.results)
-            ) {
+            } else if (Array.isArray(data?.results)) {
 
                 setWishlistCount(
                     data.results.length
                 );
 
-            }
-
-            else if (
-                Array.isArray(data.items)
-            ) {
+            } else if (Array.isArray(data?.items)) {
 
                 setWishlistCount(
                     data.items.length
                 );
 
-            }
-
-            else if (
-                data.count !== undefined
+            } else if (
+                data?.count !== undefined
             ) {
 
                 setWishlistCount(
                     Number(data.count)
                 );
 
-            }
-
-            else if (
-                data.total_items !== undefined
-            ) {
-
-                setWishlistCount(
-                    Number(data.total_items)
-                );
-
-            }
-
-            else {
+            } else {
 
                 setWishlistCount(0);
 
             }
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
-                "Wishlist count loading error:",
-                error.response?.data ||
-                error.message
+                "Wishlist count error:",
+                error.response?.data || error.message
             );
 
-
-            const savedWishlistCount =
+            const saved =
                 localStorage.getItem(
                     "wishlistCount"
                 );
 
-
             setWishlistCount(
-                Number(savedWishlistCount || 0)
+                Number(saved || 0)
             );
 
         }
@@ -361,119 +451,13 @@ function Navbar({ toggleSidebar }) {
     };
 
 
-    // =====================================================
-    // LOAD PROFILE
-    // =====================================================
+    /* =====================================================
+       SEARCH
+    ===================================================== */
 
-    const loadProfile = async () => {
+    const handleSearch = (event) => {
 
-        try {
-
-            const response = await axios.get(
-                "http://127.0.0.1:8000/api/accounts/profile/",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-
-
-            if (response.data.profile_image) {
-
-                const image =
-                    response.data.profile_image;
-
-
-                if (image.startsWith("http")) {
-
-                    setProfileImage(image);
-
-                }
-
-                else {
-
-                    setProfileImage(
-                        `http://127.0.0.1:8000${image}`
-                    );
-
-                }
-
-            }
-
-            else {
-
-                setProfileImage("");
-
-            }
-
-        }
-
-        catch (error) {
-
-            console.log(
-                "Profile loading error:",
-                error.response?.data ||
-                error.message
-            );
-
-            setProfileImage("");
-
-        }
-
-    };
-
-
-    // =====================================================
-    // LOAD PET DETAILS
-    // =====================================================
-
-    const loadPetDetails = async () => {
-
-        try {
-
-            const response = await axios.get(
-                "http://127.0.0.1:8000/api/accounts/pets/",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-
-
-            const pets =
-                Array.isArray(response.data)
-                    ? response.data
-                    : response.data.results || [];
-
-
-            setHasPet(pets.length > 0);
-
-        }
-
-        catch (error) {
-
-            console.log(
-                "Pet loading error:",
-                error.response?.data ||
-                error.message
-            );
-
-            setHasPet(false);
-
-        }
-
-    };
-
-
-    // =====================================================
-    // PRODUCT SEARCH
-    // =====================================================
-
-    const handleSearch = (e) => {
-
-        const value = e.target.value;
+        const value = event.target.value;
 
         setSearch(value);
 
@@ -486,7 +470,21 @@ function Navbar({ toggleSidebar }) {
 
         }
 
-        else {
+    };
+
+
+    const handleSearchSubmit = () => {
+
+        const value = search.trim();
+
+
+        if (value) {
+
+            navigate(
+                `/products?search=${encodeURIComponent(value)}`
+            );
+
+        } else {
 
             navigate("/products");
 
@@ -495,11 +493,51 @@ function Navbar({ toggleSidebar }) {
     };
 
 
-    // =====================================================
-    // LOGOUT
-    // =====================================================
+    const handleSearchKeyDown = (event) => {
+
+        if (event.key === "Enter") {
+
+            handleSearchSubmit();
+
+        }
+
+    };
+
+
+    /* =====================================================
+       MOBILE MENU
+    ===================================================== */
+
+    const openMobileMenu = () => {
+
+        setMobileMenuOpen(true);
+
+    };
+
+
+    const closeMobileMenu = () => {
+
+        setMobileMenuOpen(false);
+
+    };
+
+
+    const goToPage = (path) => {
+
+        setMobileMenuOpen(false);
+
+        navigate(path);
+
+    };
+
+
+    /* =====================================================
+       LOGOUT
+    ===================================================== */
 
     const handleLogout = () => {
+
+        setMobileMenuOpen(false);
 
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
@@ -508,10 +546,10 @@ function Navbar({ toggleSidebar }) {
         localStorage.removeItem("cartCount");
         localStorage.removeItem("wishlistCount");
 
+        setProfileImage("");
+        setHasPet(false);
         setCartCount(0);
         setWishlistCount(0);
-        setHasPet(false);
-        setProfileImage("");
 
         navigate("/login");
 
@@ -520,121 +558,236 @@ function Navbar({ toggleSidebar }) {
     };
 
 
-    // =====================================================
-    // ADMIN / STAFF NAVBAR
-    // =====================================================
+    /* =====================================================
+       ADMIN / STAFF NAVBAR
+    ===================================================== */
 
     if (isAdminOrStaff) {
 
         return (
+            <>
+                <header className="navbar admin-simple-navbar">
 
-            <header className="navbar admin-simple-navbar">
+                    {/* LOGO */}
 
-                {/* =================================================
-                    ADMIN LOGO
-                ================================================= */}
-
-                <div className="logo">
-
-                    <Link
-                        to="/products/manage"
-                        className="logo-link"
-                    >
-
-                        <img
-                            src={logo}
-                            alt="Zenve"
-                            className="navbar-logo"
-                        />
-
-                    </Link>
-
-                </div>
-
-
-                {/* =================================================
-                    ADMIN PROFILE
-                ================================================= */}
-
-                <div className="profile-menu admin-profile-menu">
-
-                    <Link
-                        to="/profile"
-                        className="profile-link admin-profile-link"
-                    >
-
-                        {profileImage ? (
-
-                            <img
-                                src={profileImage}
-                                className="avatar-img"
-                                alt="Profile"
-                            />
-
-                        ) : (
-
-                            <FaUserCircle
-                                size={40}
-                            />
-
-                        )}
-
-                        <p>
-                            {username || "Admin"}
-                        </p>
-
-                    </Link>
-
-
-                    {/* =================================================
-                        ADMIN HOVER POPUP
-                    ================================================= */}
-
-                    <div className="profile-popup admin-profile-popup">
-
-                        <h4>
-                            Hello, {username || "Admin"}
-                        </h4>
-
+                    <div className="logo">
 
                         <Link
-                            to="/profile"
-                            className="popup-btn"
+                            to="/products/manage"
+                            className="logo-link"
                         >
-                            My Profile
+
+                            <img
+                                src={logo}
+                                alt="Zenve"
+                                className="navbar-logo"
+                            />
+
                         </Link>
-
-
-                        <button
-                            type="button"
-                            onClick={handleLogout}
-                            className="popup-btn logout-popup-btn"
-                        >
-                            Logout
-                        </button>
 
                     </div>
 
-                </div>
 
-            </header>
+                    {/* PROFILE */}
 
+                    <div className="profile-menu">
+
+                        <Link
+                            to="/profile"
+                            className="profile-link admin-profile-link"
+                        >
+
+                            {profileImage ? (
+
+                                <img
+                                    src={profileImage}
+                                    alt="Profile"
+                                    className="avatar-img"
+                                />
+
+                            ) : (
+
+                                <FaUserCircle />
+
+                            )}
+
+                            <p>
+                                {username || "Admin"}
+                            </p>
+
+                        </Link>
+
+
+                        <div className="profile-popup">
+
+                            <h4>
+                                Hello, {username || "Admin"}
+                            </h4>
+
+                            <Link
+                                to="/profile"
+                                className="popup-btn"
+                            >
+                                My Profile
+                            </Link>
+
+                            <button
+                                type="button"
+                                className="popup-btn logout-popup-btn"
+                                onClick={handleLogout}
+                            >
+                                Logout
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    {/* MENU */}
+
+                    <button
+                        type="button"
+                        className="mobile-menu-btn"
+                        onClick={openMobileMenu}
+                        aria-label="Open menu"
+                    >
+
+                        {mobileMenuOpen
+                            ? <FaTimes />
+                            : <FaBars />
+                        }
+
+                    </button>
+
+                </header>
+
+
+                {/* ADMIN MOBILE DRAWER */}
+
+                {mobileMenuOpen && (
+
+                    <>
+                        <div
+                            className="mobile-menu-overlay"
+                            onClick={closeMobileMenu}
+                        />
+
+                        <aside className="mobile-drawer">
+
+                            <div className="mobile-drawer-header">
+
+                                <div className="mobile-drawer-title">
+
+                                    <FaUserCircle />
+
+                                    <div>
+
+                                        <strong>
+                                            {username || "Admin"}
+                                        </strong>
+
+                                        <small>
+                                            {role || "Admin"}
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+
+                                <button
+                                    type="button"
+                                    className="drawer-close-btn"
+                                    onClick={closeMobileMenu}
+                                >
+                                    <FaTimes />
+                                </button>
+
+                            </div>
+
+
+                            <div className="mobile-drawer-body">
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        goToPage(
+                                            "/products/manage"
+                                        )
+                                    }
+                                >
+                                    <FaBox />
+
+                                    <span>
+                                        Manage Products
+                                    </span>
+
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        goToPage("/profile")
+                                    }
+                                >
+                                    <FaUser />
+
+                                    <span>
+                                        My Profile
+                                    </span>
+
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        goToPage("/orders")
+                                    }
+                                >
+                                    <FaBox />
+
+                                    <span>
+                                        Orders
+                                    </span>
+
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    className="mobile-logout"
+                                    onClick={handleLogout}
+                                >
+                                    <FaSignOutAlt />
+
+                                    <span>
+                                        Logout
+                                    </span>
+
+                                </button>
+
+                            </div>
+
+                        </aside>
+                    </>
+                )}
+
+            </>
         );
 
     }
 
 
-    // =====================================================
-    // CUSTOMER NAVBAR
-    // =====================================================
+    /* =====================================================
+       CUSTOMER NAVBAR
+    ===================================================== */
 
     return (
-
         <>
-
-            {/* =================================================
-                TOP BAR
-            ================================================= */}
+            {/* TOP BAR */}
 
             <div className="top-bar">
 
@@ -666,13 +819,13 @@ function Navbar({ toggleSidebar }) {
             </div>
 
 
-            {/* =================================================
-                MAIN NAVBAR
-            ================================================= */}
+            {/* MAIN NAVBAR */}
 
             <header className="navbar">
 
-                {/* LOGO */}
+                {/* =================================================
+                    1. LOGO
+                ================================================= */}
 
                 <div className="logo">
 
@@ -692,7 +845,9 @@ function Navbar({ toggleSidebar }) {
                 </div>
 
 
-                {/* SEARCH */}
+                {/* =================================================
+                    2. SEARCH BAR + SEARCH ICON
+                ================================================= */}
 
                 <div className="search-container">
 
@@ -701,12 +856,14 @@ function Navbar({ toggleSidebar }) {
                         placeholder="Search medicines, pet food, products..."
                         value={search}
                         onChange={handleSearch}
+                        onKeyDown={handleSearchKeyDown}
                     />
-
 
                     <button
                         type="button"
                         className="search-btn"
+                        onClick={handleSearchSubmit}
+                        aria-label="Search"
                     >
 
                         <FaSearch />
@@ -717,7 +874,7 @@ function Navbar({ toggleSidebar }) {
 
 
                 {/* =================================================
-                    NAV ICONS
+                    3. DESKTOP NAVIGATION
                 ================================================= */}
 
                 <div className="nav-icons">
@@ -772,7 +929,7 @@ function Navbar({ toggleSidebar }) {
 
                         <div className="icon-wrapper">
 
-                            <MdOutlineShoppingCart />
+                            <FaShoppingCart />
 
                             {cartCount > 0 && (
 
@@ -791,38 +948,33 @@ function Navbar({ toggleSidebar }) {
                     </Link>
 
 
-                    {/* =================================================
-                        WALLET
-                    ================================================= */}
+                    {/* WALLET */}
 
                     {username && hasPet && (
-                    <Link
-                        to="/wallet"
-                        className="nav-count-link"
-                    >
 
-                        <div className="icon-wrapper">
+                        <Link
+                            to="/wallet"
+                            className="nav-count-link"
+                        >
 
                             <MdAccountBalanceWallet />
 
-                        </div>
+                            <p>
+                                Wallet
+                            </p>
 
-                        <p>
-                            Wallet
-                        </p>
+                        </Link>
 
-                    </Link>
                     )}
 
 
-                    {/* PET PROFILE */}
+                    {/* MY PETS */}
 
                     {username && hasPet && (
 
                         <Link
                             to="/pets"
                             className="pet-profile-nav"
-                            title="My Pets"
                         >
 
                             <FaPaw />
@@ -835,190 +987,518 @@ function Navbar({ toggleSidebar }) {
 
                     )}
 
-
-                    {/* PROFILE */}
-
-                    <div className="profile-menu">
-
-                        <Link
-                            to={
-                                username
-                                    ? "/profile"
-                                    : "/login"
-                            }
-                            className="profile-link"
-                        >
-
-                            {profileImage ? (
-
-                                <img
-                                    src={profileImage}
-                                    className="avatar-img"
-                                    alt="Profile"
-                                />
-
-                            ) : (
-
-                                <FaUserCircle
-                                    size={35}
-                                />
-
-                            )}
-
-                            <p>
-                                {username || "Login"}
-                            </p>
-
-                        </Link>
+                </div>
 
 
-                        {/* PROFILE POPUP */}
+                {/* =================================================
+                    4. PROFILE
+                ================================================= */}
 
-                        <div className="profile-popup">
+                <div className="profile-menu">
 
-                            {username ? (
+                    <Link
+                        to={
+                            username
+                                ? "/profile"
+                                : "/login"
+                        }
+                        className="profile-link"
+                    >
 
-                                <>
+                        {profileImage ? (
 
-                                    <h4>
-                                        Hello, {username}
-                                    </h4>
+                            <img
+                                src={profileImage}
+                                alt="Profile"
+                                className="avatar-img"
+                            />
+
+                        ) : (
+
+                            <FaUserCircle />
+
+                        )}
+
+                        <p>
+                            {username || "Login"}
+                        </p>
+
+                    </Link>
 
 
-                                    <Link
-                                        to="/profile"
-                                        className="popup-btn"
-                                    >
-                                        My Profile
-                                    </Link>
+                    {/* PROFILE POPUP */}
+
+                    <div className="profile-popup">
+
+                        {username ? (
+
+                            <>
+
+                                <h4>
+                                    Hello, {username}
+                                </h4>
 
 
-                                    {hasPet && (
+                                <Link
+                                    to="/profile"
+                                    className="popup-btn"
+                                >
+                                    My Profile
+                                </Link>
 
-                                        <Link
-                                            to="/pets"
-                                            className="popup-btn"
-                                        >
-                                            🐾 My Pets
-                                        </Link>
 
-                                    )}
-
+                                {hasPet && (
 
                                     <Link
-                                        to="/orders"
+                                        to="/pets"
                                         className="popup-btn"
                                     >
-                                        My Orders
+                                        My Pets
                                     </Link>
 
-
-                                    {/* WALLET IN PROFILE MENU */}
-
-                                    <Link
-                                        to="/wallet"
-                                        className="popup-btn"
-                                    >
-                                        💳 My Wallet
-                                    </Link>
+                                )}
 
 
-                                    <button
-                                        type="button"
-                                        onClick={handleLogout}
-                                        className="popup-btn logout-popup-btn"
-                                    >
-                                        Logout
-                                    </button>
+                                <Link
+                                    to="/orders"
+                                    className="popup-btn"
+                                >
+                                    My Orders
+                                </Link>
 
-                                </>
 
-                            ) : (
+                                <Link
+                                    to="/wallet"
+                                    className="popup-btn"
+                                >
+                                    My Wallet
+                                </Link>
 
-                                <>
 
-                                    <h4>
-                                        Welcome
-                                    </h4>
+                                <button
+                                    type="button"
+                                    className="popup-btn logout-popup-btn"
+                                    onClick={handleLogout}
+                                >
+                                    Logout
+                                </button>
 
-                                    <p>
-                                        Please login to continue.
-                                    </p>
+                            </>
 
-                                    <Link
-                                        to="/login"
-                                        className="popup-btn"
-                                    >
-                                        Login
-                                    </Link>
+                        ) : (
 
-                                    <Link
-                                        to="/register"
-                                        className="popup-btn"
-                                    >
-                                        Sign Up
-                                    </Link>
+                            <>
 
-                                </>
+                                <h4>
+                                    Welcome
+                                </h4>
 
-                            )}
+                                <p>
+                                    Please login to continue.
+                                </p>
 
-                        </div>
+                                <Link
+                                    to="/login"
+                                    className="popup-btn"
+                                >
+                                    Login
+                                </Link>
+
+                                <Link
+                                    to="/register"
+                                    className="popup-btn"
+                                >
+                                    Sign Up
+                                </Link>
+
+                            </>
+
+                        )}
 
                     </div>
 
                 </div>
 
+
+                {/* =================================================
+                    5. MOBILE MENU
+                ================================================= */}
+
+                <button
+                    type="button"
+                    className="mobile-menu-btn"
+                    onClick={openMobileMenu}
+                    aria-label="Open menu"
+                >
+
+                    {mobileMenuOpen
+                        ? <FaTimes />
+                        : <FaBars />
+                    }
+
+                </button>
+
             </header>
 
 
-            {/* =================================================
-                BOTTOM MENU
-            ================================================= */}
+            {/* =====================================================
+                MOBILE SIDE DRAWER
+            ===================================================== */}
 
-            {/*
+            {mobileMenuOpen && (
 
-            <nav className="bottom-menu">
+                <>
+                    <div
+                        className="mobile-menu-overlay"
+                        onClick={closeMobileMenu}
+                    />
 
-                <Link to="/products?product_type=Medicine&product_type=Supplements">
-                    Medicines & Supplements
-                </Link>
 
-                <Link
-                    to="/prescription/upload"
-                    className="prescription-link"
-                >
-                    📄 Upload Prescription
-                </Link>
+                    <aside className="mobile-drawer">
 
-                <Link to="/products?product_type=food&product_type=Other">
-                    Pet Food & Products
-                </Link>
+                        {/* DRAWER HEADER */}
 
-                <Link to="/products?product_type=FarmSupplies">
-                    Farm Supplies
-                </Link>
+                        <div className="mobile-drawer-header">
 
-                <Link to="/products?product_type=VetEquipment">
-                    Vet Equipment
-                </Link>
+                            <div className="mobile-drawer-title">
 
-                <Link to="/home-visit">
-                    Home Visit Service
-                </Link>
+                                {profileImage ? (
 
-                <Link to="/adoption">
-                    Adoption Platform
-                </Link>
+                                    <img
+                                        src={profileImage}
+                                        alt="Profile"
+                                        className="mobile-drawer-avatar"
+                                    />
 
-            </nav>
+                                ) : (
 
-            */}
+                                    <FaUserCircle />
+
+                                )}
+
+
+                                <div>
+
+                                    <strong>
+                                        {username || "Welcome"}
+                                    </strong>
+
+                                    <small>
+                                        {username
+                                            ? "My Account"
+                                            : "Please Login"}
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                className="drawer-close-btn"
+                                onClick={closeMobileMenu}
+                                aria-label="Close menu"
+                            >
+
+                                <FaTimes />
+
+                            </button>
+
+                        </div>
+
+
+                        {/* DRAWER ITEMS */}
+
+                        <div className="mobile-drawer-body">
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    goToPage("/home")
+                                }
+                            >
+                                <FaHome />
+
+                                <span>
+                                    Home
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    goToPage("/offers")
+                                }
+                            >
+                                <FaTag />
+
+                                <span>
+                                    Offers
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    goToPage(
+                                        "/products?product_type=Medicine&product_type=Supplements"
+                                    )
+                                }
+                            >
+                                <FaPills />
+
+                                <span>
+                                    Medicines & Supplements
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    goToPage(
+                                        "/products?product_type=food&product_type=Other"
+                                    )
+                                }
+                            >
+                                <FaPaw />
+
+                                <span>
+                                    Pet Food & Products
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    goToPage(
+                                        "/prescription/upload"
+                                    )
+                                }
+                            >
+                                <FaFilePrescription />
+
+                                <span>
+                                    Upload Prescription
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    goToPage(
+                                        "/products?product_type=FarmSupplies"
+                                    )
+                                }
+                            >
+                                <FaTractor />
+
+                                <span>
+                                    Farm Supplies
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    goToPage(
+                                        "/products?product_type=VetEquipment"
+                                    )
+                                }
+                            >
+                                <FaStethoscope />
+
+                                <span>
+                                    Vet Equipment
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    goToPage("/cart")
+                                }
+                            >
+                                <FaShoppingCart />
+
+                                <span>
+                                    Cart
+                                </span>
+
+                                {cartCount > 0 && (
+                                    <b>
+                                        {cartCount}
+                                    </b>
+                                )}
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    goToPage("/wishlists")
+                                }
+                            >
+                                <FaHeart />
+
+                                <span>
+                                    Wishlist
+                                </span>
+
+                                {wishlistCount > 0 && (
+                                    <b>
+                                        {wishlistCount}
+                                    </b>
+                                )}
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    goToPage("/orders")
+                                }
+                            >
+                                <FaBox />
+
+                                <span>
+                                    My Orders
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    goToPage(
+                                        username
+                                            ? "/profile"
+                                            : "/login"
+                                    )
+                                }
+                            >
+                                <FaUser />
+
+                                <span>
+                                    {username
+                                        ? "My Profile"
+                                        : "Login"}
+                                </span>
+
+                            </button>
+
+
+                            {username && hasPet && (
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        goToPage("/pets")
+                                    }
+                                >
+                                    <FaPaw />
+
+                                    <span>
+                                        My Pets
+                                    </span>
+
+                                </button>
+
+                            )}
+
+
+                            {username && hasPet && (
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        goToPage("/wallet")
+                                    }
+                                >
+                                    <FaWallet />
+
+                                    <span>
+                                        My Wallet
+                                    </span>
+
+                                </button>
+
+                            )}
+
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    goToPage("/home-visit")
+                                }
+                            >
+                                <FaHospital />
+
+                                <span>
+                                    Home Visit Service
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    goToPage("/adoption")
+                                }
+                            >
+                                <FaPaw />
+
+                                <span>
+                                    Adoption Platform
+                                </span>
+
+                            </button>
+
+
+                            {username && (
+
+                                <button
+                                    type="button"
+                                    className="mobile-logout"
+                                    onClick={handleLogout}
+                                >
+                                    <FaSignOutAlt />
+
+                                    <span>
+                                        Logout
+                                    </span>
+
+                                </button>
+
+                            )}
+
+                        </div>
+
+                    </aside>
+
+                </>
+            )}
 
         </>
-
     );
-
 }
 
 

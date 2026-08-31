@@ -1,41 +1,29 @@
-/* ==========================================
-   GOOGLE FONT
-========================================== */
-
-@import url(
-    'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'
-);
-
-
-/* ==========================================
+/* =====================================================
    GLOBAL
-========================================== */
+===================================================== */
 
 * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
-html,
-body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-}
-
-body {
-    background: #f5f7fb;
 }
 
 
-/* ==========================================
+.navbar,
+.top-bar,
+.mobile-drawer,
+.mobile-drawer button,
+.search-container,
+.search-container input {
+    font-family: "Poppins", sans-serif;
+}
+
+
+/* =====================================================
    TOP BAR
-========================================== */
+===================================================== */
 
 .top-bar {
     position: fixed;
+
     top: 0;
     left: 0;
 
@@ -54,51 +42,43 @@ body {
     z-index: 10000;
 }
 
+
 .top-left {
     display: flex;
     align-items: center;
-    gap: 35px;
 }
+
 
 .top-left span {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-
-    cursor: pointer;
-
     font-size: 13px;
-
-    transition: 0.3s ease;
 }
 
-.top-left span:hover {
-    color: #ffd54f;
-}
 
 .top-right {
     display: flex;
     align-items: center;
+
     gap: 20px;
 }
 
+
 .top-right a {
     color: #ffffff;
+
     text-decoration: none;
 
     font-size: 13px;
-
-    transition: 0.3s ease;
 }
+
 
 .top-right a:hover {
     color: #ffd54f;
 }
 
 
-/* ==========================================
+/* =====================================================
    MAIN NAVBAR
-========================================== */
+===================================================== */
 
 .navbar {
     position: fixed !important;
@@ -116,66 +96,32 @@ body {
 
     background: #ffffff;
 
-    z-index: 9999;
-
     box-shadow:
         0 2px 10px rgba(0, 0, 0, 0.08);
 
-    animation: slideDown 0.5s ease;
-}
-
-@keyframes slideDown {
-    from {
-        transform: translateY(-100%);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+    z-index: 9999;
 }
 
 
-/* ==========================================
-   LOGO CONTAINER
-========================================== */
-/* ==========================================
-   LOGO CONTAINER
-========================================== */
+/* =====================================================
+   LOGO
+===================================================== */
 
 .logo {
     display: flex;
     align-items: center;
-    flex-shrink: 0;
+
+    flex: 0 0 auto;
 }
 
-
-/* ==========================================
-   LOGO LINK
-========================================== */
 
 .logo-link {
     display: flex;
-    flex-direction: row;          /* IMPORTANT: side by side */
     align-items: center;
-    justify-content: center;
-
-    gap: 8px;
 
     text-decoration: none;
-
-    padding-left: 5px;
-
-    white-space: nowrap;
-
-    transition: 0.3s ease;
 }
 
-
-/* ==========================================
-   ZENVE LOGO IMAGE
-========================================== */
 
 .navbar-logo {
     width: 175px;
@@ -184,50 +130,12 @@ body {
     display: block;
 
     object-fit: contain;
-    object-position: center;
-
-    flex-shrink: 0;
-
-    transition:
-        transform 0.3s ease,
-        opacity 0.3s ease;
-}
-
-.logo-link:hover .navbar-logo {
-    transform: scale(1.04);
-    opacity: 0.92;
 }
 
 
-/* ==========================================
-   MARKETPLACE NAME - BESIDE LOGO
-========================================== */
-
-.marketplace-name {
-    display: inline-flex;
-    align-items: center;
-
-    margin: 0;
-    padding: 0;
-
-    font-size: 16px;
-    font-weight: 600;
-
-    color: #6464c8;
-
-    white-space: nowrap;
-
-    line-height: 1;
-
-    transition: 0.3s ease;
-}
-
-.logo-link:hover .marketplace-name {
-    color: #0d6efd;
-}
-/* ==========================================
+/* =====================================================
    SEARCH
-========================================== */
+===================================================== */
 
 .search-container {
     flex: 1;
@@ -236,9 +144,10 @@ body {
     align-items: center;
 
     max-width: 650px;
-    height: 50px;
 
-    margin-left: 35px;
+    height: 48px;
+
+    margin-left: 30px;
     margin-right: 25px;
 
     border: 2px solid #0d6efd;
@@ -248,62 +157,38 @@ body {
     overflow: hidden;
 
     background: #ffffff;
-
-    min-width: 200px;
 }
 
-.category-select {
-    width: 180px;
-    height: 100%;
-
-    border: none;
-    outline: none;
-
-    background: #f5f5f5;
-
-    padding: 0 15px;
-
-    color: #333;
-
-    font-size: 14px;
-
-    cursor: pointer;
-
-    flex-shrink: 0;
-}
-
-.category-select:focus {
-    background: #eeeeee;
-}
 
 .search-container input {
     flex: 1;
 
     width: 100%;
-    min-width: 0;
     height: 100%;
+
+    min-width: 0;
 
     border: none;
     outline: none;
 
-    padding: 0 18px;
+    padding: 0 16px;
 
     font-size: 14px;
 
-    color: #333;
+    color: #333333;
 }
+
 
 .search-container input::placeholder {
-    color: #999;
+    color: #999999;
 }
 
-.search-container input:focus::placeholder {
-    opacity: 0.4;
-}
 
 .search-btn {
-    width: 65px;
+    width: 58px;
     height: 100%;
+
+    flex: 0 0 58px;
 
     display: flex;
     align-items: center;
@@ -312,38 +197,34 @@ body {
     border: none;
 
     background: #0d6efd;
-
     color: #ffffff;
-
-    cursor: pointer;
 
     font-size: 18px;
 
-    flex-shrink: 0;
-
-    transition: 0.3s ease;
+    cursor: pointer;
 }
+
 
 .search-btn:hover {
     background: #0056d2;
 }
 
 
-/* ==========================================
-   NAVIGATION ICONS
-========================================== */
+/* =====================================================
+   DESKTOP NAV ICONS
+===================================================== */
 
 .nav-icons {
     display: flex;
     align-items: center;
 
-    gap: 28px;
+    gap: 25px;
 
     margin-left: auto;
 
-    flex-shrink: 0;
-    margin-right: 25px;
+    flex: 0 0 auto;
 }
+
 
 .nav-icons > a {
     position: relative;
@@ -359,78 +240,34 @@ body {
     text-decoration: none;
 
     color: #1b1bc5;
-
-    font-size: 14px;
-
-    font-weight: 600;
-
-    transition: 0.3s ease;
 }
 
-.nav-icons > a svg {
-    font-size: 25px;
 
-    color: #1b1bc5;
+.nav-icons > a svg {
+    font-size: 24px;
 
     margin-bottom: 4px;
 
-    transition: 0.3s ease;
+    color: #1b1bc5;
 }
+
 
 .nav-icons > a p {
     margin: 0;
 
     color: #1b1bc5;
 
-    font-size: 12px;
+    font-size: 11px;
 
     font-weight: 600;
 
     white-space: nowrap;
 }
 
-.nav-icons > a:hover {
-    transform: translateY(-3px);
-}
 
-.nav-icons > a:hover svg,
-.nav-icons > a:hover p {
-    color: #0d6efd;
-}
-
-
-/* ==========================================
-   NAV ICON UNDERLINE
-========================================== */
-
-.nav-icons > a::after {
-    content: "";
-
-    position: absolute;
-
-    bottom: -8px;
-    left: 50%;
-
-    width: 0;
-    height: 3px;
-
-    background: #0d6efd;
-
-    border-radius: 10px;
-
-    transform: translateX(-50%);
-
-    transition: 0.3s ease;
-}
-
-.nav-icons > a:hover::after {
-    width: 100%;
-}
-
-
-/* ==========================================
-   CART / WISHLIST WRAPPER
-========================================== */
+/* =====================================================
+   ICON WRAPPER
+===================================================== */
 
 .icon-wrapper {
     position: relative;
@@ -441,19 +278,19 @@ body {
 }
 
 
-/* ==========================================
-   CART / WISHLIST COUNT
-========================================== */
+/* =====================================================
+   CART / WISHLIST BADGES
+===================================================== */
 
 .cart-count,
 .wishlist-count {
     position: absolute;
 
     top: -8px;
-    right: -12px;
+    right: -11px;
 
-    width: 20px;
-    height: 20px;
+    width: 19px;
+    height: 19px;
 
     display: flex;
     align-items: center;
@@ -465,140 +302,104 @@ body {
 
     color: #ffffff;
 
-    font-size: 10px;
-
+    font-size: 9px;
     font-weight: 700;
-
-    box-shadow:
-        0 3px 10px rgba(255, 0, 0, 0.3);
-
-    animation: pulse 1.5s infinite;
-
-    z-index: 5;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.2);
-    }
-
-    100% {
-        transform: scale(1);
-    }
 }
 
 
-/* ==========================================
-   PROFILE MENU
-========================================== */
+/* =====================================================
+   PROFILE
+===================================================== */
 
 .profile-menu {
     position: relative;
+
+    flex: 0 0 auto;
+
+    margin-left: 20px;
 }
 
-.profile-link {
-    display: flex;
 
+.profile-link {
+    margin-right: 20px;
+    display: flex;
     flex-direction: column;
 
     align-items: center;
     justify-content: center;
 
-    gap: 4px;
-
-    color: #333;
+    gap: 3px;
 
     text-decoration: none;
 
-    cursor: pointer;
+    color: #333333;
 
-    transition: 0.3s ease;
+    cursor: pointer;
 }
+
+
+.profile-link svg {
+    color: #0d6efd;
+
+    font-size: 34px;
+}
+
 
 .profile-link p {
     margin: 0;
 
-    font-size: 12px;
+    color: #333333;
+
+    font-size: 11px;
 
     font-weight: 600;
-
-    white-space: nowrap;
 }
 
-.profile-menu > .profile-link svg {
-    color: #0d6efd;
-
-    font-size: 38px;
-}
-
-.profile-link:hover {
-    color: #0d6efd;
-}
-
-
-/* ==========================================
-   PROFILE IMAGE
-========================================== */
 
 .avatar-img {
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
 
     border-radius: 50%;
 
     object-fit: cover;
 
     border: 2px solid #0d6efd;
-
-    transition: 0.3s ease;
-}
-
-.avatar-img:hover {
-    transform: scale(1.08);
-
-    box-shadow:
-        0 0 20px rgba(13, 110, 253, 0.35);
 }
 
 
-/* ==========================================
+/* =====================================================
    PROFILE POPUP
-========================================== */
+===================================================== */
 
 .profile-popup {
     position: absolute;
 
-    top: 62px;
+    top: 55px;
     right: 0;
 
-    width: 250px;
+    width: 230px;
+
+    padding: 18px;
 
     background: #ffffff;
 
-    border-radius: 12px;
+    border-radius: 10px;
 
     box-shadow:
         0 10px 30px rgba(0, 0, 0, 0.15);
-
-    padding: 20px;
 
     opacity: 0;
 
     visibility: hidden;
 
-    transform: translateY(15px);
+    transform: translateY(8px);
 
-    transition:
-        opacity 0.25s ease,
-        visibility 0.25s ease,
-        transform 0.25s ease;
+    transition: all 0.2s ease;
 
-    z-index: 10000;
+    z-index: 15000;
 }
+
 
 .profile-menu:hover .profile-popup {
     opacity: 1;
@@ -609,421 +410,402 @@ body {
 }
 
 
-/* ==========================================
-   PROFILE POPUP CONTENT
-========================================== */
-
 .profile-popup h4 {
-    margin-bottom: 8px;
+    margin: 0 0 12px;
 
-    color: #333;
+    font-size: 15px;
 
-    font-size: 16px;
+    color: #333333;
 }
+
 
 .profile-popup p {
-    color: #777;
+    margin: 0 0 12px;
 
-    margin-bottom: 15px;
+    font-size: 13px;
 
-    font-size: 14px;
+    color: #777777;
 }
 
 
-/* ==========================================
+/* =====================================================
    POPUP BUTTON
-========================================== */
+===================================================== */
 
 .popup-btn {
     width: 100%;
 
     display: block;
 
-    padding: 10px;
+    padding: 9px;
 
-    margin-bottom: 10px;
-
-    text-align: center;
-
-    text-decoration: none;
+    margin-bottom: 8px;
 
     border: none;
 
-    border-radius: 8px;
+    border-radius: 7px;
 
     background: #0d6efd;
 
     color: #ffffff;
 
+    text-align: center;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
     cursor: pointer;
-
-    font-size: 14px;
-
-    transition: 0.3s ease;
 }
+
 
 .popup-btn:hover {
-    background: #0056d6;
-
-    transform: translateY(-2px);
+    background: #0056d2;
 }
 
-
-/* ==========================================
-   LOGOUT
-========================================== */
 
 .logout-popup-btn {
     background: #dc3545;
 }
+
 
 .logout-popup-btn:hover {
     background: #bb2d3b;
 }
 
 
-/* ==========================================
-   BOTTOM MARKETPLACE MENU
-========================================== */
+/* =====================================================
+   MOBILE MENU BUTTON
+===================================================== */
 
-.bottom-menu {
-    position: fixed;
+.mobile-menu-btn {
+    display: none;
 
-    top: 130px;
-    left: 0;
+    width: 40px;
+    height: 40px;
 
-    width: 100%;
-    height: 50px;
-
-    display: flex;
+    flex: 0 0 40px;
 
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
 
-    padding: 0 10px;
+    border: none;
 
-    background: #ffffff;
+    border-radius: 7px;
 
-    border-top: 1px solid #eeeeee;
-    border-bottom: 1px solid #eeeeee;
+    background: transparent;
 
-    box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.05);
+    color: #1b1bc5;
 
-    z-index: 9998;
+    font-size: 22px;
 
-    animation: menuSlide 0.5s ease;
-}
-
-.bottom-menu a {
-    position: relative;
-
-    text-decoration: none;
-
-    color: #333;
-
-    font-size: 13px;
-
-    font-weight: 600;
-
-    white-space: nowrap;
-
-    padding: 5px 4px;
-
-    transition: 0.3s ease;
-}
-
-.bottom-menu a:hover {
-    color: #0d6efd;
-
-    transform: translateY(-2px);
-}
-
-.bottom-menu a::after {
-    content: "";
-
-    position: absolute;
-
-    left: 50%;
-    bottom: -7px;
-
-    width: 0;
-    height: 3px;
-
-    background: #0d6efd;
-
-    border-radius: 10px;
-
-    transform: translateX(-50%);
-
-    transition: 0.3s ease;
-}
-
-.bottom-menu a:hover::after {
-    width: 100%;
+    cursor: pointer;
 }
 
 
-/* ==========================================
-   PRESCRIPTION
-========================================== */
-
-.prescription-link {
-    color: #0d6efd !important;
-}
-
-
-/* ==========================================
-   PAGE CONTENT
-========================================== */
-
-.main-content {
-    padding-top: 180px;
-}
-
-
-/* ==========================================
-   SCROLLBAR
-========================================== */
-
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #0d6efd;
-
-    border-radius: 20px;
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
+.mobile-menu-btn:hover {
+    background: #f1f4ff;
 }
 
 
 /* =====================================================
-   ADMIN / STAFF SIMPLE NAVBAR
+   MOBILE OVERLAY
 ===================================================== */
 
-.admin-simple-navbar {
-    position: fixed !important;
+.mobile-menu-overlay {
+    position: fixed;
 
-    top: 0 !important;
+    top: 0;
     left: 0;
 
     width: 100%;
-    height: 90px;
+    height: 100vh;
+
+    background: rgba(0, 0, 0, 0.45);
+
+    z-index: 20000;
+}
+
+
+/* =====================================================
+   MOBILE DRAWER
+===================================================== */
+
+.mobile-drawer {
+    position: fixed;
+
+    top: 0;
+    right: 0;
+
+    width: 320px;
+    max-width: 88vw;
+
+    height: 100vh;
+
+    background: #ffffff;
+
+    z-index: 20001;
+
+    overflow-y: auto;
+
+    box-shadow:
+        -5px 0 25px rgba(0, 0, 0, 0.2);
+
+    animation: drawerOpen 0.25s ease;
+}
+
+
+@keyframes drawerOpen {
+
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+
+}
+
+
+/* =====================================================
+   DRAWER HEADER
+===================================================== */
+
+.mobile-drawer-header {
+    min-height: 70px;
 
     display: flex;
-
     align-items: center;
     justify-content: space-between;
 
-    padding: 0 30px;
+    padding: 12px 15px;
 
-    background: #ffffff;
+    background: #1b1bc5;
 
-    box-shadow:
-        0 2px 10px rgba(0, 0, 0, 0.08);
-
-    z-index: 9999;
+    color: #ffffff;
 }
 
 
-/* =====================================================
-   ADMIN LOGO
-===================================================== */
-
-.admin-simple-navbar .logo {
+.mobile-drawer-title {
     display: flex;
-    align-items: center;
-
-    flex-shrink: 0;
-}
-
-.admin-simple-navbar .logo-link {
-    display: flex;
-    align-items: center;
-
-    gap: 8px;
-
-    padding: 0;
-
-    white-space: nowrap;
-}
-
-.admin-simple-navbar .navbar-logo {
-    width: 165px;
-    height: 65px;
-
-    object-fit: contain;
-
-    flex-shrink: 0;
-}
-
-.admin-simple-navbar .marketplace-name {
-    display: inline-flex;
-
-    font-size: 17px;
-
-    font-weight: 600;
-
-    color: #6464c8;
-
-    white-space: nowrap;
-}
-
-
-/* =====================================================
-   ADMIN PROFILE
-===================================================== */
-
-.admin-profile-menu {
-    position: relative;
-
-    margin-left: auto;
-}
-
-
-/* =====================================================
-   ADMIN PROFILE LINK
-===================================================== */
-
-.admin-profile-link {
-    display: flex;
-
-    flex-direction: row;
-
     align-items: center;
 
     gap: 10px;
 
-    padding: 8px 12px;
-
-    border-radius: 10px;
-
-    transition: 0.3s ease;
-}
-
-.admin-profile-link:hover {
-    background: #f5f7fb;
-}
-
-.admin-profile-link p {
-    margin: 0;
-
-    font-size: 15px;
-
-    font-weight: 600;
-
-    color: #333;
+    min-width: 0;
 }
 
 
-/* =====================================================
-   ADMIN AVATAR
-===================================================== */
-
-.admin-profile-link .avatar-img {
+.mobile-drawer-title > svg {
     width: 40px;
     height: 40px;
-}
 
-.admin-profile-link svg {
-    color: #0d6efd;
-}
+    font-size: 40px;
 
-
-/* =====================================================
-   ADMIN HOVER POPUP
-===================================================== */
-
-.admin-profile-popup {
-    top: calc(100% + 8px);
-
-    right: 0;
-
-    width: 220px;
-
-    padding: 18px;
-
-    opacity: 0;
-
-    visibility: hidden;
-
-    transform: translateY(10px);
-
-    transition:
-        opacity 0.25s ease,
-        visibility 0.25s ease,
-        transform 0.25s ease;
-}
-
-.admin-profile-menu:hover .admin-profile-popup {
-    opacity: 1;
-
-    visibility: visible;
-
-    transform: translateY(0);
+    flex-shrink: 0;
 }
 
 
-/* =====================================================
-   ADMIN POPUP TITLE
-===================================================== */
+.mobile-drawer-avatar {
+    width: 40px;
+    height: 40px;
 
-.admin-profile-popup h4 {
-    margin-bottom: 12px;
+    border-radius: 50%;
 
-    font-size: 16px;
+    object-fit: cover;
 
-    color: #333;
+    border: 2px solid #ffffff;
+
+    flex-shrink: 0;
+}
+
+
+.mobile-drawer-title strong {
+    display: block;
+
+    max-width: 190px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    font-size: 14px;
+}
+
+
+.mobile-drawer-title small {
+    display: block;
+
+    margin-top: 2px;
+
+    color: rgba(255, 255, 255, 0.75);
+
+    font-size: 10px;
 }
 
 
 /* =====================================================
-   ADMIN POPUP BUTTON
+   DRAWER CLOSE
 ===================================================== */
 
-.admin-profile-popup .popup-btn {
-    margin-bottom: 8px;
+.drawer-close-btn {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    border-radius: 7px;
+
+    background: rgba(255, 255, 255, 0.15);
+
+    color: #ffffff;
+
+    font-size: 19px;
+
+    cursor: pointer;
+}
+
+
+.drawer-close-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
 }
 
 
 /* =====================================================
-   LARGE TABLET
+   DRAWER BODY
 ===================================================== */
 
-@media (max-width: 1200px) {
+.mobile-drawer-body {
+    padding: 10px;
+}
 
-    .navbar-logo {
-        width: 145px;
-        height: 58px;
-    }
 
-    .marketplace-name {
-        font-size: 15px;
-    }
+.mobile-drawer-body button {
+    width: 100%;
 
-    .search-container {
-        margin-left: 20px;
-        margin-right: 20px;
+    min-height: 48px;
 
-        max-width: 520px;
-    }
+    display: flex;
+    align-items: center;
 
-    .nav-icons {
-        gap: 20px;
-    }
+    gap: 13px;
 
-    .bottom-menu a {
-        font-size: 12px;
-    }
+    padding: 10px 12px;
 
-    .admin-simple-navbar .navbar-logo {
-        width: 145px;
-        height: 58px;
-    }
+    margin-bottom: 3px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #333333;
+
+    text-align: left;
+
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+
+.mobile-drawer-body button svg {
+    width: 19px;
+    min-width: 19px;
+
+    color: #1b1bc5;
+
+    font-size: 18px;
+}
+
+
+.mobile-drawer-body button span {
+    flex: 1;
+}
+
+
+.mobile-drawer-body button:hover {
+    background: #f1f4ff;
+
+    color: #1b1bc5;
+}
+
+
+/* =====================================================
+   DRAWER BADGE
+===================================================== */
+
+.mobile-drawer-body button b {
+    width: 21px;
+    height: 21px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #ff3b30;
+
+    color: #ffffff;
+
+    font-size: 9px;
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+.mobile-drawer-body .mobile-logout {
+    margin-top: 12px;
+
+    background: #fff1f1;
+
+    color: #dc3545;
+}
+
+
+.mobile-drawer-body .mobile-logout svg {
+    color: #dc3545;
+}
+
+
+.mobile-drawer-body .mobile-logout:hover {
+    background: #ffe0e0;
+}
+
+
+/* =====================================================
+   ADMIN
+===================================================== */
+
+.admin-simple-navbar {
+    top: 0 !important;
+
+    height: 90px;
+
+    justify-content: space-between;
+}
+
+
+.admin-profile-link {
+    flex-direction: row;
+
+    gap: 8px;
+}
+
+
+.admin-profile-link p {
+    font-size: 14px;
 }
 
 
@@ -1033,89 +815,34 @@ body {
 
 @media (max-width: 992px) {
 
-    .top-left {
-        gap: 15px;
-
-        font-size: 12px;
-    }
-
-    .top-right {
-        gap: 12px;
-    }
-
     .navbar {
-        padding: 0 15px;
+        padding: 0 12px;
     }
 
-    /* Keep Marketplace beside logo */
-    .logo-link {
-        gap: 5px;
-    }
 
     .navbar-logo {
-        width: 120px;
-        height: 52px;
+        width: 135px;
+        height: 55px;
     }
 
-    .marketplace-name {
-        display: inline-flex;
-
-        font-size: 13px;
-    }
 
     .search-container {
         margin-left: 15px;
         margin-right: 15px;
 
-        max-width: 420px;
+        max-width: 430px;
     }
 
-    .category-select {
-        width: 120px;
-
-        padding: 0 10px;
-
-        font-size: 12px;
-    }
 
     .nav-icons {
         gap: 12px;
     }
 
+
     .nav-icons > a p {
-        font-size: 10px;
+        font-size: 9px;
     }
 
-    .nav-icons > a svg {
-        font-size: 23px;
-    }
-
-    .bottom-menu {
-        overflow-x: auto;
-
-        justify-content: flex-start;
-
-        padding: 0 20px;
-
-        gap: 25px;
-
-        white-space: nowrap;
-    }
-
-    .bottom-menu::-webkit-scrollbar {
-        display: none;
-    }
-
-    .admin-simple-navbar .navbar-logo {
-        width: 120px;
-        height: 52px;
-    }
-
-    .admin-simple-navbar .marketplace-name {
-        display: inline-flex;
-
-        font-size: 13px;
-    }
 }
 
 
@@ -1125,167 +852,264 @@ body {
 
 @media (max-width: 768px) {
 
-    /* TOP BAR */
+    /* TOP BAR HIDDEN */
 
     .top-bar {
-        display: none;
+        display: none !important;
     }
 
 
-    /* MAIN NAVBAR */
+    /* =================================================
+       NAVBAR
+    ================================================= */
 
     .navbar {
+        position: fixed !important;
+
         top: 0 !important;
+        left: 0 !important;
 
-        height: 70px;
+        width: 100%;
 
-        padding: 0 12px;
+        height: 64px !important;
+
+        display: flex !important;
+        align-items: center !important;
+
+        padding: 0 8px !important;
+
+        gap: 7px;
+
+        background: #ffffff;
+
+        z-index: 9999;
     }
 
 
-    /* MOBILE LOGO */
+    /* =================================================
+       1. LOGO
+    ================================================= */
 
-    .navbar:not(.admin-simple-navbar) .navbar-logo {
-        width: 105px;
-        height: 48px;
-    }
+    .logo {
+        flex: 0 0 auto;
 
-    /* Marketplace stays beside logo */
-    .navbar:not(.admin-simple-navbar) .marketplace-name {
-        display: inline-flex;
-
-        font-size: 12px;
+        margin: 0 !important;
     }
 
 
-    /* SEARCH */
+    .logo-link {
+        display: flex;
+        align-items: center;
+    }
+
+
+    .navbar-logo {
+        width: 82px !important;
+        height: 45px !important;
+
+        object-fit: contain;
+    }
+
+
+    /* =================================================
+       2. SEARCH BAR + SEARCH ICON
+    ================================================= */
 
     .search-container {
-        display: none;
+        display: flex !important;
+
+        flex: 1 1 auto;
+
+        width: auto;
+
+        min-width: 0;
+
+        max-width: none;
+
+        height: 39px !important;
+
+        margin: 0 !important;
+
+        border: 1.5px solid #0d6efd;
+
+        border-radius: 8px;
+
+        overflow: hidden;
     }
 
 
-    /* NAV ICONS */
+    .search-container input {
+        display: block !important;
+
+        flex: 1 1 auto;
+
+        width: 100%;
+
+        min-width: 0;
+
+        height: 100%;
+
+        padding: 0 9px !important;
+
+        border: none;
+
+        outline: none;
+
+        font-size: 11px !important;
+    }
+
+
+    .search-container input::placeholder {
+        font-size: 10px;
+    }
+
+
+    .search-btn {
+        display: flex !important;
+
+        width: 38px !important;
+        min-width: 38px !important;
+
+        height: 100% !important;
+
+        align-items: center;
+        justify-content: center;
+
+        border: none;
+
+        font-size: 15px;
+    }
+
+
+    /* =================================================
+       3. HIDE DESKTOP NAVIGATION
+    ================================================= */
 
     .nav-icons {
-        gap: 13px;
-
-        margin-left: auto;
-    }
-
-    .nav-icons > a {
-        min-width: 32px;
-    }
-
-    .nav-icons > a p,
-    .nav-icons .profile-link p {
-        display: none;
-    }
-
-    .nav-icons > a svg {
-        font-size: 23px;
-
-        margin-bottom: 0;
+        display: none !important;
     }
 
 
-    /* PROFILE */
+    /* =================================================
+       4. PROFILE
+    ================================================= */
 
-    .profile-menu > .profile-link svg {
-        font-size: 35px;
+    .profile-menu {
+        flex: 0 0 auto;
+
+        margin: 0 !important;
     }
+
+
+    .profile-link {
+        width: 38px !important;
+        height: 40px !important;
+
+        display: flex !important;
+
+        align-items: center;
+        justify-content: center;
+
+        padding: 0 !important;
+
+        gap: 0 !important;
+    }
+
+
+    .profile-link p {
+        display: none !important;
+    }
+
+
+    .profile-link svg {
+        width: 30px !important;
+        height: 30px !important;
+
+        font-size: 30px !important;
+    }
+
 
     .avatar-img {
-        width: 37px;
-        height: 37px;
+        width: 32px !important;
+        height: 32px !important;
     }
 
 
-    /* BADGES */
+    /* =================================================
+       5. MENU
+    ================================================= */
 
-    .cart-count,
-    .wishlist-count {
-        width: 18px;
-        height: 18px;
+    .mobile-menu-btn {
+        display: flex !important;
 
-        top: -7px;
-        right: -9px;
+        flex: 0 0 38px;
 
-        font-size: 9px;
+        width: 38px !important;
+        height: 40px !important;
+
+        margin: 0 !important;
+
+        align-items: center;
+        justify-content: center;
+
+        padding: 0;
+
+        border: none;
+
+        background: transparent;
+
+        font-size: 21px;
     }
 
 
-    /* BOTTOM MENU */
-
-    .bottom-menu {
-        top: 70px;
-
-        height: 50px;
-
-        overflow-x: auto;
-
-        justify-content: flex-start;
-
-        padding: 0 15px;
-
-        gap: 20px;
-
-        white-space: nowrap;
-    }
-
-    .bottom-menu::-webkit-scrollbar {
-        display: none;
-    }
-
-
-    /* PROFILE POPUP */
+    /* =================================================
+       PROFILE POPUP
+    ================================================= */
 
     .profile-popup {
-        top: 55px;
+        top: 48px !important;
 
-        right: -15px;
+        right: 0 !important;
 
-        width: 230px;
+        width: 220px;
     }
 
 
-    /* ADMIN */
+    /* =================================================
+       ADMIN MOBILE
+    ================================================= */
 
     .admin-simple-navbar {
-        height: 70px;
+        top: 0 !important;
 
-        padding: 0 12px;
+        height: 64px !important;
+
+        padding: 0 8px !important;
+
+        gap: 0;
     }
+
 
     .admin-simple-navbar .navbar-logo {
-        width: 105px;
-        height: 48px;
+        width: 82px !important;
+        height: 45px !important;
     }
 
-    .admin-simple-navbar .marketplace-name {
-        display: inline-flex;
-
-        font-size: 12px;
-    }
 
     .admin-profile-link {
-        padding: 6px 8px;
+        width: 38px !important;
+        height: 40px !important;
+
+        padding: 0 !important;
+
+        justify-content: center;
     }
+
 
     .admin-profile-link p {
-        font-size: 13px;
+        display: none !important;
     }
 
-    .admin-profile-link .avatar-img {
-        width: 34px;
-        height: 34px;
-    }
-
-    .admin-profile-popup {
-        top: 52px;
-
-        width: 210px;
-    }
 }
 
 
@@ -1296,126 +1120,154 @@ body {
 @media (max-width: 480px) {
 
     .navbar {
-        padding: 0 8px;
+        height: 60px !important;
+
+        padding: 0 6px !important;
+
+        gap: 5px;
     }
 
-    .navbar:not(.admin-simple-navbar) .navbar-logo {
-        width: 90px;
-        height: 43px;
+
+    .navbar-logo {
+        width: 74px !important;
+        height: 40px !important;
     }
 
-    .navbar:not(.admin-simple-navbar) .marketplace-name {
-        font-size: 11px;
+
+    .search-container {
+        height: 37px !important;
     }
 
-    .nav-icons {
-        gap: 9px;
+
+    .search-container input {
+        padding: 0 7px !important;
+
+        font-size: 10px !important;
     }
 
-    .nav-icons > a svg {
-        font-size: 21px;
+
+    .search-container input::placeholder {
+        font-size: 9px;
     }
 
-    .profile-menu > .profile-link svg {
-        font-size: 32px;
+
+    .search-btn {
+        width: 35px !important;
+        min-width: 35px !important;
+
+        font-size: 14px;
     }
+
+
+    .profile-link {
+        width: 35px !important;
+        height: 37px !important;
+        margin-right: 0;
+
+    }
+
+
+    .profile-link svg {
+        width: 28px !important;
+        height: 28px !important;
+
+        font-size: 28px !important;
+    }
+
 
     .avatar-img {
-        width: 34px;
-        height: 34px;
+        width: 30px !important;
+        height: 30px !important;
     }
 
-    .cart-count,
-    .wishlist-count {
-        width: 17px;
-        height: 17px;
 
-        font-size: 8px;
+    .mobile-menu-btn {
+        width: 35px !important;
+        height: 37px !important;
 
-        top: -6px;
-        right: -8px;
+        flex-basis: 35px;
+
+        font-size: 20px;
     }
 
-    .bottom-menu {
-        gap: 18px;
 
-        padding: 0 12px;
+    .mobile-drawer {
+        width: 57%;
+
+        max-width: 90vw;
     }
 
-    .bottom-menu a {
-        font-size: 11px;
-    }
-
-    .admin-simple-navbar {
-        padding: 0 8px;
-    }
-
-    .admin-simple-navbar .navbar-logo {
-        width: 90px;
-        height: 43px;
-    }
-
-    .admin-simple-navbar .marketplace-name {
-        font-size: 11px;
-    }
 }
 
 
 /* =====================================================
-   EXTRA SMALL MOBILE
+   VERY SMALL MOBILE
 ===================================================== */
 
 @media (max-width: 360px) {
 
-    .navbar:not(.admin-simple-navbar) .navbar-logo {
-        width: 78px;
-        height: 40px;
+    .navbar {
+        padding: 0 4px !important;
+
+        gap: 4px;
     }
 
-    .navbar:not(.admin-simple-navbar) .marketplace-name {
-        font-size: 10px;
+
+    .navbar-logo {
+        width: 65px !important;
+        height: 37px !important;
     }
 
-    .nav-icons {
-        gap: 6px;
+
+    .search-container {
+        height: 35px !important;
     }
 
-    .nav-icons > a svg {
+
+    .search-container input {
+        font-size: 9px !important;
+
+        padding: 0 5px !important;
+    }
+
+
+    .search-container input::placeholder {
+        font-size: 8px;
+    }
+
+
+    .search-btn {
+        width: 32px !important;
+        min-width: 32px !important;
+
+        font-size: 13px;
+    }
+
+
+    .profile-link {
+        width: 33px !important;
+    }
+
+
+    .profile-link svg {
+        width: 26px !important;
+        height: 26px !important;
+
+        font-size: 26px !important;
+    }
+
+
+    .avatar-img {
+        width: 28px !important;
+        height: 28px !important;
+    }
+
+
+    .mobile-menu-btn {
+        width: 33px !important;
+        flex-basis: 33px;
+
         font-size: 19px;
     }
 
-    .profile-menu > .profile-link svg {
-        font-size: 29px;
-    }
-
-    .avatar-img {
-        width: 31px;
-        height: 31px;
-    }
-
-    .admin-simple-navbar .navbar-logo {
-        width: 78px;
-        height: 40px;
-    }
-
-    .admin-simple-navbar .marketplace-name {
-        font-size: 10px;
-    }
-}
-
-
-/* ==========================================
-   ANIMATIONS
-========================================== */
-
-@keyframes menuSlide {
-    from {
-        opacity: 0;
-        transform: translateY(-15px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }

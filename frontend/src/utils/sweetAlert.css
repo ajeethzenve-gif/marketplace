@@ -1,0 +1,94 @@
+/* =========================================================
+   COMMON SWEET ALERT
+========================================================= */
+
+.pet-swal-popup {
+    border-radius: 12px !important;
+
+    padding: 14px 18px !important;
+
+    min-width: 320px !important;
+    max-width: 420px !important;
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18) !important;
+
+    font-family: "Poppins", sans-serif !important;
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.pet-swal-title {
+    font-size: 15px !important;
+
+    font-weight: 600 !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+}
+
+
+/* =========================================================
+   PROGRESS BAR
+========================================================= */
+
+.pet-swal-progress {
+    height: 3px !important;
+}
+
+
+/* =========================================================
+   CONFIRMATION POPUP
+========================================================= */
+
+.pet-confirm-popup {
+    border-radius: 16px !important;
+
+    padding: 25px !important;
+
+    font-family: "Poppins", sans-serif !important;
+
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+}
+
+
+.pet-confirm-title {
+    font-size: 20px !important;
+
+    font-weight: 600 !important;
+}
+
+
+/* =========================================================
+   CONFIRM BUTTON
+========================================================= */
+
+.pet-confirm-button {
+    border: none !important;
+
+    border-radius: 8px !important;
+
+    padding: 10px 20px !important;
+
+    font-weight: 600 !important;
+
+    margin-left: 8px !important;
+}
+
+
+/* =========================================================
+   CANCEL BUTTON
+========================================================= */
+
+.pet-cancel-button {
+    border: none !important;
+
+    border-radius: 8px !important;
+
+    padding: 10px 20px !important;
+
+    font-weight: 600 !important;
+}

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-
 import {
     FaCreditCard,
     FaUniversity,
@@ -19,7 +18,14 @@ import {
 } from "react-icons/fa";
 
 import "../styles/Payment.css";
-
+import {
+    showSuccessAlert,
+    showErrorAlert,
+    showWarningAlert,
+    showConfirmAlert,
+    showLoadingAlert,
+    closeAlert,
+} from "../utils/sweetAlert";
 function Payment() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -1549,7 +1555,7 @@ function Payment() {
                 await clearCartAfterOrder();
             }
 
-            alert(
+            showSuccessAlert(
                 "Order placed successfully!"
             );
 

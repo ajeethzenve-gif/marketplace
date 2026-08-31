@@ -1,11 +1,12 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 import "../styles/Petprofile.css";
 
 function Pets() {
-
     const navigate = useNavigate();
 
     const token = localStorage.getItem("access");
@@ -27,7 +28,7 @@ function Pets() {
         age: "",
         gender: "",
         weight: "",
-        health_notes: ""
+        health_notes: "",
     });
 
     // =====================================================
@@ -41,24 +42,99 @@ function Pets() {
         "http://127.0.0.1:8000";
 
     // =====================================================
+    // SWEET ALERT HELPERS
+    // =====================================================
+
+    // ==========================================
+// SWEET ALERT - SUCCESS
+// ==========================================
+
+const showSuccessAlert = (title, message) => {
+    Swal.fire({
+        icon: "success",
+        title: title,
+        text: message,
+
+        position: "top",
+        width: "380px",
+
+        timer: 2000,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+
+        customClass: {
+            popup: "small-swal-popup",
+            title: "small-swal-title",
+            htmlContainer: "small-swal-text",
+        },
+    });
+};
+
+
+// ==========================================
+// SWEET ALERT - ERROR
+// ==========================================
+
+const showErrorAlert = (title, message) => {
+    Swal.fire({
+        icon: "error",
+        title: title,
+        text: message,
+
+        position: "top",
+        width: "380px",
+
+        confirmButtonText: "OK",
+
+        customClass: {
+            popup: "small-swal-popup",
+            title: "small-swal-title",
+            htmlContainer: "small-swal-text",
+            confirmButton: "small-swal-button",
+        },
+    });
+};
+
+
+// ==========================================
+// SWEET ALERT - WARNING
+// ==========================================
+
+const showWarningAlert = (title, message) => {
+    Swal.fire({
+        icon: "warning",
+        title: title,
+        text: message,
+
+        position: "top",
+        width: "380px",
+
+        confirmButtonText: "OK",
+
+        customClass: {
+            popup: "small-swal-popup",
+            title: "small-swal-title",
+            htmlContainer: "small-swal-text",
+            confirmButton: "small-swal-button",
+        },
+    });
+};
+
+    // =====================================================
     // LOAD PETS
     // =====================================================
 
     useEffect(() => {
-
         if (!token) {
             navigate("/login");
             return;
         }
 
         loadPets();
-
     }, [token, navigate]);
 
     const loadPets = async () => {
-
         try {
-
             setLoading(true);
             setError("");
 
@@ -66,8 +142,8 @@ function Pets() {
                 API_URL,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
             );
 
@@ -76,23 +152,24 @@ function Pets() {
                 : response.data?.results || [];
 
             setPets(data);
-
         } catch (error) {
-
             console.error(
                 "Pet loading error:",
                 error.response?.data || error.message
             );
 
-            setError(
+            const errorMessage =
                 error.response?.data?.detail ||
-                "Unable to load your pets."
+                "Unable to load your pets.";
+
+            setError(errorMessage);
+
+            showErrorAlert(
+                "Unable to Load Pets",
+                errorMessage
             );
-
         } finally {
-
             setLoading(false);
-
         }
     };
 
@@ -101,14 +178,12 @@ function Pets() {
     // =====================================================
 
     const handleChange = (e) => {
-
         const { name, value } = e.target;
 
         setPetDetails((previous) => ({
             ...previous,
-            [name]: value
+            [name]: value,
         }));
-
     };
 
     // =====================================================
@@ -116,7 +191,6 @@ function Pets() {
     // =====================================================
 
     const resetForm = () => {
-
         setPetDetails({
             pet_name: "",
             pet_type: "Dog",
@@ -124,11 +198,10 @@ function Pets() {
             age: "",
             gender: "",
             weight: "",
-            health_notes: ""
+            health_notes: "",
         });
 
         setEditingPetId(null);
-
     };
 
     // =====================================================
@@ -136,11 +209,9 @@ function Pets() {
     // =====================================================
 
     const openAddModal = () => {
-
         setError("");
         resetForm();
         setShowModal(true);
-
     };
 
     // =====================================================
@@ -148,11 +219,9 @@ function Pets() {
     // =====================================================
 
     const closeModal = () => {
-
         setShowModal(false);
         resetForm();
         setError("");
-
     };
 
     // =====================================================
@@ -160,7 +229,6 @@ function Pets() {
     // =====================================================
 
     const handleEdit = (pet) => {
-
         setError("");
         setEditingPetId(pet.id);
 
@@ -171,11 +239,10 @@ function Pets() {
             age: pet.age ?? "",
             gender: pet.gender ?? "",
             weight: pet.weight ?? "",
-            health_notes: pet.health_notes ?? ""
+            health_notes: pet.health_notes ?? "",
         });
 
         setShowModal(true);
-
     };
 
     // =====================================================
@@ -183,22 +250,24 @@ function Pets() {
     // =====================================================
 
     const handleSubmit = async (e) => {
-
         e.preventDefault();
 
         setError("");
 
+        // =================================================
+        // VALIDATION
+        // =================================================
+
         if (!petDetails.pet_name.trim()) {
-
-            setError("Pet name is required.");
+            showWarningAlert(
+                "Pet Name Required",
+                "Please enter your pet's name."
+            );
             return;
-
         }
 
         try {
-
             const data = {
-
                 pet_name:
                     petDetails.pet_name.trim(),
 
@@ -226,8 +295,7 @@ function Pets() {
                 health_notes:
                     String(
                         petDetails.health_notes ?? ""
-                    ).trim()
-
+                    ).trim(),
             };
 
             // =================================================
@@ -235,7 +303,6 @@ function Pets() {
             // =================================================
 
             if (editingPetId) {
-
                 const response = await axios.patch(
                     `${API_URL}${editingPetId}/`,
                     data,
@@ -244,8 +311,8 @@ function Pets() {
                             Authorization:
                                 `Bearer ${token}`,
                             "Content-Type":
-                                "application/json"
-                        }
+                                "application/json",
+                        },
                     }
                 );
 
@@ -258,8 +325,12 @@ function Pets() {
                     )
                 );
 
-                alert("Pet updated successfully.");
+                closeModal();
 
+                showSuccessAlert(
+                    "Pet Updated!",
+                    "Your pet profile has been updated successfully."
+                );
             }
 
             // =================================================
@@ -267,7 +338,6 @@ function Pets() {
             // =================================================
 
             else {
-
                 const response = await axios.post(
                     API_URL,
                     data,
@@ -276,24 +346,24 @@ function Pets() {
                             Authorization:
                                 `Bearer ${token}`,
                             "Content-Type":
-                                "application/json"
-                        }
+                                "application/json",
+                        },
                     }
                 );
 
                 setPets((previousPets) => [
                     response.data,
-                    ...previousPets
+                    ...previousPets,
                 ]);
 
-                alert("Pet added successfully.");
+                closeModal();
 
+                showSuccessAlert(
+                    "Pet Added!",
+                    "Your pet profile has been added successfully."
+                );
             }
-
-            closeModal();
-
         } catch (error) {
-
             console.error(
                 "PET SAVE ERROR:",
                 error
@@ -307,39 +377,38 @@ function Pets() {
             const backendError =
                 error.response?.data;
 
+            let errorMessage =
+                "Unable to save pet details.";
+
             if (
                 backendError &&
                 typeof backendError === "object"
             ) {
+                errorMessage = Object.entries(
+                    backendError
+                )
+                    .map(
+                        ([field, message]) => {
+                            const formattedMessage =
+                                Array.isArray(message)
+                                    ? message.join(", ")
+                                    : String(message);
 
-                setError(
-                    Object.entries(
-                        backendError
+                            return `${field}: ${formattedMessage}`;
+                        }
                     )
-                        .map(
-                            ([field, message]) => {
-
-                                const formattedMessage =
-                                    Array.isArray(message)
-                                        ? message.join(", ")
-                                        : String(message);
-
-                                return `${field}: ${formattedMessage}`;
-
-                            }
-                        )
-                        .join(" | ")
-                );
-
-            } else {
-
-                setError(
-                    backendError ||
-                    "Unable to save pet details."
-                );
-
+                    .join(" | ");
+            } else if (backendError) {
+                errorMessage =
+                    String(backendError);
             }
 
+            setError(errorMessage);
+
+            showErrorAlert(
+                "Unable to Save Pet",
+                errorMessage
+            );
         }
     };
 
@@ -348,25 +417,41 @@ function Pets() {
     // =====================================================
 
     const handleDelete = async (petId) => {
+        // =================================================
+        // SWEETALERT DELETE CONFIRMATION
+        // =================================================
 
-        const confirmDelete =
-            window.confirm(
-                "Are you sure you want to delete this pet?"
-            );
+    const result = await Swal.fire({
+        title: "Delete Pet?",
+        text: "Are you sure you want to delete this pet? This action cannot be undone.",
+        icon: "warning",
+        width: "450px",
+        position: "top",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, Delete",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+        customClass: {
+                popup: "small-swal-popup",
+                title: "small-swal-title",
+                htmlContainer: "small-swal-text",
+            },
+    });
 
-        if (!confirmDelete) {
+        if (!result.isConfirmed) {
             return;
         }
 
         try {
-
             await axios.delete(
                 `${API_URL}${petId}/`,
                 {
                     headers: {
                         Authorization:
-                            `Bearer ${token}`
-                    }
+                            `Bearer ${token}`,
+                    },
                 }
             );
 
@@ -380,12 +465,11 @@ function Pets() {
 
             setError("");
 
-            alert(
-                "Pet deleted successfully."
+            showSuccessAlert(
+                "Pet Deleted!",
+                "The pet profile has been deleted successfully."
             );
-
         } catch (error) {
-
             console.error(
                 "PET DELETE ERROR:",
                 error
@@ -396,12 +480,17 @@ function Pets() {
                 error.response?.data
             );
 
-            setError(
+            const errorMessage =
                 error.response?.data?.detail ||
                 error.response?.data?.error ||
-                "Unable to delete pet."
-            );
+                "Unable to delete pet.";
 
+            setError(errorMessage);
+
+            showErrorAlert(
+                "Unable to Delete Pet",
+                errorMessage
+            );
         }
     };
 
@@ -410,9 +499,7 @@ function Pets() {
     // =====================================================
 
     const getPetIcon = (petType) => {
-
         switch (petType) {
-
             case "Dog":
                 return "🐶";
 
@@ -430,7 +517,6 @@ function Pets() {
 
             default:
                 return "🐾";
-
         }
     };
 
@@ -439,7 +525,6 @@ function Pets() {
     // =====================================================
 
     const getPetImage = (image) => {
-
         if (!image) {
             return null;
         }
@@ -449,7 +534,6 @@ function Pets() {
         }
 
         return `${BACKEND_URL}${image}`;
-
     };
 
     // =====================================================
@@ -465,7 +549,6 @@ function Pets() {
     // =====================================================
 
     return (
-
         <main className="pets-page">
 
             {/* =================================================
@@ -492,6 +575,7 @@ function Pets() {
                     <div className="pets-hero-stats">
 
                         <div className="hero-stat">
+
                             <strong>
                                 {pets.length}
                             </strong>
@@ -501,6 +585,7 @@ function Pets() {
                                     ? "Pet"
                                     : "Pets"}
                             </span>
+
                         </div>
 
                         <div className="hero-stat-divider"></div>
@@ -722,15 +807,20 @@ function Pets() {
                                         <div className="pet-title-meta">
 
                                             <span className="pet-type-badge">
+
                                                 {getPetIcon(
                                                     pet.pet_type
                                                 )}{" "}
+
                                                 {pet.pet_type}
+
                                             </span>
 
                                             <span className="pet-breed">
+
                                                 {pet.breed ||
                                                     "Breed not specified"}
+
                                             </span>
 
                                         </div>
@@ -753,6 +843,7 @@ function Pets() {
                                         </span>
 
                                         <div>
+
                                             <span className="pet-detail-label">
                                                 Age
                                             </span>
@@ -761,6 +852,7 @@ function Pets() {
                                                 {pet.age ||
                                                     "Not specified"}
                                             </span>
+
                                         </div>
 
                                     </div>
@@ -773,6 +865,7 @@ function Pets() {
                                         </span>
 
                                         <div>
+
                                             <span className="pet-detail-label">
                                                 Gender
                                             </span>
@@ -781,6 +874,7 @@ function Pets() {
                                                 {pet.gender ||
                                                     "Not specified"}
                                             </span>
+
                                         </div>
 
                                     </div>
@@ -793,6 +887,7 @@ function Pets() {
                                         </span>
 
                                         <div>
+
                                             <span className="pet-detail-label">
                                                 Weight
                                             </span>
@@ -801,6 +896,7 @@ function Pets() {
                                                 {pet.weight ||
                                                     "Not specified"}
                                             </span>
+
                                         </div>
 
                                     </div>
@@ -813,6 +909,7 @@ function Pets() {
                                         </span>
 
                                         <div>
+
                                             <span className="pet-detail-label">
                                                 Breed
                                             </span>
@@ -821,6 +918,7 @@ function Pets() {
                                                 {pet.breed ||
                                                     "Not specified"}
                                             </span>
+
                                         </div>
 
                                     </div>
@@ -873,10 +971,13 @@ function Pets() {
                                         }
                                         title="Recommended Products"
                                     >
+
                                         <span>🛍️</span>
+
                                         <span>
                                             Recommended
                                         </span>
+
                                     </button>
 
 
@@ -888,10 +989,13 @@ function Pets() {
                                         }
                                         title="Edit Pet"
                                     >
+
                                         <span>✏️</span>
+
                                         <span>
                                             Edit
                                         </span>
+
                                     </button>
 
 
@@ -903,10 +1007,13 @@ function Pets() {
                                         }
                                         title="Delete Pet"
                                     >
+
                                         <span>🗑️</span>
+
                                         <span>
                                             Delete
                                         </span>
+
                                     </button>
 
                                 </div>
@@ -1220,7 +1327,6 @@ function Pets() {
             )}
 
         </main>
-
     );
 }
 
