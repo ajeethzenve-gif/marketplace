@@ -27,6 +27,15 @@ function Register() {
 
   const [loading, setLoading] = useState(false);
 
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("success");
+
+  const showMessage = (text, type = "success") => {
+    setMessage(text);
+    setMessageType(type);
+    setTimeout(() => setMessage(""), 3000);
+  };
+
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -61,77 +70,77 @@ function Register() {
 
   const validateForm = () => {
     if (!formData.first_name.trim()) {
-      alert("Please enter your first name.");
+      showMessage("Please enter your first name.", "error");
       return false;
     }
 
     if (!formData.last_name.trim()) {
-      alert("Please enter your last name.");
+      showMessage("Please enter your last name.", "error");
       return false;
     }
 
     if (!formData.phone_number.trim()) {
-      alert("Please enter your phone number.");
+      showMessage("Please enter your phone number.", "error");
       return false;
     }
 
     if (!/^[0-9]{10,15}$/.test(formData.phone_number.trim())) {
-      alert("Please enter a valid phone number.");
+      showMessage("Please enter a valid phone number.", "error");
       return false;
     }
 
     if (!formData.email.trim()) {
-      alert("Please enter your email address.");
+      showMessage("Please enter your email address.", "error");
       return false;
     }
 
     if (!formData.address.trim()) {
-      alert("Please enter your address.");
+      showMessage("Please enter your address.", "error");
       return false;
     }
 
     if (!formData.city.trim()) {
-      alert("Please enter your city.");
+      showMessage("Please enter your city.", "error");
       return false;
     }
 
     if (!formData.state.trim()) {
-      alert("Please enter your state.");
+      showMessage("Please enter your state.", "error");
       return false;
     }
 
     if (!formData.postal_code.trim()) {
-      alert("Please enter your postal code.");
+      showMessage("Please enter your postal code.", "error");
       return false;
     }
 
     if (!/^[0-9]{5,10}$/.test(formData.postal_code.trim())) {
-      alert("Please enter a valid postal code.");
+      showMessage("Please enter a valid postal code.", "error");
       return false;
     }
 
     if (!formData.username.trim()) {
-      alert("Please enter your username.");
+      showMessage("Please enter your username.", "error");
       return false;
     }
 
     if (!formData.password) {
-      alert("Please enter your password.");
+      showMessage("Please enter your password.", "error");
       return false;
     }
 
     if (formData.password.length < 8) {
-      alert("Password must contain at least 8 characters.");
+      showMessage("Password must contain at least 8 characters.", "error");
       return false;
     }
 
     if (!formData.confirm_password) {
-      alert("Please confirm your password.");
+      showMessage("Please confirm your password.", "error");
       return false;
     }
 
     if (formData.password !== formData.confirm_password) {
-      alert("Passwords do not match.");
+      showMessage("Passwords do not match.", "error");
       return false;
     }
 
@@ -157,9 +166,10 @@ function Register() {
         formData
       );
 
-      alert(
+      showMessage(
         response.data?.message ||
-          "Registration successful"
+          "Registration successful",
+        "success"
       );
 
       setFormData({
@@ -180,7 +190,9 @@ function Register() {
       setShowPassword(false);
       setShowConfirmPassword(false);
 
-      navigate("/login");
+      setTimeout(() => {
+        navigate("/login");
+      }, 1200);
     } catch (error) {
       console.error(
         "Registration Error:",
@@ -197,28 +209,31 @@ function Register() {
 
         if (typeof data === "object") {
           const messages = Object.entries(data)
-            .map(([field, message]) => {
-              if (Array.isArray(message)) {
-                return `${field}: ${message.join(", ")}`;
+            .map(([field, msg]) => {
+              if (Array.isArray(msg)) {
+                return `${field}: ${msg.join(", ")}`;
               }
 
-              return `${field}: ${message}`;
+              return `${field}: ${msg}`;
             })
             .join("\n");
 
-          alert(
+          showMessage(
             messages ||
-              "Registration failed."
+              "Registration failed.",
+            "error"
           );
         } else {
-          alert(
+          showMessage(
             data ||
-              "Registration failed."
+              "Registration failed.",
+            "error"
           );
         }
       } else {
-        alert(
-          "Unable to connect to server. Please make sure Django is running."
+        showMessage(
+          "Unable to connect to server. Please make sure Django is running.",
+          "error"
         );
       }
     } finally {
@@ -228,6 +243,35 @@ function Register() {
 
   return (
     <div className="register-page">
+
+      {/* =================================================
+          INLINE MESSAGE (success / error)
+      ================================================= */}
+
+      {message && (
+        <div className={`inline-message ${messageType}`}>
+          <svg
+            className="inline-message-check"
+            viewBox="0 0 52 52"
+          >
+            {messageType === "success" ? (
+              <path
+                className="inline-message-check-path"
+                fill="none"
+                d="M14 27l7 7 16-16"
+              />
+            ) : (
+              <path
+                className="inline-message-cross-path"
+                fill="none"
+                d="M16 16l20 20M36 16l-20 20"
+              />
+            )}
+          </svg>
+          <span className="inline-message-text">{message}</span>
+        </div>
+      )}
+
 
       {/* =================================================
           BACKGROUND DECORATION

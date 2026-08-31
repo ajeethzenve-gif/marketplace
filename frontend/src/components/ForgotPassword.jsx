@@ -16,10 +16,13 @@ import {
   FaEnvelope,
   FaLock,
   FaPaw,
-  FaArrowLeft,
-  FaEye,
-  FaEyeSlash
+  FaArrowLeft
 } from "react-icons/fa";
+
+import {
+  FiEye,
+  FiEyeOff
+} from "react-icons/fi";
 
 
 function ForgotPassword() {
@@ -61,6 +64,15 @@ function ForgotPassword() {
   const [loading, setLoading] =
     useState(false);
 
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("success");
+
+  const showMessage = (text, type = "success") => {
+    setMessage(text);
+    setMessageType(type);
+    setTimeout(() => setMessage(""), 3000);
+  };
+
   const otpRefs = useRef([]);
 
 
@@ -78,8 +90,9 @@ function ForgotPassword() {
 
     if (!cleanEmail) {
 
-      alert(
-        "Please enter your email."
+      showMessage(
+        "Please enter your email.",
+        "error"
       );
 
       return;
@@ -110,9 +123,10 @@ function ForgotPassword() {
 
       if (!response.data.reset_token) {
 
-        alert(
-          "Reset token was not received from server."
-        );
+        showMessage(
+        "Reset token was not received from server.",
+        "error"
+      );
 
         return;
       }
@@ -138,9 +152,10 @@ function ForgotPassword() {
         ""
       ]);
 
-      alert(
+      showMessage(
         response.data.message ||
-        "OTP sent successfully."
+        "OTP sent successfully.",
+        "success"
       );
 
       // Go to OTP page
@@ -155,13 +170,15 @@ function ForgotPassword() {
         error.message
       );
 
-      alert(
+      showMessage(
 
         error.response?.data?.detail ||
 
         error.response?.data?.message ||
 
-        "Unable to send OTP."
+        "Unable to send OTP.",
+
+        "error"
 
       );
 
@@ -256,8 +273,9 @@ function ForgotPassword() {
       enteredOtp.length !== 6
     ) {
 
-      alert(
-        "Please enter the complete 6-digit OTP."
+      showMessage(
+        "Please enter the complete 6-digit OTP.",
+        "error"
       );
 
       return;
@@ -269,8 +287,9 @@ function ForgotPassword() {
 
     if (!resetToken) {
 
-      alert(
-        "Reset token is missing. Please request a new OTP."
+      showMessage(
+        "Reset token is missing. Please request a new OTP.",
+        "error"
       );
 
       setStep(1);
@@ -311,9 +330,10 @@ function ForgotPassword() {
         !response.data.verified
       ) {
 
-        alert(
-          "OTP verification failed."
-        );
+        showMessage(
+        "OTP verification failed.",
+        "error"
+      );
 
         return;
       }
@@ -325,8 +345,9 @@ function ForgotPassword() {
         resetToken
       );
 
-      alert(
-        "OTP verified successfully."
+      showMessage(
+        "OTP verified successfully.",
+        "success"
       );
 
       // Go to password page
@@ -341,13 +362,15 @@ function ForgotPassword() {
         error.message
       );
 
-      alert(
+      showMessage(
 
         error.response?.data?.detail ||
 
         error.response?.data?.message ||
 
-        "Invalid or expired OTP."
+        "Invalid or expired OTP.",
+
+        "error"
 
       );
 
@@ -371,8 +394,9 @@ function ForgotPassword() {
 
     if (!cleanEmail) {
 
-      alert(
-        "Email is missing."
+      showMessage(
+        "Email is missing.",
+        "error"
       );
 
       setStep(1);
@@ -404,9 +428,10 @@ function ForgotPassword() {
 
       if (!response.data.reset_token) {
 
-        alert(
-          "New reset token was not received."
-        );
+        showMessage(
+        "New reset token was not received.",
+        "error"
+      );
 
         return;
       }
@@ -432,9 +457,10 @@ function ForgotPassword() {
 
       }
 
-      alert(
+      showMessage(
         response.data.message ||
-        "A new OTP has been sent."
+        "A new OTP has been sent.",
+        "success"
       );
 
     } catch (error) {
@@ -445,13 +471,15 @@ function ForgotPassword() {
         error.message
       );
 
-      alert(
+      showMessage(
 
         error.response?.data?.detail ||
 
         error.response?.data?.message ||
 
-        "Unable to resend OTP."
+        "Unable to resend OTP.",
+
+        "error"
 
       );
 
@@ -504,8 +532,9 @@ function ForgotPassword() {
       !confirmPassword
     ) {
 
-      alert(
-        "Please enter your new password."
+      showMessage(
+        "Please enter your new password.",
+        "error"
       );
 
       return;
@@ -520,8 +549,9 @@ function ForgotPassword() {
       confirmPassword
     ) {
 
-      alert(
-        "Passwords do not match."
+      showMessage(
+        "Passwords do not match.",
+        "error"
       );
 
       return;
@@ -535,8 +565,9 @@ function ForgotPassword() {
       newPassword.length < 8
     ) {
 
-      alert(
-        "Password must be at least 8 characters."
+      showMessage(
+        "Password must be at least 8 characters.",
+        "error"
       );
 
       return;
@@ -548,8 +579,9 @@ function ForgotPassword() {
 
     if (!resetToken) {
 
-      alert(
-        "Reset token is missing. Please verify the OTP again."
+      showMessage(
+        "Reset token is missing. Please verify the OTP again.",
+        "error"
       );
 
       setStep(2);
@@ -583,9 +615,10 @@ function ForgotPassword() {
         response.data
       );
 
-      alert(
+      showMessage(
         response.data.message ||
-        "Password reset successfully."
+        "Password reset successfully.",
+        "success"
       );
 
       // =================================================
@@ -611,7 +644,9 @@ function ForgotPassword() {
       // GO LOGIN
       // =================================================
 
-      navigate("/login");
+      setTimeout(() => {
+        navigate("/login");
+      }, 1200);
 
     } catch (error) {
 
@@ -621,13 +656,15 @@ function ForgotPassword() {
         error.message
       );
 
-      alert(
+      showMessage(
 
         error.response?.data?.detail ||
 
         error.response?.data?.message ||
 
-        "Unable to reset password."
+        "Unable to reset password.",
+
+        "error"
 
       );
 
@@ -647,6 +684,30 @@ function ForgotPassword() {
   return (
 
     <div className="forgot-page">
+
+      {message && (
+        <div className={`inline-message ${messageType}`}>
+          <svg
+            className="inline-message-check"
+            viewBox="0 0 52 52"
+          >
+            {messageType === "success" ? (
+              <path
+                className="inline-message-check-path"
+                fill="none"
+                d="M14 27l7 7 16-16"
+              />
+            ) : (
+              <path
+                className="inline-message-cross-path"
+                fill="none"
+                d="M16 16l20 20M36 16l-20 20"
+              />
+            )}
+          </svg>
+          <span className="inline-message-text">{message}</span>
+        </div>
+      )}
 
       <div className="forgot-decoration decoration-one"></div>
 
@@ -1000,8 +1061,8 @@ function ForgotPassword() {
                 >
 
                   {showPassword
-                    ? <FaEyeSlash />
-                    : <FaEye />
+                    ? <FiEyeOff />
+                    : <FiEye />
                   }
 
                 </button>
@@ -1062,8 +1123,8 @@ function ForgotPassword() {
                 >
 
                   {showConfirmPassword
-                    ? <FaEyeSlash />
-                    : <FaEye />
+                    ? <FiEyeOff />
+                    : <FiEye />
                   }
 
                 </button>

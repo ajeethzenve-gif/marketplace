@@ -26,6 +26,17 @@ function Login() {
     remember: false,
   });
 
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("success");
+
+  const [loading, setLoading] = useState(false);
+
+  const showMessage = (text, type = "success") => {
+    setMessage(text);
+    setMessageType(type);
+    setTimeout(() => setMessage(""), 3000);
+  };
+
   /* =====================================================
      HANDLE INPUT CHANGE
   ===================================================== */
@@ -50,6 +61,8 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setLoading(true);
 
     try {
       const response = await axios.post(
@@ -95,23 +108,27 @@ function Login() {
         );
       }
 
-      alert("Login Successful");
+      showMessage("Login Successful", "success");
 
-      navigate("/");
-
-      window.location.reload();
+      setTimeout(() => {
+        navigate("/");
+        window.location.reload();
+      }, 1200);
 
     } catch (error) {
       console.error("Login Error:", error);
 
       if (error.response) {
-        alert(
+        showMessage(
           error.response.data.message ||
-          "Invalid username or password."
+          "Invalid username or password.",
+          "error"
         );
       } else {
-        alert("Unable to connect to server.");
+        showMessage("Unable to connect to server.", "error");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -129,7 +146,7 @@ function Login() {
       );
 
       if (!credentialResponse?.credential) {
-        alert("Google login failed. No credential received.");
+        showMessage("Google login failed. No credential received.", "error");
         return;
       }
 
@@ -167,11 +184,12 @@ function Login() {
         response.data.role
       );
 
-      alert("Google Login Successful");
+      showMessage("Google Login Successful", "success");
 
-      navigate("/");
-
-      window.location.reload();
+      setTimeout(() => {
+        navigate("/");
+        window.location.reload();
+      }, 1200);
 
     } catch (error) {
       console.error(
@@ -185,14 +203,16 @@ function Login() {
           error.response.data
         );
 
-        alert(
+        showMessage(
           error.response.data.message ||
           error.response.data.error ||
-          "Google Login Failed"
+          "Google Login Failed",
+          "error"
         );
       } else {
-        alert(
-          "Unable to connect to server."
+        showMessage(
+          "Unable to connect to server.",
+          "error"
         );
       }
     }
@@ -205,7 +225,7 @@ function Login() {
   const handleGoogleError = () => {
     console.error("Google Login Failed");
 
-    alert("Google Login Failed");
+    showMessage("Google Login Failed", "error");
   };
 
   /* =====================================================
@@ -213,8 +233,9 @@ function Login() {
   ===================================================== */
 
   const handleFacebookLogin = () => {
-    alert(
-      "Facebook Login will be connected here."
+    showMessage(
+      "Facebook Login will be connected here.",
+      "success"
     );
   };
 
@@ -224,6 +245,35 @@ function Login() {
 
   return (
     <div className="login-page">
+
+      {/* =================================================
+          INLINE MESSAGE (success / error)
+      ================================================= */}
+
+      {message && (
+        <div className={`inline-message ${messageType}`}>
+          <svg
+            className="inline-message-check"
+            viewBox="0 0 52 52"
+          >
+            {messageType === "success" ? (
+              <path
+                className="inline-message-check-path"
+                fill="none"
+                d="M14 27l7 7 16-16"
+              />
+            ) : (
+              <path
+                className="inline-message-cross-path"
+                fill="none"
+                d="M16 16l20 20M36 16l-20 20"
+              />
+            )}
+          </svg>
+          <span className="inline-message-text">{message}</span>
+        </div>
+      )}
+
 
       {/* =================================================
           DECORATIVE CIRCLES
@@ -482,8 +532,9 @@ function Login() {
               <button
                 className="login-btn"
                 type="submit"
+                disabled={loading}
               >
-                Login
+                {loading ? "Logging in..." : "Login"}
               </button>
 
 

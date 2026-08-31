@@ -20,6 +20,12 @@ import {
 
 import "../styles/Orders.css";
 
+import {
+    showSuccessAlert,
+    showErrorAlert,
+    showConfirmAlert,
+} from "../utils/sweetAlert";
+
 
 function Orders() {
 
@@ -128,12 +134,14 @@ function Orders() {
 
     const cancelOrder = async (orderId) => {
 
-        const confirmCancel = window.confirm(
-            "Are you sure you want to cancel this order?"
-        );
+        const confirmed = await showConfirmAlert({
+            title: "Are you sure?",
+            text: "Are you sure you want to cancel this order?",
+            confirmButtonText: "Yes",
+            cancelButtonText: "Cancel",
+        });
 
-        if (!confirmCancel) return;
-
+        if (!confirmed) return;
 
         try {
 
@@ -153,7 +161,7 @@ function Orders() {
             );
 
 
-            alert("Order cancelled successfully.");
+            showSuccessAlert("Order cancelled successfully.");
 
             await loadOrders();
 
@@ -172,7 +180,7 @@ function Orders() {
 
             console.log(error);
 
-            alert(
+            showErrorAlert(
 
                 error.response?.data?.message ||
 
@@ -280,7 +288,6 @@ function Orders() {
     return (
 
         <div className="orders-page">
-
 
             {/* =====================================
                 PAGE HEADER

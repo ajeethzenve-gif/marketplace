@@ -899,3 +899,117 @@ body {
   }
 
 }
+
+/* =====================================================
+   INLINE MESSAGE (success / error)
+===================================================== */
+
+.inline-message {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: auto;
+  min-width: 460px;
+  max-width: 90%;
+
+  min-height: 60px;
+
+  padding: 18px 30px;
+
+  border-radius: 14px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  z-index: 9999;
+
+  box-shadow: 0 10px 30px rgba(9, 35, 76, 0.18);
+}
+
+.inline-message-text {
+  display: inline-block;
+}
+
+.inline-message-check {
+  width: 25px;
+  height: 30px;
+
+  flex-shrink: 0;
+
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25));
+}
+
+.inline-message-check-path {
+  stroke: currentColor;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+
+  animation: checkmark-draw 1.2s ease-in-out infinite;
+}
+
+.inline-message-cross-path {
+  stroke: currentColor;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+
+  animation: cross-draw 1.2s ease-in-out infinite;
+}
+
+@keyframes checkmark-draw {
+  0% {
+    stroke-dashoffset: 40;
+  }
+  50% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -40;
+  }
+}
+
+@keyframes cross-draw {
+  0% {
+    stroke-dashoffset: 60;
+  }
+  50% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -60;
+  }
+}
+
+.inline-message.success {
+  background: #e6f4ea;
+  color: #1e4620;
+  border: 1px solid #34a853;
+}
+
+.inline-message.success .inline-message-check {
+  color: #34a853;
+}
+
+.inline-message.error {
+  background: #fdecea;
+  color: #611a15;
+  border: 1px solid #e53935;
+}
+
+.inline-message.error .inline-message-check {
+  color: #e53935;
+}
