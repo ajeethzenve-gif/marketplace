@@ -1139,115 +1139,126 @@ function Home() {
 
                 </div>
 
-                <div className="category-grid">
+                <div className="category-slider">
+                    <div className="category-track">
 
-                    {/* MEDICINE */}
+                        {/* Your 7 category cards */}
 
-                    <Link
-                        to="/products?product_type=Medicine&product_type=Supplements"
-                        className="category-card"
-                    >
-                        <div className="category-image">
-                            💊
-                        </div>
+                        <Link
+                            to="/products?product_type=Medicine&product_type=Supplements"
+                            className="category-card category-medicine"
+                        >
+                            <div className="category-image">💊</div>
+                            <h3>Medicines &<br />Supplements</h3>
+                        </Link>
 
-                        <h3>
-                            Medicines &
-                            <br />
-                            Supplements
-                        </h3>
-                    </Link>
+                        <Link
+                            to="/products?product_type=food&product_type=Other"
+                            className="category-card category-food"
+                        >
+                            <div className="category-image">🥣</div>
+                            <h3>Pet Food &<br />Products</h3>
+                        </Link>
 
+                        <Link
+                            to="/products?product_type=FarmSupplies"
+                            className="category-card category-farm"
+                        >
+                            <div className="category-image">🐄</div>
+                            <h3>Farm<br />Supplies</h3>
+                        </Link>
 
-                    {/* FOOD */}
+                        <Link
+                            to="/products?product_type=VetEquipment"
+                            className="category-card category-vet"
+                        >
+                            <div className="category-image">🩺</div>
+                            <h3>Vet<br />Equipment</h3>
+                        </Link>
 
-                    <Link
-                        to="/products?product_type=food&product_type=Other"
-                        className="category-card"
-                    >
-                        <div className="category-image">
-                            🥣
-                        </div>
+                        <Link
+                            to="/services"
+                            className="category-card category-home"
+                        >
+                            <div className="category-image">🏠</div>
+                            <h3>Home Visit<br />Service</h3>
+                        </Link>
 
-                        <h3>
-                            Pet Food &
-                            <br />
-                            Products
-                        </h3>
-                    </Link>
+                        <Link
+                            to="/adoption"
+                            className="category-card category-adoption"
+                        >
+                            <div className="category-image">🐾</div>
+                            <h3>Adoption<br />Platform</h3>
+                        </Link>
 
+                        <Link
+                            to="/Fashion"
+                            className="category-card category-fashion"
+                        >
+                            <div className="category-image">👕</div>
+                            <h3>Zenve<br />Fashion</h3>
+                        </Link>
 
-                    {/* FARM */}
+                        {/* DUPLICATE FOR INFINITE LOOP */}
 
-                    <Link
-                        to="/products?product_type=FarmSupplies"
-                        className="category-card"
-                    >
-                        <div className="category-image">
-                            🐄
-                        </div>
+                        <Link
+                            to="/products?product_type=Medicine&product_type=Supplements"
+                            className="category-card category-medicine"
+                        >
+                            <div className="category-image">💊</div>
+                            <h3>Medicines &<br />Supplements</h3>
+                        </Link>
 
-                        <h3>
-                            Farm
-                            <br />
-                            Supplies
-                        </h3>
-                    </Link>
+                        <Link
+                            to="/products?product_type=food&product_type=Other"
+                            className="category-card category-food"
+                        >
+                            <div className="category-image">🥣</div>
+                            <h3>Pet Food &<br />Products</h3>
+                        </Link>
 
+                        <Link
+                            to="/products?product_type=FarmSupplies"
+                            className="category-card category-farm"
+                        >
+                            <div className="category-image">🐄</div>
+                            <h3>Farm<br />Supplies</h3>
+                        </Link>
 
-                    {/* VET */}
+                        <Link
+                            to="/products?product_type=VetEquipment"
+                            className="category-card category-vet"
+                        >
+                            <div className="category-image">🩺</div>
+                            <h3>Vet<br />Equipment</h3>
+                        </Link>
 
-                    <Link
-                        to="/products?product_type=VetEquipment"
-                        className="category-card"
-                    >
-                        <div className="category-image">
-                            🩺
-                        </div>
+                        <Link
+                            to="/services"
+                            className="category-card category-home"
+                        >
+                            <div className="category-image">🏠</div>
+                            <h3>Home Visit<br />Service</h3>
+                        </Link>
 
-                        <h3>
-                            Vet
-                            <br />
-                            Equipment
-                        </h3>
-                    </Link>
+                        <Link
+                            to="/adoption"
+                            className="category-card category-adoption"
+                        >
+                            <div className="category-image">🐾</div>
+                            <h3>Adoption<br />Platform</h3>
+                        </Link>
 
+                        <Link
+                            to="/Fashion"
+                            className="category-card category-fashion"
+                        >
+                            <div className="category-image">👕</div>
+                            <h3>Zenve<br />Fashion</h3>
+                        </Link>
 
-                    {/* HOME SERVICE */}
-
-                    <Link
-                        to="/services"
-                        className="category-card"
-                    >
-                        <div className="category-image">
-                            🏠
-                        </div>
-
-                        <h3>
-                            Home Visit
-                            <br />
-                            Service
-                        </h3>
-                    </Link>
-
-
-                    {/* ADOPTION */}
-
-                    <Link
-                        to="/adoption"
-                        className="category-card"
-                    >
-                        <div className="category-image">
-                            🐾
-                        </div>
-
-                        <h3>
-                            Adoption
-                            <br />
-                            Platform
-                        </h3>
-                    </Link>
-
+                    </div>
                 </div>
 
             </section>

@@ -2,38 +2,45 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import {
+    showSuccessAlert,
+    showErrorAlert,
+    showWarningAlert,
+    showConfirmAlert,
+} from "../utils/sweetAlert";
+
 import "../styles/Wishlist.css";
+
 
 function Wishlist() {
 
     const navigate = useNavigate();
 
     const [wishlist, setWishlist] = useState([]);
-
     const [loading, setLoading] = useState(true);
 
 
-    useEffect(() => {
-
-        loadWishlist();
-
-    }, []);
-
+    /* ==================================================
+       GET AUTHORIZATION HEADERS
+    ================================================== */
 
     const getHeaders = () => {
-
         return {
-
             headers: {
-
                 Authorization:
-                    `Bearer ${localStorage.getItem("access")}`
-
-            }
-
+                    `Bearer ${localStorage.getItem("access")}`,
+            },
         };
-
     };
+
+
+    /* ==================================================
+       LOAD WISHLIST
+    ================================================== */
+
+    useEffect(() => {
+        loadWishlist();
+    }, []);
 
 
     const loadWishlist = async () => {
@@ -41,136 +48,149 @@ function Wishlist() {
         const token = localStorage.getItem("access");
 
         if (!token) {
-
             navigate("/login");
-
             return;
-
         }
 
         try {
 
             const response = await axios.get(
-
                 "http://127.0.0.1:8000/api/wishlist/",
-
                 getHeaders()
-
             );
 
             setWishlist(response.data);
 
-        }
-
-        catch(error) {
+        } catch (error) {
 
             console.log(
                 "Wishlist Load Error:",
                 error.response?.data
             );
 
-        }
+            showErrorAlert(
+                error.response?.data?.detail ||
+                "Failed to load your wishlist."
+            );
 
-        finally {
+        } finally {
 
             setLoading(false);
 
         }
-
     };
 
 
-    const removeWishlist = async(productId) => {
+    /* ==================================================
+       REMOVE PRODUCT FROM WISHLIST
+    ================================================== */
+
+    const removeWishlist = async (productId) => {
+
+        // Custom SweetAlert confirmation
+        const confirmed = await showConfirmAlert({
+            title: "Remove from Wishlist?",
+            text: "Are you sure you want to remove this product from your wishlist?",
+            confirmButtonText: "Yes, Remove",
+            cancelButtonText: "Cancel",
+        });
+
+        if (!confirmed) {
+            return;
+        }
 
         try {
 
             await axios.delete(
-
                 `http://127.0.0.1:8000/api/wishlist/remove/${productId}/`,
-
                 getHeaders()
-
             );
 
-            setWishlist(
-
-                wishlist.filter(
-
-                    item =>
-                    item.product !== productId
-
+            setWishlist((previousWishlist) =>
+                previousWishlist.filter(
+                    (item) =>
+                        item.product !== productId
                 )
-
             );
 
-        }
+            showSuccessAlert(
+                "Product removed from wishlist!"
+            );
 
-        catch(error) {
+        } catch (error) {
 
             console.log(
                 "Remove Wishlist Error:",
                 error.response?.data
             );
 
+            showErrorAlert(
+                error.response?.data?.detail ||
+                "Failed to remove product from wishlist."
+            );
         }
-
     };
 
 
-    const addToCart = async(productId) => {
+    /* ==================================================
+       ADD PRODUCT TO CART
+    ================================================== */
+
+    const addToCart = async (productId) => {
 
         try {
 
             await axios.post(
-
                 "http://127.0.0.1:8000/api/cart/add/",
-
                 {
-
                     product_id: productId,
-
-                    quantity: 1
-
+                    quantity: 1,
                 },
-
                 getHeaders()
-
             );
 
-            alert(
-                "Product added to cart"
+            showSuccessAlert(
+                "Product added to cart!"
             );
 
-        }
-
-        catch(error) {
+        } catch (error) {
 
             console.log(
                 "Cart Error:",
                 error.response?.data
             );
 
+            showErrorAlert(
+                error.response?.data?.detail ||
+                "Failed to add product to cart."
+            );
         }
-
     };
 
 
-    if(loading) {
+    /* ==================================================
+       LOADING
+    ================================================== */
+
+    if (loading) {
 
         return (
-
             <div className="wishlist-loading">
 
                 <div className="wishlist-loader"></div>
 
-                <p>Loading your wishlist...</p>
+                <p>
+                    Loading your wishlist...
+                </p>
 
             </div>
-
         );
-
     }
 
+
+    /* ==================================================
+       PAGE
+    ================================================== */
 
     return (
 
@@ -183,9 +203,7 @@ function Wishlist() {
 
             <section className="wishlist-hero">
 
-
                 <div className="wishlist-hero-content">
-
 
                     <span className="wishlist-hero-label">
                         ♥ YOUR SAVED COLLECTION
@@ -250,10 +268,11 @@ function Wishlist() {
                 </div>
 
 
-                {/* HERO VISUAL */}
+                {/* ==================================================
+                    HERO VISUAL
+                ================================================== */}
 
                 <div className="wishlist-hero-visual">
-
 
                     <div className="wishlist-hero-circle"></div>
 
@@ -391,7 +410,9 @@ function Wishlist() {
                                 >
 
 
-                                    {/* IMAGE */}
+                                    {/* ==================================================
+                                        IMAGE
+                                    ================================================== */}
 
                                     <div className="wishlist-product-image">
 
@@ -400,10 +421,10 @@ function Wishlist() {
 
                                             src={
                                                 item.product_image
-                                                ?
-                                                item.product_image
-                                                :
-                                                "https://via.placeholder.com/300x220"
+                                                    ?
+                                                    item.product_image
+                                                    :
+                                                    "https://via.placeholder.com/300x220"
                                             }
 
                                             alt={item.product_name}
@@ -418,7 +439,9 @@ function Wishlist() {
                                             className="wishlist-remove-heart"
 
                                             onClick={() =>
-                                                removeWishlist(item.product)
+                                                removeWishlist(
+                                                    item.product
+                                                )
                                             }
 
                                         >
@@ -429,7 +452,9 @@ function Wishlist() {
                                     </div>
 
 
-                                    {/* CONTENT */}
+                                    {/* ==================================================
+                                        CONTENT
+                                    ================================================== */}
 
                                     <div className="wishlist-product-content">
 
@@ -496,7 +521,9 @@ function Wishlist() {
                                             className="wishlist-cart-btn"
 
                                             onClick={() =>
-                                                addToCart(item.product)
+                                                addToCart(
+                                                    item.product
+                                                )
                                             }
 
                                         >
@@ -511,7 +538,9 @@ function Wishlist() {
                                             className="wishlist-remove-text"
 
                                             onClick={() =>
-                                                removeWishlist(item.product)
+                                                removeWishlist(
+                                                    item.product
+                                                )
                                             }
 
                                         >
@@ -542,5 +571,6 @@ function Wishlist() {
     );
 
 }
+
 
 export default Wishlist;

@@ -15,6 +15,13 @@ import {
     FaStar,
 } from "react-icons/fa";
 
+import {
+    showSuccessAlert,
+    showErrorAlert,
+    showWarningAlert,
+    showConfirmAlert,
+} from "../utils/sweetAlert";
+
 import "../styles/Profile.css";
 
 
@@ -241,7 +248,7 @@ function Profile() {
 
         if (!file.type.startsWith("image/")) {
 
-            alert(
+            showWarningAlert(
                 "Please select a valid image."
             );
 
@@ -251,7 +258,7 @@ function Profile() {
 
         if (file.size > 5 * 1024 * 1024) {
 
-            alert(
+            showWarningAlert(
                 "Image size must be less than 5 MB."
             );
 
@@ -319,7 +326,7 @@ function Profile() {
             );
 
 
-            alert(
+            showSuccessAlert(
                 "Profile updated successfully!"
             );
 
@@ -338,7 +345,7 @@ function Profile() {
             );
 
 
-            alert(
+            showErrorAlert(
                 error.response?.data?.message ||
                 error.response?.data?.detail ||
                 "Failed to update profile."
@@ -558,7 +565,7 @@ function Profile() {
 
     const getCurrentLocation = () => {
         if (!navigator.geolocation) {
-            alert(
+            showWarningAlert(
                 "Geolocation is not supported by your browser."
             );
             return;
@@ -718,8 +725,8 @@ function Profile() {
                     );
 
 
-                    alert(
-                        `Current location detected successfully.\n\nAccuracy: approximately ${Math.round(
+                    showSuccessAlert(
+                        `Current location detected successfully. Accuracy: approximately ${Math.round(
                             accuracy
                         )} meters`
                     );
@@ -732,7 +739,7 @@ function Profile() {
                         error.message
                     );
 
-                    alert(
+                    showWarningAlert(
                         "Location detected, but the address could not be converted. Please enter the address manually."
                     );
 
@@ -755,7 +762,7 @@ function Profile() {
 
                     case error.PERMISSION_DENIED:
 
-                        alert(
+                        showWarningAlert(
                             "Location permission was denied. Please allow location access in your browser settings."
                         );
 
@@ -763,7 +770,7 @@ function Profile() {
 
                     case error.POSITION_UNAVAILABLE:
 
-                        alert(
+                        showWarningAlert(
                             "Your current location is unavailable. Please turn on GPS/location services and try again."
                         );
 
@@ -771,7 +778,7 @@ function Profile() {
 
                     case error.TIMEOUT:
 
-                        alert(
+                        showWarningAlert(
                             "Location detection timed out. Please try again."
                         );
 
@@ -779,7 +786,7 @@ function Profile() {
 
                     default:
 
-                        alert(
+                        showErrorAlert(
                             "Unable to detect your current location."
                         );
                 }
@@ -829,7 +836,7 @@ function Profile() {
             !addressForm.postal_code.trim()
         ) {
 
-            alert(
+            showWarningAlert(
                 "Please fill all required fields."
             );
 
@@ -900,7 +907,7 @@ function Profile() {
             );
 
 
-            alert(
+            showSuccessAlert(
                 "Address added successfully!"
             );
 
@@ -953,7 +960,7 @@ function Profile() {
                     firstError.length > 0
                 ) {
 
-                    alert(
+                    showErrorAlert(
                         firstError[0]
                     );
 
@@ -961,13 +968,13 @@ function Profile() {
                     typeof firstError === "string"
                 ) {
 
-                    alert(
+                    showErrorAlert(
                         firstError
                     );
 
                 } else {
 
-                    alert(
+                    showErrorAlert(
                         errorData.message ||
                         errorData.detail ||
                         "Unable to add address."
@@ -976,7 +983,7 @@ function Profile() {
 
             } else {
 
-                alert(
+                showErrorAlert(
                     "Unable to add address."
                 );
             }
@@ -994,10 +1001,12 @@ function Profile() {
 
     const deleteAddress = async (id) => {
 
-        const confirmed =
-            window.confirm(
-                "Are you sure you want to delete this address?"
-            );
+        const confirmed = await showConfirmAlert({
+            title: "Delete Address?",
+            text: "Are you sure you want to delete this address?",
+            confirmButtonText: "Yes, Delete",
+            cancelButtonText: "Cancel",
+        });
 
 
         if (!confirmed) {
@@ -1017,7 +1026,7 @@ function Profile() {
             );
 
 
-            alert(
+            showSuccessAlert(
                 "Address deleted successfully!"
             );
 
@@ -1043,7 +1052,7 @@ function Profile() {
             }
 
 
-            alert(
+            showErrorAlert(
                 error.response?.data?.message ||
                 error.response?.data?.detail ||
                 "Unable to delete address."
@@ -1082,7 +1091,7 @@ function Profile() {
             );
 
 
-            alert(
+            showSuccessAlert(
                 "Default address changed successfully!"
             );
 
@@ -1108,7 +1117,7 @@ function Profile() {
             }
 
 
-            alert(
+            showErrorAlert(
                 error.response?.data?.message ||
                 error.response?.data?.detail ||
                 "Unable to change default address."

@@ -9,6 +9,12 @@ import {
     FaShoppingCart
 } from "react-icons/fa";
 
+import {
+    showSuccessAlert,
+    showErrorAlert,
+    showWarningAlert,
+} from "../utils/sweetAlert";
+
 import "../styles/ProductCard.css";
 
 
@@ -126,12 +132,38 @@ function ProductCard({ product }) {
                 response.data.in_wishlist
             );
 
+
+            /* =================================================
+               WISHLIST SUCCESS MESSAGE
+            ================================================= */
+
+            if (response.data.in_wishlist) {
+
+                showSuccessAlert(
+                    "Product added to wishlist!"
+                );
+
+            }
+            else {
+
+                showSuccessAlert(
+                    "Product removed from wishlist!"
+                );
+
+            }
+
         }
         catch (error) {
 
             console.log(
                 "Toggle Wishlist Error:",
                 error.response?.data
+            );
+
+
+            showErrorAlert(
+                error.response?.data?.detail ||
+                "Failed to update wishlist."
             );
 
         }
@@ -147,6 +179,10 @@ function ProductCard({ product }) {
 
         e.stopPropagation();
 
+
+        /* =================================================
+           USER NOT LOGGED IN
+        ================================================= */
 
         if (!token) {
 
@@ -165,9 +201,15 @@ function ProductCard({ product }) {
         }
 
 
+        /* =================================================
+           OUT OF STOCK
+        ================================================= */
+
         if (product.stock <= 0) {
 
-            alert("Product is out of stock");
+            showWarningAlert(
+                "Product is out of stock!"
+            );
 
             return;
 
@@ -194,8 +236,13 @@ function ProductCard({ product }) {
             );
 
 
-            alert("Product added to cart");
+            /* =================================================
+               CART SUCCESS MESSAGE
+            ================================================= */
 
+            showSuccessAlert(
+                "Product added to cart!"
+            );
 
         }
         catch (error) {
@@ -203,6 +250,17 @@ function ProductCard({ product }) {
             console.log(
                 "Cart Error:",
                 error.response?.data
+            );
+
+
+            /* =================================================
+               CART ERROR MESSAGE
+            ================================================= */
+
+            showErrorAlert(
+                error.response?.data?.detail ||
+                error.response?.data?.message ||
+                "Failed to add product to cart."
             );
 
         }
@@ -253,6 +311,10 @@ function ProductCard({ product }) {
         product.average_rating || 0
     );
 
+
+    /* =====================================================
+       RETURN
+       ===================================================== */
 
     return (
 

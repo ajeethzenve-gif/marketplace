@@ -1948,21 +1948,8 @@ function Payment() {
 
                                                     </div>
 
-                                                    <button
-                                                        type="button"
-                                                        className="delete-address-btn"
-                                                        onClick={() =>
-                                                            deleteAddress(
-                                                                item.id
-                                                            )
-                                                        }
-                                                    >
 
-                                                        <FaTrash />
 
-                                                        Delete
-
-                                                    </button>
 
                                                 </div>
 

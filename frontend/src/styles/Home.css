@@ -247,6 +247,7 @@
 }
 
 
+
 /* =========================================================
    HERO VISUAL - RIGHT SIDE
    ========================================================= */
@@ -529,63 +530,122 @@
 /* =========================================================
    SHOP BY CATEGORIES
    ========================================================= */
-
 .category-grid {
     display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+}
+.category-slider {
+    width: 100%;
+    overflow: hidden;
+}
 
-    grid-template-columns: repeat(6, 1fr);
+.category-track {
+    display: flex;
+    gap: 12px;
+    width: max-content;
 
-    gap: 17px;
+    animation: categoryScroll 20s linear infinite;
+}
+
+.category-track:hover {
+    animation-play-state: paused;
 }
 
 .category-card {
+    width: 150px;
+    min-width: 150px;
     height: 112px;
 
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     justify-content: center;
 
-    text-align: center;
-
-    border: 1px solid #e5eaf2;
-
-    border-radius: 11px;
-
-    background: #ffffff;
-
+    border-radius: 14px;
     text-decoration: none;
-
-    transition: 0.25s ease;
+    box-sizing: border-box;
 }
 
 .category-card:hover {
     transform: translateY(-4px);
-
     border-color: #8bbaf0;
-
-    box-shadow:
-        0 8px 22px rgba(20, 85, 160, 0.10);
+    box-shadow: 0 8px 22px rgba(20, 85, 160, 0.10);
 }
+
+@keyframes categoryScroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(calc(-50% - 6px));
+    }
+}
+
+
+.category-grid:hover .category-card {
+    animation-play-state: paused;
+}
+
+/* =========================================================
+   INDIVIDUAL BACKGROUNDS
+========================================================= */
+
+/* Medicine */
+.category-medicine {
+    background: #eaf4ff;
+    border-color: #d5e9ff;
+}
+
+/* Food */
+.category-food {
+    background: #fff6df;
+    border-color: #f7e7b8;
+}
+
+/* Farm */
+.category-farm {
+    background: #edf8e8;
+    border-color: #d8edcf;
+}
+
+/* Vet */
+.category-vet {
+    background: #f0edff;
+    border-color: #ddd6ff;
+}
+
+/* Home Service */
+.category-home {
+    background: #e9f8f3;
+    border-color: #d0eee4;
+}
+
+/* Adoption */
+.category-adoption {
+    background: #fff0f0;
+    border-color: #f7d8d8;
+}
+
+/* Fashion */
+.category-fashion {
+    background: #f8edff;
+    border-color: #ead7f7;
+}
+
 
 .category-image {
     width: 51px;
     height: 51px;
-
     margin-bottom: 7px;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     border-radius: 50%;
-
     background: #eef6ff;
+    flex-shrink: 0;
 }
 
 .category-image img {
@@ -597,11 +657,8 @@
 
 .category-card h3 {
     margin: 0;
-
     color: #12235a;
-
     font-size: 10px;
-
     line-height: 1.4;
 }
 
@@ -1627,7 +1684,7 @@
     }
 
     .category-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
     .best-seller-grid {
@@ -1945,7 +2002,7 @@
        ===================================================== */
 
     .category-grid {
-        grid-template-columns: repeat(2, 1fr);
+          grid-template-columns: repeat(2, minmax(0, 1fr));
 
         gap: 9px;
     }
@@ -3052,3 +3109,4 @@
     }
 
 }
+

@@ -13,6 +13,16 @@ import api from "../api/api";
 
 import "../styles/Review.css";
 
+import {
+    showSuccessAlert,
+    showErrorAlert,
+    showWarningAlert,
+    showConfirmAlert,
+    showLoadingAlert,
+    closeAlert,
+} from "../utils/sweetAlert";
+
+
 function Review() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -116,7 +126,7 @@ function Review() {
         }
 
         if (!review.trim()) {
-            alert("Please write a review.");
+                showErrorAlert("Please write a review.");
             return;
         }
 
@@ -138,7 +148,7 @@ function Review() {
                 }
             );
 
-            alert(
+            showSuccessAlert(
                 "Thank you! Your review was added successfully."
             );
 
@@ -165,11 +175,16 @@ function Review() {
        DELETE REVIEW
     ===================================================== */
 
-    const deleteReview = async (reviewId) => {
-        const confirmed = window.confirm(
-            "Are you sure you want to delete this review?"
-        );
+   const deleteReview = async (reviewId) => {
+    // SweetAlert confirmation
+        const confirmed = await showConfirmAlert({
+            title: "Delete Review?",
+            text: "Are you sure you want to delete this review?",
+            confirmButtonText: "Yes, Delete",
+            cancelButtonText: "Cancel",
+        });
 
+        // User clicked Cancel
         if (!confirmed) {
             return;
         }
@@ -179,25 +194,29 @@ function Review() {
                 `reviews/delete/${reviewId}/`,
                 {
                     headers: {
-                        Authorization:
-                            `Bearer ${token}`,
+                        Authorization: `Bearer ${token}`,
                     },
                 }
             );
 
+            // Remove review from UI
             setReviews((previousReviews) =>
                 previousReviews.filter(
-                    (item) =>
-                        item.id !== reviewId
+                    (item) => item.id !== reviewId
                 )
             );
+
+            // Success SweetAlert
+            showSuccessAlert("Review deleted successfully!");
+
         } catch (error) {
             console.error(
                 "Delete review error:",
                 error.response?.data || error.message
             );
 
-            alert(
+            // Error SweetAlert
+            showErrorAlert(
                 error.response?.data?.detail ||
                 "Failed to delete review."
             );

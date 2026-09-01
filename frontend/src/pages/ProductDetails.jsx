@@ -19,6 +19,12 @@ import {
     FaPaw,
 } from "react-icons/fa";
 
+import {
+    showSuccessAlert,
+    showErrorAlert,
+    showWarningAlert,
+} from "../utils/sweetAlert";
+
 import "../styles/ProductDetails.css";
 
 
@@ -82,7 +88,16 @@ function ProductDetails() {
 
         catch (error) {
 
-            console.log(error);
+            console.log(
+                "Load Product Error:",
+                error.response?.data || error.message
+            );
+
+            showErrorAlert(
+                error.response?.data?.detail ||
+                error.response?.data?.message ||
+                "Failed to load product details."
+            );
 
         }
 
@@ -113,7 +128,10 @@ function ProductDetails() {
 
         catch (error) {
 
-            console.log(error);
+            console.log(
+                "Related Products Error:",
+                error.response?.data || error.message
+            );
 
         }
 
@@ -175,7 +193,10 @@ function ProductDetails() {
 
         catch (error) {
 
-            console.log(error);
+            console.log(
+                "Wishlist Check Error:",
+                error.response?.data || error.message
+            );
 
         }
 
@@ -220,11 +241,41 @@ function ProductDetails() {
                 response.data.in_wishlist
             );
 
+
+            // =============================
+            // WISHLIST SWEET ALERT
+            // =============================
+
+            if (response.data.in_wishlist) {
+
+                showSuccessAlert(
+                    "Product added to wishlist!"
+                );
+
+            }
+            else {
+
+                showSuccessAlert(
+                    "Product removed from wishlist!"
+                );
+
+            }
+
         }
 
         catch (error) {
 
-            console.log(error);
+            console.log(
+                "Toggle Wishlist Error:",
+                error.response?.data || error.message
+            );
+
+
+            showErrorAlert(
+                error.response?.data?.detail ||
+                error.response?.data?.message ||
+                "Failed to update wishlist."
+            );
 
         }
 
@@ -238,6 +289,30 @@ function ProductDetails() {
     const increaseQuantity = () => {
 
         if (!product) return;
+
+        if (product.stock <= 0) {
+
+            showWarningAlert(
+                "Product is out of stock!"
+            );
+
+            return;
+
+        }
+
+
+        if (quantity >= product.stock) {
+
+            showWarningAlert(
+                `Only ${product.stock} item${
+                    product.stock > 1 ? "s" : ""
+                } available.`
+            );
+
+            return;
+
+        }
+
 
         setQuantity((prev) =>
             prev < product.stock
@@ -283,6 +358,28 @@ function ProductDetails() {
         }
 
 
+        if (!product) {
+
+            showErrorAlert(
+                "Product information is not available."
+            );
+
+            return;
+
+        }
+
+
+        if (product.stock <= 0) {
+
+            showWarningAlert(
+                "Product is out of stock!"
+            );
+
+            return;
+
+        }
+
+
         try {
 
             await axios.post(
@@ -302,15 +399,34 @@ function ProductDetails() {
 
             );
 
-            alert("Product added to cart.");
+
+            // =============================
+            // SUCCESS SWEET ALERT
+            // =============================
+
+            showSuccessAlert(
+                "Product added to cart!"
+            );
 
         }
 
         catch (error) {
 
-            console.log(error);
+            console.log(
+                "Add To Cart Error:",
+                error.response?.data || error.message
+            );
 
-            alert("Failed to add product.");
+
+            // =============================
+            // ERROR SWEET ALERT
+            // =============================
+
+            showErrorAlert(
+                error.response?.data?.detail ||
+                error.response?.data?.message ||
+                "Failed to add product."
+            );
 
         }
 
@@ -326,6 +442,28 @@ function ProductDetails() {
         if (!token) {
 
             navigate("/login");
+
+            return;
+
+        }
+
+
+        if (!product) {
+
+            showErrorAlert(
+                "Product information is not available."
+            );
+
+            return;
+
+        }
+
+
+        if (product.stock <= 0) {
+
+            showWarningAlert(
+                "Product is out of stock!"
+            );
 
             return;
 
