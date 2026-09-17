@@ -1948,9 +1948,6 @@ function Payment() {
 
                                                     </div>
 
-
-
-
                                                 </div>
 
                                                 <div className="address-content">

@@ -412,7 +412,7 @@ function Home() {
                 "Upload your pet's prescription and quickly find the medicines recommended by your veterinarian.",
             primaryText: "Upload Prescription",
             primaryAction: () =>
-                navigate("/prescription-upload"),
+                navigate("/prescription/upload"),
             secondaryText: "View Medicines",
             secondaryAction: () =>
                 navigate(

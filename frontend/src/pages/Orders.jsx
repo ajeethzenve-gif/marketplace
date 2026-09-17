@@ -29,6 +29,10 @@ import {
 
 function Orders() {
 
+    // ===========================================
+    // STATE
+    // ===========================================
+
     const [orders, setOrders] = useState([]);
 
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -39,13 +43,11 @@ function Orders() {
 
 
     // ===========================================
-    // LOAD ORDERS
+    // LOAD CURRENT CUSTOMER ORDERS
     // ===========================================
 
     useEffect(() => {
-
         loadOrders();
-
     }, []);
 
 
@@ -55,30 +57,67 @@ function Orders() {
 
             setLoading(true);
 
+            const token = localStorage.getItem("access");
+
+            if (!token) {
+                console.log("No access token found.");
+                setOrders([]);
+                return;
+            }
+
             const response = await axios.get(
-
                 "http://127.0.0.1:8000/api/orders/",
-
                 {
                     headers: {
-                        Authorization:
-                            `Bearer ${localStorage.getItem("access")}`
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
-
             );
 
-            setOrders(response.data);
+            console.log("ORDERS API RESPONSE:", response.data);
 
-        }
+            /*
+             * Supports both:
+             *
+             * [
+             *    {...},
+             *    {...}
+             * ]
+             *
+             * and Django pagination:
+             *
+             * {
+             *    count: 2,
+             *    results: [...]
+             * }
+             */
 
-        catch (error) {
+            const data = response.data;
 
-            console.log(error);
+            if (Array.isArray(data)) {
 
-        }
+                setOrders(data);
 
-        finally {
+            } else if (Array.isArray(data.results)) {
+
+                setOrders(data.results);
+
+            } else {
+
+                setOrders([]);
+
+            }
+
+        } catch (error) {
+
+            console.log(
+                "LOAD ORDERS ERROR:",
+                error.response?.data || error
+            );
+
+            setOrders([]);
+
+        } finally {
 
             setLoading(false);
 
@@ -95,17 +134,27 @@ function Orders() {
 
         try {
 
+            const token = localStorage.getItem("access");
+
+            if (!token) {
+                console.log("No access token found.");
+                return;
+            }
+
+            console.log("Loading order:", id);
+
             const response = await axios.get(
-
                 `http://127.0.0.1:8000/api/orders/${id}/`,
-
                 {
                     headers: {
-                        Authorization:
-                            `Bearer ${localStorage.getItem("access")}`
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
+            );
 
+            console.log(
+                "ORDER DETAILS RESPONSE:",
+                response.data
             );
 
             setSelectedOrder(response.data);
@@ -114,14 +163,21 @@ function Orders() {
 
             window.scrollTo({
                 top: 0,
-                behavior: "smooth"
+                behavior: "smooth",
             });
 
-        }
+        } catch (error) {
 
-        catch (error) {
+            console.log(
+                "ORDER DETAILS ERROR:",
+                error.response?.data || error
+            );
 
-            console.log(error);
+            showErrorAlert(
+                error.response?.data?.detail ||
+                error.response?.data?.message ||
+                "Unable to load order details."
+            );
 
         }
 
@@ -143,49 +199,53 @@ function Orders() {
 
         if (!confirmed) return;
 
+
         try {
 
+            const token = localStorage.getItem("access");
+
             await axios.patch(
-
                 `http://127.0.0.1:8000/api/orders/${orderId}/cancel/`,
-
                 {},
-
                 {
                     headers: {
-                        Authorization:
-                            `Bearer ${localStorage.getItem("access")}`
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
-
             );
 
 
-            showSuccessAlert("Order cancelled successfully.");
+            showSuccessAlert(
+                "Order cancelled successfully."
+            );
+
 
             await loadOrders();
 
+
             if (
                 selectedOrder &&
-                selectedOrder.id === orderId
+                (
+                    selectedOrder.id === orderId ||
+                    selectedOrder.id === `ord-${orderId}`
+                )
             ) {
 
                 await loadOrderDetails(orderId);
 
             }
 
-        }
+        } catch (error) {
 
-        catch (error) {
-
-            console.log(error);
+            console.log(
+                "CANCEL ORDER ERROR:",
+                error.response?.data || error
+            );
 
             showErrorAlert(
-
                 error.response?.data?.message ||
-
+                error.response?.data?.detail ||
                 "Unable to cancel order."
-
             );
 
         }
@@ -194,66 +254,147 @@ function Orders() {
 
 
     // ===========================================
-    // ORDER TRACKING STEPS
+    // ORDER STATUS
     // ===========================================
 
     const normalSteps = [
-
         "Pending",
-
         "Packed",
-
         "Shipped",
-
         "Out for Delivery",
-
         "Delivered",
-
     ];
 
 
     const cancelledSteps = [
-
         "Pending",
-
         "Packed",
-
         "Shipped",
-
         "Out for Delivery",
-
         "Cancelled",
-
     ];
 
 
+    const selectedStatus =
+        selectedOrder?.orderStatus ||
+        selectedOrder?.status ||
+        "Pending";
+
+
+    const normalizedSelectedStatus =
+        selectedStatus.toLowerCase();
+
+
     const steps =
-
-        selectedOrder?.status === "Cancelled"
-
+        normalizedSelectedStatus === "cancelled"
             ? cancelledSteps
-
             : normalSteps;
 
 
-    const currentStep =
+    const currentStep = (() => {
 
-        selectedOrder?.status === "Cancelled"
+        const index = steps.findIndex(
+            (step) =>
+                step.toLowerCase() ===
+                normalizedSelectedStatus
+        );
 
-            ? steps.length - 1
+        return index >= 0 ? index : 0;
 
-            : steps.indexOf(selectedOrder?.status);
+    })();
 
 
     // ===========================================
-    // GET STATUS CLASS
+    // STATUS CLASS
     // ===========================================
 
     const getStatusClass = (status) => {
 
         return status
-            ?.toLowerCase()
+            ?.toString()
+            .toLowerCase()
             .replace(/\s+/g, "-");
+
+    };
+
+
+    // ===========================================
+    // FORMAT DATE
+    // ===========================================
+
+    const formatDate = (date) => {
+
+        if (!date) {
+            return "N/A";
+        }
+
+        const parsedDate = new Date(date);
+
+        if (isNaN(parsedDate.getTime())) {
+            return "N/A";
+        }
+
+        return parsedDate.toLocaleDateString(
+            "en-IN",
+            {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+            }
+        );
+
+    };
+
+
+    const formatDateTime = (date) => {
+
+        if (!date) {
+            return "N/A";
+        }
+
+        const parsedDate = new Date(date);
+
+        if (isNaN(parsedDate.getTime())) {
+            return "N/A";
+        }
+
+        return parsedDate.toLocaleString(
+            "en-IN"
+        );
+
+    };
+
+
+    // ===========================================
+    // GET ORDER ID
+    // ===========================================
+
+    const getOrderDatabaseId = (order) => {
+
+        /*
+         * Serializer:
+         *
+         * id = "ord-15"
+         *
+         * But detail API expects:
+         *
+         * /api/orders/15/
+         */
+
+        if (!order?.id) {
+            return null;
+        }
+
+        if (
+            typeof order.id === "string" &&
+            order.id.startsWith("ord-")
+        ) {
+
+            return order.id.replace("ord-", "");
+
+        }
+
+        return order.id;
 
     };
 
@@ -289,6 +430,7 @@ function Orders() {
 
         <div className="orders-page">
 
+
             {/* =====================================
                 PAGE HEADER
             ====================================== */}
@@ -317,7 +459,8 @@ function Orders() {
                             </h1>
 
                             <p>
-                                Track, manage and view all your pet care orders.
+                                Track, manage and view all your
+                                pet care orders.
                             </p>
 
                         </div>
@@ -338,6 +481,9 @@ function Orders() {
 
                 <div className="orders-summary">
 
+
+                    {/* TOTAL */}
+
                     <div className="summary-card">
 
                         <div className="summary-icon total">
@@ -345,6 +491,7 @@ function Orders() {
                             <FaShoppingBag />
 
                         </div>
+
 
                         <div>
 
@@ -361,6 +508,8 @@ function Orders() {
                     </div>
 
 
+                    {/* ACTIVE */}
+
                     <div className="summary-card">
 
                         <div className="summary-icon pending">
@@ -368,6 +517,7 @@ function Orders() {
                             <FaClock />
 
                         </div>
+
 
                         <div>
 
@@ -379,11 +529,21 @@ function Orders() {
 
                                 {
                                     orders.filter(
-                                        (order) =>
-                                            ![
-                                                "Delivered",
-                                                "Cancelled"
-                                            ].includes(order.status)
+                                        (order) => {
+
+                                            const status =
+                                                (
+                                                    order.orderStatus ||
+                                                    order.status ||
+                                                    ""
+                                                ).toLowerCase();
+
+                                            return (
+                                                status !== "delivered" &&
+                                                status !== "cancelled"
+                                            );
+
+                                        }
                                     ).length
                                 }
 
@@ -394,6 +554,8 @@ function Orders() {
                     </div>
 
 
+                    {/* DELIVERED */}
+
                     <div className="summary-card">
 
                         <div className="summary-icon delivered">
@@ -401,6 +563,7 @@ function Orders() {
                             <FaCheckCircle />
 
                         </div>
+
 
                         <div>
 
@@ -412,9 +575,20 @@ function Orders() {
 
                                 {
                                     orders.filter(
-                                        (order) =>
-                                            order.status ===
-                                            "Delivered"
+                                        (order) => {
+
+                                            const status =
+                                                (
+                                                    order.orderStatus ||
+                                                    order.status ||
+                                                    ""
+                                                ).toLowerCase();
+
+                                            return (
+                                                status === "delivered"
+                                            );
+
+                                        }
                                     ).length
                                 }
 
@@ -423,6 +597,7 @@ function Orders() {
                         </div>
 
                     </div>
+
 
                 </div>
 
@@ -433,18 +608,16 @@ function Orders() {
 
                 <div className="orders-tabs">
 
-                    <button
 
+                    <button
                         className={
                             activeTab === "history"
                                 ? "active-tab"
                                 : ""
                         }
-
                         onClick={() =>
                             setActiveTab("history")
                         }
-
                     >
 
                         <FaShoppingBag />
@@ -455,20 +628,16 @@ function Orders() {
 
 
                     <button
-
                         className={
                             activeTab === "details"
                                 ? "active-tab"
                                 : ""
                         }
-
                         disabled={!selectedOrder}
-
                         onClick={() =>
                             selectedOrder &&
                             setActiveTab("details")
                         }
-
                     >
 
                         <FaClipboardCheck />
@@ -476,6 +645,7 @@ function Orders() {
                         Order Details
 
                     </button>
+
 
                 </div>
 
@@ -485,197 +655,223 @@ function Orders() {
                 ====================================== */}
 
                 {
-
                     activeTab === "history" && (
 
                         <div className="orders-list">
 
 
                             {
-
                                 orders.length === 0
 
-                                    ?
+                                    ? (
 
-                                    <div className="empty-orders">
+                                        <div className="empty-orders">
 
-                                        <div className="empty-orders-icon">
+                                            <div className="empty-orders-icon">
 
-                                            <FaBox />
+                                                <FaBox />
+
+                                            </div>
+
+                                            <h3>
+                                                No Orders Yet
+                                            </h3>
+
+                                            <p>
+                                                You haven't placed any
+                                                orders yet.
+                                            </p>
 
                                         </div>
 
-                                        <h3>
-                                            No Orders Yet
-                                        </h3>
+                                    )
 
-                                        <p>
-                                            You haven't placed any orders yet.
-                                        </p>
+                                    : (
 
-                                    </div>
+                                        orders.map((order) => {
+
+                                            const orderStatus =
+                                                order.orderStatus ||
+                                                order.status ||
+                                                "Pending";
+
+                                            const orderId =
+                                                getOrderDatabaseId(
+                                                    order
+                                                );
+
+                                            return (
+
+                                                <div
+                                                    className="modern-order-card"
+                                                    key={order.id}
+                                                >
 
 
-                                    :
+                                                    {/* CARD TOP */}
 
-                                    orders.map((order) => (
+                                                    <div className="modern-order-header">
 
-                                        <div
-                                            className="modern-order-card"
-                                            key={order.id}
-                                        >
+                                                        <div>
 
+                                                            <span className="order-number">
 
-                                            {/* CARD TOP */}
-
-                                            <div className="modern-order-header">
-
-                                                <div>
-
-                                                    <span className="order-number">
-
-                                                        Order #{order.id}
-
-                                                    </span>
-
-                                                    <p>
-
-                                                        <FaCalendarAlt />
-
-                                                        {
-
-                                                            new Date(
-                                                                order.order_date
-                                                            ).toLocaleDateString(
-                                                                "en-IN",
-                                                                {
-                                                                    day: "numeric",
-                                                                    month: "short",
-                                                                    year: "numeric"
+                                                                Order #{
+                                                                    order.orderNumber ||
+                                                                    order.id
                                                                 }
-                                                            )
 
-                                                        }
+                                                            </span>
 
-                                                    </p>
+
+                                                            <p>
+
+                                                                <FaCalendarAlt />
+
+                                                                {
+                                                                    formatDate(
+                                                                        order.createdAt ||
+                                                                        order.order_date
+                                                                    )
+                                                                }
+
+                                                            </p>
+
+                                                        </div>
+
+
+                                                        <span
+                                                            className={
+                                                                `status-badge ${getStatusClass(
+                                                                    orderStatus
+                                                                )}`
+                                                            }
+                                                        >
+
+                                                            {orderStatus}
+
+                                                        </span>
+
+                                                    </div>
+
+
+                                                    {/* CARD BODY */}
+
+                                                    <div className="modern-order-body">
+
+
+                                                        {/* TOTAL */}
+
+                                                        <div className="order-info-item">
+
+                                                            <span>
+                                                                Total Amount
+                                                            </span>
+
+                                                            <strong className="order-price">
+
+                                                                ₹
+                                                                {
+                                                                    Number(
+                                                                        order.total ??
+                                                                        order.total_amount ??
+                                                                        0
+                                                                    ).toFixed(2)
+                                                                }
+
+                                                            </strong>
+
+                                                        </div>
+
+
+                                                        {/* ITEMS */}
+
+                                                        <div className="order-info-item">
+
+                                                            <span>
+                                                                Total Items
+                                                            </span>
+
+                                                            <strong>
+
+                                                                {
+                                                                    order.items?.length ??
+                                                                    order.total_items ??
+                                                                    0
+                                                                }
+
+                                                                {" "}Items
+
+                                                            </strong>
+
+                                                        </div>
+
+
+                                                        {/* PAYMENT */}
+
+                                                        <div className="order-info-item">
+
+                                                            <span>
+                                                                Payment
+                                                            </span>
+
+                                                            <strong>
+
+                                                                {
+                                                                    order.paymentStatus ||
+                                                                    order.payment_status ||
+                                                                    "Pending"
+                                                                }
+
+                                                            </strong>
+
+                                                        </div>
+
+
+                                                    </div>
+
+
+                                                    {/* CARD FOOTER */}
+
+                                                    <div className="modern-order-footer">
+
+                                                        <span>
+
+                                                            <FaBoxOpen />
+
+                                                            View complete order details
+
+                                                        </span>
+
+
+                                                        <button
+                                                            className="view-order-btn"
+                                                            onClick={() =>
+                                                                loadOrderDetails(
+                                                                    orderId
+                                                                )
+                                                            }
+                                                        >
+
+                                                            <FaEye />
+
+                                                            View Order
+
+                                                        </button>
+
+                                                    </div>
+
 
                                                 </div>
 
+                                            );
 
-                                                <span
+                                        })
 
-                                                    className={
-                                                        `status-badge ${getStatusClass(
-                                                            order.status
-                                                        )}`
-                                                    }
-
-                                                >
-
-                                                    {order.status}
-
-                                                </span>
-
-                                            </div>
-
-
-                                            {/* CARD BODY */}
-
-                                            <div className="modern-order-body">
-
-
-                                                <div className="order-info-item">
-
-                                                    <span>
-                                                        Total Amount
-                                                    </span>
-
-                                                    <strong className="order-price">
-
-                                                        ₹{
-                                                            Number(
-                                                                order.total_amount
-                                                            ).toFixed(2)
-                                                        }
-
-                                                    </strong>
-
-                                                </div>
-
-
-                                                <div className="order-info-item">
-
-                                                    <span>
-                                                        Total Items
-                                                    </span>
-
-                                                    <strong>
-
-                                                        {order.total_items}
-
-                                                        {" "}Items
-
-                                                    </strong>
-
-                                                </div>
-
-
-                                                <div className="order-info-item">
-
-                                                    <span>
-                                                        Payment
-                                                    </span>
-
-                                                    <strong>
-
-                                                        {order.payment_status ||
-                                                            "Pending"}
-
-                                                    </strong>
-
-                                                </div>
-
-                                            </div>
-
-
-                                            {/* CARD FOOTER */}
-
-                                            <div className="modern-order-footer">
-
-                                                <span>
-
-                                                    <FaBoxOpen />
-
-                                                    View complete order details
-
-                                                </span>
-
-
-                                                <button
-
-                                                    className="view-order-btn"
-
-                                                    onClick={() =>
-                                                        loadOrderDetails(
-                                                            order.id
-                                                        )
-                                                    }
-
-                                                >
-
-                                                    <FaEye />
-
-                                                    View Order
-
-                                                </button>
-
-                                            </div>
-
-                                        </div>
-
-                                    ))
+                                    )
 
                             }
+
 
                         </div>
 
@@ -689,27 +885,26 @@ function Orders() {
                 ====================================== */}
 
                 {
-
                     activeTab === "details" &&
                     selectedOrder && (
 
                         <div className="order-details-modern">
 
 
-                            {/* DETAILS HEADER */}
+                            {/* =================================
+                                DETAILS HEADER
+                            ================================== */}
 
                             <div className="details-top-header">
 
                                 <div>
 
+
                                     <button
-
                                         className="back-orders-link"
-
                                         onClick={() =>
                                             setActiveTab("history")
                                         }
-
                                     >
 
                                         <FaArrowLeft />
@@ -721,7 +916,10 @@ function Orders() {
 
                                     <h2>
 
-                                        Order #{selectedOrder.id}
+                                        Order #{
+                                            selectedOrder.orderNumber ||
+                                            selectedOrder.id
+                                        }
 
                                     </h2>
 
@@ -731,36 +929,42 @@ function Orders() {
                                         <FaCalendarAlt />
 
                                         {
-
-                                            new Date(
+                                            formatDateTime(
+                                                selectedOrder.createdAt ||
                                                 selectedOrder.order_date
-                                            ).toLocaleString()
-
+                                            )
                                         }
 
                                     </p>
+
 
                                 </div>
 
 
                                 <span
-
                                     className={
                                         `status-badge large ${getStatusClass(
+                                            selectedOrder.orderStatus ||
                                             selectedOrder.status
                                         )}`
                                     }
-
                                 >
 
-                                    {selectedOrder.status}
+                                    {
+                                        selectedOrder.orderStatus ||
+                                        selectedOrder.status ||
+                                        "Pending"
+                                    }
 
                                 </span>
+
 
                             </div>
 
 
-                            {/* ORDER INFO CARDS */}
+                            {/* =================================
+                                ORDER INFO CARDS
+                            ================================== */}
 
                             <div className="details-info-grid">
 
@@ -768,6 +972,7 @@ function Orders() {
                                 {/* SHIPPING */}
 
                                 <div className="details-info-card">
+
 
                                     <div className="details-card-title">
 
@@ -786,113 +991,140 @@ function Orders() {
 
                                     {
 
-                                        selectedOrder.shipping_address
+                                        selectedOrder.shippingAddress
 
-                                            ?
+                                            ? (
 
-                                            <div className="address-content">
+                                                <div className="address-content">
 
-                                                <strong>
+
+                                                    <strong>
+
+                                                        {
+                                                            selectedOrder
+                                                                .shippingAddress
+                                                                .fullName
+                                                        }
+
+                                                    </strong>
+
+
+                                                    <p>
+
+                                                        📞{" "}
+
+                                                        {
+                                                            selectedOrder
+                                                                .shippingAddress
+                                                                .mobile
+                                                        }
+
+                                                    </p>
+
 
                                                     {
                                                         selectedOrder
-                                                            .shipping_address
-                                                            .full_name
+                                                            .shippingAddress
+                                                            .email && (
+
+                                                            <p>
+
+                                                                {
+                                                                    selectedOrder
+                                                                        .shippingAddress
+                                                                        .email
+                                                                }
+
+                                                            </p>
+
+                                                        )
                                                     }
 
-                                                </strong>
 
-                                                <p>
+                                                    <p>
+
+                                                        {
+                                                            selectedOrder
+                                                                .shippingAddress
+                                                                .addressLine1
+                                                        }
+
+                                                    </p>
+
 
                                                     {
                                                         selectedOrder
-                                                            .shipping_address
-                                                            .phone_number
+                                                            .shippingAddress
+                                                            .addressLine2 && (
+
+                                                            <p>
+
+                                                                {
+                                                                    selectedOrder
+                                                                        .shippingAddress
+                                                                        .addressLine2
+                                                                }
+
+                                                            </p>
+
+                                                        )
                                                     }
+
+
+                                                    <p>
+
+                                                        {
+                                                            selectedOrder
+                                                                .shippingAddress
+                                                                .city
+                                                        }
+
+                                                        ,{" "}
+
+                                                        {
+                                                            selectedOrder
+                                                                .shippingAddress
+                                                                .state
+                                                        }
+
+                                                    </p>
+
+
+                                                    <p>
+
+                                                        {
+                                                            selectedOrder
+                                                                .shippingAddress
+                                                                .country
+                                                        }
+
+                                                        {" - "}
+
+                                                        {
+                                                            selectedOrder
+                                                                .shippingAddress
+                                                                .pincode
+                                                        }
+
+                                                    </p>
+
+
+                                                </div>
+
+                                            )
+
+                                            : (
+
+                                                <p className="no-data">
+
+                                                    No address available.
 
                                                 </p>
 
-                                                <p>
-
-                                                    {
-                                                        selectedOrder
-                                                            .shipping_address
-                                                            .address_line1
-                                                    }
-
-                                                </p>
-
-
-                                                {
-
-                                                    selectedOrder
-                                                        .shipping_address
-                                                        .address_line2 && (
-
-                                                        <p>
-
-                                                            {
-                                                                selectedOrder
-                                                                    .shipping_address
-                                                                    .address_line2
-                                                            }
-
-                                                        </p>
-
-                                                    )
-
-                                                }
-
-
-                                                <p>
-
-                                                    {
-                                                        selectedOrder
-                                                            .shipping_address
-                                                            .city
-                                                    },
-
-                                                    {" "}
-
-                                                    {
-                                                        selectedOrder
-                                                            .shipping_address
-                                                            .state
-                                                    }
-
-                                                </p>
-
-
-                                                <p>
-
-                                                    {
-                                                        selectedOrder
-                                                            .shipping_address
-                                                            .country
-                                                    }
-
-                                                    {" - "}
-
-                                                    {
-                                                        selectedOrder
-                                                            .shipping_address
-                                                            .postal_code
-                                                    }
-
-                                                </p>
-
-                                            </div>
-
-
-                                            :
-
-                                            <p className="no-data">
-
-                                                No address available.
-
-                                            </p>
+                                            )
 
                                     }
+
 
                                 </div>
 
@@ -900,6 +1132,7 @@ function Orders() {
                                 {/* PAYMENT */}
 
                                 <div className="details-info-card">
+
 
                                     <div className="details-card-title">
 
@@ -918,6 +1151,7 @@ function Orders() {
 
                                     <div className="payment-info">
 
+
                                         <div>
 
                                             <span>
@@ -927,7 +1161,9 @@ function Orders() {
                                             <strong>
 
                                                 {
-                                                    selectedOrder.customer_name
+                                                    selectedOrder.userId ||
+                                                    selectedOrder.customer_name ||
+                                                    "Current Customer"
                                                 }
 
                                             </strong>
@@ -944,7 +1180,9 @@ function Orders() {
                                             <strong>
 
                                                 {
-                                                    selectedOrder.payment_method
+                                                    selectedOrder.paymentMethod ||
+                                                    selectedOrder.payment_method ||
+                                                    "Cash on Delivery"
                                                 }
 
                                             </strong>
@@ -961,16 +1199,21 @@ function Orders() {
                                             <strong>
 
                                                 {
-                                                    selectedOrder.payment_status
+                                                    selectedOrder.paymentStatus ||
+                                                    selectedOrder.payment_status ||
+                                                    "Pending"
                                                 }
 
                                             </strong>
 
                                         </div>
 
+
                                     </div>
 
+
                                 </div>
+
 
                             </div>
 
@@ -980,6 +1223,7 @@ function Orders() {
                             ====================================== */}
 
                             <div className="order-products-section">
+
 
                                 <div className="section-heading">
 
@@ -1002,7 +1246,7 @@ function Orders() {
                                             selectedOrder.items?.length || 0
                                         }
 
-                                        {" "} Items
+                                        {" "}Items
 
                                     </strong>
 
@@ -1011,124 +1255,169 @@ function Orders() {
 
                                 <div className="order-products-list">
 
+
                                     {
 
-                                        selectedOrder.items?.map(
-                                            (item) => {
+                                        selectedOrder.items?.length > 0
 
-                                                const imageUrl =
+                                            ? (
 
-                                                    item.product_image
+                                                selectedOrder.items.map(
+                                                    (item) => {
 
-                                                        ?
-
-                                                        item.product_image.startsWith(
-                                                            "http"
-                                                        )
-
-                                                            ?
-
+                                                        const imageUrl =
                                                             item.product_image
 
-                                                            :
+                                                                ? (
+                                                                    item.product_image.startsWith(
+                                                                        "http"
+                                                                    )
+                                                                        ? item.product_image
+                                                                        : `http://127.0.0.1:8000${item.product_image}`
+                                                                )
 
-                                                            `http://127.0.0.1:8000${item.product_image}`
-
-                                                        :
-
-                                                        "https://via.placeholder.com/120";
-
-
-                                                return (
-
-                                                    <div
-                                                        className="order-product-item"
-                                                        key={item.id}
-                                                    >
-
-                                                        <div className="order-product-image">
-
-                                                            <img
-                                                                src={imageUrl}
-                                                                alt={
-                                                                    item.product_name
-                                                                }
-                                                            />
-
-                                                        </div>
+                                                                : null;
 
 
-                                                        <div className="order-product-main">
+                                                        return (
 
-                                                            <h4>
-
-                                                                {
-                                                                    item.product_name
-                                                                }
-
-                                                            </h4>
-
-                                                            <span>
-
-                                                                Quantity:
-                                                                {" "}
-                                                                {
-                                                                    item.quantity
-                                                                }
-
-                                                            </span>
-
-                                                        </div>
+                                                            <div
+                                                                className="order-product-item"
+                                                                key={item.id}
+                                                            >
 
 
-                                                        <div className="order-product-price">
+                                                                {/* IMAGE */}
 
-                                                            <span>
-                                                                Price
-                                                            </span>
+                                                                <div className="order-product-image">
 
-                                                            <strong>
+                                                                    {
 
-                                                                ₹{
-                                                                    Number(
-                                                                        item.price
-                                                                    ).toFixed(2)
-                                                                }
+                                                                        imageUrl
 
-                                                            </strong>
+                                                                            ? (
 
-                                                        </div>
+                                                                                <img
+                                                                                    src={imageUrl}
+                                                                                    alt={
+                                                                                        item.product_name ||
+                                                                                        "Product"
+                                                                                    }
+                                                                                    onError={(event) => {
+                                                                                        event.currentTarget.style.display = "none";
+                                                                                    }}
+                                                                                />
+
+                                                                            )
+
+                                                                            : (
+
+                                                                                <FaBox />
+
+                                                                            )
+
+                                                                    }
+
+                                                                </div>
 
 
-                                                        <div className="order-product-subtotal">
+                                                                {/* PRODUCT */}
 
-                                                            <span>
-                                                                Subtotal
-                                                            </span>
+                                                                <div className="order-product-main">
 
-                                                            <strong>
+                                                                    <h4>
 
-                                                                ₹{
-                                                                    Number(
-                                                                        item.subtotal
-                                                                    ).toFixed(2)
-                                                                }
+                                                                        {
+                                                                            item.product_name ||
+                                                                            `Product #${item.product}`
+                                                                        }
 
-                                                            </strong>
+                                                                    </h4>
 
-                                                        </div>
 
-                                                    </div>
+                                                                    <span>
 
-                                                );
+                                                                        Quantity:
+                                                                        {" "}
 
-                                            }
+                                                                        {
+                                                                            item.quantity
+                                                                        }
 
-                                        )
+                                                                    </span>
+
+                                                                </div>
+
+
+                                                                {/* PRICE */}
+
+                                                                <div className="order-product-price">
+
+                                                                    <span>
+                                                                        Price
+                                                                    </span>
+
+                                                                    <strong>
+
+                                                                        ₹
+                                                                        {
+                                                                            Number(
+                                                                                item.price || 0
+                                                                            ).toFixed(2)
+                                                                        }
+
+                                                                    </strong>
+
+                                                                </div>
+
+
+                                                                {/* SUBTOTAL */}
+
+                                                                <div className="order-product-subtotal">
+
+                                                                    <span>
+                                                                        Subtotal
+                                                                    </span>
+
+                                                                    <strong>
+
+                                                                        ₹
+                                                                        {
+                                                                            Number(
+                                                                                item.subtotal || 0
+                                                                            ).toFixed(2)
+                                                                        }
+
+                                                                    </strong>
+
+                                                                    </div>
+
+
+                                                            </div>
+
+                                                        );
+
+                                                    }
+                                                )
+
+                                            )
+
+                                            : (
+
+                                                <div className="no-data">
+
+                                                    No products found
+                                                    for this order.
+
+                                                </div>
+
+                                            )
 
                                     }
 
+
                                 </div>
+
 
                             </div>
 
@@ -1139,17 +1428,22 @@ function Orders() {
 
                             <div className="order-summary-bottom">
 
+
                                 <div>
 
                                     <span>
                                         Order Total
                                     </span>
 
+
                                     <h2>
 
-                                        ₹{
+                                        ₹
+                                        {
                                             Number(
-                                                selectedOrder.total_amount
+                                                selectedOrder.total ??
+                                                selectedOrder.total_amount ??
+                                                0
                                             ).toFixed(2)
                                         }
 
@@ -1161,23 +1455,26 @@ function Orders() {
                                 {
 
                                     [
-                                        "Pending",
-                                        "Placed",
-                                        "Confirmed"
+                                        "pending",
+                                        "placed",
+                                        "confirmed",
                                     ].includes(
-                                        selectedOrder.status
+                                        (
+                                            selectedOrder.orderStatus ||
+                                            selectedOrder.status ||
+                                            ""
+                                        ).toLowerCase()
                                     ) && (
 
                                         <button
-
                                             className="cancel-order-btn"
-
                                             onClick={() =>
                                                 cancelOrder(
-                                                    selectedOrder.id
+                                                    getOrderDatabaseId(
+                                                        selectedOrder
+                                                    )
                                                 )
                                             }
-
                                         >
 
                                             <FaTimesCircle />
@@ -1190,6 +1487,7 @@ function Orders() {
 
                                 }
 
+
                             </div>
 
 
@@ -1198,6 +1496,7 @@ function Orders() {
                             ====================================== */}
 
                             <div className="tracking-section">
+
 
                                 <div className="section-heading">
 
@@ -1218,6 +1517,7 @@ function Orders() {
 
                                 <div className="modern-order-tracker">
 
+
                                     {
 
                                         steps.map(
@@ -1226,8 +1526,10 @@ function Orders() {
                                                 const isCancelled =
                                                     step === "Cancelled";
 
+
                                                 const isActive =
                                                     index <= currentStep;
+
 
                                                 return (
 
@@ -1239,63 +1541,55 @@ function Orders() {
 
                                                         <div className="tracker-step-content">
 
-                                                            <div
 
+                                                            <div
                                                                 className={
                                                                     `tracker-icon-modern ${
                                                                         isCancelled
                                                                             ? "cancelled"
                                                                             : isActive
-                                                                            ? "active"
-                                                                            : ""
+                                                                                ? "active"
+                                                                                : ""
                                                                     }`
                                                                 }
-
                                                             >
 
-                                                                {
 
+                                                                {
                                                                     index === 0 &&
                                                                     <FaClipboardCheck />
-
                                                                 }
 
-                                                                {
 
+                                                                {
                                                                     index === 1 &&
                                                                     <FaBoxOpen />
-
                                                                 }
 
-                                                                {
 
+                                                                {
                                                                     index === 2 &&
                                                                     <FaTruck />
-
                                                                 }
 
-                                                                {
 
+                                                                {
                                                                     index === 3 &&
                                                                     <FaHome />
-
                                                                 }
 
-                                                                {
 
-                                                                    step ===
-                                                                        "Delivered" &&
+                                                                {
+                                                                    step === "Delivered" &&
                                                                     <FaCheckCircle />
-
                                                                 }
+
 
                                                                 {
-
-                                                                    step ===
-                                                                        "Cancelled" &&
+                                                                    step === "Cancelled" &&
                                                                     <FaTimesCircle />
-
                                                                 }
+
 
                                                             </div>
 
@@ -1306,30 +1600,29 @@ function Orders() {
 
                                                             </p>
 
+
                                                         </div>
 
 
                                                         {
 
                                                             index !==
-                                                                steps.length - 1 && (
+                                                            steps.length - 1 && (
 
                                                                 <div
-
                                                                     className={
                                                                         `tracker-line-modern ${
-                                                                            index <
-                                                                            currentStep
+                                                                            index < currentStep
                                                                                 ? "active"
                                                                                 : ""
                                                                         }`
                                                                     }
-
                                                                 />
 
                                                             )
 
                                                         }
+
 
                                                     </div>
 
@@ -1341,9 +1634,12 @@ function Orders() {
 
                                     }
 
+
                                 </div>
 
+
                             </div>
+
 
                         </div>
 
@@ -1351,7 +1647,9 @@ function Orders() {
 
                 }
 
+
             </main>
+
 
         </div>
 

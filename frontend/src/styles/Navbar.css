@@ -1,4 +1,10 @@
 /* =====================================================
+   ZENVE NAVBAR
+   PREMIUM BLUE E-COMMERCE DESIGN
+===================================================== */
+
+
+/* =====================================================
    GLOBAL
 ===================================================== */
 
@@ -6,24 +12,34 @@
     box-sizing: border-box;
 }
 
+html,
+body {
+    font-family: "Poppins", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
 
 .navbar,
 .top-bar,
 .mobile-drawer,
 .mobile-drawer button,
 .search-container,
-.search-container input {
+.search-container input,
+.category-nav,
+.category-nav a,
+.fashion-navbar,
+.fashion-top-bar,
+.fashion-mobile-drawer {
     font-family: "Poppins", sans-serif;
 }
 
 
 /* =====================================================
-   TOP BAR
+   NORMAL TOP BAR
 ===================================================== */
 
 .top-bar {
     position: fixed;
-
     top: 0;
     left: 0;
 
@@ -36,48 +52,59 @@
 
     padding: 0 25px;
 
-    background: #1b1bc5;
+    background:
+        linear-gradient(
+            90deg,
+            #1515a8,
+            #1b1bc5,
+            #2424d8
+        );
+
     color: #ffffff;
 
     z-index: 10000;
-}
 
+    box-shadow:
+        0 2px 8px rgba(27, 27, 197, 0.15);
+}
 
 .top-left {
     display: flex;
     align-items: center;
 }
 
-
 .top-left span {
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
 }
-
 
 .top-right {
     display: flex;
     align-items: center;
-
     gap: 20px;
 }
 
-
 .top-right a {
     color: #ffffff;
-
     text-decoration: none;
 
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 500;
+
+    transition:
+        color 0.2s ease,
+        opacity 0.2s ease;
 }
 
-
 .top-right a:hover {
-    color: #ffd54f;
+    color: #dbe5ff;
+    opacity: 0.9;
 }
 
 
 /* =====================================================
-   MAIN NAVBAR
+   NORMAL MAIN NAVBAR
 ===================================================== */
 
 .navbar {
@@ -96,15 +123,17 @@
 
     background: #ffffff;
 
+    border-bottom: 1px solid #edf0ff;
+
     box-shadow:
-        0 2px 10px rgba(0, 0, 0, 0.08);
+        0 4px 18px rgba(27, 27, 197, 0.08);
 
     z-index: 9999;
 }
 
 
 /* =====================================================
-   LOGO
+   NORMAL LOGO
 ===================================================== */
 
 .logo {
@@ -114,14 +143,12 @@
     flex: 0 0 auto;
 }
 
-
 .logo-link {
     display: flex;
     align-items: center;
 
     text-decoration: none;
 }
-
 
 .navbar-logo {
     width: 175px;
@@ -134,7 +161,7 @@
 
 
 /* =====================================================
-   SEARCH
+   NORMAL SEARCH
 ===================================================== */
 
 .search-container {
@@ -144,21 +171,33 @@
     align-items: center;
 
     max-width: 650px;
-
     height: 48px;
 
     margin-left: 30px;
     margin-right: 25px;
 
-    border: 2px solid #0d6efd;
+    border: 1.5px solid #0d6efd;
 
     border-radius: 10px;
 
     overflow: hidden;
 
     background: #ffffff;
+
+    box-shadow:
+        0 3px 12px rgba(13, 110, 253, 0.08);
+
+    transition:
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
 }
 
+.search-container:focus-within {
+    border-color: #1b1bc5;
+
+    box-shadow:
+        0 4px 16px rgba(27, 27, 197, 0.14);
+}
 
 .search-container input {
     flex: 1;
@@ -173,16 +212,16 @@
 
     padding: 0 16px;
 
+    background: #ffffff;
+
     font-size: 14px;
 
     color: #333333;
 }
 
-
 .search-container input::placeholder {
     color: #999999;
 }
-
 
 .search-btn {
     width: 58px;
@@ -196,35 +235,52 @@
 
     border: none;
 
-    background: #0d6efd;
+    background:
+        linear-gradient(
+            135deg,
+            #0d6efd,
+            #1b1bc5
+        );
+
     color: #ffffff;
 
     font-size: 18px;
 
     cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
-
 .search-btn:hover {
-    background: #0056d2;
+    background:
+        linear-gradient(
+            135deg,
+            #0056d2,
+            #1515a8
+        );
+}
+
+.search-btn:active {
+    transform: scale(0.97);
 }
 
 
 /* =====================================================
-   DESKTOP NAV ICONS
+   NORMAL DESKTOP NAV ICONS
 ===================================================== */
 
 .nav-icons {
     display: flex;
     align-items: center;
 
-    gap: 25px;
+    gap: 14px;
 
     margin-left: auto;
 
     flex: 0 0 auto;
 }
-
 
 .nav-icons > a {
     position: relative;
@@ -234,39 +290,58 @@
 
     align-items: center;
     justify-content: center;
+    letter-spacing: 1px;
+    min-width: 52px;
+    min-height: 58px;
 
-    min-width: 50px;
+    padding: 6px 7px;
+
+    border-radius: 10px;
 
     text-decoration: none;
 
     color: #1b1bc5;
+
+    transition:
+        background 0.25s ease,
+        transform 0.25s ease;
 }
 
+.nav-icons > a:hover {
+    background: #f1f4ff;
+
+    transform: translateY(-1px);
+}
 
 .nav-icons > a svg {
-    font-size: 24px;
+    font-size: 23px;
 
     margin-bottom: 4px;
 
     color: #1b1bc5;
+
+    transition:
+        transform 0.25s ease;
 }
 
+.nav-icons > a:hover svg {
+    transform: scale(1.08);
+}
 
 .nav-icons > a p {
     margin: 0;
 
-    color: #1b1bc5;
+    color: #070755;
 
-    font-size: 11px;
-
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 500;
 
     white-space: nowrap;
 }
 
 
 /* =====================================================
-   ICON WRAPPER
+   NORMAL ICON WRAPPER
 ===================================================== */
 
 .icon-wrapper {
@@ -279,7 +354,7 @@
 
 
 /* =====================================================
-   CART / WISHLIST BADGES
+   NORMAL BADGES
 ===================================================== */
 
 .cart-count,
@@ -299,16 +374,17 @@
     border-radius: 50%;
 
     background: #ff3b30;
-
     color: #ffffff;
 
     font-size: 9px;
     font-weight: 700;
+
+    border: 2px solid #ffffff;
 }
 
 
 /* =====================================================
-   PROFILE
+   NORMAL PROFILE
 ===================================================== */
 
 .profile-menu {
@@ -316,12 +392,12 @@
 
     flex: 0 0 auto;
 
-    margin-left: 20px;
+    margin-left: 15px;
 }
 
-
 .profile-link {
-    margin-right: 20px;
+    margin-right: 15px;
+
     display: flex;
     flex-direction: column;
 
@@ -330,13 +406,23 @@
 
     gap: 3px;
 
+    padding: 5px 8px;
+
+    border-radius: 10px;
+
     text-decoration: none;
 
     color: #333333;
 
     cursor: pointer;
+
+    transition:
+        background 0.25s ease;
 }
 
+.profile-link:hover {
+    background: #f1f4ff;
+}
 
 .profile-link svg {
     color: #0d6efd;
@@ -344,17 +430,14 @@
     font-size: 34px;
 }
 
-
 .profile-link p {
     margin: 0;
 
     color: #333333;
 
-    font-size: 11px;
-
+    font-size: 10px;
     font-weight: 600;
 }
-
 
 .avatar-img {
     width: 38px;
@@ -384,40 +467,41 @@
 
     background: #ffffff;
 
-    border-radius: 10px;
+    border: 1px solid #e8ecff;
+
+    border-radius: 12px;
 
     box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.15);
+        0 12px 35px rgba(0, 0, 0, 0.14);
 
     opacity: 0;
-
     visibility: hidden;
 
     transform: translateY(8px);
 
-    transition: all 0.2s ease;
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease,
+        transform 0.2s ease;
 
     z-index: 15000;
 }
 
-
 .profile-menu:hover .profile-popup {
     opacity: 1;
-
     visibility: visible;
 
     transform: translateY(0);
 }
 
-
 .profile-popup h4 {
     margin: 0 0 12px;
 
     font-size: 15px;
+    font-weight: 600;
 
     color: #333333;
 }
-
 
 .profile-popup p {
     margin: 0 0 12px;
@@ -438,36 +522,52 @@
     display: block;
 
     padding: 9px;
-
     margin-bottom: 8px;
 
     border: none;
-
     border-radius: 7px;
 
-    background: #0d6efd;
+    background:
+        linear-gradient(
+            135deg,
+            #0d6efd,
+            #1b1bc5
+        );
 
     color: #ffffff;
 
     text-align: center;
-
     text-decoration: none;
 
     font-size: 13px;
+    font-weight: 500;
 
     cursor: pointer;
-}
 
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
 
 .popup-btn:hover {
-    background: #0056d2;
-}
+    background:
+        linear-gradient(
+            135deg,
+            #0056d2,
+            #1515a8
+        );
 
+    color: #ffffff;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 4px 10px rgba(27, 27, 197, 0.18);
+}
 
 .logout-popup-btn {
     background: #dc3545;
 }
-
 
 .logout-popup-btn:hover {
     background: #bb2d3b;
@@ -490,8 +590,7 @@
     justify-content: center;
 
     border: none;
-
-    border-radius: 7px;
+    border-radius: 8px;
 
     background: transparent;
 
@@ -500,11 +599,282 @@
     font-size: 22px;
 
     cursor: pointer;
-}
 
+    transition:
+        background 0.2s ease;
+}
 
 .mobile-menu-btn:hover {
     background: #f1f4ff;
+}
+
+
+/* =====================================================
+   PREMIUM BLUE CATEGORY NAVIGATION
+===================================================== */
+
+.category-nav {
+    position: fixed;
+
+    top: 130px;
+    left: 0;
+
+    width: 100%;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #f8faff 100%
+        );
+
+    border-top: 1px solid #edf2ff;
+
+    border-bottom: 1px solid #dfe7ff;
+
+    box-shadow:
+        0 4px 14px rgba(27, 27, 197, 0.08);
+
+    z-index: 9998;
+}
+
+
+/* =====================================================
+   CATEGORY INNER CONTAINER
+===================================================== */
+
+.category-nav-scroll {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+
+    justify-content: flex-start;
+
+    gap: 8px;
+
+    padding: 0 28px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scrollbar-width: none;
+
+    -ms-overflow-style: none;
+
+    scroll-behavior: smooth;
+}
+
+.category-nav-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* =====================================================
+   CATEGORY LINKS
+===================================================== */
+
+.category-nav-scroll a {
+    position: relative;
+
+    flex: 0 0 auto;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    height: 36px;
+
+    padding: 0 14px;
+
+    border-radius: 8px;
+
+    color: #070755;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    letter-spacing: 1px;
+
+    white-space: nowrap;
+
+    transition:
+        color 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+/* =====================================================
+   CATEGORY HOVER
+===================================================== */
+
+.category-nav-scroll a:hover {
+    color: #1b1bc5;
+
+    background: #eef2ff;
+
+    box-shadow:
+        0 3px 10px rgba(27, 27, 197, 0.08);
+
+    transform: translateY(-1px);
+}
+
+
+/* =====================================================
+   CATEGORY BLUE UNDERLINE
+===================================================== */
+
+.category-nav-scroll a::after {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    bottom: 3px;
+
+    width: 0;
+    height: 2px;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #1b1bc5,
+            #0d6efd
+        );
+
+    transform: translateX(-50%);
+
+    transition:
+        width 0.25s ease;
+}
+
+.category-nav-scroll a:hover::after {
+    width: 55%;
+}
+
+
+/* =====================================================
+   ACTIVE CATEGORY
+===================================================== */
+
+.category-nav-scroll a.active {
+    color: #1b1bc5;
+
+    background: #eef2ff;
+
+    font-weight: 600;
+
+    box-shadow:
+        inset 0 0 0 1px #dbe3ff;
+}
+
+.category-nav-scroll a.active::after {
+    width: 55%;
+}
+
+
+/* =====================================================
+   PAGE CONTENT OFFSET
+===================================================== */
+
+.main-content {
+    padding-top: 178px;
+}
+
+
+/* =====================================================
+   NORMAL MOBILE / TABLET ACTIONS
+===================================================== */
+
+.normal-mobile-actions {
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+
+    flex: 0 0 auto;
+}
+
+.normal-mobile-action {
+    position: relative;
+
+    width: 38px;
+    height: 40px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none;
+
+    color: #1b1bc5;
+
+    border-radius: 7px;
+
+    transition:
+        background 0.2s ease;
+}
+
+.normal-mobile-action:hover {
+    background: #f1f4ff;
+}
+
+.normal-mobile-action-icon {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.normal-mobile-action-icon svg {
+    font-size: 22px;
+
+    color: #1b1bc5;
+}
+
+.normal-mobile-badge {
+    position: absolute;
+
+    top: -9px;
+    right: -10px;
+
+    width: 17px;
+    height: 17px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #ff3b30;
+
+    color: #ffffff;
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+    border: 1px solid #ffffff;
 }
 
 
@@ -523,6 +893,8 @@
 
     background: rgba(0, 0, 0, 0.45);
 
+    backdrop-filter: blur(2px);
+
     z-index: 20000;
 }
 
@@ -538,6 +910,7 @@
     right: 0;
 
     width: 320px;
+
     max-width: 88vw;
 
     height: 100vh;
@@ -554,7 +927,6 @@
     animation: drawerOpen 0.25s ease;
 }
 
-
 @keyframes drawerOpen {
 
     from {
@@ -564,38 +936,43 @@
     to {
         transform: translateX(0);
     }
-
 }
 
 
 /* =====================================================
-   DRAWER HEADER
+   NORMAL DRAWER HEADER
 ===================================================== */
 
 .mobile-drawer-header {
     min-height: 70px;
 
     display: flex;
+
     align-items: center;
     justify-content: space-between;
 
     padding: 12px 15px;
 
-    background: #1b1bc5;
+    background:
+        linear-gradient(
+            135deg,
+            #1515a8,
+            #1b1bc5,
+            #2424d8
+        );
 
     color: #ffffff;
 }
 
-
 .mobile-drawer-title {
     display: flex;
+
     align-items: center;
 
     gap: 10px;
 
     min-width: 0;
 }
-
 
 .mobile-drawer-title > svg {
     width: 40px;
@@ -605,7 +982,6 @@
 
     flex-shrink: 0;
 }
-
 
 .mobile-drawer-avatar {
     width: 40px;
@@ -620,7 +996,6 @@
     flex-shrink: 0;
 }
 
-
 .mobile-drawer-title strong {
     display: block;
 
@@ -634,7 +1009,6 @@
 
     font-size: 14px;
 }
-
 
 .mobile-drawer-title small {
     display: block;
@@ -656,6 +1030,7 @@
     height: 38px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -670,8 +1045,10 @@
     font-size: 19px;
 
     cursor: pointer;
-}
 
+    transition:
+        background 0.2s ease;
+}
 
 .drawer-close-btn:hover {
     background: rgba(255, 255, 255, 0.25);
@@ -679,13 +1056,12 @@
 
 
 /* =====================================================
-   DRAWER BODY
+   NORMAL DRAWER BODY
 ===================================================== */
 
 .mobile-drawer-body {
     padding: 10px;
 }
-
 
 .mobile-drawer-body button {
     width: 100%;
@@ -693,6 +1069,7 @@
     min-height: 48px;
 
     display: flex;
+
     align-items: center;
 
     gap: 13px;
@@ -714,11 +1091,15 @@
     font-size: 13px;
 
     cursor: pointer;
-}
 
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
 
 .mobile-drawer-body button svg {
     width: 19px;
+
     min-width: 19px;
 
     color: #1b1bc5;
@@ -726,11 +1107,9 @@
     font-size: 18px;
 }
 
-
 .mobile-drawer-body button span {
     flex: 1;
 }
-
 
 .mobile-drawer-body button:hover {
     background: #f1f4ff;
@@ -738,16 +1117,12 @@
     color: #1b1bc5;
 }
 
-
-/* =====================================================
-   DRAWER BADGE
-===================================================== */
-
 .mobile-drawer-body button b {
     width: 21px;
     height: 21px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -762,7 +1137,7 @@
 
 
 /* =====================================================
-   LOGOUT
+   NORMAL LOGOUT
 ===================================================== */
 
 .mobile-drawer-body .mobile-logout {
@@ -773,11 +1148,9 @@
     color: #dc3545;
 }
 
-
 .mobile-drawer-body .mobile-logout svg {
     color: #dc3545;
 }
-
 
 .mobile-drawer-body .mobile-logout:hover {
     background: #ffe0e0;
@@ -796,13 +1169,11 @@
     justify-content: space-between;
 }
 
-
 .admin-profile-link {
     flex-direction: row;
 
     gap: 8px;
 }
-
 
 .admin-profile-link p {
     font-size: 14px;
@@ -810,49 +1181,861 @@
 
 
 /* =====================================================
-   TABLET
+   ZENVE FASHION NAVBAR
 ===================================================== */
 
-@media (max-width: 992px) {
 
-    .navbar {
-        padding: 0 12px;
-    }
+/* =====================================================
+   FASHION TOP BAR
+===================================================== */
 
+.fashion-top-bar {
+    position: fixed;
 
-    .navbar-logo {
-        width: 135px;
-        height: 55px;
-    }
+    top: 0;
+    left: 0;
 
+    width: 100%;
+    height: 34px;
 
-    .search-container {
-        margin-left: 15px;
-        margin-right: 15px;
+    display: flex;
 
-        max-width: 430px;
-    }
+    align-items: center;
+    justify-content: space-between;
 
+    padding: 0 32px;
 
-    .nav-icons {
-        gap: 12px;
-    }
+    background: #080808;
 
+    color: #d4af37;
 
-    .nav-icons > a p {
-        font-size: 9px;
-    }
+    border-bottom:
+        1px solid rgba(212, 175, 55, 0.22);
 
+    z-index: 10000;
+}
+
+.fashion-top-left {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+    font-weight: 500;
+}
+
+.fashion-top-divider {
+    color: rgba(212, 175, 55, 0.4);
+}
+
+.fashion-top-right {
+    display: flex;
+
+    align-items: center;
+
+    gap: 22px;
+}
+
+.fashion-top-right a {
+    color: #eeeeee;
+
+    text-decoration: none;
+
+    font-size: 10px;
+
+    letter-spacing: 0.5px;
+
+    transition:
+        color 0.2s ease;
+}
+
+.fashion-top-right a:hover {
+    color: #d4af37;
 }
 
 
 /* =====================================================
-   MOBILE
+   FASHION MAIN NAVBAR
 ===================================================== */
 
-@media (max-width: 768px) {
+.fashion-navbar {
+    position: fixed !important;
 
-    /* TOP BAR HIDDEN */
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    height: 94px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 30px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #0a0a0a 0%,
+            #111111 50%,
+            #080808 100%
+        );
+
+    border-bottom:
+        1px solid rgba(212, 175, 55, 0.25);
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.35);
+
+    z-index: 9999;
+}
+
+
+/* =====================================================
+   FASHION LOGO
+===================================================== */
+
+.fashion-logo {
+    flex: 0 0 auto;
+
+    min-width: 190px;
+}
+
+.fashion-logo-link {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    text-decoration: none;
+}
+
+.fashion-navbar-logo {
+    width: 72px;
+    height: 68px;
+
+    object-fit: contain;
+
+    filter:
+        drop-shadow(
+            0 2px 5px
+            rgba(212, 175, 55, 0.18)
+        );
+}
+
+.fashion-brand-text {
+    display: flex;
+
+    flex-direction: column;
+
+    line-height: 1;
+}
+
+.fashion-brand-text strong {
+    color: #ffffff;
+
+    font-family: Georgia, serif;
+
+    font-size: 20px;
+
+    letter-spacing: 4px;
+
+    font-weight: 600;
+}
+
+.fashion-brand-text span {
+    margin-top: 5px;
+
+    color: #d4af37;
+
+    font-size: 8px;
+
+    letter-spacing: 4px;
+
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   FASHION CENTER NAVIGATION
+===================================================== */
+
+.fashion-main-links {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 25px;
+
+    margin-left: 15px;
+
+    flex: 1;
+}
+
+.fashion-nav-link {
+    position: relative;
+
+    padding: 35px 0;
+
+    color: #eeeeee;
+
+    text-decoration: none;
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+
+    font-weight: 500;
+
+    white-space: nowrap;
+
+    transition:
+        color 0.25s ease;
+}
+
+.fashion-nav-link::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    bottom: 25px;
+
+    width: 0;
+
+    height: 1px;
+
+    background: #d4af37;
+
+    transition:
+        width 0.25s ease;
+}
+
+.fashion-nav-link:hover {
+    color: #d4af37;
+}
+
+.fashion-nav-link:hover::after {
+    width: 100%;
+}
+
+.fashion-nav-link.active {
+    color: #d4af37;
+}
+
+.fashion-nav-link.active::after {
+    width: 100%;
+}
+
+
+/* =====================================================
+   FASHION SEARCH
+===================================================== */
+
+.fashion-search {
+    width: 175px;
+
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    margin-left: 15px;
+
+    border:
+        1px solid rgba(212, 175, 55, 0.45);
+
+    background: #101010;
+
+    border-radius: 2px;
+
+    overflow: hidden;
+}
+
+.fashion-search input {
+    flex: 1;
+
+    min-width: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #ffffff;
+
+    padding: 0 10px;
+
+    font-size: 10px;
+
+    font-family: "Poppins", sans-serif;
+}
+
+.fashion-search input::placeholder {
+    color: #777777;
+}
+
+.fashion-search button {
+    width: 38px;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    background: #d4af37;
+
+    color: #090909;
+
+    cursor: pointer;
+
+    font-size: 13px;
+
+    transition:
+        background 0.2s ease;
+}
+
+.fashion-search button:hover {
+    background: #f0d36a;
+}
+
+
+/* =====================================================
+   FASHION EXISTING ICONS
+===================================================== */
+
+.fashion-icons {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    margin-left: 18px;
+}
+
+.fashion-icon-link {
+    position: relative;
+
+    min-width: 45px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 3px;
+
+    color: #eeeeee;
+
+    text-decoration: none;
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+.fashion-icon-link svg {
+    color: #d4af37;
+
+    font-size: 19px;
+}
+
+.fashion-icon-link span {
+    font-size: 8px;
+
+    letter-spacing: 0.4px;
+
+    white-space: nowrap;
+
+    color: #bbbbbb;
+}
+
+.fashion-icon-link:hover {
+    color: #d4af37;
+}
+
+.fashion-icon-link:hover span {
+    color: #d4af37;
+}
+
+
+/* =====================================================
+   FASHION ICON BADGE
+===================================================== */
+
+.fashion-icon-wrapper {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.fashion-badge {
+    position: absolute;
+
+    top: -8px;
+
+    right: -10px;
+
+    width: 17px;
+    height: 17px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #d4af37;
+
+    color: #080808;
+
+    font-size: 8px;
+
+    font-weight: 700;
+}
+
+
+/* =====================================================
+   FASHION PROFILE
+===================================================== */
+
+.fashion-profile-menu {
+    margin-left: 15px;
+}
+
+.fashion-profile-link {
+    margin-right: 0;
+
+    min-width: 58px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 3px;
+
+    color: #eeeeee;
+
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+.fashion-profile-link svg {
+    color: #d4af37;
+
+    font-size: 27px;
+}
+
+.fashion-profile-link span {
+    color: #bbbbbb;
+
+    font-size: 8px;
+
+    white-space: nowrap;
+}
+
+.fashion-profile-link:hover span {
+    color: #d4af37;
+}
+
+.fashion-avatar {
+    width: 32px;
+    height: 32px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    border: 1px solid #d4af37;
+}
+
+
+/* =====================================================
+   FASHION PROFILE POPUP
+===================================================== */
+
+.fashion-profile-popup {
+    top: 65px;
+
+    right: 0;
+
+    width: 220px;
+
+    background: #111111;
+
+    border:
+        1px solid rgba(212, 175, 55, 0.3);
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+.fashion-profile-popup h4 {
+    color: #ffffff;
+}
+
+.fashion-profile-popup p {
+    color: #999999;
+}
+
+.fashion-popup-btn {
+    background: #d4af37;
+
+    color: #080808;
+
+    border-radius: 2px;
+
+    font-weight: 600;
+}
+
+.fashion-popup-btn:hover {
+    background: #f0d36a;
+}
+
+.fashion-profile-popup .logout-popup-btn {
+    background: #8e2525;
+
+    color: #ffffff;
+}
+
+.fashion-profile-popup .logout-popup-btn:hover {
+    background: #a92c2c;
+}
+
+
+/* =====================================================
+   FASHION MOBILE / TABLET ACTIONS
+===================================================== */
+
+.fashion-mobile-actions {
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+
+    flex: 0 0 auto;
+}
+
+.fashion-mobile-action {
+    position: relative;
+
+    width: 38px;
+    height: 40px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #d4af37;
+
+    text-decoration: none;
+
+    border-radius: 3px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.fashion-mobile-action:hover {
+    background: rgba(212, 175, 55, 0.08);
+
+    color: #f0d36a;
+}
+
+.fashion-mobile-action-icon {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.fashion-mobile-action-icon svg {
+    color: #d4af37;
+
+    font-size: 21px;
+}
+
+.fashion-mobile-badge {
+    position: absolute;
+
+    top: -9px;
+
+    right: -10px;
+
+    width: 17px;
+    height: 17px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #d4af37;
+
+    color: #080808;
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+    line-height: 1;
+}
+
+
+/* =====================================================
+   FASHION MOBILE DRAWER
+===================================================== */
+
+.fashion-mobile-drawer {
+    background: #090909;
+
+    color: #ffffff;
+
+    border-left:
+        1px solid rgba(212, 175, 55, 0.25);
+}
+
+.fashion-mobile-header {
+    min-height: 82px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 12px 15px;
+
+    background: #090909;
+
+    border-bottom:
+        1px solid rgba(212, 175, 55, 0.25);
+}
+
+.fashion-mobile-brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+}
+
+.fashion-mobile-brand img {
+    width: 55px;
+
+    height: 55px;
+
+    object-fit: contain;
+}
+
+.fashion-mobile-brand div {
+    display: flex;
+
+    flex-direction: column;
+}
+
+.fashion-mobile-brand strong {
+    color: #ffffff;
+
+    font-family: Georgia, serif;
+
+    font-size: 18px;
+
+    letter-spacing: 3px;
+}
+
+.fashion-mobile-brand small {
+    margin-top: 4px;
+
+    color: #d4af37;
+
+    font-size: 8px;
+
+    letter-spacing: 3px;
+}
+
+.fashion-drawer-close {
+    width: 38px;
+
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border:
+        1px solid rgba(212, 175, 55, 0.35);
+
+    background: transparent;
+
+    color: #d4af37;
+
+    border-radius: 2px;
+
+    font-size: 18px;
+
+    cursor: pointer;
+}
+
+.fashion-drawer-close:hover {
+    background: #d4af37;
+
+    color: #080808;
+}
+
+
+/* =====================================================
+   FASHION MOBILE BODY
+===================================================== */
+
+.fashion-mobile-body {
+    padding: 10px;
+}
+
+.fashion-mobile-body button {
+    width: 100%;
+
+    min-height: 50px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 10px 12px;
+
+    margin-bottom: 4px;
+
+    border: none;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.05);
+
+    background: transparent;
+
+    color: #eeeeee;
+
+    text-align: left;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.fashion-mobile-body button svg {
+    width: 20px;
+
+    min-width: 20px;
+
+    color: #d4af37;
+
+    font-size: 18px;
+}
+
+.fashion-mobile-body button span {
+    flex: 1;
+}
+
+.fashion-mobile-body button:hover {
+    background: #171717;
+
+    color: #d4af37;
+}
+
+.fashion-mobile-body button b {
+    width: 21px;
+
+    height: 21px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #d4af37;
+
+    color: #080808;
+
+    font-size: 9px;
+}
+
+.fashion-mobile-logout {
+    margin-top: 15px !important;
+
+    border:
+        1px solid rgba(180, 50, 50, 0.3) !important;
+
+    background:
+        rgba(120, 25, 25, 0.15) !important;
+
+    color: #ff7676 !important;
+}
+
+.fashion-mobile-logout svg {
+    color: #ff7676 !important;
+}
+
+
+/* =====================================================
+   TABLET
+   769px - 992px
+===================================================== */
+
+@media (min-width: 769px) and (max-width: 992px) {
+
+    /* =================================================
+       NORMAL TOP BAR
+    ================================================= */
 
     .top-bar {
         display: none !important;
@@ -860,13 +2043,166 @@
 
 
     /* =================================================
-       NAVBAR
+       NORMAL CUSTOMER NAVBAR
     ================================================= */
 
-    .navbar {
+    .navbar:not(.fashion-navbar) {
+        top: 0 !important;
+
+        height: 72px !important;
+
+        padding: 0 12px !important;
+    }
+
+    .navbar:not(.fashion-navbar) .search-container {
+        max-width: none;
+
+        margin-left: 15px;
+
+        margin-right: 15px;
+    }
+
+    .navbar:not(.fashion-navbar) .nav-icons {
+        display: none !important;
+    }
+
+    .navbar:not(.fashion-navbar) .profile-menu {
+        display: none !important;
+    }
+
+    .navbar:not(.fashion-navbar) .normal-mobile-actions {
+        display: flex !important;
+    }
+
+    .navbar:not(.fashion-navbar) .mobile-menu-btn {
+        display: flex !important;
+    }
+
+
+    /* =================================================
+       CATEGORY NAV
+    ================================================= */
+
+    .category-nav {
+        top: 72px;
+
+        height: 48px;
+    }
+
+    .category-nav-scroll {
+        gap: 5px;
+
+        padding: 0 16px;
+
+        justify-content: flex-start;
+
+        overflow-x: auto;
+
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .category-nav-scroll a {
+        height: 34px;
+
+        padding: 0 11px;
+
+        font-size: 11.5px;
+    }
+
+
+    /* =================================================
+       FASHION TABLET
+    ================================================= */
+
+    .fashion-navbar {
+        height: 72px !important;
+
+        padding: 0 15px !important;
+
+        gap: 8px;
+    }
+
+    .fashion-logo {
+        min-width: 140px;
+    }
+
+    .fashion-navbar-logo {
+        width: 55px;
+
+        height: 55px;
+    }
+
+    .fashion-brand-text strong {
+        font-size: 16px;
+    }
+
+    .fashion-brand-text span {
+        font-size: 7px;
+    }
+
+    .fashion-main-links {
+        display: none !important;
+    }
+
+    .fashion-search {
+        display: none !important;
+    }
+
+    .fashion-icons {
+        display: none !important;
+    }
+
+    .fashion-profile-menu {
+        display: none !important;
+    }
+
+    .fashion-mobile-actions {
+        display: flex !important;
+
+        margin-left: auto;
+    }
+
+    .fashion-mobile-menu-btn {
+        display: flex !important;
+
+        width: 40px !important;
+
+        height: 40px !important;
+
+        flex: 0 0 40px;
+
+        color: #d4af37 !important;
+
+        font-size: 21px;
+    }
+}
+
+
+/* =====================================================
+   MOBILE
+   768px AND BELOW
+===================================================== */
+
+@media (max-width: 768px) {
+
+    /* =================================================
+       NORMAL TOP BAR
+    ================================================= */
+
+    .top-bar {
+        display: none !important;
+    }
+
+
+    /* =================================================
+       NORMAL CUSTOMER NAVBAR
+    ================================================= */
+
+    .navbar:not(.fashion-navbar) {
         position: fixed !important;
 
         top: 0 !important;
+
         left: 0 !important;
 
         width: 100%;
@@ -874,6 +2210,7 @@
         height: 64px !important;
 
         display: flex !important;
+
         align-items: center !important;
 
         padding: 0 8px !important;
@@ -885,37 +2222,19 @@
         z-index: 9999;
     }
 
-
-    /* =================================================
-       1. LOGO
-    ================================================= */
-
-    .logo {
+    .navbar:not(.fashion-navbar) .logo {
         flex: 0 0 auto;
 
         margin: 0 !important;
     }
 
-
-    .logo-link {
-        display: flex;
-        align-items: center;
-    }
-
-
-    .navbar-logo {
+    .navbar:not(.fashion-navbar) .navbar-logo {
         width: 82px !important;
-        height: 45px !important;
 
-        object-fit: contain;
+        height: 45px !important;
     }
 
-
-    /* =================================================
-       2. SEARCH BAR + SEARCH ICON
-    ================================================= */
-
-    .search-container {
+    .navbar:not(.fashion-navbar) .search-container {
         display: flex !important;
 
         flex: 1 1 auto;
@@ -937,8 +2256,7 @@
         overflow: hidden;
     }
 
-
-    .search-container input {
+    .navbar:not(.fashion-navbar) .search-container input {
         display: block !important;
 
         flex: 1 1 auto;
@@ -951,127 +2269,106 @@
 
         padding: 0 9px !important;
 
-        border: none;
-
-        outline: none;
-
         font-size: 11px !important;
     }
 
-
-    .search-container input::placeholder {
-        font-size: 10px;
-    }
-
-
-    .search-btn {
+    .navbar:not(.fashion-navbar) .search-btn {
         display: flex !important;
 
         width: 38px !important;
+
         min-width: 38px !important;
 
         height: 100% !important;
 
-        align-items: center;
-        justify-content: center;
-
-        border: none;
-
         font-size: 15px;
     }
 
-
-    /* =================================================
-       3. HIDE DESKTOP NAVIGATION
-    ================================================= */
-
-    .nav-icons {
+    .navbar:not(.fashion-navbar) .nav-icons {
         display: none !important;
     }
 
-
-    /* =================================================
-       4. PROFILE
-    ================================================= */
-
-    .profile-menu {
-        flex: 0 0 auto;
-
-        margin: 0 !important;
+    .navbar:not(.fashion-navbar) .profile-menu {
+        display: none !important;
     }
 
-
-    .profile-link {
-        width: 38px !important;
-        height: 40px !important;
-
+    .navbar:not(.fashion-navbar) .normal-mobile-actions {
         display: flex !important;
-
-        align-items: center;
-        justify-content: center;
-
-        padding: 0 !important;
-
-        gap: 0 !important;
     }
 
+    .navbar:not(.fashion-navbar) .normal-mobile-action {
+        width: 36px;
 
-    .profile-link p {
-        display: none !important;
+        height: 38px;
     }
 
-
-    .profile-link svg {
-        width: 30px !important;
-        height: 30px !important;
-
-        font-size: 30px !important;
+    .navbar:not(.fashion-navbar) .normal-mobile-action-icon svg {
+        font-size: 21px;
     }
 
-
-    .avatar-img {
-        width: 32px !important;
-        height: 32px !important;
-    }
-
-
-    /* =================================================
-       5. MENU
-    ================================================= */
-
-    .mobile-menu-btn {
+    .navbar:not(.fashion-navbar) .mobile-menu-btn {
         display: flex !important;
 
         flex: 0 0 38px;
 
         width: 38px !important;
+
         height: 40px !important;
 
         margin: 0 !important;
-
-        align-items: center;
-        justify-content: center;
-
-        padding: 0;
-
-        border: none;
-
-        background: transparent;
 
         font-size: 21px;
     }
 
 
     /* =================================================
-       PROFILE POPUP
+       CATEGORY NAV
     ================================================= */
 
-    .profile-popup {
-        top: 48px !important;
+    .category-nav {
+        top: 64px;
 
-        right: 0 !important;
+        height: 46px;
 
-        width: 220px;
+        background:
+            linear-gradient(
+                180deg,
+                #ffffff,
+                #f7f9ff
+            );
+
+        box-shadow:
+            0 3px 10px rgba(27, 27, 197, 0.08);
+    }
+
+    .category-nav-scroll {
+        gap: 5px;
+
+        padding: 0 10px;
+
+        justify-content: flex-start;
+
+        overflow-x: auto;
+
+        -webkit-overflow-scrolling: touch;
+
+        scroll-behavior: smooth;
+    }
+
+    .category-nav-scroll a {
+        height: 32px;
+
+        padding: 0 10px;
+
+        border-radius: 7px;
+
+        font-size: 10.5px;
+    }
+
+    .category-nav-scroll a::after {
+        bottom: 2px;
+
+        height: 2px;
     }
 
 
@@ -1089,15 +2386,21 @@
         gap: 0;
     }
 
-
     .admin-simple-navbar .navbar-logo {
         width: 82px !important;
+
         height: 45px !important;
     }
 
+    .admin-simple-navbar .profile-menu {
+        display: flex !important;
+
+        margin-left: auto !important;
+    }
 
     .admin-profile-link {
         width: 38px !important;
+
         height: 40px !important;
 
         padding: 0 !important;
@@ -1105,21 +2408,190 @@
         justify-content: center;
     }
 
-
     .admin-profile-link p {
         display: none !important;
     }
 
+
+    /* =================================================
+       FASHION TOP BAR
+    ================================================= */
+
+    .fashion-top-bar {
+        display: none !important;
+    }
+
+
+    /* =================================================
+       FASHION NAVBAR
+    ================================================= */
+
+    .fashion-navbar {
+        position: fixed !important;
+
+        top: 0 !important;
+
+        left: 0 !important;
+
+        width: 100% !important;
+
+        height: 64px !important;
+
+        padding: 0 7px !important;
+
+        gap: 6px;
+
+        background: #080808;
+
+        border-bottom:
+            1px solid rgba(212, 175, 55, 0.3);
+
+        z-index: 9999;
+    }
+
+
+    /* =================================================
+       FASHION LOGO
+    ================================================= */
+
+    .fashion-logo {
+        min-width: auto;
+
+        flex: 0 0 auto;
+    }
+
+    .fashion-logo-link {
+        gap: 3px;
+    }
+
+    .fashion-navbar-logo {
+        width: 47px !important;
+
+        height: 48px !important;
+
+        object-fit: contain;
+    }
+
+    .fashion-brand-text {
+        display: none !important;
+    }
+
+
+    /* =================================================
+       HIDE DESKTOP FASHION NAV
+    ================================================= */
+
+    .fashion-main-links {
+        display: none !important;
+    }
+
+
+    /* =================================================
+       HIDE FASHION SEARCH
+    ================================================= */
+
+    .fashion-search {
+        display: none !important;
+    }
+
+
+    /* =================================================
+       HIDE DESKTOP FASHION ICONS
+    ================================================= */
+
+    .fashion-icons {
+        display: none !important;
+    }
+
+
+    /* =================================================
+       HIDE FASHION PROFILE
+    ================================================= */
+
+    .fashion-profile-menu {
+        display: none !important;
+    }
+
+
+    /* =================================================
+       SHOW FASHION WISHLIST + CART
+    ================================================= */
+
+    .fashion-mobile-actions {
+        display: flex !important;
+
+        margin-left: auto;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 3px;
+    }
+
+    .fashion-mobile-action {
+        width: 36px;
+
+        height: 38px;
+    }
+
+    .fashion-mobile-action-icon svg {
+        font-size: 21px;
+    }
+
+
+    /* =================================================
+       FASHION MENU BUTTON
+    ================================================= */
+
+    .fashion-mobile-menu-btn {
+        display: flex !important;
+
+        flex: 0 0 36px;
+
+        width: 36px !important;
+
+        height: 38px !important;
+
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        color: #d4af37 !important;
+
+        font-size: 20px;
+    }
+
+    .fashion-mobile-menu-btn:hover {
+        background:
+            rgba(212, 175, 55, 0.08);
+    }
+
+
+    /* =================================================
+       FASHION DRAWER
+    ================================================= */
+
+    .fashion-mobile-drawer {
+        width: 320px;
+
+        max-width: 88vw;
+    }
 }
 
 
 /* =====================================================
    SMALL MOBILE
+   480px AND BELOW
 ===================================================== */
 
 @media (max-width: 480px) {
 
-    .navbar {
+    /* =================================================
+       NORMAL
+    ================================================= */
+
+    .navbar:not(.fashion-navbar) {
         height: 60px !important;
 
         padding: 0 6px !important;
@@ -1127,62 +2599,47 @@
         gap: 5px;
     }
 
-
-    .navbar-logo {
+    .navbar:not(.fashion-navbar) .navbar-logo {
         width: 74px !important;
+
         height: 40px !important;
     }
 
-
-    .search-container {
+    .navbar:not(.fashion-navbar) .search-container {
         height: 37px !important;
     }
 
-
-    .search-container input {
+    .navbar:not(.fashion-navbar) .search-container input {
         padding: 0 7px !important;
 
         font-size: 10px !important;
     }
 
-
-    .search-container input::placeholder {
-        font-size: 9px;
-    }
-
-
-    .search-btn {
+    .navbar:not(.fashion-navbar) .search-btn {
         width: 35px !important;
-        min-width: 35px !important;
+
+        min-width: 35px;
 
         font-size: 14px;
     }
 
+    .navbar:not(.fashion-navbar) .normal-mobile-actions {
+        gap: 1px;
+    }
 
-    .profile-link {
+    .navbar:not(.fashion-navbar) .normal-mobile-action {
+        width: 32px;
+
+        height: 36px;
+    }
+
+    .navbar:not(.fashion-navbar) .normal-mobile-action-icon svg {
+        font-size: 20px;
+    }
+
+    .navbar:not(.fashion-navbar) .mobile-menu-btn {
         width: 35px !important;
-        height: 37px !important;
-        margin-right: 0;
 
-    }
-
-
-    .profile-link svg {
-        width: 28px !important;
-        height: 28px !important;
-
-        font-size: 28px !important;
-    }
-
-
-    .avatar-img {
-        width: 30px !important;
-        height: 30px !important;
-    }
-
-
-    .mobile-menu-btn {
-        width: 35px !important;
         height: 37px !important;
 
         flex-basis: 35px;
@@ -1191,83 +2648,301 @@
     }
 
 
+    /* =================================================
+       CATEGORY NAV
+    ================================================= */
+
+    .category-nav {
+        top: 60px;
+
+        height: 44px;
+    }
+
+    .category-nav-scroll {
+        gap: 4px;
+
+        padding: 0 8px;
+    }
+
+    .category-nav-scroll a {
+        height: 30px;
+
+        padding: 0 9px;
+
+        font-size: 10px;
+    }
+
+
+    /* =================================================
+       DRAWER
+    ================================================= */
+
     .mobile-drawer {
         width: 57%;
 
         max-width: 90vw;
     }
 
+
+    /* =================================================
+       FASHION
+    ================================================= */
+
+    .fashion-navbar {
+        height: 60px !important;
+
+        padding: 0 5px !important;
+
+        gap: 4px;
+    }
+
+    .fashion-navbar-logo {
+        width: 42px !important;
+
+        height: 44px !important;
+    }
+
+    .fashion-mobile-actions {
+        gap: 1px;
+    }
+
+    .fashion-mobile-action {
+        width: 32px;
+
+        height: 36px;
+    }
+
+    .fashion-mobile-action-icon svg {
+        font-size: 19px;
+    }
+
+    .fashion-mobile-badge {
+        width: 16px;
+
+        height: 16px;
+
+        top: -8px;
+
+        right: -9px;
+
+        font-size: 7px;
+    }
+
+    .fashion-mobile-menu-btn {
+        width: 33px !important;
+
+        height: 35px !important;
+
+        flex-basis: 33px;
+
+        font-size: 19px;
+    }
 }
 
 
 /* =====================================================
    VERY SMALL MOBILE
+   360px AND BELOW
 ===================================================== */
 
 @media (max-width: 360px) {
 
-    .navbar {
+    /* =================================================
+       NORMAL
+    ================================================= */
+
+    .navbar:not(.fashion-navbar) {
         padding: 0 4px !important;
 
         gap: 4px;
     }
 
-
-    .navbar-logo {
+    .navbar:not(.fashion-navbar) .navbar-logo {
         width: 65px !important;
+
         height: 37px !important;
     }
 
-
-    .search-container {
+    .navbar:not(.fashion-navbar) .search-container {
         height: 35px !important;
     }
 
-
-    .search-container input {
+    .navbar:not(.fashion-navbar) .search-container input {
         font-size: 9px !important;
 
         padding: 0 5px !important;
     }
 
-
-    .search-container input::placeholder {
-        font-size: 8px;
-    }
-
-
-    .search-btn {
+    .navbar:not(.fashion-navbar) .search-btn {
         width: 32px !important;
-        min-width: 32px !important;
+
+        min-width: 32px;
 
         font-size: 13px;
     }
 
+    .navbar:not(.fashion-navbar) .normal-mobile-action {
+        width: 29px;
 
-    .profile-link {
+        height: 34px;
+    }
+
+    .navbar:not(.fashion-navbar) .normal-mobile-action-icon svg {
+        font-size: 18px;
+    }
+
+    .navbar:not(.fashion-navbar) .normal-mobile-badge {
+        width: 15px;
+
+        height: 15px;
+
+        top: -7px;
+
+        right: -8px;
+
+        font-size: 7px;
+    }
+
+    .navbar:not(.fashion-navbar) .mobile-menu-btn {
         width: 33px !important;
-    }
 
-
-    .profile-link svg {
-        width: 26px !important;
-        height: 26px !important;
-
-        font-size: 26px !important;
-    }
-
-
-    .avatar-img {
-        width: 28px !important;
-        height: 28px !important;
-    }
-
-
-    .mobile-menu-btn {
-        width: 33px !important;
         flex-basis: 33px;
 
         font-size: 19px;
     }
 
+
+    /* =================================================
+       CATEGORY NAV
+    ================================================= */
+
+    .category-nav {
+        top: 60px;
+
+        height: 42px;
+    }
+
+    .category-nav-scroll {
+        gap: 3px;
+
+        padding: 0 6px;
+    }
+
+    .category-nav-scroll a {
+        height: 29px;
+
+        padding: 0 8px;
+
+        font-size: 9.5px;
+    }
+
+
+    /* =================================================
+       FASHION
+    ================================================= */
+
+    .fashion-navbar {
+        padding: 0 3px !important;
+
+        gap: 3px;
+    }
+
+    .fashion-navbar-logo {
+        width: 38px !important;
+
+        height: 40px !important;
+    }
+
+    .fashion-mobile-actions {
+        gap: 0;
+    }
+
+    .fashion-mobile-action {
+        width: 29px;
+
+        height: 34px;
+    }
+
+    .fashion-mobile-action-icon svg {
+        font-size: 18px;
+    }
+
+    .fashion-mobile-badge {
+        width: 15px;
+
+        height: 15px;
+
+        top: -7px;
+
+        right: -8px;
+
+        font-size: 7px;
+    }
+
+    .fashion-mobile-menu-btn {
+        width: 30px !important;
+
+        height: 33px !important;
+
+        flex-basis: 30px;
+
+        font-size: 18px;
+    }
+}
+
+
+/* =====================================================
+   PAGE CONTENT RESPONSIVE OFFSET
+===================================================== */
+
+.main-content {
+    padding-top: 178px;
+}
+
+
+/* =====================================================
+   TABLET CONTENT
+===================================================== */
+
+@media (min-width: 769px) and (max-width: 992px) {
+
+    .main-content {
+        padding-top: 120px;
+    }
+}
+
+
+/* =====================================================
+   MOBILE CONTENT
+===================================================== */
+
+@media (max-width: 768px) {
+
+    .main-content {
+        padding-top: 110px;
+    }
+}
+
+
+/* =====================================================
+   SMALL MOBILE CONTENT
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .main-content {
+        padding-top: 104px;
+    }
+}
+
+
+/* =====================================================
+   VERY SMALL MOBILE CONTENT
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .main-content {
+        padding-top: 102px;
+    }
 }

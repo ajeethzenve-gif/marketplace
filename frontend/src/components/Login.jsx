@@ -1,16 +1,18 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { GoogleLogin } from "@react-oauth/google";
 import logo from "../assets/logo/Zenve - 01 (1).png";
+
 import {
   FaEnvelope,
   FaLock,
   FaEye,
   FaEyeSlash,
-  FaPaw,
   FaFacebookF,
+  FaMobileAlt,
 } from "react-icons/fa";
 
 import "../styles/Login.css";
@@ -18,7 +20,21 @@ import "../styles/Login.css";
 function Login() {
   const navigate = useNavigate();
 
+  // =====================================================
+  // LOGIN METHOD
+  // =====================================================
+
+  const [loginMethod, setLoginMethod] = useState("email");
+
+  // =====================================================
+  // PASSWORD
+  // =====================================================
+
   const [showPassword, setShowPassword] = useState(false);
+
+  // =====================================================
+  // EMAIL LOGIN DATA
+  // =====================================================
 
   const [loginData, setLoginData] = useState({
     username: "",
@@ -26,28 +42,47 @@ function Login() {
     remember: false,
   });
 
+  // =====================================================
+  // MOBILE LOGIN DATA
+  // =====================================================
+
+  const [mobile, setMobile] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+
+  // =====================================================
+  // LOADING
+  // =====================================================
+
+  const [loading, setLoading] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
+
+  // =====================================================
+  // MESSAGE
+  // =====================================================
+
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("success");
 
-  const [loading, setLoading] = useState(false);
+  // =====================================================
+  // SHOW MESSAGE
+  // =====================================================
 
   const showMessage = (text, type = "success") => {
     setMessage(text);
     setMessageType(type);
-    setTimeout(() => setMessage(""), 3000);
+
+    setTimeout(() => {
+      setMessage("");
+    }, 3000);
   };
 
-  /* =====================================================
-     HANDLE INPUT CHANGE
-  ===================================================== */
+  // =====================================================
+  // HANDLE EMAIL INPUT
+  // =====================================================
 
   const handleChange = (e) => {
-    const {
-      name,
-      value,
-      type,
-      checked,
-    } = e.target;
+    const { name, value, type, checked } = e.target;
 
     setLoginData((prev) => ({
       ...prev,
@@ -55,12 +90,26 @@ function Login() {
     }));
   };
 
-  /* =====================================================
-     NORMAL LOGIN
-  ===================================================== */
+  // =====================================================
+  // EMAIL / PASSWORD LOGIN
+  // =====================================================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (loginMethod !== "email") {
+      return;
+    }
+
+    if (!loginData.username.trim()) {
+      showMessage("Enter username or email", "error");
+      return;
+    }
+
+    if (!loginData.password) {
+      showMessage("Enter password", "error");
+      return;
+    }
 
     setLoading(true);
 
@@ -73,39 +122,32 @@ function Login() {
         }
       );
 
-      /* Store authentication data */
+      if (response.data.access) {
+        localStorage.setItem("access", response.data.access);
+      }
 
-      localStorage.setItem(
-        "access",
-        response.data.access
-      );
+      if (response.data.refresh) {
+        localStorage.setItem("refresh", response.data.refresh);
+      }
 
-      localStorage.setItem(
-        "refresh",
-        response.data.refresh
-      );
+      if (response.data.username) {
+        localStorage.setItem(
+          "username",
+          response.data.username
+        );
+      }
 
-      localStorage.setItem(
-        "username",
-        response.data.username
-      );
-
-      localStorage.setItem(
-        "role",
-        response.data.role
-      );
-
-      /* Remember Me */
+      if (response.data.role) {
+        localStorage.setItem(
+          "role",
+          response.data.role
+        );
+      }
 
       if (loginData.remember) {
-        localStorage.setItem(
-          "rememberMe",
-          "true"
-        );
+        localStorage.setItem("rememberMe", "true");
       } else {
-        localStorage.removeItem(
-          "rememberMe"
-        );
+        localStorage.removeItem("rememberMe");
       }
 
       showMessage("Login Successful", "success");
@@ -113,40 +155,223 @@ function Login() {
       setTimeout(() => {
         navigate("/");
         window.location.reload();
-      }, 1200);
-
+      }, 1000);
     } catch (error) {
       console.error("Login Error:", error);
 
       if (error.response) {
         showMessage(
-          error.response.data.message ||
-          "Invalid username or password.",
+          error.response.data?.message ||
+            error.response.data?.detail ||
+            "Invalid username or password.",
           "error"
         );
       } else {
-        showMessage("Unable to connect to server.", "error");
+        showMessage(
+          "Unable to connect to server.",
+          "error"
+        );
       }
     } finally {
       setLoading(false);
     }
   };
 
-  /* =====================================================
-     GOOGLE LOGIN
-  ===================================================== */
+  // =====================================================
+  // MOBILE NUMBER
+  // =====================================================
+
+  const handleMobileChange = (e) => {
+    const value = e.target.value.replace(/\D/g, "");
+
+    if (value.length <= 10) {
+      setMobile(value);
+    }
+  };
+
+  // =====================================================
+  // SEND OTP
+  // =====================================================
+
+  const handleSendOtp = async () => {
+    if (!/^[6-9]\d{9}$/.test(mobile)) {
+      showMessage(
+        "Enter a valid 10-digit mobile number",
+        "error"
+      );
+      return;
+    }
+
+    setOtpLoading(true);
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/accounts/send-otp/",
+        {
+          mobile: `+91${mobile}`,
+        }
+      );
+
+      console.log(
+        "Send OTP Response:",
+        response.data
+      );
+
+      setOtpSent(true);
+
+      showMessage(
+        response.data?.message ||
+          "OTP sent successfully",
+        "success"
+      );
+    } catch (error) {
+      console.error(
+        "Send OTP Error:",
+        error
+      );
+
+      if (error.response) {
+        showMessage(
+          error.response.data?.message ||
+            error.response.data?.detail ||
+            "Unable to send OTP",
+          "error"
+        );
+      } else {
+        showMessage(
+          "Unable to connect to server.",
+          "error"
+        );
+      }
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  // =====================================================
+  // OTP CHANGE
+  // =====================================================
+
+  const handleOtpChange = (e) => {
+    const value = e.target.value.replace(/\D/g, "");
+
+    if (value.length <= 6) {
+      setOtp(value);
+    }
+  };
+
+  // =====================================================
+  // VERIFY OTP
+  // =====================================================
+
+  const handleVerifyOtp = async () => {
+    if (otp.length !== 6) {
+      showMessage(
+        "Enter 6-digit OTP",
+        "error"
+      );
+      return;
+    }
+
+    setOtpLoading(true);
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/accounts/verify-otp/",
+        {
+          mobile: `+91${mobile}`,
+          otp: otp,
+        }
+      );
+
+      console.log(
+        "Verify OTP Response:",
+        response.data
+      );
+
+      if (response.data.access) {
+        localStorage.setItem(
+          "access",
+          response.data.access
+        );
+      }
+
+      if (response.data.refresh) {
+        localStorage.setItem(
+          "refresh",
+          response.data.refresh
+        );
+      }
+
+      if (response.data.username) {
+        localStorage.setItem(
+          "username",
+          response.data.username
+        );
+      }
+
+      if (response.data.role) {
+        localStorage.setItem(
+          "role",
+          response.data.role
+        );
+      }
+
+      showMessage(
+        "OTP verified. Login Successful",
+        "success"
+      );
+
+      setTimeout(() => {
+        navigate("/");
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.error(
+        "Verify OTP Error:",
+        error
+      );
+
+      if (error.response) {
+        showMessage(
+          error.response.data?.message ||
+            error.response.data?.detail ||
+            "Invalid OTP",
+          "error"
+        );
+      } else {
+        showMessage(
+          "Unable to connect to server.",
+          "error"
+        );
+      }
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  // =====================================================
+  // CHANGE NUMBER
+  // =====================================================
+
+  const handleChangeNumber = () => {
+    setOtpSent(false);
+    setOtp("");
+  };
+
+  // =====================================================
+  // GOOGLE LOGIN
+  // =====================================================
 
   const handleGoogleLogin = async (
     credentialResponse
   ) => {
     try {
-      console.log(
-        "Google Credential Response:",
-        credentialResponse
-      );
-
       if (!credentialResponse?.credential) {
-        showMessage("Google login failed. No credential received.", "error");
+        showMessage(
+          "Google login failed. No credential received.",
+          "error"
+        );
         return;
       }
 
@@ -162,35 +387,43 @@ function Login() {
         response.data
       );
 
-      /* Store authentication data */
+      if (response.data.access) {
+        localStorage.setItem(
+          "access",
+          response.data.access
+        );
+      }
 
-      localStorage.setItem(
-        "access",
-        response.data.access
+      if (response.data.refresh) {
+        localStorage.setItem(
+          "refresh",
+          response.data.refresh
+        );
+      }
+
+      if (response.data.username) {
+        localStorage.setItem(
+          "username",
+          response.data.username
+        );
+      }
+
+      if (response.data.role) {
+        localStorage.setItem(
+          "role",
+          response.data.role
+        );
+      }
+
+      showMessage(
+        "Google Login Successful",
+        "success"
       );
-
-      localStorage.setItem(
-        "refresh",
-        response.data.refresh
-      );
-
-      localStorage.setItem(
-        "username",
-        response.data.username
-      );
-
-      localStorage.setItem(
-        "role",
-        response.data.role
-      );
-
-      showMessage("Google Login Successful", "success");
 
       setTimeout(() => {
         navigate("/");
         window.location.reload();
-      }, 1200);
-
+      }, 1000);
     } catch (error) {
       console.error(
         "Google Login Error:",
@@ -198,15 +431,10 @@ function Login() {
       );
 
       if (error.response) {
-        console.error(
-          "Google Response:",
-          error.response.data
-        );
-
         showMessage(
-          error.response.data.message ||
-          error.response.data.error ||
-          "Google Login Failed",
+          error.response.data?.message ||
+            error.response.data?.error ||
+            "Google Login Failed",
           "error"
         );
       } else {
@@ -218,19 +446,22 @@ function Login() {
     }
   };
 
-  /* =====================================================
-     GOOGLE LOGIN ERROR
-  ===================================================== */
+  // =====================================================
+  // GOOGLE ERROR
+  // =====================================================
 
   const handleGoogleError = () => {
     console.error("Google Login Failed");
 
-    showMessage("Google Login Failed", "error");
+    showMessage(
+      "Google Login Failed",
+      "error"
+    );
   };
 
-  /* =====================================================
-     FACEBOOK LOGIN
-  ===================================================== */
+  // =====================================================
+  // FACEBOOK LOGIN
+  // =====================================================
 
   const handleFacebookLogin = () => {
     showMessage(
@@ -239,19 +470,21 @@ function Login() {
     );
   };
 
-  /* =====================================================
-     JSX
-  ===================================================== */
+  // =====================================================
+  // RENDER
+  // =====================================================
 
   return (
     <div className="login-page">
 
       {/* =================================================
-          INLINE MESSAGE (success / error)
+          MESSAGE
       ================================================= */}
 
       {message && (
-        <div className={`inline-message ${messageType}`}>
+        <div
+          className={`inline-message ${messageType}`}
+        >
           <svg
             className="inline-message-check"
             viewBox="0 0 52 52"
@@ -270,10 +503,12 @@ function Login() {
               />
             )}
           </svg>
-          <span className="inline-message-text">{message}</span>
+
+          <span className="inline-message-text">
+            {message}
+          </span>
         </div>
       )}
-
 
       {/* =================================================
           DECORATIVE CIRCLES
@@ -283,13 +518,11 @@ function Login() {
       <div className="circle two"></div>
       <div className="circle three"></div>
 
-
       {/* =================================================
-          MAIN LOGIN CONTAINER
+          MAIN CONTAINER
       ================================================= */}
 
       <div className="login-container">
-
 
         {/* =================================================
             LEFT SIDE
@@ -297,11 +530,9 @@ function Login() {
 
         <div className="login-left">
 
-          {/* BRAND */}
-
           <div className="brand-section">
 
-           <div className="logo-box">
+            <div className="logo-box">
               <img
                 src={logo}
                 alt="PetCare Store"
@@ -310,21 +541,14 @@ function Login() {
             </div>
 
             <div className="brand-text">
-
-              <h1>
-               MarketPlace
-              </h1>
+              <h1>MarketPlace</h1>
 
               <span>
                 Premium care for your pets
               </span>
-
             </div>
 
           </div>
-
-
-          {/* WELCOME */}
 
           <div className="welcome-content">
 
@@ -342,34 +566,22 @@ function Login() {
               and healthcare products.
             </p>
 
-
-            {/* FEATURES */}
-
             <div className="feature-list">
 
               <div className="feature">
-
-                <span>
-                  🐾
-                </span>
+                <span>🐾</span>
 
                 <p>
                   Premium pet products
                 </p>
-
               </div>
 
-
               <div className="feature">
-
-                <span>
-                  🛍️
-                </span>
+                <span>🛍️</span>
 
                 <p>
                   Easy and secure shopping
                 </p>
-
               </div>
 
             </div>
@@ -378,7 +590,6 @@ function Login() {
 
         </div>
 
-
         {/* =================================================
             RIGHT SIDE
         ================================================= */}
@@ -386,7 +597,6 @@ function Login() {
         <div className="login-right">
 
           <div className="login-card">
-
 
             {/* MOBILE LOGO */}
 
@@ -397,14 +607,11 @@ function Login() {
               />
             </div>
 
-
-            {/* LOGIN HEADING */}
+            {/* HEADING */}
 
             <div className="login-heading">
 
-              <h2>
-                Login
-              </h2>
+              <h2>Login</h2>
 
               <p className="subtitle">
                 Sign in to continue
@@ -412,148 +619,342 @@ function Login() {
 
             </div>
 
-
             {/* =================================================
-                LOGIN FORM
+                LOGIN METHOD
             ================================================= */}
 
-            <form onSubmit={handleSubmit}>
-
-
-              {/* =================================================
-                  USERNAME / EMAIL
-              ================================================= */}
-
-              <div className="login-input-group">
-
-                <FaEnvelope
-                  className="input-icon"
-                />
-
-                <input
-                  type="text"
-                  name="username"
-                  placeholder="Username or Email"
-                  value={loginData.username}
-                  onChange={handleChange}
-                  autoComplete="username"
-                  required
-                />
-
-              </div>
-
-
-              {/* =================================================
-                  PASSWORD
-              ================================================= */}
-
-              <div className="login-input-group">
-
-                <FaLock
-                  className="input-icon"
-                />
-
-                <input
-                  type={
-                    showPassword
-                      ? "text"
-                      : "password"
-                  }
-                  name="password"
-                  placeholder="Password"
-                  value={loginData.password}
-                  onChange={handleChange}
-                  autoComplete="current-password"
-                  required
-                />
-
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() =>
-                    setShowPassword(
-                      (prev) => !prev
-                    )
-                  }
-                  aria-label={
-                    showPassword
-                      ? "Hide password"
-                      : "Show password"
-                  }
-                >
-                  {showPassword ? (
-                    <FaEyeSlash />
-                  ) : (
-                    <FaEye />
-                  )}
-                </button>
-
-              </div>
-
-
-              {/* =================================================
-                  REMEMBER ME / FORGOT PASSWORD
-              ================================================= */}
-
-              <div className="login-options">
-
-                <label className="remember">
-
-                  <input
-                    type="checkbox"
-                    name="remember"
-                    checked={
-                      loginData.remember
-                    }
-                    onChange={handleChange}
-                  />
-
-                  <span>
-                    Remember Me
-                  </span>
-
-                </label>
-
-
-                <Link
-                  to="/forgotpassword"
-                  className="forgot-link"
-                >
-                  Forgot Password?
-                </Link>
-
-              </div>
-
-
-              {/* =================================================
-                  LOGIN BUTTON
-              ================================================= */}
+            <div className="login-method">
 
               <button
-                className="login-btn"
-                type="submit"
-                disabled={loading}
+                type="button"
+                className={
+                  loginMethod === "email"
+                    ? "active"
+                    : ""
+                }
+                onClick={() => {
+                  setLoginMethod("email");
+                  setOtpSent(false);
+                  setOtp("");
+                }}
               >
-                {loading ? "Logging in..." : "Login"}
+                <FaEnvelope />
+                <span>Email Login</span>
               </button>
 
+              <button
+                type="button"
+                className={
+                  loginMethod === "mobile"
+                    ? "active"
+                    : ""
+                }
+                onClick={() => {
+                  setLoginMethod("mobile");
+                  setOtpSent(false);
+                  setOtp("");
+                }}
+              >
+                <FaMobileAlt />
+                <span>Number Login</span>
+              </button>
 
-              {/* =================================================
-                  REGISTER
-              ================================================= */}
+            </div>
 
-              <p className="register-text">
+            {/* =================================================
+                EMAIL LOGIN
+            ================================================= */}
 
-                Don't have an account?
+            {loginMethod === "email" ? (
 
-                <Link to="/register">
-                  Register
-                </Link>
+              <form onSubmit={handleSubmit}>
 
-              </p>
+                {/* USERNAME / EMAIL */}
 
-            </form>
+                <div className="login-input-group">
 
+                  <FaEnvelope
+                    className="input-icon"
+                  />
+
+                  <input
+                    type="text"
+                    name="username"
+                    placeholder="Username or Email"
+                    value={loginData.username}
+                    onChange={handleChange}
+                    autoComplete="username"
+                    required
+                  />
+
+                </div>
+
+                {/* PASSWORD */}
+
+                <div className="login-input-group">
+
+                  <FaLock
+                    className="input-icon"
+                  />
+
+                  <input
+                    type={
+                      showPassword
+                        ? "text"
+                        : "password"
+                    }
+                    name="password"
+                    placeholder="Password"
+                    value={loginData.password}
+                    onChange={handleChange}
+                    autoComplete="current-password"
+                    required
+                  />
+
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() =>
+                      setShowPassword(
+                        (prev) => !prev
+                      )
+                    }
+                  >
+                    {showPassword ? (
+                      <FaEyeSlash />
+                    ) : (
+                      <FaEye />
+                    )}
+                  </button>
+
+                </div>
+
+                {/* OPTIONS */}
+
+                <div className="login-options">
+
+                  <label className="remember">
+
+                    <input
+                      type="checkbox"
+                      name="remember"
+                      checked={
+                        loginData.remember
+                      }
+                      onChange={handleChange}
+                    />
+
+                    <span>
+                      Remember Me
+                    </span>
+
+                  </label>
+
+                  <Link
+                    to="/forgotpassword"
+                    className="forgot-link"
+                  >
+                    Forgot Password?
+                  </Link>
+
+                </div>
+
+                {/* LOGIN */}
+
+                <button
+                  className="login-btn"
+                  type="submit"
+                  disabled={loading}
+                >
+                  {loading
+                    ? "Logging in..."
+                    : "Login"}
+                </button>
+
+                {/* REGISTER */}
+
+                <p className="register-text">
+
+                  Don't have an account?
+
+                  <Link to="/register">
+                    Register
+                  </Link>
+
+                </p>
+
+              </form>
+
+            ) : (
+
+              /* =================================================
+                  NUMBER LOGIN
+              ================================================= */
+
+              <div className="mobile-login">
+
+                {!otpSent ? (
+
+                  <>
+                    {/* MOBILE NUMBER */}
+
+                    <div className="mobile-number-wrapper">
+
+                      {/* COUNTRY CODE */}
+
+                      <div className="country-code">
+                        +91
+                      </div>
+
+                      {/* NUMBER INPUT */}
+
+                      <div className="login-input-group mobile-input-group">
+
+                        <FaMobileAlt
+                          className="input-icon"
+                        />
+
+                        <input
+                          type="tel"
+                          placeholder="Enter mobile number"
+                          value={mobile}
+                          onChange={
+                            handleMobileChange
+                          }
+                          maxLength={10}
+                          inputMode="numeric"
+                          autoComplete="tel"
+                        />
+
+                      </div>
+
+                    </div>
+
+                    <p className="input-hint">
+                      Enter your 10-digit Indian
+                      mobile number
+                    </p>
+
+                    {/* SEND OTP */}
+
+                    <button
+                      type="button"
+                      className="login-btn"
+                      onClick={
+                        handleSendOtp
+                      }
+                      disabled={otpLoading}
+                    >
+                      {otpLoading
+                        ? "Sending OTP..."
+                        : "Send OTP"}
+                    </button>
+
+                  </>
+
+                ) : (
+
+                  <>
+                    {/* OTP INFO */}
+
+                    <div className="otp-info">
+
+                      <p>
+                        OTP sent to
+                      </p>
+
+                      <strong>
+                        +91 {mobile}
+                      </strong>
+
+                    </div>
+
+                    {/* OTP INPUT */}
+
+                    <div className="login-input-group">
+
+                      <FaLock
+                        className="input-icon"
+                      />
+
+                      <input
+                        type="text"
+                        placeholder="Enter 6-digit OTP"
+                        value={otp}
+                        onChange={
+                          handleOtpChange
+                        }
+                        maxLength={6}
+                        inputMode="numeric"
+                        autoComplete="one-time-code"
+                      />
+
+                    </div>
+
+                    <p className="input-hint">
+                      Enter the 6-digit OTP
+                      sent to your mobile
+                    </p>
+
+                    {/* VERIFY */}
+
+                    <button
+                      type="button"
+                      className="login-btn"
+                      onClick={
+                        handleVerifyOtp
+                      }
+                      disabled={otpLoading}
+                    >
+                      {otpLoading
+                        ? "Verifying..."
+                        : "Verify OTP"}
+                    </button>
+
+                    {/* CHANGE NUMBER */}
+
+                    <button
+                      type="button"
+                      className="change-number-btn"
+                      onClick={
+                        handleChangeNumber
+                      }
+                    >
+                      ← Change Number
+                    </button>
+
+                    {/* RESEND */}
+
+                    <button
+                      type="button"
+                      className="resend-otp-btn"
+                      onClick={
+                        handleSendOtp
+                      }
+                      disabled={otpLoading}
+                    >
+                      Resend OTP
+                    </button>
+
+                  </>
+
+                )}
+
+                {/* REGISTER */}
+
+                <p className="register-text">
+
+                  Don't have an account?
+
+                  <Link to="/register">
+                    Register
+                  </Link>
+
+                </p>
+
+              </div>
+
+            )}
 
             {/* =================================================
                 DIVIDER
@@ -563,24 +964,25 @@ function Login() {
 
               <span></span>
 
-              <p>
-                OR
-              </p>
+              <p>OR</p>
 
               <span></span>
 
             </div>
 
-
             {/* =================================================
-                GOOGLE LOGIN
+                GOOGLE
             ================================================= */}
 
             <div className="google-login">
 
               <GoogleLogin
-                onSuccess={handleGoogleLogin}
-                onError={handleGoogleError}
+                onSuccess={
+                  handleGoogleLogin
+                }
+                onError={
+                  handleGoogleError
+                }
                 useOneTap={false}
                 auto_select={false}
                 width="100%"
@@ -588,9 +990,8 @@ function Login() {
 
             </div>
 
-
             {/* =================================================
-                FACEBOOK LOGIN
+                FACEBOOK
             ================================================= */}
 
             <div className="social-login">
@@ -598,7 +999,9 @@ function Login() {
               <button
                 type="button"
                 className="facebook-btn"
-                onClick={handleFacebookLogin}
+                onClick={
+                  handleFacebookLogin
+                }
               >
 
                 <FaFacebookF />

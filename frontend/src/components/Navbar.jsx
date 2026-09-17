@@ -30,6 +30,7 @@ import {
 } from "react-icons/md";
 
 import logo from "../assets/logo/Zenve - 01 (1).png";
+import fashionlogo from "../assets/logo/zenve-logo-CGDKnQD9.png";
 
 import "../styles/Navbar.css";
 
@@ -45,9 +46,21 @@ function Navbar() {
         role === "Admin" ||
         role === "Staff";
 
-    /* =====================================================
-       STATES
-    ===================================================== */
+    /*
+    =====================================================
+    FASHION PAGE DETECTION
+    =====================================================
+    */
+
+    const isFashionPage =
+        location.pathname.toLowerCase() === "/fashion" ||
+        location.pathname.toLowerCase().startsWith("/fashion/");
+
+    /*
+    =====================================================
+    STATES
+    =====================================================
+    */
 
     const [profileImage, setProfileImage] = useState("");
     const [search, setSearch] = useState("");
@@ -63,12 +76,17 @@ function Navbar() {
 
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    /* =====================================================
-       SAVE CART COUNT
-    ===================================================== */
+    /*
+    =====================================================
+    SAVE CART COUNT
+    =====================================================
+    */
 
     const updateCartCount = useCallback((count) => {
-        const newCount = Math.max(0, Number(count || 0));
+        const newCount = Math.max(
+            0,
+            Number(count || 0)
+        );
 
         setCartCount(newCount);
 
@@ -78,12 +96,17 @@ function Navbar() {
         );
     }, []);
 
-    /* =====================================================
-       SAVE WISHLIST COUNT
-    ===================================================== */
+    /*
+    =====================================================
+    SAVE WISHLIST COUNT
+    =====================================================
+    */
 
     const updateWishlistCount = useCallback((count) => {
-        const newCount = Math.max(0, Number(count || 0));
+        const newCount = Math.max(
+            0,
+            Number(count || 0)
+        );
 
         setWishlistCount(newCount);
 
@@ -93,9 +116,11 @@ function Navbar() {
         );
     }, []);
 
-    /* =====================================================
-       LOAD PROFILE
-    ===================================================== */
+    /*
+    =====================================================
+    LOAD PROFILE
+    =====================================================
+    */
 
     const loadProfile = useCallback(async () => {
         if (!token) {
@@ -131,16 +156,19 @@ function Navbar() {
         } catch (error) {
             console.error(
                 "Profile loading error:",
-                error.response?.data || error.message
+                error.response?.data ||
+                error.message
             );
 
             setProfileImage("");
         }
     }, [token]);
 
-    /* =====================================================
-       LOAD PET DETAILS
-    ===================================================== */
+    /*
+    =====================================================
+    LOAD PET DETAILS
+    =====================================================
+    */
 
     const loadPetDetails = useCallback(async () => {
         if (!token || isAdminOrStaff) {
@@ -170,16 +198,19 @@ function Navbar() {
         } catch (error) {
             console.error(
                 "Pet loading error:",
-                error.response?.data || error.message
+                error.response?.data ||
+                error.message
             );
 
             setHasPet(false);
         }
     }, [token, isAdminOrStaff]);
 
-    /* =====================================================
-       LOAD CART COUNT
-    ===================================================== */
+    /*
+    =====================================================
+    LOAD CART COUNT
+    =====================================================
+    */
 
     const loadCartCount = useCallback(async () => {
         if (!token || isAdminOrStaff) {
@@ -208,7 +239,9 @@ function Navbar() {
                         Number(item.quantity || 1),
                     0
                 );
-            } else if (Array.isArray(data?.items)) {
+            } else if (
+                Array.isArray(data?.items)
+            ) {
                 count = data.items.reduce(
                     (total, item) =>
                         total +
@@ -218,7 +251,9 @@ function Navbar() {
             } else if (
                 data?.total_items !== undefined
             ) {
-                count = Number(data.total_items);
+                count = Number(
+                    data.total_items
+                );
             } else if (
                 data?.count !== undefined
             ) {
@@ -229,11 +264,14 @@ function Navbar() {
         } catch (error) {
             console.error(
                 "Cart count error:",
-                error.response?.data || error.message
+                error.response?.data ||
+                error.message
             );
 
             const saved =
-                localStorage.getItem("cartCount");
+                localStorage.getItem(
+                    "cartCount"
+                );
 
             updateCartCount(
                 Number(saved || 0)
@@ -245,9 +283,11 @@ function Navbar() {
         updateCartCount,
     ]);
 
-    /* =====================================================
-       LOAD WISHLIST COUNT
-    ===================================================== */
+    /*
+    =====================================================
+    LOAD WISHLIST COUNT
+    =====================================================
+    */
 
     const loadWishlistCount = useCallback(async () => {
         if (!token || isAdminOrStaff) {
@@ -289,7 +329,8 @@ function Navbar() {
         } catch (error) {
             console.error(
                 "Wishlist count error:",
-                error.response?.data || error.message
+                error.response?.data ||
+                error.message
             );
 
             const saved =
@@ -307,9 +348,11 @@ function Navbar() {
         updateWishlistCount,
     ]);
 
-    /* =====================================================
-       INITIAL USER DATA
-    ===================================================== */
+    /*
+    =====================================================
+    INITIAL USER DATA
+    =====================================================
+    */
 
     useEffect(() => {
         if (!token) {
@@ -345,38 +388,18 @@ function Navbar() {
         updateWishlistCount,
     ]);
 
-    /* =====================================================
-       IMPORTANT:
-       LISTEN FOR CART / WISHLIST CHANGES
-    ===================================================== */
+    /*
+    =====================================================
+    CART / WISHLIST EVENTS
+    =====================================================
+    */
 
     useEffect(() => {
         if (!token || isAdminOrStaff) {
             return;
         }
 
-        /* ---------------------------------------------
-           CART UPDATED EVENT
-        --------------------------------------------- */
-
         const handleCartUpdate = (event) => {
-            console.log(
-                "Cart updated event received:",
-                event.detail
-            );
-
-            /*
-             * If another component sends:
-             *
-             * window.dispatchEvent(
-             *   new CustomEvent("cartUpdated", {
-             *      detail: { count: newCount }
-             *   })
-             * );
-             *
-             * update immediately without waiting for API.
-             */
-
             if (
                 event.detail &&
                 event.detail.count !== undefined
@@ -386,22 +409,10 @@ function Navbar() {
                 );
             }
 
-            /*
-             * Also fetch the real backend count.
-             */
             loadCartCount();
         };
 
-        /* ---------------------------------------------
-           WISHLIST UPDATED EVENT
-        --------------------------------------------- */
-
         const handleWishlistUpdate = (event) => {
-            console.log(
-                "Wishlist updated event received:",
-                event.detail
-            );
-
             if (
                 event.detail &&
                 event.detail.count !== undefined
@@ -411,9 +422,6 @@ function Navbar() {
                 );
             }
 
-            /*
-             * Fetch the real backend count.
-             */
             loadWishlistCount();
         };
 
@@ -447,9 +455,11 @@ function Navbar() {
         updateWishlistCount,
     ]);
 
-    /* =====================================================
-       RELOAD COUNTS WHEN ROUTE CHANGES
-    ===================================================== */
+    /*
+    =====================================================
+    RELOAD COUNTS ON ROUTE CHANGE
+    =====================================================
+    */
 
     useEffect(() => {
         if (!token || isAdminOrStaff) {
@@ -467,9 +477,11 @@ function Navbar() {
         loadWishlistCount,
     ]);
 
-    /* =====================================================
-       UPDATE WHEN WINDOW GETS FOCUS
-    ===================================================== */
+    /*
+    =====================================================
+    WINDOW FOCUS
+    =====================================================
+    */
 
     useEffect(() => {
         if (!token || isAdminOrStaff) {
@@ -499,23 +511,32 @@ function Navbar() {
         loadWishlistCount,
     ]);
 
-    /* =====================================================
-       LISTEN TO STORAGE CHANGES
-    ===================================================== */
+    /*
+    =====================================================
+    STORAGE CHANGES
+    =====================================================
+    */
 
     useEffect(() => {
         const handleStorage = (event) => {
-            if (event.key === "cartCount") {
+            if (
+                event.key === "cartCount"
+            ) {
                 updateCartCount(
-                    Number(event.newValue || 0)
+                    Number(
+                        event.newValue || 0
+                    )
                 );
             }
 
             if (
-                event.key === "wishlistCount"
+                event.key ===
+                "wishlistCount"
             ) {
                 updateWishlistCount(
-                    Number(event.newValue || 0)
+                    Number(
+                        event.newValue || 0
+                    )
                 );
             }
         };
@@ -536,13 +557,15 @@ function Navbar() {
         updateWishlistCount,
     ]);
 
-    /* =====================================================
-       CLOSE MOBILE MENU ON DESKTOP
-    ===================================================== */
+    /*
+    =====================================================
+    CLOSE MOBILE MENU ON DESKTOP
+    =====================================================
+    */
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth > 768) {
+            if (window.innerWidth > 992) {
                 setMobileMenuOpen(false);
             }
         };
@@ -560,9 +583,11 @@ function Navbar() {
         };
     }, []);
 
-    /* =====================================================
-       LOCK BODY SCROLL
-    ===================================================== */
+    /*
+    =====================================================
+    BODY SCROLL
+    =====================================================
+    */
 
     useEffect(() => {
         if (mobileMenuOpen) {
@@ -579,12 +604,15 @@ function Navbar() {
         };
     }, [mobileMenuOpen]);
 
-    /* =====================================================
-       SEARCH
-    ===================================================== */
+    /*
+    =====================================================
+    SEARCH
+    =====================================================
+    */
 
     const handleSearch = (event) => {
-        const value = event.target.value;
+        const value =
+            event.target.value;
 
         setSearch(value);
 
@@ -598,7 +626,8 @@ function Navbar() {
     };
 
     const handleSearchSubmit = () => {
-        const value = search.trim();
+        const value =
+            search.trim();
 
         if (value) {
             navigate(
@@ -611,15 +640,19 @@ function Navbar() {
         }
     };
 
-    const handleSearchKeyDown = (event) => {
+    const handleSearchKeyDown = (
+        event
+    ) => {
         if (event.key === "Enter") {
             handleSearchSubmit();
         }
     };
 
-    /* =====================================================
-       MOBILE MENU
-    ===================================================== */
+    /*
+    =====================================================
+    MOBILE MENU
+    =====================================================
+    */
 
     const openMobileMenu = () => {
         setMobileMenuOpen(true);
@@ -634,9 +667,11 @@ function Navbar() {
         navigate(path);
     };
 
-    /* =====================================================
-       LOGOUT
-    ===================================================== */
+    /*
+    =====================================================
+    LOGOUT
+    =====================================================
+    */
 
     const handleLogout = () => {
         setMobileMenuOpen(false);
@@ -658,9 +693,11 @@ function Navbar() {
         window.location.reload();
     };
 
-    /* =====================================================
-       ADMIN / STAFF NAVBAR
-    ===================================================== */
+    /*
+    =====================================================
+    ADMIN / STAFF NAVBAR
+    =====================================================
+    */
 
     if (isAdminOrStaff) {
         return (
@@ -697,7 +734,8 @@ function Navbar() {
                             )}
 
                             <p>
-                                {username || "Admin"}
+                                {username ||
+                                    "Admin"}
                             </p>
                         </Link>
 
@@ -705,7 +743,8 @@ function Navbar() {
 
                             <h4>
                                 Hello,{" "}
-                                {username || "Admin"}
+                                {username ||
+                                    "Admin"}
                             </h4>
 
                             <Link
@@ -718,7 +757,9 @@ function Navbar() {
                             <button
                                 type="button"
                                 className="popup-btn logout-popup-btn"
-                                onClick={handleLogout}
+                                onClick={
+                                    handleLogout
+                                }
                             >
                                 Logout
                             </button>
@@ -729,7 +770,9 @@ function Navbar() {
                     <button
                         type="button"
                         className="mobile-menu-btn"
-                        onClick={openMobileMenu}
+                        onClick={
+                            openMobileMenu
+                        }
                         aria-label="Open menu"
                     >
                         {mobileMenuOpen ? (
@@ -745,7 +788,9 @@ function Navbar() {
                     <>
                         <div
                             className="mobile-menu-overlay"
-                            onClick={closeMobileMenu}
+                            onClick={
+                                closeMobileMenu
+                            }
                         />
 
                         <aside className="mobile-drawer">
@@ -793,7 +838,6 @@ function Navbar() {
                                     }
                                 >
                                     <FaBox />
-
                                     <span>
                                         Manage Products
                                     </span>
@@ -808,7 +852,6 @@ function Navbar() {
                                     }
                                 >
                                     <FaUser />
-
                                     <span>
                                         My Profile
                                     </span>
@@ -823,7 +866,6 @@ function Navbar() {
                                     }
                                 >
                                     <FaBox />
-
                                     <span>
                                         Orders
                                     </span>
@@ -837,13 +879,13 @@ function Navbar() {
                                     }
                                 >
                                     <FaSignOutAlt />
-
                                     <span>
                                         Logout
                                     </span>
                                 </button>
 
                             </div>
+
                         </aside>
                     </>
                 )}
@@ -851,9 +893,687 @@ function Navbar() {
         );
     }
 
-    /* =====================================================
-       CUSTOMER NAVBAR
-    ===================================================== */
+    /*
+    =====================================================
+    FASHION NAVBAR
+    =====================================================
+    */
+
+    if (isFashionPage) {
+        return (
+            <>
+                <header className="navbar fashion-navbar">
+
+                    {/* LOGO */}
+
+                    <div className="fashion-logo">
+
+                        <Link
+                            to="/Fashion"
+                            className="fashion-logo-link"
+                        >
+
+                            <img
+                                src={fashionlogo}
+                                alt="Zenve Fashion"
+                                className="fashion-navbar-logo"
+                            />
+
+                            <div className="fashion-brand-text">
+                            </div>
+
+                        </Link>
+
+                    </div>
+
+                    {/* FASHION NAVIGATION */}
+
+                    <nav className="fashion-main-links">
+
+                        <Link
+                            to="/Fashion"
+                            className="fashion-nav-link active"
+                        >
+                            Home
+                        </Link>
+
+                        <Link
+                            to="/products?search=Fashion"
+                            className="fashion-nav-link"
+                        >
+                            Collections
+                        </Link>
+
+                        <Link
+                            to="/products?search=Pet Fashion"
+                            className="fashion-nav-link"
+                        >
+                            Pet Fashion
+                        </Link>
+
+                        <Link
+                            to="/products?search=Human Fashion"
+                            className="fashion-nav-link"
+                        >
+                            People
+                        </Link>
+
+                        <Link
+                            to="/products?search=Twin Fashion"
+                            className="fashion-nav-link"
+                        >
+                            Twin Fashion
+                        </Link>
+
+                        <Link
+                            to="/offers"
+                            className="fashion-nav-link"
+                        >
+                            Offers
+                        </Link>
+
+                    </nav>
+
+                    {/* SEARCH */}
+
+                    <div className="fashion-search">
+
+                        <input
+                            type="text"
+                            placeholder="Search fashion..."
+                            value={search}
+                            onChange={handleSearch}
+                            onKeyDown={
+                                handleSearchKeyDown
+                            }
+                        />
+
+                        <button
+                            type="button"
+                            onClick={
+                                handleSearchSubmit
+                            }
+                            aria-label="Search"
+                        >
+                            <FaSearch />
+                        </button>
+
+                    </div>
+
+                    {/* EXISTING DESKTOP ICONS */}
+
+                    <div className="fashion-icons">
+
+                        {/* OFFERS */}
+
+                        <Link
+                            to="/offers"
+                            className="fashion-icon-link"
+                            title="Offers"
+                        >
+                            <MdOutlineLocalOffer />
+
+                            <span>
+                                Offers
+                            </span>
+                        </Link>
+
+                        {/* WISHLIST */}
+
+                        <Link
+                            to="/wishlists"
+                            className="fashion-icon-link fashion-count-link"
+                            title="Wishlist"
+                        >
+
+                            <div className="fashion-icon-wrapper">
+
+                                <MdOutlineFavoriteBorder />
+
+                                {wishlistCount > 0 && (
+                                    <span className="fashion-badge">
+                                        {wishlistCount}
+                                    </span>
+                                )}
+
+                            </div>
+
+                            <span>
+                                Wishlist
+                            </span>
+
+                        </Link>
+
+                        {/* CART */}
+
+                        <Link
+                            to="/cart"
+                            className="fashion-icon-link fashion-count-link"
+                            title="Cart"
+                        >
+
+                            <div className="fashion-icon-wrapper">
+
+                                <FaShoppingCart />
+
+                                {cartCount > 0 && (
+                                    <span className="fashion-badge">
+                                        {cartCount}
+                                    </span>
+                                )}
+
+                            </div>
+
+                            <span>
+                                Cart
+                            </span>
+
+                        </Link>
+
+                        {/* WALLET */}
+
+                        {username &&
+                            hasPet && (
+                                <Link
+                                    to="/wallet"
+                                    className="fashion-icon-link"
+                                    title="Wallet"
+                                >
+                                    <MdAccountBalanceWallet />
+
+                                    <span>
+                                        Wallet
+                                    </span>
+                                </Link>
+                            )}
+
+                        {/* PET */}
+
+                        {username &&
+                            hasPet && (
+                                <Link
+                                    to="/pets"
+                                    className="fashion-icon-link"
+                                    title="My Pets"
+                                >
+                                    <FaPaw />
+
+                                    <span>
+                                        My Pets
+                                    </span>
+                                </Link>
+                            )}
+
+                    </div>
+
+                    {/* DESKTOP PROFILE */}
+
+                    <div className="profile-menu fashion-profile-menu">
+
+                        <Link
+                            to={
+                                username
+                                    ? "/profile"
+                                    : "/login"
+                            }
+                            className="fashion-profile-link"
+                        >
+
+                            {profileImage ? (
+                                <img
+                                    src={profileImage}
+                                    alt="Profile"
+                                    className="fashion-avatar"
+                                />
+                            ) : (
+                                <FaUserCircle />
+                            )}
+
+                            <span>
+                                {username ||
+                                    "Login"}
+                            </span>
+
+                        </Link>
+
+                        <div className="profile-popup fashion-profile-popup">
+
+                            {username ? (
+                                <>
+                                    <h4>
+                                        Hello,{" "}
+                                        {username}
+                                    </h4>
+
+                                    <Link
+                                        to="/profile"
+                                        className="popup-btn fashion-popup-btn"
+                                    >
+                                        My Profile
+                                    </Link>
+
+                                    {hasPet && (
+                                        <Link
+                                            to="/pets"
+                                            className="popup-btn fashion-popup-btn"
+                                        >
+                                            My Pets
+                                        </Link>
+                                    )}
+
+                                    <Link
+                                        to="/orders"
+                                        className="popup-btn fashion-popup-btn"
+                                    >
+                                        My Orders
+                                    </Link>
+
+                                    <Link
+                                        to="/wallet"
+                                        className="popup-btn fashion-popup-btn"
+                                    >
+                                        My Wallet
+                                    </Link>
+
+                                    <button
+                                        type="button"
+                                        className="popup-btn logout-popup-btn"
+                                        onClick={
+                                            handleLogout
+                                        }
+                                    >
+                                        Logout
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <h4>
+                                        Welcome
+                                    </h4>
+
+                                    <p>
+                                        Please login to continue.
+                                    </p>
+
+                                    <Link
+                                        to="/login"
+                                        className="popup-btn fashion-popup-btn"
+                                    >
+                                        Login
+                                    </Link>
+
+                                    <Link
+                                        to="/register"
+                                        className="popup-btn fashion-popup-btn"
+                                    >
+                                        Sign Up
+                                    </Link>
+                                </>
+                            )}
+
+                        </div>
+
+                    </div>
+
+                    {/* =================================================
+                        TABLET / MOBILE WISHLIST + CART
+                    ================================================= */}
+
+                    <div className="fashion-mobile-actions">
+
+                        {/* WISHLIST */}
+
+                        <Link
+                            to="/wishlists"
+                            className="fashion-mobile-action"
+                            title="Wishlist"
+                        >
+
+                            <div className="fashion-mobile-action-icon">
+
+                                <MdOutlineFavoriteBorder />
+
+                                {wishlistCount > 0 && (
+                                    <span className="fashion-mobile-badge">
+                                        {wishlistCount}
+                                    </span>
+                                )}
+
+                            </div>
+
+                        </Link>
+
+                        {/* CART */}
+
+                        <Link
+                            to="/cart"
+                            className="fashion-mobile-action"
+                            title="Cart"
+                        >
+
+                            <div className="fashion-mobile-action-icon">
+
+                                <FaShoppingCart />
+
+                                {cartCount > 0 && (
+                                    <span className="fashion-mobile-badge">
+                                        {cartCount}
+                                    </span>
+                                )}
+
+                            </div>
+
+                        </Link>
+
+                    </div>
+
+                    {/* MOBILE / TABLET MENU */}
+
+                    <button
+                        type="button"
+                        className="mobile-menu-btn fashion-mobile-menu-btn"
+                        onClick={
+                            openMobileMenu
+                        }
+                        aria-label="Open menu"
+                    >
+                        {mobileMenuOpen ? (
+                            <FaTimes />
+                        ) : (
+                            <FaBars />
+                        )}
+                    </button>
+
+                </header>
+
+                {/* FASHION MOBILE DRAWER */}
+
+                {mobileMenuOpen && (
+                    <>
+                        <div
+                            className="mobile-menu-overlay fashion-mobile-overlay"
+                            onClick={
+                                closeMobileMenu
+                            }
+                        />
+
+                        <aside className="mobile-drawer fashion-mobile-drawer">
+
+                            <div className="fashion-mobile-header">
+
+                                <div className="fashion-mobile-brand">
+
+                                    <img
+                                        src={logo}
+                                        alt="Zenve Fashion"
+                                    />
+
+                                    <div>
+                                        <strong>
+                                            ZENVE
+                                        </strong>
+
+                                        <small>
+                                            FASHION
+                                        </small>
+                                    </div>
+
+                                </div>
+
+                                <button
+                                    type="button"
+                                    className="fashion-drawer-close"
+                                    onClick={
+                                        closeMobileMenu
+                                    }
+                                >
+                                    <FaTimes />
+                                </button>
+
+                            </div>
+
+                            <div className="fashion-mobile-body">
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        goToPage(
+                                            "/Fashion"
+                                        )
+                                    }
+                                >
+                                    <FaHome />
+                                    <span>
+                                        Fashion Home
+                                    </span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        goToPage(
+                                            "/products?search=Fashion"
+                                        )
+                                    }
+                                >
+                                    <FaTag />
+                                    <span>
+                                        Collections
+                                    </span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        goToPage(
+                                            "/products?search=Pet Fashion"
+                                        )
+                                    }
+                                >
+                                    <FaPaw />
+                                    <span>
+                                        Pet Fashion
+                                    </span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        goToPage(
+                                            "/products?search=Human Fashion"
+                                        )
+                                    }
+                                >
+                                    <FaUser />
+                                    <span>
+                                        People Fashion
+                                    </span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        goToPage(
+                                            "/products?search=Twin Fashion"
+                                        )
+                                    }
+                                >
+                                    <FaHeart />
+                                    <span>
+                                        Twin Fashion
+                                    </span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        goToPage(
+                                            "/offers"
+                                        )
+                                    }
+                                >
+                                    <MdOutlineLocalOffer />
+                                    <span>
+                                        Offers
+                                    </span>
+                                </button>
+
+                                {/* CART */}
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        goToPage(
+                                            "/cart"
+                                        )
+                                    }
+                                >
+                                    <FaShoppingCart />
+
+                                    <span>
+                                        Cart
+                                    </span>
+
+                                    {cartCount > 0 && (
+                                        <b>
+                                            {cartCount}
+                                        </b>
+                                    )}
+                                </button>
+
+                                {/* WISHLIST */}
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        goToPage(
+                                            "/wishlists"
+                                        )
+                                    }
+                                >
+                                    <FaHeart />
+
+                                    <span>
+                                        Wishlist
+                                    </span>
+
+                                    {wishlistCount > 0 && (
+                                        <b>
+                                            {wishlistCount}
+                                        </b>
+                                    )}
+                                </button>
+
+                                {/* ORDERS */}
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        goToPage(
+                                            "/orders"
+                                        )
+                                    }
+                                >
+                                    <FaBox />
+
+                                    <span>
+                                        My Orders
+                                    </span>
+                                </button>
+
+                                {/* PETS */}
+
+                                {username &&
+                                    hasPet && (
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                goToPage(
+                                                    "/pets"
+                                                )
+                                            }
+                                        >
+                                            <FaPaw />
+
+                                            <span>
+                                                My Pets
+                                            </span>
+                                        </button>
+                                    )}
+
+                                {/* WALLET */}
+
+                                {username &&
+                                    hasPet && (
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                goToPage(
+                                                    "/wallet"
+                                                )
+                                            }
+                                        >
+                                            <FaWallet />
+
+                                            <span>
+                                                My Wallet
+                                            </span>
+                                        </button>
+                                    )}
+
+                                {/* PROFILE */}
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        goToPage(
+                                            username
+                                                ? "/profile"
+                                                : "/login"
+                                        )
+                                    }
+                                >
+                                    <FaUser />
+
+                                    <span>
+                                        {username
+                                            ? "My Profile"
+                                            : "Login"}
+                                    </span>
+                                </button>
+
+                                {/* LOGOUT */}
+
+                                {username && (
+                                    <button
+                                        type="button"
+                                        className="mobile-logout fashion-mobile-logout"
+                                        onClick={
+                                            handleLogout
+                                        }
+                                    >
+                                        <FaSignOutAlt />
+
+                                        <span>
+                                            Logout
+                                        </span>
+                                    </button>
+                                )}
+
+                            </div>
+
+                        </aside>
+                    </>
+                )}
+            </>
+        );
+    }
+
+    /*
+    =====================================================
+    NORMAL CUSTOMER NAVBAR
+    =====================================================
+    */
 
     return (
         <>
@@ -889,8 +1609,6 @@ function Navbar() {
 
             <header className="navbar">
 
-                {/* LOGO */}
-
                 <div className="logo">
 
                     <Link
@@ -905,8 +1623,6 @@ function Navbar() {
                     </Link>
 
                 </div>
-
-                {/* SEARCH */}
 
                 <div className="search-container">
 
@@ -933,7 +1649,7 @@ function Navbar() {
 
                 </div>
 
-                {/* DESKTOP NAVIGATION */}
+                {/* DESKTOP ICONS */}
 
                 <div className="nav-icons">
 
@@ -1001,41 +1717,43 @@ function Navbar() {
 
                     {/* WALLET */}
 
-                    {username && hasPet && (
-                        <Link
-                            to="/wallet"
-                            className="nav-count-link"
-                        >
+                    {username &&
+                        hasPet && (
+                            <Link
+                                to="/wallet"
+                                className="nav-count-link"
+                            >
 
-                            <MdAccountBalanceWallet />
+                                <MdAccountBalanceWallet />
 
-                            <p>
-                                Wallet
-                            </p>
+                                <p>
+                                    Wallet
+                                </p>
 
-                        </Link>
-                    )}
+                            </Link>
+                        )}
 
                     {/* MY PETS */}
 
-                    {username && hasPet && (
-                        <Link
-                            to="/pets"
-                            className="pet-profile-nav"
-                        >
+                    {username &&
+                        hasPet && (
+                            <Link
+                                to="/pets"
+                                className="pet-profile-nav"
+                            >
 
-                            <FaPaw />
+                                <FaPaw />
 
-                            <p>
-                                My Pets
-                            </p>
+                                <p>
+                                    My Pets
+                                </p>
 
-                        </Link>
-                    )}
+                            </Link>
+                        )}
 
                 </div>
 
-                {/* PROFILE */}
+                {/* DESKTOP PROFILE */}
 
                 <div className="profile-menu">
 
@@ -1059,19 +1777,19 @@ function Navbar() {
                         )}
 
                         <p>
-                            {username || "Login"}
+                            {username ||
+                                "Login"}
                         </p>
 
                     </Link>
-
-                    {/* PROFILE POPUP */}
 
                     <div className="profile-popup">
 
                         {username ? (
                             <>
                                 <h4>
-                                    Hello, {username}
+                                    Hello,{" "}
+                                    {username}
                                 </h4>
 
                                 <Link
@@ -1144,12 +1862,62 @@ function Navbar() {
 
                 </div>
 
-                {/* MOBILE BUTTON */}
+                {/* TABLET / MOBILE ACTIONS */}
+
+                <div className="normal-mobile-actions">
+
+                    {/* WISHLIST */}
+
+                    <Link
+                        to="/wishlists"
+                        className="normal-mobile-action"
+                        title="Wishlist"
+                    >
+
+                        <div className="normal-mobile-action-icon">
+
+                            <MdOutlineFavoriteBorder />
+
+                            {wishlistCount > 0 && (
+                                <span className="normal-mobile-badge">
+                                    {wishlistCount}
+                                </span>
+                            )}
+
+                        </div>
+
+                    </Link>
+
+                    {/* CART */}
+
+                    <Link
+                        to="/cart"
+                        className="normal-mobile-action"
+                        title="Cart"
+                    >
+
+                        <div className="normal-mobile-action-icon">
+
+                            <FaShoppingCart />
+
+                            {cartCount > 0 && (
+                                <span className="normal-mobile-badge">
+                                    {cartCount}
+                                </span>
+                            )}
+
+                        </div>
+
+                    </Link>
+
+                </div>
 
                 <button
                     type="button"
                     className="mobile-menu-btn"
-                    onClick={openMobileMenu}
+                    onClick={
+                        openMobileMenu
+                    }
                     aria-label="Open menu"
                 >
                     {mobileMenuOpen ? (
@@ -1160,19 +1928,73 @@ function Navbar() {
                 </button>
 
             </header>
+             <nav className="category-nav">
 
-            {/* MOBILE DRAWER */}
+                <div className="category-nav-scroll">
+
+                    <Link to="/category/food">
+                        Pet Food
+                    </Link>
+
+                    <Link to="/category/treats">
+                        Treats
+                    </Link>
+
+                    <Link to="/category/toys">
+                        Toys
+                    </Link>
+
+                    <Link to="/category/fashion">
+                        Pet Fashion
+                    </Link>
+
+                    <Link to="/category/grooming">
+                        Grooming
+                    </Link>
+
+                    <Link to="/category/accessories">
+                        Accessories
+                    </Link>
+
+                    <Link to="/">
+                        Shop
+                    </Link>
+
+                    <Link to="/vet-booked">
+                        Book a Vet
+                    </Link>
+
+                    <Link to="/fashion">
+                        Zenve Fashion
+                    </Link>
+
+                    <Link to="/account">
+                        My Space
+                    </Link>
+
+                    <Link to="/contact">
+                        Help & Care
+                    </Link>
+
+                    <Link to="/policies">
+                        Shipping & Returns
+                    </Link>
+
+                </div>
+
+            </nav>
+            {/* NORMAL MOBILE DRAWER */}
 
             {mobileMenuOpen && (
                 <>
                     <div
                         className="mobile-menu-overlay"
-                        onClick={closeMobileMenu}
+                        onClick={
+                            closeMobileMenu
+                        }
                     />
 
                     <aside className="mobile-drawer">
-
-                        {/* HEADER */}
 
                         <div className="mobile-drawer-header">
 
@@ -1218,18 +2040,17 @@ function Navbar() {
 
                         </div>
 
-                        {/* DRAWER ITEMS */}
-
                         <div className="mobile-drawer-body">
 
                             <button
                                 type="button"
                                 onClick={() =>
-                                    goToPage("/home")
+                                    goToPage(
+                                        "/home"
+                                    )
                                 }
                             >
                                 <FaHome />
-
                                 <span>
                                     Home
                                 </span>
@@ -1238,11 +2059,12 @@ function Navbar() {
                             <button
                                 type="button"
                                 onClick={() =>
-                                    goToPage("/offers")
+                                    goToPage(
+                                        "/offers"
+                                    )
                                 }
                             >
                                 <FaTag />
-
                                 <span>
                                     Offers
                                 </span>
@@ -1257,7 +2079,6 @@ function Navbar() {
                                 }
                             >
                                 <FaPills />
-
                                 <span>
                                     Medicines & Supplements
                                 </span>
@@ -1272,7 +2093,6 @@ function Navbar() {
                                 }
                             >
                                 <FaPaw />
-
                                 <span>
                                     Pet Food & Products
                                 </span>
@@ -1287,7 +2107,6 @@ function Navbar() {
                                 }
                             >
                                 <FaFilePrescription />
-
                                 <span>
                                     Upload Prescription
                                 </span>
@@ -1302,7 +2121,6 @@ function Navbar() {
                                 }
                             >
                                 <FaTractor />
-
                                 <span>
                                     Farm Supplies
                                 </span>
@@ -1317,18 +2135,17 @@ function Navbar() {
                                 }
                             >
                                 <FaStethoscope />
-
                                 <span>
                                     Vet Equipment
                                 </span>
                             </button>
 
-                            {/* CART */}
-
                             <button
                                 type="button"
                                 onClick={() =>
-                                    goToPage("/cart")
+                                    goToPage(
+                                        "/cart"
+                                    )
                                 }
                             >
                                 <FaShoppingCart />
@@ -1343,8 +2160,6 @@ function Navbar() {
                                     </b>
                                 )}
                             </button>
-
-                            {/* WISHLIST */}
 
                             <button
                                 type="button"
