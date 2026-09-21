@@ -656,7 +656,7 @@ function Login() {
                 }}
               >
                 <FaMobileAlt />
-                <span>Number Login</span>
+                <span>Mobile Login</span>
               </button>
 
             </div>
