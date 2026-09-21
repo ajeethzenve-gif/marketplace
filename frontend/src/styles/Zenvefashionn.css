@@ -1,0 +1,1894 @@
+/* =====================================================
+   MAIN
+===================================================== */
+
+.zenve-fashion-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #faf7ff;
+  color: #241d27;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+.zenve-section-container {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+
+/* =====================================================
+   HERO
+===================================================== */
+
+.zenve-hero {
+  width: 100%;
+  min-height: 600px;
+
+  background:
+    radial-gradient(
+      circle at 78% 50%,
+      rgba(119, 47, 126, 0.18),
+      transparent 28%
+    ),
+    #001CCC;
+
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+.zenve-hero-container {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 1.08fr 0.92fr;
+
+  gap: 60px;
+
+  align-items: center;
+}
+
+
+/* =====================================================
+   HERO CONTENT
+===================================================== */
+
+.zenve-hero-content {
+  padding: 40px 0;
+}
+
+.zenve-exclusive {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 17px;
+
+  border: 1px solid #8c6728;
+  border-radius: 30px;
+  background:white; 
+  color: #e5b75d;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+
+  margin-bottom: 25px;
+}
+
+.zenve-hero-content h1 {
+  margin: 0;
+
+  font-size: clamp(48px, 6vw, 70px);
+  line-height: 0.98;
+
+  font-weight: 800;
+
+  color: #F1CA2C;
+}
+
+.zenve-hero-content h2 {
+  margin: 12px 0 24px;
+
+  font-size: clamp(30px, 4vw, 43px);
+  line-height: 1;
+
+  color: #f2edf0;
+}
+
+.zenve-hero-content > p {
+  max-width: 650px;
+
+  margin: 0;
+
+  color: #bdb6ba;
+
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+
+/* =====================================================
+   HERO BUTTONS
+===================================================== */
+
+.zenve-hero-buttons {
+  display: flex;
+  gap: 13px;
+  margin-top: 32px;
+}
+
+.zenve-primary-btn,
+.zenve-secondary-btn {
+  min-height: 44px;
+
+  padding: 0 24px;
+
+  border-radius: 25px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+}
+
+.zenve-primary-btn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  border: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      #d49b3f,
+      #f2d176
+    );
+
+  color: #25180b;
+}
+
+.zenve-primary-btn:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 25px rgba(224, 171, 74, 0.25);
+}
+
+.zenve-secondary-btn {
+  border: 1px solid #795921;
+
+  background: transparent;
+
+  color: #e5b75d;
+}
+
+.zenve-secondary-btn:hover {
+  background: rgba(229, 183, 93, 0.08);
+}
+
+
+/* =====================================================
+   STATS
+===================================================== */
+
+.zenve-stats {
+  display: flex;
+  gap: 18px;
+
+  margin-top: 40px;
+}
+
+.zenve-stat {
+  min-width: 125px;
+
+  padding: 16px 14px;
+
+  border: 1px solid #39302d;
+  border-radius: 18px;
+
+  background:white; 
+}
+
+.zenve-stat strong {
+  display: block;
+
+  font-size: 24px;
+
+  color: #e5b75d;
+}
+
+.zenve-stat span {
+  display: block;
+
+  margin-top: 6px;
+
+  color: #989295;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   HERO IMAGE
+===================================================== */
+
+.zenve-hero-image {
+  width: 100%;
+  min-height: 520px;
+
+  background: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  border-radius: 22px;
+
+  box-shadow:
+    0 20px 55px rgba(0, 0, 0, 0.12);
+}
+
+.zenve-hero-img {
+  width: 90%;
+  height: 90%;
+
+  object-fit: contain;
+  object-position: center;
+
+  display: block;
+
+  border-radius: 16px;
+}
+
+
+/* =====================================================
+   HERO LOGO CARD
+===================================================== */
+
+.zenve-logo-card {
+  width: min(500px, 100%);
+
+  aspect-ratio: 1 / 0.88;
+
+  background: #fff;
+
+  border-radius: 35px;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  box-shadow:
+    0 25px 70px rgba(128, 45, 137, 0.25);
+
+  text-align: center;
+
+  color: #111;
+}
+
+.zenve-logo-design {
+  font-family: Georgia, serif;
+
+  font-size: 145px;
+
+  line-height: 0.65;
+
+  color: #c28b2d;
+
+  font-weight: 700;
+}
+
+.zenve-logo-name {
+  margin-top: 35px;
+
+  font-family: Georgia, serif;
+
+  font-size: 65px;
+
+  font-weight: 700;
+
+  letter-spacing: -3px;
+}
+
+.zenve-logo-fashion {
+  margin-top: -4px;
+
+  font-size: 18px;
+
+  letter-spacing: 10px;
+}
+
+.zenve-logo-line {
+  margin-top: 18px;
+
+  font-size: 12px;
+
+  letter-spacing: 4px;
+
+  color: #4e4947;
+}
+
+.zenve-logo-line span {
+  color: #c28b2d;
+
+  padding: 0 7px;
+}
+
+.zenve-logo-tagline {
+  margin-top: 24px;
+
+  font-family: cursive;
+
+  font-size: 23px;
+
+  color: #c28b2d;
+}
+
+
+/* =====================================================
+   DESIGNER SECTION
+===================================================== */
+
+.zenve-designers-section {
+  padding: 40px 0 25px;
+
+  background: #faf7ff;
+}
+
+.zenve-designers-section h2,
+.zenve-runway-header h2 {
+  margin: 0;
+
+  color: #001CCC;
+
+  font-size: 23px;
+
+  font-weight: 800;
+}
+
+.zenve-section-subtitle {
+  margin: 7px 0 18px;
+
+  color: #81778f;
+
+  font-size: 12px;
+}
+
+
+/* =====================================================
+   DESIGNERS
+===================================================== */
+
+.zenve-designer-list {
+  display: flex;
+
+  gap: 8px;
+
+  overflow-x: auto;
+
+  padding-bottom: 4px;
+}
+
+.zenve-designer-list::-webkit-scrollbar {
+  display: none;
+}
+
+.zenve-all-houses,
+.zenve-designer {
+  flex-shrink: 0;
+
+  height: 40px;
+
+  padding: 5px 15px;
+
+  border-radius: 15px;
+
+  cursor: pointer;
+
+  text-align: left;
+
+  transition: 0.2s;
+}
+
+.zenve-all-houses {
+  min-width: 82px;
+
+  border: none;
+
+  background: #17120f;
+
+  color: #f0c45d;
+}
+
+.zenve-all-houses strong,
+.zenve-designer strong {
+  display: block;
+
+  font-size: 9px;
+}
+
+.zenve-all-houses small,
+.zenve-designer small {
+  display: block;
+
+  margin-top: 2px;
+
+  font-size: 7px;
+}
+
+.zenve-designer {
+  min-width: 130px;
+
+  border: 1px solid #ded6e9;
+
+  background: white;
+
+  color: #3f354a;
+}
+
+.zenve-designer small {
+  color: #8c8298;
+}
+
+.zenve-designer:hover {
+  border-color: #7550b7;
+
+  transform: translateY(-1px);
+}
+
+
+/* =====================================================
+   SCROLL BAR
+===================================================== */
+
+.zenve-scroll-bar {
+  width: 100%;
+
+  height: 8px;
+
+  margin-top: 8px;
+
+  background: white;
+
+  position: relative;
+}
+
+.zenve-scroll-bar span {
+  position: absolute;
+
+  left: 20px;
+
+  top: 1px;
+
+  width: 235px;
+
+  height: 6px;
+
+  border-radius: 10px;
+
+  background: #929292;
+}
+
+
+/* =====================================================
+   RUNWAY
+===================================================== */
+
+.zenve-runway-section {
+  padding: 18px 0 60px;
+
+  background: #faf7ff;
+}
+
+.zenve-runway-header {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 18px;
+}
+
+.zenve-runway-header p {
+  margin: 9px 0 0;
+
+  color: #8b8292;
+
+  font-size: 11px;
+}
+
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+.zenve-filter-wrapper {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-end;
+}
+
+.zenve-filters {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  flex-wrap: wrap;
+}
+
+.zenve-filters button {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 10px 16px;
+
+  border: 1px solid #ddd8ce;
+
+  background: #ffffff;
+
+  color: #27251f;
+
+  border-radius: 4px;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.7px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+/* =====================================================
+   ALL COLLECTIONS
+===================================================== */
+
+.zenve-filters button:nth-child(1) {
+  background: #ffffff;
+
+  color: #27251f;
+
+  border-color: #ddd8ce;
+}
+
+.zenve-filters button:nth-child(1):hover {
+  background: #ffffff;
+
+  color: #27251f;
+
+  border-color: #ddd8ce;
+
+  transform: none;
+
+  box-shadow: none;
+}
+
+
+/* =====================================================
+   PEOPLE / PETS / TWINS
+   NORMAL
+===================================================== */
+
+.zenve-filters button:nth-child(2),
+.zenve-filters button:nth-child(3),
+.zenve-filters button:nth-child(4) {
+  background: #ffffff;
+
+  color: #27251f;
+
+  border: 1px solid #ddd8ce;
+}
+
+
+/* =====================================================
+   PEOPLE / PETS / TWINS
+   HOVER
+   BLACK + WHITE
+===================================================== */
+
+.zenve-filters button:nth-child(2):hover,
+.zenve-filters button:nth-child(3):hover,
+.zenve-filters button:nth-child(4):hover {
+  background: #001CCC !important;
+
+  color: #ffffff !important;
+
+  border-color: #000000 !important;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 5px 12px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =====================================================
+   PEOPLE / PETS / TWINS
+   ACTIVE / CLICK
+   #001CCC + WHITE
+===================================================== */
+
+.zenve-filters button:nth-child(2).active,
+.zenve-filters button:nth-child(3).active,
+.zenve-filters button:nth-child(4).active {
+  background: #070f3f  !important;
+
+  color: #ffffff !important;
+
+  border-color: #001CCC !important;
+
+  box-shadow:
+    0 5px 14px rgba(0, 28, 204, 0.18);
+}
+
+
+/* =====================================================
+   PEOPLE / PETS / TWINS
+   ACTIVE + HOVER
+   STAY BLUE
+===================================================== */
+
+.zenve-filters button:nth-child(2).active:hover,
+.zenve-filters button:nth-child(3).active:hover,
+.zenve-filters button:nth-child(4).active:hover {
+  background: #070f3f  !important;
+
+  color: #ffffff !important;
+
+  border-color: #001CCC !important;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 6px 16px rgba(0, 28, 204, 0.22);
+}
+
+
+/* =====================================================
+   FILTER ICONS
+===================================================== */
+
+.zenve-filters button:nth-child(2) svg,
+.zenve-filters button:nth-child(3) svg,
+.zenve-filters button:nth-child(4) svg {
+  color: #070f3f ;
+
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+
+/* =====================================================
+   ICON HOVER
+===================================================== */
+
+.zenve-filters button:nth-child(2):hover svg,
+.zenve-filters button:nth-child(3):hover svg,
+.zenve-filters button:nth-child(4):hover svg {
+  color: #ffffff;
+
+  transform: translateY(1px);
+}
+
+
+/* =====================================================
+   ICON ACTIVE
+===================================================== */
+
+.zenve-filters button:nth-child(2).active svg,
+.zenve-filters button:nth-child(3).active svg,
+.zenve-filters button:nth-child(4).active svg {
+  color: #ffffff;
+}
+
+
+/* =====================================================
+   PRODUCT GRID
+===================================================== */
+
+.zenve-product-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 12px;
+}
+
+
+/* =====================================================
+   PRODUCT CARD
+===================================================== */
+
+.zenve-product-card {
+  overflow: hidden;
+
+  border: 1px solid #e0d8e8;
+
+  border-radius: 18px;
+
+  background: white;
+
+  box-shadow:
+    0 5px 20px rgba(67, 42, 83, 0.07);
+
+  transition: 0.25s ease;
+}
+
+.zenve-product-card:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 15px 35px rgba(67, 42, 83, 0.13);
+}
+
+
+/* =====================================================
+   PRODUCT IMAGE
+===================================================== */
+
+.zenve-product-image {
+  height: 260px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 18px 18px 0 0;
+}
+
+.zenve-product-image img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: contain;
+
+  object-position: center;
+
+  background: #ffffff;
+
+  transition:
+    transform 0.35s ease;
+}
+
+.zenve-product-card:hover .zenve-product-image img {
+  transform: scale(1.03);
+}
+
+.zenve-product-tag {
+  position: absolute;
+
+  top: 9px;
+
+  left: 9px;
+
+  padding: 5px 8px;
+
+  border-radius: 8px;
+
+  background: #001CCC;
+
+  color: #ffffff;
+
+  font-size: 8px;
+
+  font-weight: 800;
+}
+
+
+/* =====================================================
+   HEART
+===================================================== */
+
+.zenve-heart {
+  position: absolute;
+
+  top: 9px;
+
+  right: 9px;
+
+  width: 28px;
+
+  height: 28px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background: white;
+
+  color: #716775;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.zenve-heart:hover {
+  color: #8b3fa0;
+
+  transform: scale(1.05);
+}
+
+
+/* =====================================================
+   PRODUCT DETAILS
+===================================================== */
+
+.zenve-product-details {
+  padding: 11px;
+}
+
+.zenve-designer-name {
+  font-size: 7px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.3px;
+
+  color: #9a3b86;
+}
+
+.zenve-product-details h3 {
+  margin: 5px 0;
+
+  font-size: 11px;
+
+  line-height: 1.35;
+
+  color: #39313b;
+}
+
+.zenve-product-description {
+  min-height: 28px;
+
+  margin: 0;
+
+  color: #827985;
+
+  font-size: 8px;
+
+  line-height: 1.35;
+}
+
+.zenve-rating {
+  display: flex;
+
+  align-items: center;
+
+  gap: 3px;
+
+  margin-top: 8px;
+
+  font-size: 8px;
+}
+
+.zenve-rating span {
+  color: #e1a52f;
+}
+
+.zenve-rating strong {
+  color: #5e5564;
+}
+
+.zenve-rating small {
+  color: #99909e;
+}
+
+.zenve-edition {
+  margin-top: 4px;
+
+  color: #a29aa6;
+
+  font-size: 7px;
+
+  letter-spacing: 0.5px;
+}
+
+.zenve-price-row {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-top: 10px;
+}
+
+.zenve-price-row strong {
+  font-size: 13px;
+
+  color: #001CCC;
+}
+
+.zenve-price-row del {
+  margin-left: 6px;
+
+  color: #aaa3ad;
+
+  font-size: 8px;
+}
+
+.zenve-price-row > span {
+  color: #1f9c63;
+
+  font-size: 7px;
+
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   BASKET BUTTON
+===================================================== */
+
+.zenve-basket-btn {
+  width: 100%;
+
+  height: 30px;
+
+  margin-top: 10px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 6px;
+
+  border: none;
+
+  border-radius: 18px;
+
+  background: #001CCC;
+
+  color: #ffffff;
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+/* =====================================================
+   BASKET HOVER
+   #001CCC + WHITE TEXT
+===================================================== */
+
+.zenve-basket-btn:hover {
+  background: #070f3f !important;
+
+  color: #ffffff !important;
+
+  border-color: #001CCC !important;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 6px 15px rgba(0, 28, 204, 0.25);
+}
+
+.zenve-basket-btn:hover svg {
+  color: #ffffff !important;
+}
+
+
+/* =====================================================
+   CATEGORY POPUP
+===================================================== */
+
+.zenve-category-popup {
+  position: absolute;
+
+  top: calc(100% + 12px);
+
+  right: 0;
+
+  width: 430px;
+
+  padding: 20px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e1d7;
+
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.13);
+
+  border-radius: 6px;
+
+  z-index: 100;
+
+  animation: categoryPopup 0.25s ease;
+}
+
+@keyframes categoryPopup {
+
+  from {
+    opacity: 0;
+
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+.zenve-category-title {
+  font-size: 12px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 1.4px;
+
+  color: #111;
+
+  margin-bottom: 15px;
+}
+
+.zenve-category-list {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+}
+
+.zenve-category-list button {
+  border: 1px solid #ddd8cc;
+
+  background: #ffffff;
+
+  color: #333333;
+
+  padding: 9px 13px;
+
+  border-radius: 3px;
+
+  cursor: pointer;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+
+/* =====================================================
+   CATEGORY HOVER
+   BLACK + WHITE
+===================================================== */
+
+.zenve-category-list button:hover {
+  background: #001CCC!important;
+
+  color: #ffffff !important;
+
+  border-color: #000000 !important;
+
+  transform: translateY(-1px);
+}
+
+
+/* =====================================================
+   CATEGORY ACTIVE / SELECTED
+   #001CCC + WHITE
+===================================================== */
+
+.zenve-category-list button.category-active {
+  background: #070f3f  !important;
+
+  color: #ffffff !important;
+
+  border-color: #001CCC !important;
+
+  box-shadow:
+    0 5px 12px rgba(0, 28, 204, 0.16);
+}
+
+
+/* =====================================================
+   CATEGORY ACTIVE + HOVER
+   STAY BLUE
+===================================================== */
+
+.zenve-category-list button.category-active:hover {
+  background: #001CCC !important;
+
+  color: #ffffff !important;
+
+  border-color: #001CCC !important;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 6px 15px rgba(0, 28, 204, 0.20);
+}
+
+
+/* =====================================================
+   SELECTED FILTER
+===================================================== */
+
+.zenve-selected-filter {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin: 20px 0 25px;
+
+  padding: 12px 16px;
+
+  background: #f7f5ef;
+
+  border-left: 3px solid #001CCC;
+
+  font-size: 13px;
+}
+
+.zenve-selected-filter span {
+  color: #777;
+}
+
+.zenve-selected-filter strong {
+  color: #111;
+}
+
+
+/* =====================================================
+   LOAD MORE
+===================================================== */
+
+.zenve-load-more {
+  display: flex;
+
+  justify-content: center;
+
+  margin-top: 45px;
+}
+
+.zenve-load-more-btn {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 13px 22px;
+
+  border: 1px solid #171713;
+
+  background: white;
+
+  color: #0e0d0d;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.8px;
+
+  text-transform: uppercase;
+
+  cursor: pointer;
+
+  transition:
+    all 0.25s ease;
+}
+
+/* .zenve-load-more-btn:hover {
+
+} */
+
+
+/* =====================================================
+   CATEGORY IMAGE SECTION
+===================================================== */
+
+.zenve-category-images-section {
+  width: 100%;
+
+  margin: 40px 0 45px;
+
+  animation:
+    zenveCategoryFade 0.35s ease;
+}
+
+@keyframes zenveCategoryFade {
+
+  from {
+    opacity: 0;
+
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+.zenve-category-images-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-end;
+
+  margin-bottom: 22px;
+}
+
+.zenve-category-images-header span {
+  display: inline-block;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  letter-spacing: 2px;
+
+  color: #777;
+
+  margin-bottom: 7px;
+}
+
+.zenve-category-images-header h2 {
+  margin: 0;
+
+  font-size: 30px;
+
+  font-weight: 600;
+
+  color: #111;
+}
+
+.zenve-category-images-header p {
+  margin: 8px 0 0;
+
+  color: #777;
+
+  font-size: 14px;
+}
+
+
+/* =====================================================
+   FIVE IMAGE GRID
+===================================================== */
+
+.zenve-category-image-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(5, 1fr);
+
+  gap: 14px;
+}
+
+.zenve-category-image-card {
+  overflow: hidden;
+
+  border-radius: 4px;
+
+  background: #f4f2ed;
+}
+
+.zenve-category-image-wrapper {
+  position: relative;
+
+  height: 380px;
+
+  overflow: hidden;
+}
+
+.zenve-category-image-wrapper img {
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+
+  transition:
+    transform 0.5s ease;
+}
+
+.zenve-category-image-card:hover img {
+  transform: scale(1.06);
+}
+
+.zenve-category-image-overlay {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  bottom: 0;
+
+  padding: 45px 16px 16px;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.7),
+      rgba(0, 0, 0, 0)
+    );
+
+  color: #ffffff;
+}
+
+.zenve-category-image-overlay span {
+  font-size: 9px;
+
+  letter-spacing: 1.5px;
+
+  font-weight: 700;
+}
+
+.zenve-category-image-overlay h3 {
+  margin: 5px 0 0;
+
+  font-size: 15px;
+
+  font-weight: 500;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1100px) {
+
+  .zenve-category-image-grid {
+    grid-template-columns:
+      repeat(3, 1fr);
+  }
+
+  .zenve-category-image-wrapper {
+    height: 330px;
+  }
+}
+
+
+@media (max-width: 1000px) {
+
+  .zenve-hero-container {
+    grid-template-columns: 1fr;
+
+    gap: 30px;
+
+    padding: 50px 0;
+  }
+
+  .zenve-hero {
+    min-height: auto;
+  }
+
+  .zenve-hero-image {
+    order: -1;
+
+    min-height: 430px;
+  }
+
+  .zenve-product-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .zenve-runway-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 15px;
+  }
+
+  .zenve-filters {
+    flex-wrap: wrap;
+  }
+}
+
+
+@media (max-width: 768px) {
+
+  .zenve-runway-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 20px;
+  }
+
+  .zenve-filter-wrapper {
+    width: 100%;
+
+    align-items: flex-start;
+  }
+
+  .zenve-filters {
+    width: 100%;
+  }
+
+  .zenve-filters button {
+    padding: 9px 12px;
+  }
+
+  .zenve-category-popup {
+    position: static;
+
+    width: 100%;
+
+    margin-top: 12px;
+  }
+
+  .zenve-selected-filter {
+    flex-wrap: wrap;
+  }
+
+  .zenve-category-image-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .zenve-category-image-wrapper {
+    height: 300px;
+  }
+
+  /* PEOPLE / PETS / TWINS */
+
+  .zenve-filters button:nth-child(2),
+  .zenve-filters button:nth-child(3),
+  .zenve-filters button:nth-child(4) {
+    background: #ffffff !important;
+
+    color: #27251f !important;
+
+    border-color: #ddd8ce !important;
+  }
+
+  .zenve-filters button:nth-child(2):hover,
+  .zenve-filters button:nth-child(3):hover,
+  .zenve-filters button:nth-child(4):hover {
+    background: #000000 !important;
+
+    color: #ffffff !important;
+
+    border-color: #000000 !important;
+  }
+
+  .zenve-filters button:nth-child(2).active,
+  .zenve-filters button:nth-child(3).active,
+  .zenve-filters button:nth-child(4).active {
+    background: #001CCC !important;
+
+    color: #ffffff !important;
+
+    border-color: #001CCC !important;
+  }
+
+  .zenve-filters button:nth-child(2).active:hover,
+  .zenve-filters button:nth-child(3).active:hover,
+  .zenve-filters button:nth-child(4).active:hover {
+    background: #001CCC !important;
+
+    color: #ffffff !important;
+
+    border-color: #001CCC !important;
+  }
+}
+
+
+@media (max-width: 600px) {
+
+  .zenve-section-container,
+  .zenve-hero-container {
+    width: min(100% - 24px, 1180px);
+  }
+
+  .zenve-hero-content h1 {
+    font-size: 46px;
+  }
+
+  .zenve-hero-content h2 {
+    font-size: 30px;
+  }
+
+  .zenve-hero-content > p {
+    font-size: 14px;
+  }
+
+  .zenve-hero-buttons {
+    flex-direction: column;
+  }
+
+  .zenve-primary-btn,
+  .zenve-secondary-btn {
+    width: 100%;
+
+    justify-content: center;
+  }
+
+  .zenve-stats {
+    gap: 7px;
+  }
+
+  .zenve-stat {
+    min-width: 0;
+
+    flex: 1;
+
+    padding: 13px 9px;
+  }
+
+  .zenve-stat strong {
+    font-size: 19px;
+  }
+
+  .zenve-stat span {
+    font-size: 8px;
+  }
+
+  .zenve-product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .zenve-product-image {
+    height: 340px;
+
+    border-radius:
+      16px 16px 0 0;
+  }
+
+  .zenve-product-image img {
+    width: 96%;
+
+    height: 96%;
+
+    object-fit: contain;
+
+    object-position: center;
+  }
+
+  .zenve-hero-image {
+    min-height: 360px;
+
+    border-radius: 18px;
+  }
+
+  .zenve-hero-img {
+    width: 94%;
+
+    height: 94%;
+
+    border-radius: 14px;
+  }
+}
+
+
+@media (max-width: 480px) {
+
+  .zenve-category-image-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .zenve-category-image-wrapper {
+    height: 400px;
+  }
+
+  .zenve-category-images-header h2 {
+    font-size: 24px;
+  }
+
+  .zenve-category-list {
+    gap: 6px;
+  }
+
+  .zenve-category-list button {
+    padding: 8px 11px;
+
+    font-size: 11px;
+  }
+}
+
+
+/* =====================================================
+   INLINE COLLECTION TABS
+   PEOPLE / PETS / TWINS
+   ===================================================== */
+
+.zenve-collection-tabs {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 22px 0 10px;
+}
+
+.zenve-collection-btn {
+  min-height: 40px;
+  padding: 9px 20px;
+  border: 1px solid #ddd8ce;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #27251f;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.zenve-collection-btn:hover {
+  background: #001CCC;
+  color: #ffffff;
+  border-color: #001CCC;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(0, 28, 204, 0.14);
+}
+
+.zenve-collection-btn.active {
+  background: #070f3f;
+  color: #ffffff;
+  border-color: #001CCC;
+  box-shadow: 0 5px 14px rgba(0, 28, 204, 0.18);
+}
+
+.zenve-collection-btn.active:hover {
+  background: #001CCC;
+  color: #ffffff;
+  border-color: #001CCC;
+}
+
+
+/* =====================================================
+   INLINE CATEGORY TABS
+   Appears below People / Pets / Twins
+   ===================================================== */
+
+.zenve-category-tabs {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin: 8px 0 24px;
+  padding: 10px 0 15px;
+  border-bottom: 1px solid #e5e1d7;
+  animation: zenveInlineCategoryFade 0.25s ease;
+}
+
+.zenve-category-btn {
+  border: 1px solid #ddd8ce;
+  background: #ffffff;
+  color: #333333;
+  padding: 8px 13px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.zenve-category-btn:hover {
+  background: #001CCC;
+  color: #ffffff;
+  border-color: #001CCC;
+  transform: translateY(-1px);
+}
+
+.zenve-category-btn.active {
+  background: #070f3f;
+  color: #ffffff;
+  border-color: #001CCC;
+  box-shadow: 0 5px 12px rgba(0, 28, 204, 0.16);
+}
+
+.zenve-category-btn.active:hover {
+  background: #001CCC;
+  color: #ffffff;
+  border-color: #001CCC;
+}
+
+@keyframes zenveInlineCategoryFade {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =====================================================
+   OLD CATEGORY POPUP
+   Disable popup positioning if old class is still present
+   ===================================================== */
+
+.zenve-category-popup {
+  position: static;
+  width: 100%;
+  max-width: none;
+  margin: 8px 0 24px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  animation: none;
+}
+
+.zenve-category-popup .zenve-category-title {
+  display: none;
+}
+
+.zenve-category-popup .zenve-category-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  width: 100%;
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .zenve-collection-tabs {
+    justify-content: flex-start;
+    gap: 7px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .zenve-collection-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .zenve-collection-btn {
+    flex: 0 0 auto;
+    padding: 9px 16px;
+    font-size: 11px;
+  }
+
+  .zenve-category-tabs {
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding: 8px 0 13px;
+    scrollbar-width: none;
+  }
+
+  .zenve-category-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .zenve-category-btn {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .zenve-collection-tabs {
+    margin-top: 16px;
+  }
+
+  .zenve-collection-btn {
+    padding: 8px 14px;
+    font-size: 10px;
+  }
+
+  .zenve-category-tabs {
+    margin-bottom: 18px;
+  }
+
+  .zenve-category-btn {
+    padding: 7px 11px;
+    font-size: 10px;
+  }
+}
+
+
+
+
+
