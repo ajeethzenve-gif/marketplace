@@ -416,7 +416,7 @@ function Home() {
             secondaryText: "View Medicines",
             secondaryAction: () =>
                 navigate(
-                    "/products?category=Medicine"
+                    "/products?product_type=Medicine&product_type=Supplements"
                 ),
             smartText:
                 "📄 Simple prescription upload and medicine matching",
@@ -438,10 +438,10 @@ function Home() {
                 "Book experienced veterinary professionals for health checkups, vaccinations, grooming and pet care at home.",
             primaryText: "Book a Home Visit",
             primaryAction: () =>
-                navigate("/services"),
+                navigate("/home-visit"),
             secondaryText: "Explore Services",
             secondaryAction: () =>
-                navigate("/services"),
+                navigate("/home-visit"),
             smartText:
                 "🏠 Professional pet care without leaving home",
             image: homeService,
@@ -1177,7 +1177,7 @@ function Home() {
                         </Link>
 
                         <Link
-                            to="/services"
+                            to="/home-visit"
                             className="category-card category-home"
                         >
                             <div className="category-image">🏠</div>
@@ -1235,7 +1235,7 @@ function Home() {
                         </Link>
 
                         <Link
-                            to="/services"
+                            to="/home-visit"
                             className="category-card category-home"
                         >
                             <div className="category-image">🏠</div>
@@ -1442,7 +1442,7 @@ function Home() {
                 buttonText="Shop Medicines"
                 onClick={() =>
                     navigate(
-                        "/products?category=Medicine"
+                        "/products?product_type=Medicine&product_type=Supplements"
                     )
                 }
             />
@@ -1466,7 +1466,7 @@ function Home() {
                 buttonText="Shop Products"
                 onClick={() =>
                     navigate(
-                        "/products?category=Food"
+                        "/products?product_type=food&product_type=Other"
                     )
                 }
             />
@@ -1490,7 +1490,7 @@ function Home() {
                 buttonText="View Equipment"
                 onClick={() =>
                     navigate(
-                        "/products?category=VetEquipment"
+                        "/products?product_type=VetEquipment"
                     )
                 }
             />
@@ -1514,7 +1514,7 @@ function Home() {
                 buttonText="Shop Farm Supplies"
                 onClick={() =>
                     navigate(
-                        "/products?category=FarmSupplies"
+                        "/products?product_type=FarmSupplies"
                     )
                 }
             />

@@ -128,7 +128,7 @@ body {
     box-shadow:
         0 4px 18px rgba(27, 27, 197, 0.08);
 
-    z-index: 9999;
+    z-index: 12000;
 }
 
 
@@ -389,6 +389,7 @@ body {
 
 .profile-menu {
     position: relative;
+    z-index: 12001;
 
     flex: 0 0 auto;
 
@@ -639,7 +640,7 @@ body {
     box-shadow:
         0 4px 14px rgba(27, 27, 197, 0.08);
 
-    z-index: 9998;
+    z-index: 9000;
 }
 
 
@@ -1527,6 +1528,7 @@ body {
 
 .fashion-icons {
     display: flex;
+
 
     align-items: center;
 
@@ -2945,4 +2947,141 @@ body {
     .main-content {
         padding-top: 102px;
     }
+}
+
+/* =====================================================
+   DROPDOWN IN FRONT OF NAVBAR + CATEGORY ROW (FIX)
+   Keep at the END of this file so it wins over the
+   responsive rules above.
+===================================================== */
+
+.category-nav {
+    z-index: 9000 !important;
+}
+
+.navbar:not(.fashion-navbar) {
+    z-index: 12000 !important;
+}
+
+.navbar:not(.fashion-navbar) .profile-menu {
+    z-index: 12001;
+}
+
+.navbar:not(.fashion-navbar) .profile-popup {
+    z-index: 15000;
+}
+
+/* =====================================================
+   SIMPLE PROFILE DROPDOWN (no box background, icon + text)
+   Scoped to .profile-popup so the Fashion popup is untouched.
+===================================================== */
+
+.popup-btn {
+    margin-top: 0!important;
+}
+
+.profile-popup .popup-btn {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 10px 6px;
+    margin-bottom: 2px;
+
+    border: none;
+    border-radius: 0;
+
+    background: transparent;
+
+    color: #333333;
+
+    text-align: left;
+    text-decoration: none;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    box-shadow: none;
+    transform: none;
+
+    transition: color 0.2s ease;
+}
+
+.profile-popup .popup-btn svg {
+    flex: 0 0 auto;
+
+    font-size: 16px;
+
+    color: #1b1bc5;
+
+    transition: color 0.2s ease;
+}
+
+.profile-popup .popup-btn:hover {
+    background: transparent;
+
+    color: #1b1bc5;
+
+    transform: none;
+    box-shadow: none;
+}
+
+.profile-popup .logout-popup-btn {
+    margin-top: 6px;
+    padding-top: 12px;
+
+    border-top: 1px solid #edf0ff;
+
+    background: transparent;
+
+    color: #dc3545;
+}
+
+.profile-popup .logout-popup-btn svg {
+    color: #dc3545;
+}
+
+.profile-popup .logout-popup-btn:hover {
+    background: transparent;
+
+    color: #bb2d3b;
+}
+
+.profile-popup .logout-popup-btn:hover svg {
+    color: #bb2d3b;
+}
+
+/* =====================================================
+   LONGER PROFILE DROPDOWN (sections + scroll on short screens)
+===================================================== */
+
+.profile-popup {
+    width: 250px;
+
+    max-height: calc(100vh - 160px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.popup-divider {
+    height: 1px;
+
+    margin: 6px 0;
+
+    background: #edf0ff;
+}
+
+.profile-popup::-webkit-scrollbar {
+    width: 6px;
+}
+
+.profile-popup::-webkit-scrollbar-thumb {
+    background: #d5dbff;
+
+    border-radius: 6px;
 }

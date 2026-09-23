@@ -21,6 +21,9 @@ import {
     FaTractor,
     FaStethoscope,
     FaSignOutAlt,
+    FaSignInAlt,
+    FaUserPlus,
+    FaHandHoldingHeart,
 } from "react-icons/fa";
 
 import {
@@ -745,7 +748,8 @@ function Navbar() {
                                 to="/profile"
                                 className="popup-btn"
                             >
-                                My Profile
+                                <FaUser />
+                                <span>My Profile</span>
                             </Link>
 
                             <button
@@ -755,7 +759,8 @@ function Navbar() {
                                     handleLogout
                                 }
                             >
-                                Logout
+                                <FaSignOutAlt />
+                                <span>Logout</span>
                             </button>
 
                         </div>
@@ -1114,30 +1119,84 @@ function Navbar() {
                                     to="/profile"
                                     className="popup-btn"
                                 >
-                                    My Profile
+                                    <FaUser />
+                                    <span>My Profile</span>
                                 </Link>
 
-                                {hasPet && (
-                                    <Link
-                                        to="/pets"
-                                        className="popup-btn"
-                                    >
-                                        My Pets
-                                    </Link>
-                                )}
+                                <Link
+                                    to="/pets"
+                                    className="popup-btn"
+                                >
+                                    <FaPaw />
+                                    <span>My Pets</span>
+                                </Link>
 
                                 <Link
                                     to="/orders"
                                     className="popup-btn"
                                 >
-                                    My Orders
+                                    <FaBox />
+                                    <span>My Orders</span>
                                 </Link>
 
                                 <Link
                                     to="/wallet"
                                     className="popup-btn"
                                 >
-                                    My Wallet
+                                    <FaWallet />
+                                    <span>My Wallet</span>
+                                </Link>
+
+                                <div className="popup-divider" />
+
+                                <Link
+                                    to="/cart"
+                                    className="popup-btn"
+                                >
+                                    <FaShoppingCart />
+                                    <span>Cart</span>
+                                </Link>
+
+                                <Link
+                                    to="/wishlists"
+                                    className="popup-btn"
+                                >
+                                    <FaHeart />
+                                    <span>Wishlist</span>
+                                </Link>
+
+                                <Link
+                                    to="/products?product_type=FarmSupplies"
+                                    className="popup-btn"
+                                >
+                                    <FaTractor />
+                                    <span>Farm Supplies</span>
+                                </Link>
+
+                                <Link
+                                    to="/products?product_type=VetEquipment"
+                                    className="popup-btn"
+                                >
+                                    <FaStethoscope />
+                                    <span>Vet Equipment</span>
+                                </Link>
+
+                                <div className="popup-divider" />
+
+                                <Link
+                                    to="/home-visit"
+                                    className="popup-btn"
+                                >
+                                    <FaHome />
+                                    <span>Home Visit Service</span>
+                                </Link>
+
+                                <Link
+                                    to="/adoption"
+                                    className="popup-btn"
+                                >
+                                    <FaHandHoldingHeart />
+                                    <span>Adoption Platform</span>
                                 </Link>
 
                                 <button
@@ -1147,7 +1206,8 @@ function Navbar() {
                                         handleLogout
                                     }
                                 >
-                                    Logout
+                                    <FaSignOutAlt />
+                                    <span>Logout</span>
                                 </button>
                             </>
                         ) : (
@@ -1164,14 +1224,16 @@ function Navbar() {
                                     to="/login"
                                     className="popup-btn"
                                 >
-                                    Login
+                                    <FaSignInAlt />
+                                    <span>Login</span>
                                 </Link>
 
                                 <Link
                                     to="/register"
                                     className="popup-btn"
                                 >
-                                    Sign Up
+                                    <FaUserPlus />
+                                    <span>Sign Up</span>
                                 </Link>
                             </>
                         )}
@@ -1250,31 +1312,39 @@ function Navbar() {
 
                 <div className="category-nav-scroll">
 
-                    <Link to="/category/food">
+                    <Link to="/products?product_type=food">
                         Pet Food
                     </Link>
 
-                    <Link to="/category/treats">
+                    <Link to="/products?product_type=treats">
                         Treats
                     </Link>
 
-                    <Link to="/category/toys">
+                    <Link to="/products?product_type=toys">
                         Toys
                     </Link>
 
-                    <Link to="/category/fashion">
+
+                    <Link to="/products?product_type=Medicine">
+                        Medicines
+                    </Link>
+
+                    <Link to="/products?product_type=Supplements">
+                        Supplements
+                    </Link>
+                    <Link to="/products?product_type=clothing">
                         Pet Fashion
                     </Link>
 
-                    <Link to="/category/grooming">
+                    <Link to="/products?product_type=grooming">
                         Grooming
                     </Link>
 
-                    <Link to="/category/accessories">
+                    <Link to="/products?product_type=accessories">
                         Accessories
                     </Link>
 
-                    <Link to="/">
+                    <Link to="/products">
                         Shop
                     </Link>
 
@@ -1286,11 +1356,11 @@ function Navbar() {
                         Zenve Fashion
                     </Link>
 
-                    <Link to="/account">
+                    <Link to="/profile">
                         My Space
                     </Link>
 
-                    <Link to="/contact">
+                    <Link to="/help">
                         Help & Care
                     </Link>
 
