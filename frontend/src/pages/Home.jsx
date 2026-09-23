@@ -639,7 +639,11 @@ function Home() {
     // =====================================================
 
     const openAIChat = () => {
-        window.location.href = "https://zynvo.ai/";
+        window.open(
+            "https://zynvo.ai/",
+            "_blank",
+            "noopener,noreferrer"
+        );
     };
 
     // =====================================================

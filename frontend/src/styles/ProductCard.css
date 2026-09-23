@@ -15,7 +15,7 @@
 
     background: #ffffff;
 
-    border: 1px solid #e5eaf1;
+    border: 1px solid #f3ebeb;
 
     border-radius: 11px;
 
@@ -161,7 +161,7 @@
 
 .market-product-content {
     flex: 1;
-
+    background: #f3ebeb;
     display: flex;
     flex-direction: column;
 

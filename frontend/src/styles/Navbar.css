@@ -214,13 +214,25 @@ body {
 
     background: #ffffff;
 
+    font-family: "Poppins", sans-serif;
     font-size: 14px;
+    font-weight: 400;
 
     color: #333333;
+
+    caret-color: #1b1bc5;
 }
 
+/* Animated typing placeholder from Navbar.jsx */
 .search-container input::placeholder {
-    color: #999999;
+    color: #7c8499;
+    opacity: 1;
+
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+
+    letter-spacing: 0.2px;
 }
 
 .search-btn {
@@ -487,6 +499,7 @@ body {
 
     z-index: 15000;
 }
+
 
 .profile-menu:hover .profile-popup {
     opacity: 1;
@@ -3084,4 +3097,184 @@ body {
     background: #d5dbff;
 
     border-radius: 6px;
+}
+/* =========================================================
+   ZYNVO AI CHAT
+========================================================= */
+
+.zynvo-ai-nav-link {
+    border: 1px solid rgba(0, 37, 111, 0.12);
+    outline: none;
+
+    /* Light ZYNVO blue background */
+    background: linear-gradient(
+        135deg,
+        #f4f9ff 0%,
+        #eafaff 100%
+    );
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    padding: 5px 12px;
+    margin: 0;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+    white-space: nowrap;
+
+    font-family: inherit;
+
+    box-shadow:
+        0 2px 6px rgba(0, 37, 111, 0.08);
+
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.2s ease;
+}
+
+
+/* ZYNVO LOGO */
+
+.zynvo-ai-logo {
+    width: auto;
+    height: 30px;
+
+    display: block;
+    object-fit: contain;
+
+    transition:
+        transform 0.25s ease;
+}
+
+
+/* AI TEXT */
+
+.zynvo-ai-chat-text {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+
+    color: #ffffff;
+
+    background: linear-gradient(
+        135deg,
+        #00256f,
+        #006eb8
+    );
+
+    padding: 4px 7px;
+
+    border-radius: 5px;
+
+    line-height: 1;
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.zynvo-ai-nav-link:hover {
+    background: linear-gradient(
+        135deg,
+        #eaf8ff 0%,
+        #dffbff 100%
+    );
+
+    border-color: #00cfe8;
+
+    box-shadow:
+        0 5px 14px rgba(0, 110, 184, 0.18);
+
+    transform: translateY(-2px);
+}
+
+
+/* Logo small zoom */
+
+.zynvo-ai-nav-link:hover .zynvo-ai-logo {
+    transform: scale(1.04);
+}
+
+
+/* AI cyan on hover */
+
+.zynvo-ai-nav-link:hover .zynvo-ai-chat-text {
+    background: linear-gradient(
+        135deg,
+        #00cfe8,
+        #009edb
+    );
+
+    color: #00256f;
+}
+
+
+/* =========================================================
+   CLICK
+========================================================= */
+
+.zynvo-ai-nav-link:active {
+    transform: translateY(0) scale(0.98);
+}
+
+
+/* =========================================================
+   KEYBOARD FOCUS
+========================================================= */
+
+.zynvo-ai-nav-link:focus-visible {
+    outline: 2px solid #00cfe8;
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .zynvo-ai-nav-link {
+        padding: 4px 8px;
+        gap: 4px;
+
+        border-radius: 7px;
+    }
+
+    .zynvo-ai-logo {
+        height: 20px;
+    }
+
+    .zynvo-ai-chat-text {
+        font-size: 10px;
+
+        padding: 3px 5px;
+    }
+}
+
+/* =====================================================
+   ACCESSIBILITY - REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .search-container,
+    .search-btn {
+        transition: none;
+    }
 }

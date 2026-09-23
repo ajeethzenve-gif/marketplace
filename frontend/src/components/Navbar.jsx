@@ -1,6 +1,7 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
+import zynvoLogo from "../assets/logo/zynvo_logo.jpeg";
 
 import {
     FaSearch,
@@ -44,6 +45,14 @@ function Navbar() {
     const role = localStorage.getItem("role");
     const token = localStorage.getItem("access");
 
+    const openAIChat = () => {
+        window.open(
+            "https://zynvo.ai/",
+            "_blank",
+            "noopener,noreferrer"
+        );
+    };
+
     const isAdminOrStaff =
         role === "Admin" ||
         role === "Staff";
@@ -61,6 +70,19 @@ function Navbar() {
 
     const [profileImage, setProfileImage] = useState("");
     const [search, setSearch] = useState("");
+
+    const searchPlaceholders = [
+        "Search Medicines...",
+        "Search Pet Food...",
+        "Search Pet Toys...",
+        "Search Supplements...",
+        "Search Grooming Products...",
+        "Search Pet Fashion...",
+    ];
+
+    const [animatedPlaceholder, setAnimatedPlaceholder] = useState("");
+    const [placeholderIndex, setPlaceholderIndex] = useState(0);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [hasPet, setHasPet] = useState(false);
 
     const [cartCount, setCartCount] = useState(
@@ -603,6 +625,45 @@ function Navbar() {
 
     /*
     =====================================================
+    SEARCH PLACEHOLDER TYPING ANIMATION
+    =====================================================
+    */
+
+    useEffect(() => {
+        const currentText = searchPlaceholders[placeholderIndex];
+        let timer;
+
+        if (!isDeleting) {
+            if (animatedPlaceholder.length < currentText.length) {
+                timer = setTimeout(() => {
+                    setAnimatedPlaceholder(
+                        currentText.slice(0, animatedPlaceholder.length + 1)
+                    );
+                }, 80);
+            } else {
+                timer = setTimeout(() => {
+                    setIsDeleting(true);
+                }, 1600);
+            }
+        } else if (animatedPlaceholder.length > 0) {
+            timer = setTimeout(() => {
+                setAnimatedPlaceholder(
+                    currentText.slice(0, animatedPlaceholder.length - 1)
+                );
+            }, 40);
+        } else {
+            setIsDeleting(false);
+            setPlaceholderIndex(
+                (previousIndex) =>
+                    (previousIndex + 1) % searchPlaceholders.length
+            );
+        }
+
+        return () => clearTimeout(timer);
+    }, [animatedPlaceholder, placeholderIndex, isDeleting]);
+
+    /*
+    =====================================================
     SEARCH
     =====================================================
     */
@@ -951,7 +1012,7 @@ function Navbar() {
 
                     <input
                         type="text"
-                        placeholder="Search medicines, pet food, products..."
+                        placeholder={animatedPlaceholder}
                         value={search}
                         onChange={handleSearch}
                         onKeyDown={
@@ -1311,6 +1372,23 @@ function Navbar() {
              <nav className="category-nav">
 
                 <div className="category-nav-scroll">
+
+                   <button
+                        type="button"
+                        className="zynvo-ai-nav-link"
+                        onClick={openAIChat}
+                        title="Open ZYNVO AI Chat"
+                    >
+                        <img
+                            src={zynvoLogo}
+                            alt="ZYNVO"
+                            className="zynvo-ai-logo"
+                        />
+
+                        <span className="zynvo-ai-chat-text">
+                            AI
+                        </span>
+                    </button>
 
                     <Link to="/products?product_type=food">
                         Pet Food
