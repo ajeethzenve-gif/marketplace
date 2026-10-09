@@ -277,7 +277,7 @@ function Login() {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/accounts/verify-otp/",
+        "http://127.0.0.1:8000/api/accounts/verify-mobile-otp/",
         {
           mobile: `+91${mobile}`,
           otp: otp,
@@ -289,6 +289,9 @@ function Login() {
         response.data
       );
 
+      if (!response.data.access || !response.data.refresh) {
+        throw new Error("Login response is missing authentication tokens.");
+      }
       if (response.data.access) {
         localStorage.setItem(
           "access",

@@ -6,6 +6,16 @@ from .models import Customer, CustomerAddress,PetProfile
 class RegisterSerializer(serializers.ModelSerializer):
 
     phone_number = serializers.CharField()
+
+    def validate_phone_number(self, value):
+        from .mobile_login import normalize_mobile, customer_for_mobile
+        try:
+            number = normalize_mobile(value)
+            if customer_for_mobile(number):
+                raise serializers.ValidationError("Phone number already exists. Log in with this mobile number.")
+            return number
+        except ValueError as exc:
+            raise serializers.ValidationError(str(exc))
     gender = serializers.CharField(required=False)
     date_of_birth = serializers.DateField(required=False)
     address = serializers.CharField(required=False)
@@ -58,19 +68,19 @@ class RegisterSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
 
     first_name = serializers.CharField(
-        source="user.first_name"
+        source="user.first_name", allow_blank=True, max_length=150
     )
 
     last_name = serializers.CharField(
-        source="user.last_name"
+        source="user.last_name", allow_blank=True, max_length=150
     )
 
     username = serializers.CharField(
-        source="user.username"
+        source="user.username", read_only=True
     )
 
     email = serializers.EmailField(
-        source="user.email"
+        source="user.email", allow_blank=True
     )
 
     class Meta:

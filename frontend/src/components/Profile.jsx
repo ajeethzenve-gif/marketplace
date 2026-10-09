@@ -294,6 +294,8 @@ function Profile() {
             Object.entries(formData).forEach(
                 ([key, value]) => {
 
+                    if (key === "username") return;
+
                     data.append(
                         key,
                         value || ""
@@ -335,6 +337,7 @@ function Profile() {
 
 
             await loadProfile();
+            window.dispatchEvent(new Event("profileUpdated"));
 
         } catch (error) {
 
@@ -348,6 +351,7 @@ function Profile() {
             showErrorAlert(
                 error.response?.data?.message ||
                 error.response?.data?.detail ||
+                Object.entries(error.response?.data || {}).map(([field, errors]) => `${field.replaceAll("_", " ")}: ${Array.isArray(errors) ? errors.join(" ") : errors}`).join("\n") ||
                 "Failed to update profile."
             );
 
@@ -1212,17 +1216,6 @@ function Profile() {
                         </h2>
 
 
-                        <p>
-
-                            @
-                            {
-                                formData.username ||
-                                "username"
-                            }
-
-                        </p>
-
-
                         <span className="profile-email">
 
                             {formData.email}
@@ -1546,31 +1539,6 @@ function Profile() {
                                     name="last_name"
                                     value={
                                         formData.last_name
-                                    }
-                                    onChange={
-                                        handleChange
-                                    }
-                                />
-
-                            </div>
-
-
-
-                            {/* USERNAME */}
-
-                            <div className="col-md-6 mb-4">
-
-                                <label>
-                                    Username
-                                </label>
-
-
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    name="username"
-                                    value={
-                                        formData.username
                                     }
                                     onChange={
                                         handleChange

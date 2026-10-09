@@ -69,6 +69,7 @@ function Navbar() {
     */
 
     const [profileImage, setProfileImage] = useState("");
+    const [fullName, setFullName] = useState("");
     const [search, setSearch] = useState("");
 
     const searchPlaceholders = [
@@ -144,6 +145,7 @@ function Navbar() {
     const loadProfile = useCallback(async () => {
         if (!token) {
             setProfileImage("");
+            setFullName("");
             return;
         }
 
@@ -157,6 +159,7 @@ function Navbar() {
                 }
             );
 
+            setFullName([response.data?.first_name, response.data?.last_name].filter(Boolean).join(" ").trim());
             const image =
                 response.data?.profile_image;
 
@@ -182,6 +185,11 @@ function Navbar() {
             setProfileImage("");
         }
     }, [token]);
+
+    useEffect(() => {
+        window.addEventListener("profileUpdated", loadProfile);
+        return () => window.removeEventListener("profileUpdated", loadProfile);
+    }, [loadProfile]);
 
     /*
     =====================================================
@@ -792,7 +800,7 @@ function Navbar() {
                             )}
 
                             <p>
-                                {username ||
+                                {fullName ||
                                     "Admin"}
                             </p>
                         </Link>
@@ -801,7 +809,7 @@ function Navbar() {
 
                             <h4>
                                 Hello,{" "}
-                                {username ||
+                                {fullName ||
                                     "Admin"}
                             </h4>
 
@@ -863,7 +871,7 @@ function Navbar() {
 
                                     <div>
                                         <strong>
-                                            {username ||
+                                            {fullName ||
                                                 "Admin"}
                                         </strong>
 
@@ -1161,7 +1169,7 @@ function Navbar() {
                         )}
 
                         <p>
-                            {username ||
+                            {fullName ||
                                 "Login"}
                         </p>
 
@@ -1173,7 +1181,7 @@ function Navbar() {
                             <>
                                 <h4>
                                     Hello,{" "}
-                                    {username}
+                                    {fullName || "My Account"}
                                 </h4>
 
                                 <Link
@@ -1479,7 +1487,7 @@ function Navbar() {
                                 <div>
 
                                     <strong>
-                                        {username ||
+                                        {fullName ||
                                             "Welcome"}
                                     </strong>
 

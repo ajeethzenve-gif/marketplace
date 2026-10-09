@@ -264,3 +264,21 @@ RAZORPAY_KEY_SECRET = os.environ.get(
     "RAZORPAY_KEY_SECRET",
     "your_key_secret"
 )
+
+
+SMS_PROVIDER = os.getenv("SMS_PROVIDER", "APITXT")
+
+SMS_API_KEY = os.getenv("SMS_API_KEY", "")
+SMS_AUTH_KEY = os.getenv("SMS_AUTH_KEY", "")
+
+SMS_SENDER_ID = os.getenv(
+    "SMS_SENDER_ID",
+    "Zenve 01"
+)
+
+SMS_API_URL = os.getenv(
+    "SMS_API_URL",
+    "https://apitxt.com/api/sendOTP"
+)
+
+SMS_ROUTE = os.getenv("SMS_ROUTE", "otp")
