@@ -261,19 +261,8 @@ function AddProduct() {
     // LOAD CATEGORIES / BRANDS
     // =====================================================
 
-    useEffect(() => {
-
-        loadCategories();
-
-        loadBrands();
-
-    }, []);
-
-
     const loadCategories = async () => {
-
         try {
-
             const response = await axios.get(
                 `${API_URL}/categories/`
             );
@@ -283,23 +272,16 @@ function AddProduct() {
                     ? response.data
                     : response.data.results || []
             );
-
         } catch (error) {
-
             console.error(
                 "Category Load Error:",
                 error.response?.data || error
             );
-
         }
-
     };
 
-
     const loadBrands = async () => {
-
         try {
-
             const response = await axios.get(
                 `${API_URL}/brands/`
             );
@@ -309,21 +291,21 @@ function AddProduct() {
                     ? response.data
                     : response.data.results || []
             );
-
         } catch (error) {
-
             console.error(
                 "Brand Load Error:",
                 error.response?.data || error
             );
-
         } finally {
-
             setLoadingData(false);
-
         }
-
     };
+
+    useEffect(() => {
+        loadCategories();
+        loadBrands();
+    }, []);
+
 
 
     // =====================================================

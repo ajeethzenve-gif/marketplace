@@ -8,14 +8,8 @@ function CouponList() {
 
     const [coupons, setCoupons] = useState([]);
 
-    useEffect(() => {
-        loadCoupons();
-    }, []);
-
     const loadCoupons = async () => {
-
         try {
-
             const response = await axios.get(
                 "http://127.0.0.1:8000/api/coupons/",
                 {
@@ -24,16 +18,20 @@ function CouponList() {
                     }
                 }
             );
-
-            setCoupons(response.data);
-
+            const data = Array.isArray(response.data)
+                ? response.data
+                : (response.data?.results || []);
+            setCoupons(data);
         } catch (error) {
-
-            console.log(error);
-
+            console.log("Error loading coupons:", error);
+            setCoupons([]);
         }
-
     };
+
+    useEffect(() => {
+        loadCoupons();
+    }, []);
+
 
     return (
 

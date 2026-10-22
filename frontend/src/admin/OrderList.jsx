@@ -11,46 +11,29 @@ function OrderList() {
     const role = localStorage.getItem("role");
     const token = localStorage.getItem("access");
 
-    useEffect(() => {
-
-        if (role === "Admin" || role === "Staff") {
-
-            loadOrders();
-
-        }
-
-    }, [role]);
-
     // =====================================
     // LOAD ALL ORDERS
     // =====================================
 
     const loadOrders = async () => {
-
         setLoading(true);
 
         try {
-
             const response = await axios.get(
-
                 "http://127.0.0.1:8000/api/orders/admin/",
-
                 {
-
                     headers: {
-
                         Authorization: `Bearer ${token}`
-
                     }
-
                 }
-
             );
             console.log("Orders API Response:", response.data);
-
-            setOrders(response.data);
-
+            const data = Array.isArray(response.data)
+                ? response.data
+                : (response.data?.results || []);
+            setOrders(data);
         }
+
 
         catch (error) {
 
@@ -81,16 +64,20 @@ function OrderList() {
         }
 
         finally {
-
             setLoading(false);
-
         }
-
     };
+
+    useEffect(() => {
+        if (role === "Admin" || role === "Staff") {
+            loadOrders();
+        }
+    }, [role]);
 
     // =====================================
     // UPDATE ORDER STATUS
     // =====================================
+
 
     const updateStatus = async (id, status) => {
 
@@ -236,126 +223,63 @@ function OrderList() {
                             loading ? (
 
                                 <tr>
-
-                                    <td colSpan="11">
-
+                                    <td colSpan="10">
                                         Loading Orders...
-
                                     </td>
-
                                 </tr>
-
                             ) : orders.length === 0 ? (
-
                                 <tr>
-
-                                    <td colSpan="11">
-
+                                    <td colSpan="10">
                                         No Orders Found
-
                                     </td>
-
                                 </tr>
-
                             ) : (
-
                                 orders.map((order, index) => (
-
                                     <tr key={order.id}>
-
                                         <td>
-
                                             {index + 1}
-
                                         </td>
-
                                         <td>
-
                                             #{order.id}
-
                                         </td>
-
                                         <td>
-
                                             <strong>
-
-                                                {order.customer_name}
-
+                                                {order.customer_name || "Guest Customer"}
                                             </strong>
-
                                         </td>
-
                                         <td style={{ textAlign: "center" }}>
-
-                                            {order.total_items}
-
+                                            {order.total_items ?? 1}
                                         </td>
-
                                         <td>
-
                                             ₹{order.total_amount}
-
                                         </td>
-
                                         <td>
-
                                             <span
-
                                                 className={
-
                                                     order.payment_status === "Paid"
-
                                                         ? "paid"
-
                                                         : "pending"
-
                                                 }
-
                                             >
-
-                                                {
-
-                                                    order.payment_status
-
-                                                }
-
+                                                {order.payment_status || "Pending"}
                                             </span>
-
                                         </td>
-
                                         <td>
-
-                                            {order.payment_method}
-
+                                            {order.payment_method || "COD"}
                                         </td>
-
                                         <td>
-
                                             <span
-
-                                                className={`status-badge ${order.status.toLowerCase()}`}
-
+                                                className={`status-badge ${(order.status || "Pending").toLowerCase()}`}
                                             >
-
-                                                {order.status}
-
+                                                {order.status || "Pending"}
                                             </span>
-
                                         </td>
-
                                         <td>
-
-                                            {
-
-                                                new Date(
-
-                                                    order.order_date
-
-                                                ).toLocaleDateString()
-
-                                            }
-
+                                            {order.order_date
+                                                ? new Date(order.order_date).toLocaleDateString()
+                                                : "-"}
                                         </td>
+
 
                                         <td>
 

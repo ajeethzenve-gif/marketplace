@@ -3508,3 +3508,291 @@
         padding: 6px 10px;
     }
 }
+
+/* =========================================================
+   INDIVIDUAL PET THEMES & MODE SWITCHER BAR
+   ========================================================= */
+
+.pet-theme-switcher-bar {
+    width: calc(100% - 52px);
+    margin: 0 auto 16px;
+    background: #ffffff;
+    border: 1px solid rgba(220, 228, 240, 0.9);
+    border-radius: 18px;
+    padding: 10px 18px;
+    box-shadow: 0 4px 18px rgba(16, 36, 92, 0.05);
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    transition: all 0.28s ease;
+}
+
+.pet-theme-switcher-inner {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.pet-theme-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #10245c;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pet-theme-pills {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pet-pill {
+    padding: 7px 15px;
+    border-radius: 999px;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pet-pill:hover {
+    background: #f1f5f9;
+    color: #1e293b;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.pet-pill.active {
+    background: #10245c;
+    color: #ffffff;
+    border-color: #10245c;
+    box-shadow: 0 2px 8px rgba(16, 36, 92, 0.2);
+}
+
+/* =========================================================
+   1. DOG THEME (Warm Golden Amber & Honey)
+   ========================================================= */
+
+.home-body.theme-dog {
+    --theme-primary: #D97706;
+    --theme-dark: #92400E;
+    --theme-light: #FEF3C7;
+    --theme-glow: rgba(217, 119, 6, 0.25);
+}
+
+.home-body.theme-dog .pet-theme-switcher-bar {
+    border-color: #FCD34D;
+    background: linear-gradient(90deg, #FFFBEB 0%, #ffffff 100%);
+    box-shadow: 0 4px 20px rgba(217, 119, 6, 0.12);
+}
+
+.home-body.theme-dog .pet-theme-label {
+    color: #92400E;
+}
+
+.home-body.theme-dog .pet-pill.pet-pill-dog.active {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    border-color: #B45309;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
+}
+
+.home-body.theme-dog .hero-section {
+    background:
+        radial-gradient(circle at 72% 45%, #FEF3C7 0%, #FDE68A 35%, transparent 65%),
+        linear-gradient(110deg, #FFFBEB 0%, #FEF3C7 100%);
+    border: 1.5px solid #FDE68A;
+}
+
+.home-body.theme-dog .hero-label {
+    background: #FFFBEB;
+    color: #92400E;
+    border: 1px solid #FCD34D;
+}
+
+.home-body.theme-dog .hero-content h1 span {
+    color: #D97706;
+}
+
+.home-body.theme-dog .hero-btn-primary {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    box-shadow: 0 6px 18px rgba(217, 119, 6, 0.35);
+}
+
+.home-body.theme-dog .product-category-section .section-heading h2 {
+    color: #78350F;
+}
+
+.home-body.theme-dog .section-heading a {
+    color: #D97706;
+}
+
+.home-body.theme-dog .home-advertisement {
+    background: linear-gradient(120deg, #FFFBEB 0%, #FEF3C7 100%);
+    border: 1px solid #FDE68A;
+}
+
+.home-body.theme-dog .advertisement-label {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.home-body.theme-dog .advertisement-button {
+    background: #92400E;
+}
+
+/* =========================================================
+   2. CAT THEME (Feline Royal Purple & Violet)
+   ========================================================= */
+
+.home-body.theme-cat {
+    --theme-primary: #7C3AED;
+    --theme-dark: #5B21B6;
+    --theme-light: #F3E8FF;
+    --theme-glow: rgba(124, 58, 237, 0.25);
+}
+
+.home-body.theme-cat .pet-theme-switcher-bar {
+    border-color: #DDD6FE;
+    background: linear-gradient(90deg, #FAF5FF 0%, #ffffff 100%);
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.12);
+}
+
+.home-body.theme-cat .pet-theme-label {
+    color: #5B21B6;
+}
+
+.home-body.theme-cat .pet-pill.pet-pill-cat.active {
+    background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+    border-color: #5B21B6;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+}
+
+.home-body.theme-cat .hero-section {
+    background:
+        radial-gradient(circle at 72% 45%, #EDE9FE 0%, #DDD6FE 35%, transparent 65%),
+        linear-gradient(110deg, #FAF5FF 0%, #F3E8FF 100%);
+    border: 1.5px solid #DDD6FE;
+}
+
+.home-body.theme-cat .hero-label {
+    background: #FAF5FF;
+    color: #5B21B6;
+    border: 1px solid #C4B5FD;
+}
+
+.home-body.theme-cat .hero-content h1 span {
+    color: #7C3AED;
+}
+
+.home-body.theme-cat .hero-btn-primary {
+    background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.35);
+}
+
+.home-body.theme-cat .product-category-section .section-heading h2 {
+    color: #4C1D95;
+}
+
+.home-body.theme-cat .section-heading a {
+    color: #7C3AED;
+}
+
+.home-body.theme-cat .home-advertisement {
+    background: linear-gradient(120deg, #FAF5FF 0%, #F3E8FF 100%);
+    border: 1px solid #DDD6FE;
+}
+
+.home-body.theme-cat .advertisement-label {
+    background: #F3E8FF;
+    color: #5B21B6;
+}
+
+.home-body.theme-cat .advertisement-button {
+    background: #5B21B6;
+}
+
+/* =========================================================
+   3. SETTING / OTHERS THEME (Emerald Nature & Farm)
+   ========================================================= */
+
+.home-body.theme-others {
+    --theme-primary: #059669;
+    --theme-dark: #065F46;
+    --theme-light: #D1FAE5;
+    --theme-glow: rgba(5, 150, 105, 0.25);
+}
+
+.home-body.theme-others .pet-theme-switcher-bar {
+    border-color: #A7F3D0;
+    background: linear-gradient(90deg, #ECFDF5 0%, #ffffff 100%);
+    box-shadow: 0 4px 20px rgba(5, 150, 105, 0.12);
+}
+
+.home-body.theme-others .pet-theme-label {
+    color: #065F46;
+}
+
+.home-body.theme-others .pet-pill.pet-pill-others.active {
+    background: linear-gradient(135deg, #10B981 0%, #047857 100%);
+    border-color: #064E3B;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
+}
+
+.home-body.theme-others .hero-section {
+    background:
+        radial-gradient(circle at 72% 45%, #D1FAE5 0%, #A7F3D0 35%, transparent 65%),
+        linear-gradient(110deg, #ECFDF5 0%, #D1FAE5 100%);
+    border: 1.5px solid #A7F3D0;
+}
+
+.home-body.theme-others .hero-label {
+    background: #ECFDF5;
+    color: #065F46;
+    border: 1px solid #6EE7B7;
+}
+
+.home-body.theme-others .hero-content h1 span {
+    color: #059669;
+}
+
+.home-body.theme-others .hero-btn-primary {
+    background: linear-gradient(135deg, #10B981 0%, #047857 100%);
+    box-shadow: 0 6px 18px rgba(5, 150, 105, 0.35);
+}
+
+.home-body.theme-others .product-category-section .section-heading h2 {
+    color: #064E3B;
+}
+
+.home-body.theme-others .section-heading a {
+    color: #059669;
+}
+
+.home-body.theme-others .home-advertisement {
+    background: linear-gradient(120deg, #ECFDF5 0%, #D1FAE5 100%);
+    border: 1px solid #A7F3D0;
+}
+
+.home-body.theme-others .advertisement-label {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.home-body.theme-others .advertisement-button {
+    background: #065F46;
+}

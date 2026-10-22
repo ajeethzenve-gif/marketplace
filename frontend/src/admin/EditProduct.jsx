@@ -135,14 +135,8 @@ function EditProduct() {
     // LOAD
     // =====================================================
 
-    useEffect(() => {
-
-        loadInitialData();
-
-    }, [id]);
-
-
     const loadInitialData = async () => {
+
 
         try {
 
@@ -471,12 +465,14 @@ function EditProduct() {
 
 
         } finally {
-
             setLoading(false);
-
         }
-
     };
+
+    useEffect(() => {
+        loadInitialData();
+    }, [id]);
+
 
 
     // =====================================================

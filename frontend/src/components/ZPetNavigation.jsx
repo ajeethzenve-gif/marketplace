@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/ZPetNavigation.css";
 
 /**
@@ -57,27 +57,21 @@ const CatProfileSilhouetteIcon = () => (
 );
 
 /**
- * Clean 3-slider filter/others icon matching the design reference
+ * Setting / Gear Icon for Other Pets & Specialized Preferences
  */
-const SlidersFilterIcon = () => (
+const SettingGearIcon = () => (
   <svg
-    viewBox="0 0 48 48"
+    viewBox="0 0 24 24"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
     className="pet-icon-svg"
     aria-hidden="true"
   >
-    {/* Top Slider Track & Knob */}
-    <path d="M8 14H40" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" />
-    <circle cx="30" cy="14" r="4.2" fill="currentColor" />
-
-    {/* Middle Slider Track & Knob */}
-    <path d="M8 24H40" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" />
-    <circle cx="35" cy="24" r="4.2" fill="currentColor" />
-
-    {/* Bottom Slider Track & Knob */}
-    <path d="M8 34H40" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" />
-    <circle cx="18" cy="34" r="4.2" fill="currentColor" />
+    <circle cx="12" cy="12" r="3" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
   </svg>
 );
 
@@ -85,14 +79,15 @@ const SlidersFilterIcon = () => (
  * ZPetNavigation Component - Premium Gold Edition with Shimmer & Sparkles
  *
  * Primary Color: #D4AF37
- * Radial Layout: Dog (Top), Cat (Top-Left), Others/Filter (Top-Right)
+ * Radial Layout: Dog (Top), Cat (Top-Left), Setting / Other Pets (Top-Right)
  */
 export default function ZPetNavigation({
   onSelectPet,
   customRoutes = {
-    Dog: "/Products?pet_type=Dog",
-    Cat: "/Products?pet_type=Cat",
-    Filter: "/Products",
+    Dog: "/home?pet=dog",
+    Cat: "/home?pet=cat",
+    Setting: "/home?pet=others",
+    Filter: "/home?pet=others",
   },
   className = "",
 }) {
@@ -100,6 +95,13 @@ export default function ZPetNavigation({
   const leaveTimerRef = useRef(null);
   const wrapperRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const searchParams = new URLSearchParams(location.search);
+  const currentPet = (searchParams.get("pet") || searchParams.get("pet_type") || "").toLowerCase();
+  const isDogActive = currentPet === "dog";
+  const isCatActive = currentPet === "cat";
+  const isSettingActive = ["others", "other", "setting", "settings", "filter"].includes(currentPet);
 
   // Clear timer on unmount
   useEffect(() => {
@@ -161,8 +163,9 @@ export default function ZPetNavigation({
 
     if (onSelectPet) {
       onSelectPet(key);
-    } else if (customRoutes[key]) {
-      navigate(customRoutes[key]);
+    } else {
+      const target = customRoutes[key] || customRoutes.Setting || customRoutes.Filter;
+      navigate(target);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
@@ -200,12 +203,14 @@ export default function ZPetNavigation({
         ===================================================== */}
         <button
           type="button"
-          className="pet-btn pet-btn-dog"
+          className={`pet-btn pet-btn-dog ${isDogActive ? "active" : ""}`}
           onClick={() => handleItemClick("Dog")}
-          aria-label="Dogs"
+          aria-label="Dog Face (Only Dog Products)"
+          title="Dog Mode — Products for Dogs only"
           tabIndex={isExpanded ? 0 : -1}
         >
           <DogProfileSilhouetteIcon />
+          <span className="pet-tooltip-badge">Dogs</span>
         </button>
 
         {/* =====================================================
@@ -213,25 +218,29 @@ export default function ZPetNavigation({
         ===================================================== */}
         <button
           type="button"
-          className="pet-btn pet-btn-cat"
+          className={`pet-btn pet-btn-cat ${isCatActive ? "active" : ""}`}
           onClick={() => handleItemClick("Cat")}
-          aria-label="Cats"
+          aria-label="Cat Face (Only Cat Products)"
+          title="Cat Mode — Products for Cats only"
           tabIndex={isExpanded ? 0 : -1}
         >
           <CatProfileSilhouetteIcon />
+          <span className="pet-tooltip-badge">Cats</span>
         </button>
 
         {/* =====================================================
-            3. OTHERS / FILTER ICON (Diagonally Upper-Right of Z)
+            3. SETTING / OTHERS ICON (Diagonally Upper-Right of Z)
         ===================================================== */}
         <button
           type="button"
-          className="pet-btn pet-btn-filter"
-          onClick={() => handleItemClick("Filter")}
-          aria-label="Others and Filters"
+          className={`pet-btn pet-btn-filter pet-btn-setting ${isSettingActive ? "active" : ""}`}
+          onClick={() => handleItemClick("Setting")}
+          aria-label="Setting Icon (All Other Pets)"
+          title="Setting Mode — Products for all pets other than dogs & cats"
           tabIndex={isExpanded ? 0 : -1}
         >
-          <SlidersFilterIcon />
+          <SettingGearIcon />
+          <span className="pet-tooltip-badge">Other Pets</span>
         </button>
 
         {/* =====================================================

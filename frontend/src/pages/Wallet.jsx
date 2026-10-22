@@ -91,10 +91,10 @@ function Wallet() {
     // ==========================================
 
     useEffect(() => {
-
         fetchWallet();
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
 
 
     // ==========================================

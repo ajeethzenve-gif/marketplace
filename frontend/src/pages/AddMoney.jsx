@@ -673,8 +673,10 @@ function AddMoney() {
 
                 throw new Error(
                     razorpayError.message ||
-                    "Unable to initialize Razorpay checkout."
+                    "Unable to initialize Razorpay checkout.",
+                    { cause: razorpayError }
                 );
+
 
             }
 

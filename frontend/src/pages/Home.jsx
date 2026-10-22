@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useMemo } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import api from "../api/api";
 import ProductCard from "../components/ProductCard";
 
@@ -13,13 +13,17 @@ import offerProduct from "../assets/images/offer_proudct-removebg.png";
 import vetVisitImage from "../assets/images/vet_home_visit.jpg";
 import petFashionImage from "../assets/images/pet_fashion_nobg.png";
 
-
-
-
 import "../styles/Home.css";
 
 function Home() {
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    // =====================================================
+    // ACTIVE PET MODE & THEME
+    // =====================================================
+    const petParam = searchParams.get("pet") || searchParams.get("pet_type") || "";
+    const activePetMode = petParam.toLowerCase();
 
     // =====================================================
     // PRODUCTS
@@ -37,7 +41,7 @@ function Home() {
 
     const [petDetails, setPetDetails] = useState({
         pet_name: "",
-        pet_type: "Dog",
+        pet_type: activePetMode === "cat" ? "Cat" : activePetMode === "dog" ? "Dog" : "Dog",
         breed: "",
         age: "",
         gender: "",
@@ -58,7 +62,7 @@ function Home() {
     useEffect(() => {
         loadAllProducts();
         loadCustomerRecommendations();
-    }, []);
+    }, [activePetMode]);
 
     const loadCustomerRecommendations = async () => {
         const token = localStorage.getItem("access");
@@ -86,9 +90,16 @@ function Home() {
             let page = 1;
 
             while (true) {
-                const response = await api.get(
-                    `products/?page=${page}`
-                );
+                let url = `products/?page=${page}`;
+                if (activePetMode === "dog") {
+                    url += "&pet_type=Dog";
+                } else if (activePetMode === "cat") {
+                    url += "&pet_type=Cat";
+                } else if (["others", "other", "setting", "settings"].includes(activePetMode)) {
+                    url += "&pet_type=others";
+                }
+
+                const response = await api.get(url);
 
                 const responseData = response.data;
 
@@ -177,82 +188,108 @@ function Home() {
     };
 
     // =====================================================
+    // FILTERED PRODUCTS FOR ACTIVE THEME
+    // =====================================================
+
+    const displayedProducts = useMemo(() => {
+        if (!products || !products.length) return [];
+        return products.filter((product) => {
+            const pt = (product?.pet_type || "").trim().toLowerCase();
+            if (activePetMode === "dog") {
+                return pt === "dog";
+            }
+            if (activePetMode === "cat") {
+                return pt === "cat";
+            }
+            if (["others", "other", "setting", "settings"].includes(activePetMode)) {
+                return pt !== "dog" && pt !== "cat";
+            }
+            return true;
+        });
+    }, [products, activePetMode]);
+
+    // =====================================================
     // MEDICINE + SUPPLEMENTS
     // =====================================================
 
-    const medicineProducts = products
-        .filter((product) => {
-            const type = getProductType(product);
-
-            return (
-                type === "medicine" ||
-                type === "supplement" ||
-                type === "supplements"
-            );
-        })
-        .slice(0, 5);
+    const medicineProducts = useMemo(() => {
+        return displayedProducts
+            .filter((product) => {
+                const type = getProductType(product);
+                return (
+                    type === "medicine" ||
+                    type === "supplement" ||
+                    type === "supplements"
+                );
+            })
+            .slice(0, 5);
+    }, [displayedProducts]);
 
     // =====================================================
     // FOOD + OTHER
     // =====================================================
 
-    const foodAndOtherProducts = products
-        .filter((product) => {
-            const type = getProductType(product);
-
-            return (
-                type === "food" ||
-                type === "treats" ||
-                type === "grooming" ||
-                type === "hygiene" ||
-                type === "fleatick" ||
-                type === "deworming" ||
-                type === "dentalcare" ||
-                type === "skincare" ||
-                type === "jointcare" ||
-                type === "vitamins" ||
-                type === "accessories" ||
-                type === "toys" ||
-                type === "beds" ||
-                type === "leashes" ||
-                type === "clothing" ||
-                type === "feeding" ||
-                type === "aquarium" ||
-                type === "birdcare" ||
-                type === "other"
-            );
-        })
-        .slice(0, 5);
+    const foodAndOtherProducts = useMemo(() => {
+        return displayedProducts
+            .filter((product) => {
+                const type = getProductType(product);
+                return (
+                    type === "food" ||
+                    type === "treat" ||
+                    type === "treats" ||
+                    type === "grooming" ||
+                    type === "hygiene" ||
+                    type === "fleatick" ||
+                    type === "deworming" ||
+                    type === "dentalcare" ||
+                    type === "skincare" ||
+                    type === "jointcare" ||
+                    type === "vitamins" ||
+                    type === "accessories" ||
+                    type === "toys" ||
+                    type === "beds" ||
+                    type === "leashes" ||
+                    type === "clothing" ||
+                    type === "feeding" ||
+                    type === "aquarium" ||
+                    type === "birdcare" ||
+                    type === "other"
+                );
+            })
+            .slice(0, 5);
+    }, [displayedProducts]);
 
     // =====================================================
     // VET EQUIPMENT
     // =====================================================
 
-    const vetEquipmentProducts = products
-        .filter((product) => {
-            const type = getProductType(product);
-
-            return (
-                type === "vetequipment" ||
-                type === "veterinaryequipment"
-            );
-        })
-        .slice(0, 5);
+    const vetEquipmentProducts = useMemo(() => {
+        return displayedProducts
+            .filter((product) => {
+                const type = getProductType(product);
+                return (
+                    type === "vetequipment" ||
+                    type === "veterinaryequipment"
+                );
+            })
+            .slice(0, 5);
+    }, [displayedProducts]);
 
     // =====================================================
     // FARM SUPPLIES
     // =====================================================
 
-    const farmSupplyProducts = products
-        .filter((product) => {
-            const type = getProductType(product);
-
-            return (
-                type === "farmsupply" ||
-                type === "farmsupplies"
-            );
-        })
-        .slice(0, 5);
+    const farmSupplyProducts = useMemo(() => {
+        return displayedProducts
+            .filter((product) => {
+                const type = getProductType(product);
+                return (
+                    type === "farmsupply" ||
+                    type === "farmsupplies"
+                );
+            })
+            .slice(0, 5);
+    }, [displayedProducts]);
 
     // =====================================================
     // DEBUG
@@ -379,11 +416,11 @@ function Home() {
 
     const [currentSlide, setCurrentSlide] = useState(0);
 
-    const heroSlides = [
+    useEffect(() => {
+        setCurrentSlide(0);
+    }, [activePetMode]);
 
-
-
-
+    const defaultHeroSlides = [
         {
             key: "store",
             label: "Smart Care for Every Pet",
@@ -554,6 +591,214 @@ function Home() {
             imageAlt: "Zenve Pet and Owner Matching Fashion",
         },
     ];
+
+    const heroSlides = useMemo(() => {
+        if (activePetMode === "dog") {
+            return [
+                {
+                    key: "dog-store",
+                    label: "🐶 Canine Dedicated Sanctuary",
+                    title: (
+                        <>
+                            World of
+                            <br />
+                            <span>Dogs</span>
+                        </>
+                    ),
+                    description:
+                        "Everything your dog loves & needs. Wholesome kibble, chew treats, veterinary care, grooming & toys crafted especially for dogs.",
+                    primaryText: "Shop Dog Collection",
+                    primaryAction: () => navigate("/products?pet_type=Dog"),
+                    secondaryText: "🐾 Add Dog Profile",
+                    secondaryAction: () => {
+                        setPetDetails((prev) => ({ ...prev, pet_type: "Dog" }));
+                        setShowPetModal(true);
+                    },
+                    smartText: "🐕 100% Curated for Dogs of all breeds & ages",
+                    image: dogImage,
+                    imageAlt: "Dog products and care",
+                },
+                {
+                    key: "dog-health",
+                    label: "🩺 Veterinary Care for Dogs",
+                    title: (
+                        <>
+                            Canine
+                            <br />
+                            <span>Healthcare</span>
+                        </>
+                    ),
+                    description:
+                        "From vaccines and deworming to joint care supplements and dental hygiene, keep your dog happy and healthy.",
+                    primaryText: "View Dog Medicines",
+                    primaryAction: () => navigate("/products?pet_type=Dog&product_type=Medicine&product_type=Supplements"),
+                    secondaryText: "Book Vet Visit",
+                    secondaryAction: () => navigate("/home-visit"),
+                    smartText: "⭐ Veterinary approved formulas for dogs",
+                    image: prescriptionUpload,
+                    imageAlt: "Dog healthcare",
+                },
+                {
+                    key: "dog-nutrition",
+                    label: "🥩 Premium Dog Nutrition",
+                    title: (
+                        <>
+                            Healthy Meals
+                            <br />
+                            <span>& Biscuits</span>
+                        </>
+                    ),
+                    description:
+                        "High-protein puppy and adult dog food from top brands like Drools, Pedigree, and Royal Canin.",
+                    primaryText: "Shop Dog Food",
+                    primaryAction: () => navigate("/products?pet_type=Dog&product_type=food"),
+                    secondaryText: "Browse All",
+                    secondaryAction: () => navigate("/products?pet_type=Dog"),
+                    smartText: "🦴 Delicious meals, gravies and training treats",
+                    image: offerProduct,
+                    imageAlt: "Dog food and treats",
+                },
+            ];
+        }
+
+        if (activePetMode === "cat") {
+            return [
+                {
+                    key: "cat-store",
+                    label: "🐱 Feline Haven Sanctuary",
+                    title: (
+                        <>
+                            World of
+                            <br />
+                            <span>Cats</span>
+                        </>
+                    ),
+                    description:
+                        "Purr-fect care for every cat. Delicious wet & dry food, hairball remedies, soothing catnip, scratchers and gentle grooming.",
+                    primaryText: "Shop Cat Collection",
+                    primaryAction: () => navigate("/products?pet_type=Cat"),
+                    secondaryText: "🐾 Add Cat Profile",
+                    secondaryAction: () => {
+                        setPetDetails((prev) => ({ ...prev, pet_type: "Cat" }));
+                        setShowPetModal(true);
+                    },
+                    smartText: "🐈 100% Curated for Cats and Kittens",
+                    image: catImage,
+                    imageAlt: "Cat products and care",
+                },
+                {
+                    key: "cat-health",
+                    label: "💊 Feline Wellness & Care",
+                    title: (
+                        <>
+                            Gentle Care
+                            <br />
+                            <span>For Cats</span>
+                        </>
+                    ),
+                    description:
+                        "Veterinary-approved drops, parasite control, calming treats and vitamin boosters formulated specially for cats.",
+                    primaryText: "View Cat Medicines",
+                    primaryAction: () => navigate("/products?pet_type=Cat&product_type=Medicine&product_type=Supplements"),
+                    secondaryText: "Book Vet Visit",
+                    secondaryAction: () => navigate("/home-visit"),
+                    smartText: "✨ Gentle, stress-free health solutions for cats",
+                    image: prescriptionUpload,
+                    imageAlt: "Cat health",
+                },
+                {
+                    key: "cat-food",
+                    label: "🐟 Gourmet Cat Meals",
+                    title: (
+                        <>
+                            Nutritious
+                            <br />
+                            <span>Cat Dinners</span>
+                        </>
+                    ),
+                    description:
+                        "Tender salmon, chicken pouches, crunchy kibble and dental bites crafted for finicky felines.",
+                    primaryText: "Shop Cat Food",
+                    primaryAction: () => navigate("/products?pet_type=Cat&product_type=food"),
+                    secondaryText: "Browse All",
+                    secondaryAction: () => navigate("/products?pet_type=Cat"),
+                    smartText: "🥣 Real meat recipes rich in taurine & omega fatty acids",
+                    image: offerProduct,
+                    imageAlt: "Cat food and treats",
+                },
+            ];
+        }
+
+        if (["others", "other", "setting", "settings"].includes(activePetMode)) {
+            return [
+                {
+                    key: "others-store",
+                    label: "⚙️ Specialized Pets & Farm Care",
+                    title: (
+                        <>
+                            Exotic &
+                            <br />
+                            <span>Farm Pets</span>
+                        </>
+                    ),
+                    description:
+                        "Specialized care for Birds, Aquarium Fish, Rabbits, Cattle and Farm Animals. Professional equipment, feeds and health supplements.",
+                    primaryText: "Shop Other Pet Supplies",
+                    primaryAction: () => navigate("/products?pet_type=others"),
+                    secondaryText: "🐾 Add Pet Profile",
+                    secondaryAction: () => {
+                        setPetDetails((prev) => ({ ...prev, pet_type: "Bird" }));
+                        setShowPetModal(true);
+                    },
+                    smartText: "🕊️ Specialized for Birds, Fish, Rabbits & Livestock",
+                    image: productImage,
+                    imageAlt: "Other pets products",
+                },
+                {
+                    key: "others-equipment",
+                    label: "🩺 Clinical Veterinary Equipment",
+                    title: (
+                        <>
+                            Veterinary
+                            <br />
+                            <span>Instruments</span>
+                        </>
+                    ),
+                    description:
+                        "Professional clinical tools, surgical equipment, examination kits, stethoscopes and diagnostic gear for veterinarians.",
+                    primaryText: "View Vet Equipment",
+                    primaryAction: () => navigate("/products?product_type=VetEquipment"),
+                    secondaryText: "Farm Supplies",
+                    secondaryAction: () => navigate("/products?product_type=FarmSupplies"),
+                    smartText: "🔬 Precision surgical & clinical tools by VetLife",
+                    image: vetVisitImage,
+                    imageAlt: "Veterinary tools",
+                },
+                {
+                    key: "others-feeds",
+                    label: "🌾 Feeds & Habitat Nutrition",
+                    title: (
+                        <>
+                            Seeds, Feeds
+                            <br />
+                            <span>& Tonics</span>
+                        </>
+                    ),
+                    description:
+                        "Fortified seed blends for birds, poultry feeds, mineral mixtures, and nutritional supplements for small and farm animals.",
+                    primaryText: "Shop Feeds & Tonics",
+                    primaryAction: () => navigate("/products?pet_type=others"),
+                    secondaryText: "Browse All",
+                    secondaryAction: () => navigate("/products?pet_type=others"),
+                    smartText: "🌿 Natural herbal supplements by Himalaya & VetLife",
+                    image: offerProduct,
+                    imageAlt: "Bird and farm feeds",
+                },
+            ];
+        }
+
+        return defaultHeroSlides;
+    }, [activePetMode]);
 
     // =====================================================
     // HERO AUTO SLIDER
@@ -733,14 +978,70 @@ function Home() {
     // =====================================================
 
     return (
-        <main className="home-body">
+        <main className={`home-body theme-${activePetMode === "dog" ? "dog" : activePetMode === "cat" ? "cat" : ["others", "other", "setting", "settings"].includes(activePetMode) ? "others" : "all"}`}>
+
+            {/* =================================================
+                PET THEME & MODE SWITCHER BAR
+            ================================================= */}
+            <div className="pet-theme-switcher-bar">
+                <div className="pet-theme-switcher-inner">
+                    <span className="pet-theme-label">
+                        {activePetMode === "dog" && "🐶 Showing Dog Products — Canine Sanctuary Theme"}
+                        {activePetMode === "cat" && "🐱 Showing Cat Products — Feline Haven Theme"}
+                        {["others", "other", "setting", "settings"].includes(activePetMode) && "⚙️ Showing Other Pets (Birds, Fish, Farm) — Exotic Care Theme"}
+                        {(!activePetMode || activePetMode === "all") && "🐾 Showing All Pets — Complete Marketplace"}
+                    </span>
+                    <div className="pet-theme-pills">
+                        <button
+                            type="button"
+                            className={`pet-pill ${!activePetMode || activePetMode === "all" ? "active" : ""}`}
+                            onClick={() => {
+                                setSearchParams({});
+                                window.scrollTo({ top: 0, behavior: "smooth" });
+                            }}
+                        >
+                            🐾 All Pets
+                        </button>
+                        <button
+                            type="button"
+                            className={`pet-pill pet-pill-dog ${activePetMode === "dog" ? "active" : ""}`}
+                            onClick={() => {
+                                setSearchParams({ pet: "dog" });
+                                window.scrollTo({ top: 0, behavior: "smooth" });
+                            }}
+                        >
+                            🐶 Dogs Only
+                        </button>
+                        <button
+                            type="button"
+                            className={`pet-pill pet-pill-cat ${activePetMode === "cat" ? "active" : ""}`}
+                            onClick={() => {
+                                setSearchParams({ pet: "cat" });
+                                window.scrollTo({ top: 0, behavior: "smooth" });
+                            }}
+                        >
+                            🐱 Cats Only
+                        </button>
+                        <button
+                            type="button"
+                            className={`pet-pill pet-pill-others ${["others", "other", "setting", "settings"].includes(activePetMode) ? "active" : ""}`}
+                            onClick={() => {
+                                setSearchParams({ pet: "others" });
+                                window.scrollTo({ top: 0, behavior: "smooth" });
+                            }}
+                        >
+                            ⚙️ Other Pets
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             {/* =================================================
                 HERO
             ================================================= */}
 
             <section
-                className={`hero-section hero-slider ${heroSlides[currentSlide].key}-slide`}
+                className={`hero-section hero-slider ${heroSlides[currentSlide]?.key || "store"}-slide`}
             >
 
                 <div
@@ -1570,20 +1871,58 @@ function Home() {
             ================================================= */}
 
             <ProductRow
-                title="Medicine & Supplements"
+                title={
+                    activePetMode === "dog"
+                        ? "🐕 Dog Healthcare & Veterinary Medicines"
+                        : activePetMode === "cat"
+                        ? "🐱 Cat Healthcare & Medicines"
+                        : ["others", "other", "setting", "settings"].includes(activePetMode)
+                        ? "🕊️ Small Pets & Bird Health Supplies"
+                        : "Medicine & Supplements"
+                }
                 products={medicineProducts}
-                viewLink="/products?product_type=Medicine&product_type=Supplements"
+                viewLink={
+                    activePetMode === "dog"
+                        ? "/products?pet_type=Dog&product_type=Medicine&product_type=Supplements"
+                        : activePetMode === "cat"
+                        ? "/products?pet_type=Cat&product_type=Medicine&product_type=Supplements"
+                        : ["others", "other", "setting", "settings"].includes(activePetMode)
+                        ? "/products?pet_type=others&product_type=Medicine&product_type=Supplements"
+                        : "/products?product_type=Medicine&product_type=Supplements"
+                }
             />
 
 
             <AdvertisementBanner
                 icon="💊"
-                title="Complete Care for Your Pet"
-                subtitle="Trusted medicines and supplements for your pet's everyday health."
+                title={
+                    activePetMode === "dog"
+                        ? "Complete Health Care for Your Dog"
+                        : activePetMode === "cat"
+                        ? "Gentle Wellness Care for Your Cat"
+                        : ["others", "other", "setting", "settings"].includes(activePetMode)
+                        ? "Specialized Health Tonics & Vitamins"
+                        : "Complete Care for Your Pet"
+                }
+                subtitle={
+                    activePetMode === "dog"
+                        ? "Veterinary approved deworming, joint boosters, flea sprays and drops for dogs."
+                        : activePetMode === "cat"
+                        ? "Hairball control, soothing drops, multivitamins and gentle parasite care for cats."
+                        : ["others", "other", "setting", "settings"].includes(activePetMode)
+                        ? "Herbal vitality tonics, respiratory care and vitamins for birds, fish & farm animals."
+                        : "Trusted medicines and supplements for your pet's everyday health."
+                }
                 buttonText="Shop Medicines"
                 onClick={() =>
                     navigate(
-                        "/products?product_type=Medicine&product_type=Supplements"
+                        activePetMode === "dog"
+                            ? "/products?pet_type=Dog&product_type=Medicine&product_type=Supplements"
+                            : activePetMode === "cat"
+                            ? "/products?pet_type=Cat&product_type=Medicine&product_type=Supplements"
+                            : ["others", "other", "setting", "settings"].includes(activePetMode)
+                            ? "/products?pet_type=others&product_type=Medicine&product_type=Supplements"
+                            : "/products?product_type=Medicine&product_type=Supplements"
                     )
                 }
             />
@@ -1594,20 +1933,58 @@ function Home() {
             ================================================= */}
 
             <ProductRow
-                title="Food & Other"
+                title={
+                    activePetMode === "dog"
+                        ? "🥩 Wholesome Dog Food, Meals & Treats"
+                        : activePetMode === "cat"
+                        ? "🐟 Delicious Cat Food, Broths & Treats"
+                        : ["others", "other", "setting", "settings"].includes(activePetMode)
+                        ? "🌾 Feeds, Seeds & Mineral Nutrition"
+                        : "Food & Other"
+                }
                 products={foodAndOtherProducts}
-                viewLink="/products?product_type=food&product_type=Other"
+                viewLink={
+                    activePetMode === "dog"
+                        ? "/products?pet_type=Dog&product_type=food&product_type=Other"
+                        : activePetMode === "cat"
+                        ? "/products?pet_type=Cat&product_type=food&product_type=Other"
+                        : ["others", "other", "setting", "settings"].includes(activePetMode)
+                        ? "/products?pet_type=others&product_type=food&product_type=Other"
+                        : "/products?product_type=food&product_type=Other"
+                }
             />
 
 
             <AdvertisementBanner
                 icon="🥣"
-                title="Healthy Food & Everyday Essentials"
-                subtitle="Discover nutritious food, treats and everyday products for your pets."
+                title={
+                    activePetMode === "dog"
+                        ? "Nutritious Dog Food & Crunchy Treats"
+                        : activePetMode === "cat"
+                        ? "Gourmet Cat Dinners & Tasty Nibbles"
+                        : ["others", "other", "setting", "settings"].includes(activePetMode)
+                        ? "Feeds, Seed Blends & Essential Nutrients"
+                        : "Healthy Food & Everyday Essentials"
+                }
+                subtitle={
+                    activePetMode === "dog"
+                        ? "Protein-rich recipes, puppy gravies and crunchy biscuits from top canine brands."
+                        : activePetMode === "cat"
+                        ? "Tender salmon pouches, taurine-rich kibble and catnip crunchy bites."
+                        : ["others", "other", "setting", "settings"].includes(activePetMode)
+                        ? "Fortified bird seed blends, poultry feed, and mineral mixtures by VetLife & Himalaya."
+                        : "Discover nutritious food, treats and everyday products for your pets."
+                }
                 buttonText="Shop Products"
                 onClick={() =>
                     navigate(
-                        "/products?product_type=food&product_type=Other"
+                        activePetMode === "dog"
+                            ? "/products?pet_type=Dog&product_type=food&product_type=Other"
+                            : activePetMode === "cat"
+                            ? "/products?pet_type=Cat&product_type=food&product_type=Other"
+                            : ["others", "other", "setting", "settings"].includes(activePetMode)
+                            ? "/products?pet_type=others&product_type=food&product_type=Other"
+                            : "/products?product_type=food&product_type=Other"
                     )
                 }
             />
@@ -1618,9 +1995,21 @@ function Home() {
             ================================================= */}
 
             <ProductRow
-                title="Vet Equipment"
+                title={
+                    activePetMode === "dog"
+                        ? "🩺 Dog Veterinary Supplies & Tools"
+                        : activePetMode === "cat"
+                        ? "🩺 Cat Veterinary Care & Hygiene"
+                        : "🩺 Professional Veterinary Clinical Equipment"
+                }
                 products={vetEquipmentProducts}
-                viewLink="/products?product_type=VetEquipment"
+                viewLink={
+                    activePetMode === "dog"
+                        ? "/products?pet_type=Dog&product_type=VetEquipment"
+                        : activePetMode === "cat"
+                        ? "/products?pet_type=Cat&product_type=VetEquipment"
+                        : "/products?product_type=VetEquipment"
+                }
             />
 
 
@@ -1631,34 +2020,41 @@ function Home() {
                 buttonText="View Equipment"
                 onClick={() =>
                     navigate(
-                        "/products?product_type=VetEquipment"
+                        activePetMode === "dog"
+                            ? "/products?pet_type=Dog&product_type=VetEquipment"
+                            : activePetMode === "cat"
+                            ? "/products?pet_type=Cat&product_type=VetEquipment"
+                            : "/products?product_type=VetEquipment"
                     )
                 }
             />
 
 
             {/* =================================================
-                FARM SUPPLIES
+                FARM SUPPLIES (Shown for Other Pets & All Pets)
             ================================================= */}
 
-            <ProductRow
-                title="Farm Supplies"
-                products={farmSupplyProducts}
-                viewLink="/products?product_type=FarmSupplies"
-            />
+            {activePetMode !== "dog" && activePetMode !== "cat" && (
+                <>
+                    <ProductRow
+                        title="Farm Supplies"
+                        products={farmSupplyProducts}
+                        viewLink="/products?product_type=FarmSupplies"
+                    />
 
-
-            <AdvertisementBanner
-                icon="🐄"
-                title="Farm & Livestock Supplies"
-                subtitle="Reliable products for farm, livestock and agricultural care."
-                buttonText="Shop Farm Supplies"
-                onClick={() =>
-                    navigate(
-                        "/products?product_type=FarmSupplies"
-                    )
-                }
-            />
+                    <AdvertisementBanner
+                        icon="🐄"
+                        title="Farm & Livestock Supplies"
+                        subtitle="Reliable products for farm, livestock and agricultural care."
+                        buttonText="Shop Farm Supplies"
+                        onClick={() =>
+                            navigate(
+                                "/products?product_type=FarmSupplies"
+                            )
+                        }
+                    />
+                </>
+            )}
 
 
 

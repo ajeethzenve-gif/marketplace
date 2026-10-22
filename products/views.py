@@ -145,10 +145,17 @@ class ProductListAPIView(APIView):
         pet_type = request.query_params.get("pet_type") or request.query_params.get("pet")
 
         if pet_type:
-
-            products = products.filter(
-                pet_type__iexact=pet_type
-            )
+            pt_clean = str(pet_type).strip().lower()
+            if pt_clean in ["others", "other", "setting", "settings", "non_dog_cat"]:
+                products = products.exclude(
+                    pet_type__iexact="Dog"
+                ).exclude(
+                    pet_type__iexact="Cat"
+                )
+            else:
+                products = products.filter(
+                    pet_type__iexact=pet_type
+                )
 
         # =================================================
         # MIN PRICE
