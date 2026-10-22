@@ -518,6 +518,7 @@ import AddCoupon from "./admin/AddCoupon";
 
 import "./App.css";
 import Zenvefashion from "./pages/Zenvefashion.jsx";
+import ZPetNavigation from "./components/ZPetNavigation";
 
 
 function AppContent() {
@@ -935,6 +936,9 @@ function AppContent() {
 
       {/* Footer */}
       {!hideLayout && <Footer />}
+
+      {/* Floating Interactive Z Pet Navigation */}
+      {!hideLayout && <ZPetNavigation />}
 
     </>
   );

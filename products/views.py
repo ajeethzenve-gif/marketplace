@@ -139,6 +139,18 @@ class ProductListAPIView(APIView):
             )
 
         # =================================================
+        # PET TYPE FILTER
+        # =================================================
+
+        pet_type = request.query_params.get("pet_type") or request.query_params.get("pet")
+
+        if pet_type:
+
+            products = products.filter(
+                pet_type__iexact=pet_type
+            )
+
+        # =================================================
         # MIN PRICE
         # =================================================
 

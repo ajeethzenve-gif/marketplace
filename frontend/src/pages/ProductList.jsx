@@ -71,6 +71,9 @@ function ProductList() {
     const productTypesFromNavbar =
         searchParams.getAll("product_type");
 
+    const petTypeFromNavbar =
+        searchParams.get("pet_type") || searchParams.get("pet") || "";
+
 
     /* =====================================================
        CATEGORIES
@@ -223,6 +226,17 @@ function ProductList() {
 
             }
 
+            /* PET TYPE */
+
+            if (petTypeFromNavbar) {
+
+                params.append(
+                    "pet_type",
+                    petTypeFromNavbar
+                );
+
+            }
+
 
             /* MIN PRICE */
 
@@ -363,6 +377,7 @@ function ProductList() {
         maxPrice,
         sort,
         productTypesFromNavbar.join("|"),
+        petTypeFromNavbar,
     ]);
 
 
