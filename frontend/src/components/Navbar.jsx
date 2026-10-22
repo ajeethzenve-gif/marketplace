@@ -25,6 +25,7 @@ import {
     FaSignInAlt,
     FaUserPlus,
     FaHandHoldingHeart,
+    FaMapMarkerAlt,
 } from "react-icons/fa";
 
 import {
@@ -1206,6 +1207,14 @@ function Navbar() {
                                 >
                                     <FaBox />
                                     <span>My Orders</span>
+                                </Link>
+
+                                <Link
+                                    to="/addresses"
+                                    className="popup-btn"
+                                >
+                                    <FaMapMarkerAlt />
+                                    <span>My Addresses</span>
                                 </Link>
 
                                 <Link

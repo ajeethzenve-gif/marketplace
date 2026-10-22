@@ -518,6 +518,7 @@ import AddCoupon from "./admin/AddCoupon";
 
 import "./App.css";
 import Zenvefashion from "./pages/Zenvefashion.jsx";
+import Addresses from "./pages/Addresses.jsx";
 
 
 function AppContent() {
@@ -752,6 +753,32 @@ function AppContent() {
             <Route
               path="/profile"
               element={<Profile />}
+            />
+
+            <Route
+              path="/personal-info"
+              element={<Profile />}
+            />
+
+            <Route
+              path="/personal-information"
+              element={<Profile />}
+            />
+
+            {/* Addresses */}
+            <Route
+              path="/addresses"
+              element={<Addresses />}
+            />
+
+            <Route
+              path="/my-addresses"
+              element={<Addresses />}
+            />
+
+            <Route
+              path="/profile/addresses"
+              element={<Addresses />}
             />
 
 
