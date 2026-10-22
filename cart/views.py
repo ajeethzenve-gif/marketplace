@@ -12,16 +12,21 @@ from .models import Cart, CartItem
 from .serializers import CartSerializer
 
 
+def get_customer(user):
+    customer, _ = Customer.objects.get_or_create(
+        user=user,
+        defaults={"phone_number": f"{user.id}".zfill(10)}
+    )
+    return customer
+
+
 class CartAPIView(APIView):
 
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
 
-        customer = get_object_or_404(
-            Customer,
-            user=request.user
-        )
+        customer = get_customer(request.user)
 
         cart, created = Cart.objects.get_or_create(
             customer=customer
@@ -38,10 +43,7 @@ class AddToCartAPIView(APIView):
 
     def post(self, request):
 
-        customer = get_object_or_404(
-            Customer,
-            user=request.user
-        )
+        customer = get_customer(request.user)
 
         cart, created = Cart.objects.get_or_create(
             customer=customer
@@ -123,10 +125,7 @@ class UpdateCartAPIView(APIView):
 
     def put(self, request):
 
-        customer = get_object_or_404(
-            Customer,
-            user=request.user
-        )
+        customer = get_customer(request.user)
 
         cart = get_object_or_404(
             Cart,
@@ -187,10 +186,7 @@ class RemoveCartItemAPIView(APIView):
 
     def delete(self, request, product_id):
 
-        customer = get_object_or_404(
-            Customer,
-            user=request.user
-        )
+        customer = get_customer(request.user)
 
         cart = get_object_or_404(
             Cart,

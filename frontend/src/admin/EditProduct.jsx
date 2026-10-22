@@ -266,7 +266,7 @@ function EditProduct() {
                 )
                     ? categoryResponse.data
                     : categoryResponse.data.results ||
-                      []
+                    []
 
             );
 
@@ -282,7 +282,7 @@ function EditProduct() {
                 )
                     ? brandResponse.data
                     : brandResponse.data.results ||
-                      []
+                    []
 
             );
 
@@ -827,10 +827,9 @@ function EditProduct() {
                     )
                         .map(
                             ([key, value]) =>
-                                `${key}: ${
-                                    Array.isArray(value)
-                                        ? value.join(", ")
-                                        : value
+                                `${key}: ${Array.isArray(value)
+                                    ? value.join(", ")
+                                    : value
                                 }`
                         )
                         .join("\n")
@@ -881,7 +880,6 @@ function EditProduct() {
 
     const productTypes = [
 
-        ["Medicine", "Medicine"],
         ["Supplements", "Supplements"],
         ["Food", "Food"],
         ["Treat", "Treats"],
@@ -1144,6 +1142,10 @@ function EditProduct() {
                                         Fish
                                     </option>
 
+                                    <option value="Cattle">
+                                        Cattle
+                                    </option>
+
                                 </select>
 
                             </div>
@@ -1366,202 +1368,202 @@ function EditProduct() {
                     {formData.product_type ===
                         "Medicine" && (
 
-                        <section className="form-section">
+                            <section className="form-section">
 
-                            <h3>
-                                Medicine Information
-                            </h3>
-
-
-                            <div className="form-grid">
+                                <h3>
+                                    Medicine Information
+                                </h3>
 
 
-                                <div className="form-group">
-
-                                    <label>
-                                        Active Ingredient
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        name="active_ingredient"
-                                        value={
-                                            medicineData.active_ingredient
-                                        }
-                                        onChange={
-                                            handleMedicineChange
-                                        }
-                                    />
-
-                                </div>
+                                <div className="form-grid">
 
 
-                                <div className="form-group">
+                                    <div className="form-group">
 
-                                    <label>
-                                        Dosage
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        name="dosage"
-                                        value={
-                                            medicineData.dosage
-                                        }
-                                        onChange={
-                                            handleMedicineChange
-                                        }
-                                    />
-
-                                </div>
-
-
-                                <div className="form-group">
-
-                                    <label>
-                                        Dosage Form
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        name="dosage_form"
-                                        value={
-                                            medicineData.dosage_form
-                                        }
-                                        onChange={
-                                            handleMedicineChange
-                                        }
-                                    />
-
-                                </div>
-
-
-                                <div className="form-group">
-
-                                    <label>
-                                        Manufacturer
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        name="manufacturer"
-                                        value={
-                                            medicineData.manufacturer
-                                        }
-                                        onChange={
-                                            handleMedicineChange
-                                        }
-                                    />
-
-                                </div>
-
-
-                                <div className="form-group">
-
-                                    <label>
-                                        Batch Number
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        name="batch_number"
-                                        value={
-                                            medicineData.batch_number
-                                        }
-                                        onChange={
-                                            handleMedicineChange
-                                        }
-                                    />
-
-                                </div>
-
-
-                                <div className="form-group">
-
-                                    <label>
-                                        Expiry Date
-                                    </label>
-
-                                    <input
-                                        type="date"
-                                        name="expiry_date"
-                                        value={
-                                            medicineData.expiry_date
-                                        }
-                                        onChange={
-                                            handleMedicineChange
-                                        }
-                                    />
-
-                                </div>
-
-
-                                <div className="form-group checkbox-group">
-
-                                    <label>
+                                        <label>
+                                            Active Ingredient
+                                        </label>
 
                                         <input
-                                            type="checkbox"
-                                            name="prescription_required"
-                                            checked={
-                                                medicineData.prescription_required
+                                            type="text"
+                                            name="active_ingredient"
+                                            value={
+                                                medicineData.active_ingredient
                                             }
                                             onChange={
                                                 handleMedicineChange
                                             }
                                         />
 
-                                        Prescription Required
+                                    </div>
 
-                                    </label>
+
+                                    <div className="form-group">
+
+                                        <label>
+                                            Dosage
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="dosage"
+                                            value={
+                                                medicineData.dosage
+                                            }
+                                            onChange={
+                                                handleMedicineChange
+                                            }
+                                        />
+
+                                    </div>
+
+
+                                    <div className="form-group">
+
+                                        <label>
+                                            Dosage Form
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="dosage_form"
+                                            value={
+                                                medicineData.dosage_form
+                                            }
+                                            onChange={
+                                                handleMedicineChange
+                                            }
+                                        />
+
+                                    </div>
+
+
+                                    <div className="form-group">
+
+                                        <label>
+                                            Manufacturer
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="manufacturer"
+                                            value={
+                                                medicineData.manufacturer
+                                            }
+                                            onChange={
+                                                handleMedicineChange
+                                            }
+                                        />
+
+                                    </div>
+
+
+                                    <div className="form-group">
+
+                                        <label>
+                                            Batch Number
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="batch_number"
+                                            value={
+                                                medicineData.batch_number
+                                            }
+                                            onChange={
+                                                handleMedicineChange
+                                            }
+                                        />
+
+                                    </div>
+
+
+                                    <div className="form-group">
+
+                                        <label>
+                                            Expiry Date
+                                        </label>
+
+                                        <input
+                                            type="date"
+                                            name="expiry_date"
+                                            value={
+                                                medicineData.expiry_date
+                                            }
+                                            onChange={
+                                                handleMedicineChange
+                                            }
+                                        />
+
+                                    </div>
+
+
+                                    <div className="form-group checkbox-group">
+
+                                        <label>
+
+                                            <input
+                                                type="checkbox"
+                                                name="prescription_required"
+                                                checked={
+                                                    medicineData.prescription_required
+                                                }
+                                                onChange={
+                                                    handleMedicineChange
+                                                }
+                                            />
+
+                                            Prescription Required
+
+                                        </label>
+
+                                    </div>
 
                                 </div>
 
-                            </div>
+
+                                <div className="form-group">
+
+                                    <label>
+                                        Storage Instructions
+                                    </label>
+
+                                    <textarea
+                                        name="storage_instructions"
+                                        value={
+                                            medicineData.storage_instructions
+                                        }
+                                        onChange={
+                                            handleMedicineChange
+                                        }
+                                        rows="3"
+                                    />
+
+                                </div>
 
 
-                            <div className="form-group">
+                                <div className="form-group">
 
-                                <label>
-                                    Storage Instructions
-                                </label>
+                                    <label>
+                                        Warnings
+                                    </label>
 
-                                <textarea
-                                    name="storage_instructions"
-                                    value={
-                                        medicineData.storage_instructions
-                                    }
-                                    onChange={
-                                        handleMedicineChange
-                                    }
-                                    rows="3"
-                                />
+                                    <textarea
+                                        name="warnings"
+                                        value={
+                                            medicineData.warnings
+                                        }
+                                        onChange={
+                                            handleMedicineChange
+                                        }
+                                        rows="3"
+                                    />
 
-                            </div>
+                                </div>
 
+                            </section>
 
-                            <div className="form-group">
-
-                                <label>
-                                    Warnings
-                                </label>
-
-                                <textarea
-                                    name="warnings"
-                                    value={
-                                        medicineData.warnings
-                                    }
-                                    onChange={
-                                        handleMedicineChange
-                                    }
-                                    rows="3"
-                                />
-
-                            </div>
-
-                        </section>
-
-                    )}
+                        )}
 
 
                     {/* =========================================
@@ -1571,26 +1573,208 @@ function EditProduct() {
                     {formData.product_type ===
                         "Supplement" && (
 
-                        <section className="form-section">
+                            <section className="form-section">
 
-                            <h3>
-                                Supplement Information
-                            </h3>
+                                <h3>
+                                    Supplement Information
+                                </h3>
 
 
-                            <div className="form-grid">
+                                <div className="form-grid">
+
+
+                                    <div className="form-group">
+
+                                        <label>
+                                            Ingredients
+                                        </label>
+
+                                        <textarea
+                                            name="ingredients"
+                                            value={
+                                                supplementData.ingredients
+                                            }
+                                            onChange={
+                                                handleSupplementChange
+                                            }
+                                            rows="3"
+                                        />
+
+                                    </div>
+
+
+                                    <div className="form-group">
+
+                                        <label>
+                                            Dosage
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="dosage"
+                                            value={
+                                                supplementData.dosage
+                                            }
+                                            onChange={
+                                                handleSupplementChange
+                                            }
+                                        />
+
+                                    </div>
+
+
+                                    <div className="form-group">
+
+                                        <label>
+                                            Form
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="form"
+                                            value={
+                                                supplementData.form
+                                            }
+                                            onChange={
+                                                handleSupplementChange
+                                            }
+                                        />
+
+                                    </div>
+
+
+                                    <div className="form-group">
+
+                                        <label>
+                                            Flavor
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="flavor"
+                                            value={
+                                                supplementData.flavor
+                                            }
+                                            onChange={
+                                                handleSupplementChange
+                                            }
+                                        />
+
+                                    </div>
+
+
+                                    <div className="form-group">
+
+                                        <label>
+                                            Age Group
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="age_group"
+                                            value={
+                                                supplementData.age_group
+                                            }
+                                            onChange={
+                                                handleSupplementChange
+                                            }
+                                        />
+
+                                    </div>
+
+
+                                    <div className="form-group">
+
+                                        <label>
+                                            Weight Range
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="weight_range"
+                                            value={
+                                                supplementData.weight_range
+                                            }
+                                            onChange={
+                                                handleSupplementChange
+                                            }
+                                        />
+
+                                    </div>
+
+
+                                    <div className="form-group">
+
+                                        <label>
+                                            Manufacturer
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="manufacturer"
+                                            value={
+                                                supplementData.manufacturer
+                                            }
+                                            onChange={
+                                                handleSupplementChange
+                                            }
+                                        />
+
+                                    </div>
+
+
+                                    <div className="form-group">
+
+                                        <label>
+                                            Batch Number
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="batch_number"
+                                            value={
+                                                supplementData.batch_number
+                                            }
+                                            onChange={
+                                                handleSupplementChange
+                                            }
+                                        />
+
+                                    </div>
+
+
+                                    <div className="form-group">
+
+                                        <label>
+                                            Expiry Date
+                                        </label>
+
+                                        <input
+                                            type="date"
+                                            name="expiry_date"
+                                            value={
+                                                supplementData.expiry_date
+                                            }
+                                            onChange={
+                                                handleSupplementChange
+                                            }
+                                        />
+
+                                    </div>
+
+                                </div>
 
 
                                 <div className="form-group">
 
                                     <label>
-                                        Ingredients
+                                        Storage Instructions
                                     </label>
 
                                     <textarea
-                                        name="ingredients"
+                                        name="storage_instructions"
                                         value={
-                                            supplementData.ingredients
+                                            supplementData.storage_instructions
                                         }
                                         onChange={
                                             handleSupplementChange
@@ -1604,207 +1788,25 @@ function EditProduct() {
                                 <div className="form-group">
 
                                     <label>
-                                        Dosage
+                                        Warnings
                                     </label>
 
-                                    <input
-                                        type="text"
-                                        name="dosage"
+                                    <textarea
+                                        name="warnings"
                                         value={
-                                            supplementData.dosage
+                                            supplementData.warnings
                                         }
                                         onChange={
                                             handleSupplementChange
                                         }
+                                        rows="3"
                                     />
 
                                 </div>
 
+                            </section>
 
-                                <div className="form-group">
-
-                                    <label>
-                                        Form
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        name="form"
-                                        value={
-                                            supplementData.form
-                                        }
-                                        onChange={
-                                            handleSupplementChange
-                                        }
-                                    />
-
-                                </div>
-
-
-                                <div className="form-group">
-
-                                    <label>
-                                        Flavor
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        name="flavor"
-                                        value={
-                                            supplementData.flavor
-                                        }
-                                        onChange={
-                                            handleSupplementChange
-                                        }
-                                    />
-
-                                </div>
-
-
-                                <div className="form-group">
-
-                                    <label>
-                                        Age Group
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        name="age_group"
-                                        value={
-                                            supplementData.age_group
-                                        }
-                                        onChange={
-                                            handleSupplementChange
-                                        }
-                                    />
-
-                                </div>
-
-
-                                <div className="form-group">
-
-                                    <label>
-                                        Weight Range
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        name="weight_range"
-                                        value={
-                                            supplementData.weight_range
-                                        }
-                                        onChange={
-                                            handleSupplementChange
-                                        }
-                                    />
-
-                                </div>
-
-
-                                <div className="form-group">
-
-                                    <label>
-                                        Manufacturer
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        name="manufacturer"
-                                        value={
-                                            supplementData.manufacturer
-                                        }
-                                        onChange={
-                                            handleSupplementChange
-                                        }
-                                    />
-
-                                </div>
-
-
-                                <div className="form-group">
-
-                                    <label>
-                                        Batch Number
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        name="batch_number"
-                                        value={
-                                            supplementData.batch_number
-                                        }
-                                        onChange={
-                                            handleSupplementChange
-                                        }
-                                    />
-
-                                </div>
-
-
-                                <div className="form-group">
-
-                                    <label>
-                                        Expiry Date
-                                    </label>
-
-                                    <input
-                                        type="date"
-                                        name="expiry_date"
-                                        value={
-                                            supplementData.expiry_date
-                                        }
-                                        onChange={
-                                            handleSupplementChange
-                                        }
-                                    />
-
-                                </div>
-
-                            </div>
-
-
-                            <div className="form-group">
-
-                                <label>
-                                    Storage Instructions
-                                </label>
-
-                                <textarea
-                                    name="storage_instructions"
-                                    value={
-                                        supplementData.storage_instructions
-                                    }
-                                    onChange={
-                                        handleSupplementChange
-                                    }
-                                    rows="3"
-                                />
-
-                            </div>
-
-
-                            <div className="form-group">
-
-                                <label>
-                                    Warnings
-                                </label>
-
-                                <textarea
-                                    name="warnings"
-                                    value={
-                                        supplementData.warnings
-                                    }
-                                    onChange={
-                                        handleSupplementChange
-                                    }
-                                    rows="3"
-                                />
-
-                            </div>
-
-                        </section>
-
-                    )}
+                        )}
 
 
                     {/* =========================================

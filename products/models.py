@@ -72,6 +72,7 @@ class Product(models.Model):
         ("Bird", "Bird"),
         ("Rabbit", "Rabbit"),
         ("Fish", "Fish"),
+        ("Cattle", "Cattle"),
     ]
 
     PRODUCT_TYPE_CHOICES = [
@@ -318,5 +319,60 @@ class Supplement(models.Model):
 
     def __str__(self):
         return self.product.product_name
+
+
+class RecommendationFeedback(models.Model):
+    FEEDBACK_REASONS = [
+        ("helpful", "Helpful Recommendation"),
+        ("not_relevant", "Not Relevant to Pet"),
+        ("already_bought", "Already Purchased"),
+        ("wrong_breed_age", "Incompatible Breed or Age"),
+        ("dislike_brand", "Prefer Different Brand"),
+    ]
+
+    customer = models.ForeignKey(
+        "accounts.Customer",
+        on_delete=models.CASCADE,
+        related_name="recommendation_feedbacks"
+    )
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="recommendation_feedbacks"
+    )
+
+    pet = models.ForeignKey(
+        "accounts.PetProfile",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="recommendation_feedbacks"
+    )
+
+    is_helpful = models.BooleanField(
+        default=True
+    )
+
+    feedback_reason = models.CharField(
+        max_length=50,
+        choices=FEEDBACK_REASONS,
+        blank=True,
+        null=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Recommendation Feedback"
+        verbose_name_plural = "Recommendation Feedbacks"
+
+    def __str__(self):
+        status_str = "Helpful" if self.is_helpful else "Unhelpful"
+        return f"{self.customer} - {self.product.product_name} ({status_str})"
+
 
 

@@ -10,6 +10,11 @@ import petAdoption from "../assets/images/pet-adoption-removebg.png";
 import homeService from "../assets/images/pet_home_service_remove_bg.png";
 import prescriptionUpload from "../assets/images/prescription_upload-removebg.png";
 import offerProduct from "../assets/images/offer_proudct-removebg.png";
+import vetVisitImage from "../assets/images/vet_home_visit.jpg";
+import petFashionImage from "../assets/images/pet_fashion_nobg.png";
+
+
+
 
 import "../styles/Home.css";
 
@@ -41,12 +46,37 @@ function Home() {
     });
 
     // =====================================================
-    // LOAD ALL PRODUCTS
+    // EXPLAINABLE AI RECOMMENDATIONS
+    // =====================================================
+
+    const [aiRecSections, setAiRecSections] = useState([]);
+
+    // =====================================================
+    // LOAD ALL PRODUCTS & RECOMMENDATIONS
     // =====================================================
 
     useEffect(() => {
         loadAllProducts();
+        loadCustomerRecommendations();
     }, []);
+
+    const loadCustomerRecommendations = async () => {
+        const token = localStorage.getItem("access");
+        if (!token) return;
+
+        try {
+            const response = await api.get("recommendations/customer/", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (response.data?.sections) {
+                setAiRecSections(response.data.sections);
+            }
+        } catch (err) {
+            console.log("Customer AI recommendations not available:", err?.message);
+        }
+    };
 
     const loadAllProducts = async () => {
         try {
@@ -350,6 +380,10 @@ function Home() {
     const [currentSlide, setCurrentSlide] = useState(0);
 
     const heroSlides = [
+
+
+
+
         {
             key: "store",
             label: "Smart Care for Every Pet",
@@ -470,6 +504,54 @@ function Home() {
                 "🎉 New deals and savings for every pet parent",
             image: offerProduct,
             imageAlt: "Pet product offers",
+        },
+
+        {
+            key: "book-vet",
+            label: "Trusted Vets · Home Visits",
+            title: (
+                <>
+                    Book a Vet,
+                    <br />
+                    <span>At Your Doorstep</span>
+                </>
+            ),
+            description:
+                "Skip the clinic queue. Book certified veterinary professionals for health checkups, vaccinations, grooming and emergency care — all from the comfort of your home.",
+            primaryText: "Book a Vet Now",
+            primaryAction: () =>
+                navigate("/home-visit"),
+            secondaryText: "Explore Services",
+            secondaryAction: () =>
+                navigate("/home-visit"),
+            smartText:
+                "🩺 500+ Certified Vets · 4.9★ Rating · 30 min Response",
+            image: vetVisitImage,
+            imageAlt: "Book a vet home visit",
+        },
+
+        {
+            key: "zenve-fashion",
+            label: "Style · Fashion · Accessories",
+            title: (
+                <>
+                    Dress Your Pet in
+                    <br />
+                    <span>Zenve Fashion</span>
+                </>
+            ),
+            description:
+                "Explore our exclusive pet fashion collection — from cozy sweaters and raincoats to stylish bandanas and party outfits. Because your pet deserves to look amazing.",
+            primaryText: "Shop Fashion",
+            primaryAction: () =>
+                navigate("/Fashion"),
+            secondaryText: "View All Styles",
+            secondaryAction: () =>
+                navigate("/Fashion"),
+            smartText:
+                "👕 200+ Styles · All Sizes Available · New Every Week",
+            image: petFashionImage,
+            imageAlt: "Zenve Pet and Owner Matching Fashion",
         },
     ];
 
@@ -768,27 +850,29 @@ function Home() {
 
                     </div>
 
-                    <div className="hero-visual">
+                    {heroSlides[currentSlide].image && (
+                        <div className="hero-visual">
 
-                        <div className="hero-circle"></div>
+                            <div className="hero-circle"></div>
 
-                        <div className="hero-image-wrapper">
+                            <div className="hero-image-wrapper">
 
-                            <img
-                                src={
-                                    heroSlides[currentSlide]
-                                        .image
-                                }
-                                alt={
-                                    heroSlides[currentSlide]
-                                        .imageAlt
-                                }
-                                className="hero-slide-image"
-                            />
+                                <img
+                                    src={
+                                        heroSlides[currentSlide]
+                                            .image
+                                    }
+                                    alt={
+                                        heroSlides[currentSlide]
+                                            .imageAlt
+                                    }
+                                    className="hero-slide-image"
+                                />
+
+                            </div>
 
                         </div>
-
-                    </div>
+                    )}
 
                 </div>
 
@@ -1122,6 +1206,59 @@ function Home() {
 
                 </div>
 
+            )}
+
+
+            {/* =====================================================
+                EXPLAINABLE AI RECOMMENDATIONS FOR YOUR PETS
+            ===================================================== */}
+            {aiRecSections.length > 0 && (
+                <section className="home-section home-xai-section">
+                    <div className="section-heading">
+                        <div>
+                            <span className="xai-chip-pill" style={{ marginBottom: "8px" }}>
+                                ✨ EXPLAINABLE AI CARE
+                            </span>
+                            <h2>Tailored Care For Your Pets</h2>
+                            <p style={{ margin: "4px 0 0 0", color: "#64748b", fontSize: "14px" }}>
+                                Transparently personalized based on your pets' life-stage, breed, and health requirements.
+                            </p>
+                        </div>
+                        <Link to="/pets" style={{ fontSize: "14px", fontWeight: "600", color: "#2563eb" }}>
+                            Manage Pets & View All Care Plans →
+                        </Link>
+                    </div>
+
+                    <div className="home-xai-container">
+                        {aiRecSections.map((sec) => (
+                            <div key={sec.section_id} className="home-xai-block">
+                                <div className="home-xai-subheading">
+                                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                        <span style={{ fontSize: "22px" }}>🐾</span>
+                                        <div>
+                                            <h3 style={{ margin: 0, fontSize: "17px", color: "#0f172a", fontWeight: "700" }}>{sec.title}</h3>
+                                            <span style={{ fontSize: "12px", color: "#64748b" }}>{sec.subtitle}</span>
+                                        </div>
+                                    </div>
+                                    {sec.pet_id && (
+                                        <Link to={`/recommended-products/${sec.pet_id}`} className="home-xai-details-link">
+                                            Full Explanation Plan ({sec.products.length}) →
+                                        </Link>
+                                    )}
+                                </div>
+                                <div className="category-product-grid" style={{ marginTop: "14px" }}>
+                                    {sec.products.slice(0, 5).map((product) => (
+                                        <ProductCard
+                                            key={product.id}
+                                            product={product}
+                                            pet={{ id: sec.pet_id, pet_name: sec.pet_name, pet_type: sec.pet_type }}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
             )}
 
 
@@ -1522,7 +1659,6 @@ function Home() {
                     )
                 }
             />
-
 
 
 

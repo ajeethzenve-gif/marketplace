@@ -15,14 +15,16 @@ import {
     showWarningAlert,
 } from "../utils/sweetAlert";
 
+import ExplainModal from "./ExplainModal";
 import "../styles/ProductCard.css";
 
 
-function ProductCard({ product }) {
+function ProductCard({ product, pet = null, onFeedbackSubmitted = null }) {
 
     const navigate = useNavigate();
 
     const [inWishlist, setInWishlist] = useState(false);
+    const [showExplain, setShowExplain] = useState(false);
 
     const token = localStorage.getItem("access");
 
@@ -330,13 +332,23 @@ function ProductCard({ product }) {
 
             <div className="market-product-image">
 
-
-                {/* DISCOUNT */}
-
-                <span className="product-discount">
-                    -20%
-                </span>
-
+                {/* DISCOUNT OR RECOMMENDATION BADGE */}
+                {product.recommendation ? (
+                    <span
+                        className="product-match-tag"
+                        style={{ backgroundColor: product.recommendation.match_color || "#10b981" }}
+                    >
+                        {product.recommendation.match_score}% Match
+                    </span>
+                ) : product.related_explanation ? (
+                    <span className="product-match-tag related-tag">
+                        {product.related_explanation.relationship_badge || "🛒 Bundle"}
+                    </span>
+                ) : (
+                    <span className="product-discount">
+                        -20%
+                    </span>
+                )}
 
                 {/* WISHLIST */}
 
@@ -375,6 +387,32 @@ function ProductCard({ product }) {
 
             <div className="market-product-content">
 
+                {/* RECOMMENDATION EXPLANATION SNIPPET */}
+                {(product.recommendation || product.related_explanation) && (
+                    <div
+                        className="market-product-rec-reason"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setShowExplain(true);
+                        }}
+                    >
+                        <span className="rec-sparkle">✨</span>
+                        <span className="rec-text" title="Click to view explanation">
+                            {product.recommendation?.primary_reason || product.related_explanation?.explanation}
+                        </span>
+                        <button
+                            type="button"
+                            className="rec-why-btn"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowExplain(true);
+                            }}
+                            title="See Why This Was Recommended"
+                        >
+                            Why?
+                        </button>
+                    </div>
+                )}
 
                 {/* PRODUCT NAME */}
 
@@ -468,6 +506,15 @@ function ProductCard({ product }) {
 
 
             </div>
+
+            {/* EXPLAINABILITY MODAL */}
+            <ExplainModal
+                product={product}
+                pet={pet}
+                isOpen={showExplain}
+                onClose={() => setShowExplain(false)}
+                onFeedbackSubmitted={onFeedbackSubmitted}
+            />
 
         </div>
 

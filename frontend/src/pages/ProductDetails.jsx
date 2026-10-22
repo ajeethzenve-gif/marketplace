@@ -1086,7 +1086,7 @@ function ProductDetails() {
 
 
                 {/* =============================
-                    RELATED PRODUCTS
+                    EXPLAINABLE RELATED PRODUCTS & PAIRINGS
                 ============================= */}
 
                 <section className="related-products-section">
@@ -1095,13 +1095,17 @@ function ProductDetails() {
 
                         <div>
 
-                            <span>
-                                YOU MAY ALSO LIKE
+                            <span className="xai-related-sub">
+                                ✨ INTELLIGENT COMPANIONS & ROUTINES
                             </span>
 
                             <h2>
-                                Related Products
+                                Frequently Paired & Recommended Care
                             </h2>
+
+                            <p className="xai-related-desc">
+                                Transparent pairings selected through order co-purchase frequency and veterinarian complementary routine standards.
+                            </p>
 
                         </div>
 

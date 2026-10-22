@@ -51,6 +51,14 @@
         );
 }
 
+/* When no hero-visual is rendered (image is null),
+   let the content panel fill the full width */
+.hero-section .hero-content:only-child {
+    width: 55%;
+    padding-right: 62px;
+}
+
+
 
 /* =========================================================
    HERO CONTENT - LEFT SIDE
@@ -268,6 +276,41 @@
     justify-content: center;
 
     box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HERO IMAGE WRAPPER + SLIDE IMAGE
+   Shared styles for all hero slider images.
+   mix-blend-mode: multiply makes white/light backgrounds
+   invisible so subjects blend directly onto the blue gradient,
+   exactly matching the existing pet/product images.
+   ========================================================= */
+
+.hero-image-wrapper {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.hero-slide-image {
+    width: auto;
+    max-width: 100%;
+    height: 100%;
+    max-height: 360px;
+    object-fit: contain;
+    object-position: bottom center;
+    mix-blend-mode: multiply;
+    filter: drop-shadow(0 12px 12px rgba(0, 0, 0, 0.10));
+    display: block;
+    background: transparent;
 }
 
 
@@ -3110,3 +3153,358 @@
 
 }
 
+/* =========================================================
+   EXPLAINABLE AI RECOMMENDATION SECTION ON HOME
+========================================================= */
+
+.home-xai-section {
+    background: linear-gradient(180deg, #f8faff 0%, #ffffff 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+}
+
+.home-xai-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.home-xai-block {
+    background: #ffffff;
+    border: 1px solid #edf2f7;
+    border-radius: 14px;
+    padding: 18px 20px;
+}
+
+.home-xai-subheading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.home-xai-details-link {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2563eb;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.home-xai-details-link:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   PROMO HERO BANNERS (VET + FASHION)
+========================================================= */
+
+.promo-hero-banner {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    margin: 0 0 32px 0;
+    padding: 60px 48px;
+    isolation: isolate;
+}
+
+/* VET BANNER — deep teal to indigo */
+.promo-vet-banner {
+    background: linear-gradient(135deg, #0f4c75 0%, #1b6ca8 40%, #3a86c8 100%);
+}
+
+.promo-vet-banner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 55%),
+        radial-gradient(circle at 10% 80%, rgba(0,200,200,0.12) 0%, transparent 50%);
+    z-index: 0;
+}
+
+/* FASHION BANNER — rose to violet */
+.promo-fashion-banner {
+    background: linear-gradient(135deg, #6b21a8 0%, #a855f7 45%, #ec4899 100%);
+}
+
+.promo-fashion-banner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 15% 20%, rgba(255,255,255,0.10) 0%, transparent 55%),
+        radial-gradient(circle at 85% 80%, rgba(255,200,255,0.12) 0%, transparent 50%);
+    z-index: 0;
+}
+
+.promo-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.promo-hero-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    color: #fff;
+}
+
+.promo-hero-tag {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.20);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.30);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    padding: 6px 14px;
+    border-radius: 50px;
+    width: fit-content;
+}
+
+.promo-hero-title {
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1.15;
+    color: #fff;
+    margin: 0;
+}
+
+.promo-hero-title span {
+    background: linear-gradient(90deg, #ffd700, #fff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.promo-fashion-banner .promo-hero-title span {
+    background: linear-gradient(90deg, #ffe066, #fff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.promo-hero-desc {
+    font-size: 16px;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.88);
+    margin: 0;
+    max-width: 480px;
+}
+
+.promo-hero-stats {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+}
+
+.promo-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.promo-stat strong {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+}
+
+.promo-stat span {
+    font-size: 12px;
+    color: rgba(255,255,255,0.70);
+    font-weight: 500;
+}
+
+.promo-hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    color: #0f4c75;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 14px 28px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    width: fit-content;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.20);
+}
+
+.promo-hero-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.28);
+}
+
+.promo-fashion-btn {
+    color: #6b21a8;
+}
+
+.promo-hero-visual {
+    flex: 0 0 280px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 260px;
+}
+
+.promo-visual-left {
+    order: -1;
+}
+
+.promo-visual-circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.promo-vet-circle {
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.25);
+    box-shadow: 0 0 60px rgba(255,255,255,0.10);
+}
+
+.promo-fashion-circle {
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.25);
+    box-shadow: 0 0 60px rgba(255,200,255,0.15);
+}
+
+.promo-visual-emoji {
+    font-size: 80px;
+    line-height: 1;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.25));
+}
+
+.promo-float-badge {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.95);
+    color: #1e293b;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 50px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    white-space: nowrap;
+    animation: promoBadgeFloat 3s ease-in-out infinite;
+}
+
+.promo-badge-one {
+    top: 10px;
+    right: 0;
+    animation-delay: 0s;
+}
+
+.promo-badge-two {
+    bottom: 40px;
+    left: 0;
+    animation-delay: 1s;
+}
+
+.promo-badge-three {
+    top: 50%;
+    right: -10px;
+    animation-delay: 2s;
+    animation-name: promoBadgeFloatMiddle;
+    transform: translateY(-50%);
+}
+
+@keyframes promoBadgeFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+@keyframes promoBadgeFloatMiddle {
+    0%, 100% { transform: translateY(-50%); }
+    50% { transform: translateY(calc(-50% - 6px)); }
+}
+
+@media (max-width: 900px) {
+    .promo-hero-banner {
+        padding: 44px 28px;
+    }
+
+    .promo-hero-inner {
+        flex-direction: column;
+        gap: 32px;
+        text-align: center;
+    }
+
+    .promo-hero-content,
+    .promo-content-right {
+        text-align: center;
+        align-items: center;
+    }
+
+    .promo-hero-title {
+        font-size: 32px;
+    }
+
+    .promo-hero-visual {
+        flex: none;
+        width: 100%;
+        height: 200px;
+    }
+
+    .promo-visual-left {
+        order: 0;
+    }
+
+    .promo-hero-stats {
+        justify-content: center;
+    }
+
+    .promo-hero-btn {
+        align-self: center;
+    }
+}
+
+@media (max-width: 560px) {
+    .promo-hero-banner {
+        padding: 36px 20px;
+        border-radius: 18px;
+    }
+
+    .promo-hero-title {
+        font-size: 26px;
+    }
+
+    .promo-hero-desc {
+        font-size: 14px;
+    }
+
+    .promo-hero-stats {
+        gap: 18px;
+    }
+
+    .promo-stat strong {
+        font-size: 18px;
+    }
+
+    .promo-float-badge {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+}

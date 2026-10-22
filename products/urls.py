@@ -9,6 +9,9 @@ from .views import (
     ProductImageUploadAPIView,
     RelatedProductsAPIView,
     PetRecommendedProductsAPIView,
+    CustomerRecommendedProductsAPIView,
+    ExplainProductRecommendationAPIView,
+    RecommendationFeedbackAPIView,
 )
 
 
@@ -75,7 +78,7 @@ urlpatterns = [
     ),
 
     # =====================================================
-    # RELATED PRODUCTS
+    # RELATED PRODUCTS (EXPLAINABLE)
     # =====================================================
 
     path(
@@ -85,12 +88,42 @@ urlpatterns = [
     ),
 
     # =====================================================
-    # PET RECOMMENDED PRODUCTS
+    # PET RECOMMENDED PRODUCTS (EXPLAINABLE)
     # =====================================================
 
     path(
         "pet/<int:pet_id>/recommended/",
         PetRecommendedProductsAPIView.as_view(),
         name="pet-recommended-products",
+    ),
+
+    # =====================================================
+    # CUSTOMER MULTI-PET EXPLAINABLE FEED
+    # =====================================================
+
+    path(
+        "recommendations/customer/",
+        CustomerRecommendedProductsAPIView.as_view(),
+        name="customer-recommended-products",
+    ),
+
+    # =====================================================
+    # DEEP-DIVE EXPLANATION INSPECTOR
+    # =====================================================
+
+    path(
+        "recommendations/explain/<int:product_id>/pet/<int:pet_id>/",
+        ExplainProductRecommendationAPIView.as_view(),
+        name="explain-product-recommendation",
+    ),
+
+    # =====================================================
+    # RECOMMENDATION FEEDBACK
+    # =====================================================
+
+    path(
+        "recommendations/feedback/",
+        RecommendationFeedbackAPIView.as_view(),
+        name="recommendation-feedback",
     ),
 ]

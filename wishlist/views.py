@@ -12,6 +12,14 @@ from .models import Wishlist
 from .serializers import WishlistSerializer
 
 
+def get_customer(user):
+    customer, _ = Customer.objects.get_or_create(
+        user=user,
+        defaults={"phone_number": f"{user.id}".zfill(10)}
+    )
+    return customer
+
+
 
 class WishlistAPIView(APIView):
 
@@ -21,10 +29,7 @@ class WishlistAPIView(APIView):
     # GET USER WISHLIST
     def get(self, request):
 
-        customer = get_object_or_404(
-            Customer,
-            user=request.user
-        )
+        customer = get_customer(request.user)
 
 
         wishlist = Wishlist.objects.filter(
@@ -50,10 +55,7 @@ class WishlistAPIView(APIView):
     # ADD PRODUCT TO WISHLIST
     def post(self, request):
 
-        customer = get_object_or_404(
-            Customer,
-            user=request.user
-        )
+        customer = get_customer(request.user)
 
 
         product_id = request.data.get("product_id")
@@ -86,10 +88,7 @@ class WishlistAPIView(APIView):
     # REMOVE PRODUCT
     def delete(self, request, product_id):
 
-        customer = get_object_or_404(
-            Customer,
-            user=request.user
-        )
+        customer = get_customer(request.user)
 
 
         Wishlist.objects.filter(
@@ -120,13 +119,7 @@ class ToggleWishlistAPIView(APIView):
     def post(self, request):
 
 
-        customer = get_object_or_404(
-
-            Customer,
-
-            user=request.user
-
-        )
+        customer = get_customer(request.user)
 
 
         product = get_object_or_404(

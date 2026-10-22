@@ -56,45 +56,47 @@ class RegisterAPIView(APIView):
 
         if serializer.is_valid():
 
-            user = User.objects.create_user(
-                username=serializer.validated_data["username"],
-                first_name=serializer.validated_data["first_name"],
-                last_name=serializer.validated_data["last_name"],
-                email=serializer.validated_data["email"],
-                password=serializer.validated_data["password"]
-            )
-
-
-            # Customer Role
-            customer_role = Role.objects.get(
-                name="Customer"
-            )
-
-
-            # Assign Role
-            UserRole.objects.create(
-                user=user,
-                role=customer_role
-            )
-
-
-            # Create Customer Details
-            Customer.objects.create(
-                user=user,
-                phone_number=serializer.validated_data["phone_number"],
-                gender=serializer.validated_data.get("gender"),
-                date_of_birth=serializer.validated_data.get("date_of_birth"),
-                address=serializer.validated_data.get("address"),
-                city=serializer.validated_data.get("city"),
-                state=serializer.validated_data.get("state"),
-                country=serializer.validated_data.get(
-                    "country",
-                    "India"
-                ),
-                postal_code=serializer.validated_data.get(
-                    "postal_code"
+            with transaction.atomic():
+                user = User.objects.create_user(
+                    username=serializer.validated_data["username"],
+                    first_name=serializer.validated_data["first_name"],
+                    last_name=serializer.validated_data["last_name"],
+                    email=serializer.validated_data["email"],
+                    password=serializer.validated_data["password"]
                 )
-            )
+
+
+                # Customer Role
+                customer_role, _ = Role.objects.get_or_create(
+                    name="Customer",
+                    defaults={"description": "Customer role"}
+                )
+
+
+                # Assign Role
+                UserRole.objects.create(
+                    user=user,
+                    role=customer_role
+                )
+
+
+                # Create Customer Details
+                Customer.objects.create(
+                    user=user,
+                    phone_number=serializer.validated_data["phone_number"],
+                    gender=serializer.validated_data.get("gender"),
+                    date_of_birth=serializer.validated_data.get("date_of_birth"),
+                    address=serializer.validated_data.get("address"),
+                    city=serializer.validated_data.get("city"),
+                    state=serializer.validated_data.get("state"),
+                    country=serializer.validated_data.get(
+                        "country",
+                        "India"
+                    ),
+                    postal_code=serializer.validated_data.get(
+                        "postal_code"
+                    )
+                )
 
 
             return Response(
@@ -290,8 +292,9 @@ class GoogleLoginAPIView(APIView):
 
             # Get Customer Role
 
-            customer_role = Role.objects.get(
-                name="Customer"
+            customer_role, _ = Role.objects.get_or_create(
+                name="Customer",
+                defaults={"description": "Customer role"}
             )
 
 
@@ -416,27 +419,22 @@ class ProfileAPIView(APIView):
                 user=request.user
             )
 
-            serializer = ProfileSerializer(
-                customer
-            )
-
-
-            return Response(
-                serializer.data
-            )
-
-
         except Customer.DoesNotExist:
 
-
-            return Response(
-                {
-                    "message":
-                    "Customer profile not found"
-                },
-
-                status=status.HTTP_404_NOT_FOUND
+            customer, _ = Customer.objects.get_or_create(
+                user=request.user,
+                defaults={
+                    "phone_number": f"{request.user.id}".zfill(10)
+                }
             )
+
+        serializer = ProfileSerializer(
+            customer
+        )
+
+        return Response(
+            serializer.data
+        )
 
 
 
@@ -1145,38 +1143,26 @@ class PetProfileListCreateAPIView(APIView):
 
     def get(self, request):
 
-        try:
-
-            customer = Customer.objects.get(
-                user=request.user
-            )
-
-        except Customer.DoesNotExist:
-
-            return Response(
-                {
-                    "error": "Customer profile not found."
-                },
-                status=status.HTTP_404_NOT_FOUND
-            )
-
+        customer, _ = Customer.objects.get_or_create(
+            user=request.user,
+            defaults={
+                "phone_number": f"{request.user.id}".zfill(10)
+            }
+        )
 
         pets = PetProfile.objects.filter(
             customer=customer
         )
-
 
         serializer = PetProfileSerializer(
             pets,
             many=True
         )
 
-
         return Response(
             serializer.data,
             status=status.HTTP_200_OK
         )
-
 
     # =====================================================
     # POST - ADD PET
@@ -1184,20 +1170,12 @@ class PetProfileListCreateAPIView(APIView):
 
     def post(self, request):
 
-        try:
-
-            customer = Customer.objects.get(
-                user=request.user
-            )
-
-        except Customer.DoesNotExist:
-
-            return Response(
-                {
-                    "error": "Customer profile not found."
-                },
-                status=status.HTTP_404_NOT_FOUND
-            )
+        customer, _ = Customer.objects.get_or_create(
+            user=request.user,
+            defaults={
+                "phone_number": f"{request.user.id}".zfill(10)
+            }
+        )
 
 
         serializer = PetProfileSerializer(

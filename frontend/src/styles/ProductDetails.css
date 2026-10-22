@@ -1131,3 +1131,25 @@
     }
 
 }
+
+/* =========================================================
+   EXPLAINABLE RELATED PAIRINGS STYLES
+========================================================= */
+
+.xai-related-sub {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #2563eb;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 6px;
+}
+
+.xai-related-desc {
+    font-size: 14px;
+    color: #64748b;
+    margin: 4px 0 0 0;
+    max-width: 680px;
+    line-height: 1.5;
+}

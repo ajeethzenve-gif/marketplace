@@ -16,11 +16,33 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from django.http import JsonResponse
 
 from django.conf import settings
 from django.conf.urls.static import static
 
+def api_root(request):
+    return JsonResponse({
+        "status": "healthy",
+        "service": "Zenve Marketplace API",
+        "endpoints": {
+            "products": "/api/",
+            "accounts": "/api/accounts/",
+            "cart": "/api/cart/",
+            "orders": "/api/orders/",
+            "wishlist": "/api/wishlist/",
+            "reviews": "/api/reviews/",
+            "coupons": "/api/coupons/",
+            "prescriptions": "/api/prescriptions/",
+            "payments": "/api/payments/",
+            "membership": "/api/membership/",
+            "wallet": "/api/wallet/",
+            "admin": "/admin/",
+        }
+    })
+
 urlpatterns = [
+    path("", api_root, name="api-root"),
     path('admin/', admin.site.urls),
     path("api/", include("products.urls")),
     path("api/accounts/", include("accounts.urls")),

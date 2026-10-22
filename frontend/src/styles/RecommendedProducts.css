@@ -127,118 +127,252 @@
 
 
 /* =====================================================
-   PET INFORMATION
+/* =====================================================
+   EXPLAINABLE AI CERTIFIED BADGE & TITLE
 ===================================================== */
 
-.recommended-info {
-    width: 100%;
-    max-width: 1250px;
-
-    margin: 0 auto 35px;
-
-    padding: 15px 18px;
-
-    box-sizing: border-box;
-
-    background: #ffffff;
-
-    border: 1px solid #e4e8ef;
-
-    border-radius: 12px;
-
+.xai-title-row {
     display: flex;
-
     align-items: center;
-
-    justify-content: space-between;
-
-    gap: 20px;
-
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.03);
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
 }
 
+.xai-certified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: #ecfdf5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
 
 /* =====================================================
-   PET DETAILS
+   PET HERO & TELEMETRY SECTION
 ===================================================== */
 
-.recommended-pet-details {
+.recommended-pet-hero {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto 25px;
+    padding: 24px 28px;
+    box-sizing: border-box;
+    background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
     display: flex;
-
     align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
+}
 
+.pet-hero-main {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.pet-hero-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #174b96, #2563eb);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+}
+
+.pet-hero-name-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.pet-hero-name-row h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.pet-hero-species {
+    padding: 2px 8px;
+    background: #e2e8f0;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+}
+
+.pet-hero-breed {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2563eb;
+}
+
+.pet-hero-tags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pet-hero-tag {
+    font-size: 12px;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.pet-hero-health-alert {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #b91c1c;
+    background: #fee2e2;
+    padding: 3px 10px;
+    border-radius: 6px;
+    border: 1px solid #fecaca;
+}
+
+/* Telemetry Cards */
+.pet-telemetry-cards {
+    display: flex;
     gap: 12px;
 }
 
-
-/* =====================================================
-   PET ICON
-===================================================== */
-
-.recommended-pet-icon {
-    width: 44px;
-    height: 44px;
-
-    flex-shrink: 0;
-
-    border-radius: 50%;
-
-    background: #eef5ff;
-
+.telemetry-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 18px;
     display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    font-size: 22px;
+    flex-direction: column;
+    min-width: 110px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
-
-/* =====================================================
-   PET NAME
-===================================================== */
-
-.recommended-info strong {
-    display: block;
-
-    margin-bottom: 3px;
-
-    color: #172033;
-
-    font-size: 16px;
+.telemetry-card.highlight {
+    background: #f0f7ff;
+    border-color: #bfdbfe;
 }
 
-
-/* =====================================================
-   PET TYPE / BREED
-===================================================== */
-
-.recommended-info .recommended-pet-details span:not(.recommended-pet-icon) {
-    color: #687386;
-
-    font-size: 13px;
-}
-
-
-/* =====================================================
-   TOTAL PRODUCT COUNT
-===================================================== */
-
-.product-count {
-    padding: 7px 13px;
-
-    border-radius: 20px;
-
-    background: #eaf6f1;
-
-    color: #008c62;
-
-    font-size: 13px;
-
+.telemetry-label {
+    font-size: 11px;
     font-weight: 600;
-
-    white-space: nowrap;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
 }
+
+.telemetry-value {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.telemetry-card.highlight .telemetry-value {
+    color: #1d4ed8;
+}
+
+/* =====================================================
+   FILTER NAVIGATION PILLS
+===================================================== */
+
+.xai-filter-nav {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.xai-filter-pill {
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.xai-filter-pill:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+.xai-filter-pill.active {
+    background: #174b96;
+    color: #ffffff;
+    border-color: #174b96;
+    box-shadow: 0 4px 12px rgba(23, 75, 150, 0.25);
+}
+
+/* =====================================================
+   TRANSPARENCY BANNER
+===================================================== */
+
+.xai-transparency-banner {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto 30px;
+    padding: 12px 18px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.banner-icon {
+    color: #2563eb;
+    font-size: 16px;
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.xai-transparency-banner p {
+    margin: 0;
+    font-size: 13px;
+    color: #1e3a8a;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .recommended-pet-hero {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .pet-telemetry-cards {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
 
 
 /* =====================================================
