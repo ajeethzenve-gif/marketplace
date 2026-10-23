@@ -13,6 +13,14 @@ import offerProduct from "../assets/images/offer_proudct-removebg.png";
 import vetVisitImage from "../assets/images/vet_home_visit.jpg";
 import petFashionImage from "../assets/images/pet_fashion_nobg.png";
 
+import catHealthBanner from "../assets/images/cat_health_banner.jpg";
+import catFoodBanner from "../assets/images/cat_food_banner.jpg";
+import otherPetsBanner from "../assets/images/other_pets_banner.jpg";
+import vetInstrumentsBanner from "../assets/images/vet_instruments_banner.jpg";
+import otherFeedsBanner from "../assets/images/other_feeds_banner.jpg";
+import kiwiParrot from "../assets/images/kiwi_parrot.jpg";
+import thumperRabbit from "../assets/images/thumper_rabbit.jpg";
+
 import "../styles/Home.css";
 
 function Home() {
@@ -66,25 +74,41 @@ function Home() {
 
     const loadCustomerRecommendations = async () => {
         const token = localStorage.getItem("access");
-        if (!token) return;
+        if (!token) {
+            setAiRecSections([]);
+            return;
+        }
 
         try {
-            const response = await api.get("recommendations/customer/", {
+            let url = "recommendations/customer/";
+            if (activePetMode === "dog") {
+                url += "?pet_type=Dog";
+            } else if (activePetMode === "cat") {
+                url += "?pet_type=Cat";
+            } else if (["others", "other", "setting", "settings"].includes(activePetMode)) {
+                url += "?pet_type=others";
+            }
+
+            const response = await api.get(url, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
             if (response.data?.sections) {
                 setAiRecSections(response.data.sections);
+            } else {
+                setAiRecSections([]);
             }
         } catch (err) {
             console.log("Customer AI recommendations not available:", err?.message);
+            setAiRecSections([]);
         }
     };
 
     const loadAllProducts = async () => {
         try {
             setProductsLoading(true);
+            setProducts([]); // Clear stale products immediately when switching pet mode
 
             let allProducts = [];
             let page = 1;
@@ -196,10 +220,10 @@ function Home() {
         return products.filter((product) => {
             const pt = (product?.pet_type || "").trim().toLowerCase();
             if (activePetMode === "dog") {
-                return pt === "dog";
+                return pt === "dog" || pt === "universal";
             }
             if (activePetMode === "cat") {
-                return pt === "cat";
+                return pt === "cat" || pt === "universal";
             }
             if (["others", "other", "setting", "settings"].includes(activePetMode)) {
                 return pt !== "dog" && pt !== "cat";
@@ -207,6 +231,112 @@ function Home() {
             return true;
         });
     }, [products, activePetMode]);
+
+    // Filter AI Recommendation sections to ensure strict pet-type isolation
+    const activeAiRecSections = useMemo(() => {
+        if (!aiRecSections?.length) return [];
+        return aiRecSections.filter((sec) => {
+            if (!sec.pet_type) return true;
+            const pt = sec.pet_type.toLowerCase();
+            if (activePetMode === "dog") return pt === "dog";
+            if (activePetMode === "cat") return pt === "cat";
+            if (["others", "other", "setting", "settings"].includes(activePetMode)) {
+                return pt !== "dog" && pt !== "cat";
+            }
+            return true;
+        });
+    }, [aiRecSections, activePetMode]);
+
+    // Category URL helper to preserve active pet mode
+    const getCategoryUrl = (base) => {
+        if (activePetMode === "dog") {
+            return `${base}${base.includes("?") ? "&" : "?"}pet_type=Dog`;
+        }
+        if (activePetMode === "cat") {
+            return `${base}${base.includes("?") ? "&" : "?"}pet_type=Cat`;
+        }
+        if (["others", "other", "setting", "settings"].includes(activePetMode)) {
+            return `${base}${base.includes("?") ? "&" : "?"}pet_type=others`;
+        }
+        return base;
+    };
+
+    // Filtered adoption pets matching active pet mode
+    const allAdoptionPets = useMemo(() => [
+        {
+            id: 1,
+            name: "Bruno",
+            type: "Dog",
+            breed: "Labrador",
+            age: "2 Years",
+            gender: "Male",
+            location: "Bangalore, Karnataka",
+            image: dogImage,
+        },
+        {
+            id: 2,
+            name: "Luna",
+            type: "Cat",
+            breed: "Indie",
+            age: "1 Year",
+            gender: "Female",
+            location: "Pune, Maharashtra",
+            image: catImage,
+        },
+        {
+            id: 3,
+            name: "Rocky",
+            type: "Dog",
+            breed: "German Shepherd",
+            age: "3 Years",
+            gender: "Male",
+            location: "Hyderabad, Telangana",
+            image: dogImage,
+        },
+        {
+            id: 4,
+            name: "Milo",
+            type: "Cat",
+            breed: "Persian",
+            age: "8 Months",
+            gender: "Male",
+            location: "Chennai, Tamil Nadu",
+            image: catImage,
+        },
+        {
+            id: 5,
+            name: "Kiwi",
+            type: "Bird",
+            breed: "Sun Conure Parrot",
+            age: "1.5 Years",
+            gender: "Male",
+            location: "Bangalore, Karnataka",
+            image: kiwiParrot,
+        },
+        {
+            id: 6,
+            name: "Thumper",
+            type: "Rabbit",
+            breed: "Holland Lop",
+            age: "10 Months",
+            gender: "Female",
+            location: "Mumbai, Maharashtra",
+            image: thumperRabbit,
+        },
+    ], []);
+
+    const displayedAdoptionPets = useMemo(() => {
+        if (activePetMode === "dog") {
+            return allAdoptionPets.filter(p => p.type.toLowerCase() === "dog");
+        }
+        if (activePetMode === "cat") {
+            return allAdoptionPets.filter(p => p.type.toLowerCase() === "cat");
+        }
+        if (["others", "other", "setting", "settings"].includes(activePetMode)) {
+            return allAdoptionPets.filter(p => p.type.toLowerCase() !== "dog" && p.type.toLowerCase() !== "cat");
+        }
+        return allAdoptionPets.slice(0, 4);
+    }, [allAdoptionPets, activePetMode]);
 
     // =====================================================
     // MEDICINE + SUPPLEMENTS
@@ -703,8 +833,8 @@ function Home() {
                     secondaryText: "Book Vet Visit",
                     secondaryAction: () => navigate("/home-visit"),
                     smartText: "✨ Gentle, stress-free health solutions for cats",
-                    image: prescriptionUpload,
-                    imageAlt: "Cat health",
+                    image: catHealthBanner,
+                    imageAlt: "Cat healthcare and wellness",
                 },
                 {
                     key: "cat-food",
@@ -723,7 +853,7 @@ function Home() {
                     secondaryText: "Browse All",
                     secondaryAction: () => navigate("/products?pet_type=Cat"),
                     smartText: "🥣 Real meat recipes rich in taurine & omega fatty acids",
-                    image: offerProduct,
+                    image: catFoodBanner,
                     imageAlt: "Cat food and treats",
                 },
             ];
@@ -751,8 +881,8 @@ function Home() {
                         setShowPetModal(true);
                     },
                     smartText: "🕊️ Specialized for Birds, Fish, Rabbits & Livestock",
-                    image: productImage,
-                    imageAlt: "Other pets products",
+                    image: otherPetsBanner,
+                    imageAlt: "Other pets products and accessories",
                 },
                 {
                     key: "others-equipment",
@@ -771,8 +901,8 @@ function Home() {
                     secondaryText: "Farm Supplies",
                     secondaryAction: () => navigate("/products?product_type=FarmSupplies"),
                     smartText: "🔬 Precision surgical & clinical tools by VetLife",
-                    image: vetVisitImage,
-                    imageAlt: "Veterinary tools",
+                    image: vetInstrumentsBanner,
+                    imageAlt: "Clinical veterinary instruments",
                 },
                 {
                     key: "others-feeds",
@@ -791,8 +921,8 @@ function Home() {
                     secondaryText: "Browse All",
                     secondaryAction: () => navigate("/products?pet_type=others"),
                     smartText: "🌿 Natural herbal supplements by Himalaya & VetLife",
-                    image: offerProduct,
-                    imageAlt: "Bird and farm feeds",
+                    image: otherFeedsBanner,
+                    imageAlt: "Bird, small pet and farm feeds",
                 },
             ];
         }
@@ -1513,7 +1643,7 @@ function Home() {
             {/* =====================================================
                 EXPLAINABLE AI RECOMMENDATIONS FOR YOUR PETS
             ===================================================== */}
-            {aiRecSections.length > 0 && (
+            {activeAiRecSections.length > 0 && (
                 <section className="home-section home-xai-section">
                     <div className="section-heading">
                         <div>
@@ -1531,7 +1661,7 @@ function Home() {
                     </div>
 
                     <div className="home-xai-container">
-                        {aiRecSections.map((sec) => (
+                        {activeAiRecSections.map((sec) => (
                             <div key={sec.section_id} className="home-xai-block">
                                 <div className="home-xai-subheading">
                                     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -1575,7 +1705,7 @@ function Home() {
                         Shop by Categories
                     </h2>
 
-                    <Link to="/products">
+                    <Link to={getCategoryUrl("/products")}>
                         View All Categories →
                     </Link>
 
@@ -1587,7 +1717,7 @@ function Home() {
                         {/* Your 7 category cards */}
 
                         <Link
-                            to="/products?product_type=Medicine&product_type=Supplements"
+                            to={getCategoryUrl("/products?product_type=Medicine&product_type=Supplements")}
                             className="category-card category-medicine"
                         >
                             <div className="category-image">💊</div>
@@ -1595,7 +1725,7 @@ function Home() {
                         </Link>
 
                         <Link
-                            to="/products?product_type=food&product_type=Other"
+                            to={getCategoryUrl("/products?product_type=food&product_type=Other")}
                             className="category-card category-food"
                         >
                             <div className="category-image">🥣</div>
@@ -1603,7 +1733,7 @@ function Home() {
                         </Link>
 
                         <Link
-                            to="/products?product_type=FarmSupplies"
+                            to={getCategoryUrl("/products?product_type=FarmSupplies")}
                             className="category-card category-farm"
                         >
                             <div className="category-image">🐄</div>
@@ -1611,7 +1741,7 @@ function Home() {
                         </Link>
 
                         <Link
-                            to="/products?product_type=VetEquipment"
+                            to={getCategoryUrl("/products?product_type=VetEquipment")}
                             className="category-card category-vet"
                         >
                             <div className="category-image">🩺</div>
@@ -1645,7 +1775,7 @@ function Home() {
                         {/* DUPLICATE FOR INFINITE LOOP */}
 
                         <Link
-                            to="/products?product_type=Medicine&product_type=Supplements"
+                            to={getCategoryUrl("/products?product_type=Medicine&product_type=Supplements")}
                             className="category-card category-medicine"
                         >
                             <div className="category-image">💊</div>
@@ -1653,7 +1783,7 @@ function Home() {
                         </Link>
 
                         <Link
-                            to="/products?product_type=food&product_type=Other"
+                            to={getCategoryUrl("/products?product_type=food&product_type=Other")}
                             className="category-card category-food"
                         >
                             <div className="category-image">🥣</div>
@@ -1661,7 +1791,7 @@ function Home() {
                         </Link>
 
                         <Link
-                            to="/products?product_type=FarmSupplies"
+                            to={getCategoryUrl("/products?product_type=FarmSupplies")}
                             className="category-card category-farm"
                         >
                             <div className="category-image">🐄</div>
@@ -1669,7 +1799,7 @@ function Home() {
                         </Link>
 
                         <Link
-                            to="/products?product_type=VetEquipment"
+                            to={getCategoryUrl("/products?product_type=VetEquipment")}
                             className="category-card category-vet"
                         >
                             <div className="category-image">🩺</div>
@@ -2077,162 +2207,35 @@ function Home() {
                 </div>
 
                 <div className="pets-grid">
-
-                    <div className="pet-card">
-
-                        <div className="pet-image">
-
-                            <img
-                                src={dogImage}
-                                alt="Bruno"
-                            />
-
-                            <span className="pet-type">
-                                Dog
-                            </span>
-
-                            <button
-                                type="button"
-                                className="favorite"
-                            >
-                                ♡
-                            </button>
-
+                    {displayedAdoptionPets.map((pet) => (
+                        <div key={pet.id} className="pet-card">
+                            <div className="pet-image">
+                                <img
+                                    src={pet.image}
+                                    alt={pet.name}
+                                    style={{ objectFit: "cover" }}
+                                />
+                                <span className={`pet-type ${pet.type.toLowerCase()}`}>
+                                    {pet.type}
+                                </span>
+                                <button
+                                    type="button"
+                                    className="favorite"
+                                >
+                                    ♡
+                                </button>
+                            </div>
+                            <div className="pet-info">
+                                <h3>{pet.name}</h3>
+                                <p>
+                                    {pet.age} · {pet.gender} · {pet.breed}
+                                </p>
+                                <small>
+                                    📍 {pet.location}
+                                </small>
+                            </div>
                         </div>
-
-                        <div className="pet-info">
-
-                            <h3>Bruno</h3>
-
-                            <p>
-                                2 Years · Male · Labrador
-                            </p>
-
-                            <small>
-                                📍 Bangalore, Karnataka
-                            </small>
-
-                        </div>
-
-                    </div>
-
-
-                    <div className="pet-card">
-
-                        <div className="pet-image">
-
-                            <img
-                                src={catImage}
-                                alt="Luna"
-                            />
-
-                            <span className="pet-type cat">
-                                Cat
-                            </span>
-
-                            <button
-                                type="button"
-                                className="favorite"
-                            >
-                                ♡
-                            </button>
-
-                        </div>
-
-                        <div className="pet-info">
-
-                            <h3>Luna</h3>
-
-                            <p>
-                                1 Year · Female · Indie
-                            </p>
-
-                            <small>
-                                📍 Pune, Maharashtra
-                            </small>
-
-                        </div>
-
-                    </div>
-
-
-                    <div className="pet-card">
-
-                        <div className="pet-image">
-
-                            <img
-                                src={dogImage}
-                                alt="Rocky"
-                            />
-
-                            <span className="pet-type">
-                                Dog
-                            </span>
-
-                            <button
-                                type="button"
-                                className="favorite"
-                            >
-                                ♡
-                            </button>
-
-                        </div>
-
-                        <div className="pet-info">
-
-                            <h3>Rocky</h3>
-
-                            <p>
-                                3 Years · Male · German Shepherd
-                            </p>
-
-                            <small>
-                                📍 Hyderabad, Telangana
-                            </small>
-
-                        </div>
-
-                    </div>
-
-
-                    <div className="pet-card">
-
-                        <div className="pet-image">
-
-                            <img
-                                src={catImage}
-                                alt="Milo"
-                            />
-
-                            <span className="pet-type cat">
-                                Cat
-                            </span>
-
-                            <button
-                                type="button"
-                                className="favorite"
-                            >
-                                ♡
-                            </button>
-
-                        </div>
-
-                        <div className="pet-info">
-
-                            <h3>Milo</h3>
-
-                            <p>
-                                8 Months · Male · Persian
-                            </p>
-
-                            <small>
-                                📍 Chennai, Tamil Nadu
-                            </small>
-
-                        </div>
-
-                    </div>
-
+                    ))}
                 </div>
 
             </section>

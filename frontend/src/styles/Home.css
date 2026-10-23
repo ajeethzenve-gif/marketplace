@@ -1065,6 +1065,16 @@
     color: #4d3025;
 }
 
+.pet-type.bird {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.pet-type.rabbit {
+    background: #f3e8ff;
+    color: #6b21a8;
+}
+
 /* =========================
    FAVORITE BUTTON
 ========================= */

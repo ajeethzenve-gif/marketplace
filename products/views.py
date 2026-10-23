@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Q
 
 from rest_framework.permissions import (
     AllowAny,
@@ -152,9 +153,13 @@ class ProductListAPIView(APIView):
                 ).exclude(
                     pet_type__iexact="Cat"
                 )
+            elif pt_clean in ["dog", "cat"]:
+                products = products.filter(
+                    Q(pet_type__iexact=pt_clean.capitalize()) | Q(pet_type__iexact="Universal")
+                )
             else:
                 products = products.filter(
-                    pet_type__iexact=pet_type
+                    Q(pet_type__iexact=pet_type) | Q(pet_type__iexact="Universal")
                 )
 
         # =================================================
@@ -792,7 +797,17 @@ class CustomerRecommendedProductsAPIView(APIView):
             )
 
         # Use LLM engine for per-pet sections inside the customer feed
+        pet_type = request.query_params.get("pet_type") or request.query_params.get("pet")
         pets = PetProfile.objects.filter(customer=customer)
+        if pet_type:
+            pt_clean = str(pet_type).strip().lower()
+            if pt_clean in ["others", "other", "setting", "settings", "non_dog_cat"]:
+                pets = pets.exclude(pet_type__iexact="Dog").exclude(pet_type__iexact="Cat")
+            elif pt_clean in ["dog", "cat"]:
+                pets = pets.filter(pet_type__iexact=pt_clean.capitalize())
+            else:
+                pets = pets.filter(pet_type__iexact=pet_type)
+
         feed_sections = []
 
         for pet in pets:
@@ -814,8 +829,21 @@ class CustomerRecommendedProductsAPIView(APIView):
         recent_order_items = (
             OrderItem.objects.filter(order__customer=customer)
             .select_related("product")
-            .order_by("-order__order_date")[:4]
+            .order_by("-order__order_date")
         )
+        if pet_type:
+            pt_clean = str(pet_type).strip().lower()
+            if pt_clean in ["others", "other", "setting", "settings", "non_dog_cat"]:
+                recent_order_items = recent_order_items.exclude(product__pet_type__iexact="Dog").exclude(product__pet_type__iexact="Cat")
+            elif pt_clean in ["dog", "cat"]:
+                recent_order_items = recent_order_items.filter(
+                    Q(product__pet_type__iexact=pt_clean.capitalize()) | Q(product__pet_type__iexact="Universal")
+                )
+            else:
+                recent_order_items = recent_order_items.filter(
+                    Q(product__pet_type__iexact=pet_type) | Q(product__pet_type__iexact="Universal")
+                )
+        recent_order_items = recent_order_items[:4]
         if recent_order_items.exists():
             rep_items = []
             seen = set()
