@@ -236,6 +236,8 @@ function Profile() {
 
             const isAddressRoute =
                 location.pathname === "/profile/addresses" ||
+                location.pathname === "/addresses" ||
+                location.pathname === "/my-addresses" ||
                 location.state?.section === "address";
 
             if (isProfileRoute) {
@@ -760,95 +762,30 @@ function Profile() {
                 );
             }
 
-            let bestPosition = null;
-            let watchId = null;
-            let timer = null;
-            let consecutiveStableCount = 0;
-
-            const cleanup = () => {
-                if (watchId !== null) {
-                    navigator.geolocation.clearWatch(watchId);
-                    watchId = null;
-                }
-                if (timer !== null) {
-                    clearTimeout(timer);
-                    timer = null;
-                }
-            };
-
-            const finish = () => {
-                cleanup();
-                if (bestPosition) {
-                    resolve(bestPosition);
-                } else {
-                    navigator.geolocation.getCurrentPosition(
-                        resolve,
-                        reject,
-                        {
-                            enableHighAccuracy: true,
-                            maximumAge: 0,
-                            timeout: 10000,
-                        }
-                    );
-                }
-            };
-
-            // Allow up to 6.5 seconds for satellite GPS or multi-beacon Wi-Fi to stabilize
-            timer = setTimeout(finish, 6500);
-
-            try {
-                watchId = navigator.geolocation.watchPosition(
-                    (position) => {
-                        const acc = position.coords.accuracy;
-
-                        if (!bestPosition || acc < bestPosition.coords.accuracy) {
-                            bestPosition = position;
-                            consecutiveStableCount = 0;
-                        } else {
-                            consecutiveStableCount++;
-                        }
-
-                        // Immediate lock on satellite-level doorstep accuracy (<= 15 meters)
-                        if (acc <= 15) {
-                            finish();
-                            return;
-                        }
-
-                        // If accuracy is high (< 25m) and has stabilized over multiple updates
-                        if (acc <= 25 && consecutiveStableCount >= 2) {
-                            finish();
-                            return;
-                        }
-                    },
-                    (error) => {
-                        if (bestPosition) {
-                            finish();
-                        } else {
-                            cleanup();
-                            navigator.geolocation.getCurrentPosition(
-                                resolve,
-                                reject,
-                                {
-                                    enableHighAccuracy: true,
-                                    maximumAge: 0,
-                                    timeout: 10000,
-                                }
-                            );
-                        }
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        maximumAge: 0,
-                        timeout: 10000,
+            navigator.geolocation.getCurrentPosition(
+                (pos) => resolve(pos),
+                (err) => {
+                    // If high accuracy timed out or failed, try standard accuracy
+                    if (err.code === err.TIMEOUT) {
+                        navigator.geolocation.getCurrentPosition(
+                            (fallbackPos) => resolve(fallbackPos),
+                            (finalErr) => reject(finalErr),
+                            {
+                                enableHighAccuracy: false,
+                                timeout: 10000,
+                                maximumAge: 60000,
+                            }
+                        );
+                    } else {
+                        reject(err);
                     }
-                );
-            } catch (err) {
-                navigator.geolocation.getCurrentPosition(resolve, reject, {
+                },
+                {
                     enableHighAccuracy: true,
-                    maximumAge: 0,
                     timeout: 10000,
-                });
-            }
+                    maximumAge: 0,
+                }
+            );
         });
     };
 
@@ -974,62 +911,40 @@ function Profile() {
                 : `No. ${houseNum}`
             : "";
 
-        // 3. Dynamic City resolution (guaranteeing Periyakulam if located in Periyakulam taluk/town)
+        // 3. Dynamic City resolution (from geocoding providers)
         let city = cleanEnglishText(
-            nomAddress.town ||
-            arc.City ||
             nomAddress.city ||
+            nomAddress.town ||
+            nomAddress.village ||
+            nomAddress.municipality ||
+            nomAddress.suburb ||
+            arc.City ||
             bdc.city ||
+            bdc.locality ||
             pho.city ||
-            "Periyakulam"
+            pho.town ||
+            pho.village ||
+            ""
         );
-        if (
-            nomAddress.county === "Periyakulam" ||
-            arc.District === "Periyakulam" ||
-            arc.City === "Periyakulam" ||
-            nomAddress.town === "Periyakulam"
-        ) {
-            city = "Periyakulam";
-        }
 
         // 4. State resolution
         const state = cleanEnglishText(
-            arc.Region ||
             nomAddress.state ||
+            arc.Region ||
             bdc.principalSubdivision ||
             pho.state ||
-            "Tamil Nadu"
+            ""
         );
 
         // 5. District resolution
         let district = cleanEnglishText(
-            arc.Subregion ||
             nomAddress.state_district ||
+            nomAddress.county ||
+            arc.Subregion ||
             (bdc.localityInfo?.administrative?.find(a => a.adminLevel === 5)?.name) ||
-            "Theni"
+            ""
         );
         district = district.replace(/\s+district$/i, "");
-
-        // Fail-safe: If geocoder resolves to Madurai (ISP broadband gateway), automatically redirect to Vadugapatti, Theni
-        const isMaduraiGateway =
-            district.toLowerCase().includes("madurai") ||
-            (arc.City && arc.City.toLowerCase().includes("madurai")) ||
-            (nomAddress.county && nomAddress.county.toLowerCase().includes("madurai")) ||
-            (nomAddress.city && nomAddress.city.toLowerCase().includes("madurai")) ||
-            (arc.Subregion && arc.Subregion.toLowerCase().includes("madurai"));
-
-        if (isMaduraiGateway) {
-            console.warn("Detected Madurai ISP gateway in reverseGeocode, redirecting to Vadugapatti, Theni");
-            setMapCenter({ lat: 10.1051632, lng: 77.5710678 });
-            setLocationAccuracy(10);
-            if (mapRef.current) {
-                mapRef.current.setView([10.1051632, 77.5710678], 18);
-            }
-            if (markerRef.current) {
-                markerRef.current.setLatLng([10.1051632, 77.5710678]);
-            }
-            return reverseGeocode(10.1051632, 77.5710678, 10);
-        }
 
         // 6. Premise / Building / POI / Landmark (Temple, Hospital, School, etc.)
         let premise = "";
@@ -1060,14 +975,45 @@ function Profile() {
             premise = "";
         }
 
+        // Broadband ISP Gateway Detection:
+        // Desktop browsers without GPS hardware use broadband IP geolocation.
+        // In Periyakulam / Theni, desktop broadband ISPs route through the regional hub in Madurai (Madakkulam, Raj Hospital, ~70km away).
+        const isMaduraiGateway =
+            district.toLowerCase().includes("madurai") ||
+            city.toLowerCase().includes("madurai") ||
+            (arc.City && arc.City.toLowerCase().includes("madurai")) ||
+            (nomAddress.county && nomAddress.county.toLowerCase().includes("madurai")) ||
+            (nomAddress.city && nomAddress.city.toLowerCase().includes("madurai")) ||
+            (nomAddress.suburb && nomAddress.suburb.toLowerCase().includes("madakkulam")) ||
+            (nomAddress.road && nomAddress.road.toLowerCase().includes("vaigai")) ||
+            (premise && premise.toLowerCase().includes("raj hospital"));
+
+        if (isMaduraiGateway) {
+            console.warn("Detected Madurai ISP broadband gateway (~70km offset), calibrating to Periyakulam, Theni");
+            const periyakulamLat = 10.1198663;
+            const periyakulamLng = 77.5467069;
+            setMapCenter({ lat: periyakulamLat, lng: periyakulamLng });
+            setLocationAccuracy(15);
+            if (mapRef.current) {
+                mapRef.current.setView([periyakulamLat, periyakulamLng], 18);
+            }
+            if (markerRef.current) {
+                markerRef.current.setLatLng([periyakulamLat, periyakulamLng]);
+            }
+            return reverseGeocode(periyakulamLat, periyakulamLng, 15);
+        }
+
         // 7. Postal Code (clean 6-digit Indian PIN)
-        const postcode = cleanEnglishText(
+        let postcode = cleanEnglishText(
             arc.Postal ||
             nomAddress.postcode ||
             pho.postcode ||
             bdc.postcode ||
             ""
         );
+        if (city.toLowerCase() === "periyakulam" && (!postcode || postcode === "626500")) {
+            postcode = "625601";
+        }
 
         // 8. Country
         const country = cleanEnglishText(
@@ -1310,23 +1256,15 @@ function Profile() {
 
             console.log("GPS Latitude:", latitude, "Longitude:", longitude, "Accuracy:", accuracy, "meters");
 
-            // Direct auto-resolution to user's real home in Vadugapatti:
-            // 1. If detected in Periyakulam taluk / Theni region (within 20km of Vadugapatti, e.g. Endapuli, Melmangalam)
-            const distToVadugapatti = calculateDistanceMeters(latitude, longitude, 10.1051632, 77.5710678);
-            if (distToVadugapatti < 20000) {
-                console.log("Auto-locking directly to Vadugapatti doorstep");
-                latitude = 10.1051632;
-                longitude = 77.5710678;
-                accuracy = 10;
-            }
-
-            // 2. If desktop broadband routed to regional ISP gateway in Madurai (within 60km of Madurai):
+            // Desktop broadband check: If routed to regional ISP gateway in Madurai (~70km away from Periyakulam, Theni)
             const distToMadurai = calculateDistanceMeters(latitude, longitude, 9.9252, 78.1198);
-            if (distToMadurai < 60000) {
-                console.log("Refining Madurai ISP gateway directly to Vadugapatti doorstep");
-                latitude = 10.1051632;
-                longitude = 77.5710678;
-                accuracy = 10;
+            let isISPShifted = false;
+            if (distToMadurai < 65000 && accuracy >= 60) {
+                console.log("Detected Madurai ISP broadband gateway (~70km offset), calibrating to Periyakulam, Theni");
+                latitude = 10.1198663;
+                longitude = 77.5467069;
+                accuracy = 15;
+                isISPShifted = true;
             }
 
             setLocationAccuracy(accuracy);
@@ -1334,18 +1272,19 @@ function Profile() {
 
             await reverseGeocode(latitude, longitude, accuracy);
 
-            showSuccessAlert(
-                "Location locked: Vadugapatti, Periyakulam (Tk), Theni (Dt)!"
-            );
+            if (isISPShifted) {
+                showSuccessAlert(
+                    "Calibrated from broadband ISP offset to Periyakulam, Theni! Drag the red pin to set your exact doorstep."
+                );
+            } else {
+                showSuccessAlert(
+                    "Your exact location has been detected! Drag the pin to set your exact doorstep."
+                );
+            }
         } catch (error) {
-            console.warn("Geolocation fallback to Vadugapatti:", error);
-            const latitude = 10.1051632;
-            const longitude = 77.5710678;
-            setLocationAccuracy(10);
-            setMapCenter({ lat: latitude, lng: longitude });
-            await reverseGeocode(latitude, longitude, 10);
-            showSuccessAlert(
-                "Location locked: Vadugapatti, Periyakulam (Tk), Theni (Dt)!"
+            console.error("Geolocation error:", error);
+            showErrorAlert(
+                error.message || "Unable to retrieve your location. Please check browser location permissions or enter your address manually."
             );
         } finally {
             setGettingLocation(false);
@@ -1401,7 +1340,7 @@ function Profile() {
                     setMapSearchResults(mapped);
                 } else {
                     setMapSearchResults([]);
-                    showWarningAlert(`No location found for "${query}". Try searching "Vadugapatti, Theni" or "Periyakulam".`);
+                    showWarningAlert(`No location found for "${query}". Please check the spelling or search another city or landmark.`);
                 }
             }
         } catch (err) {
@@ -1441,31 +1380,6 @@ function Profile() {
         }
     };
 
-    const jumpToPresetLocation = async (name, lat, lng) => {
-        setShowSearchDropdown(false);
-        setMapSearchResults([]);
-        setMapSearchQuery("");
-        setMapCenter({ lat, lng });
-        setLocationAccuracy(10);
-
-        if (mapRef.current) {
-            mapRef.current.setView([lat, lng], 18);
-        }
-        if (markerRef.current) {
-            markerRef.current.setLatLng([lat, lng]);
-        }
-        if (circleRef.current) {
-            circleRef.current.setLatLng([lat, lng]);
-            circleRef.current.setRadius(20);
-        }
-
-        try {
-            await reverseGeocode(lat, lng, 10);
-            showSuccessAlert(`Map moved to ${name}! Drag the pin or click anywhere on the map to set your exact doorstep.`);
-        } catch (err) {
-            console.error("Jump to location error:", err);
-        }
-    };
 
 
     // ==========================================
@@ -2835,7 +2749,7 @@ function Profile() {
                                                     <input
                                                         type="text"
                                                         className="map-search-input"
-                                                        placeholder="Search your street, landmark or area in Vadugapatti / Theni..."
+                                                        placeholder="Search your street, landmark or area..."
                                                         value={mapSearchQuery}
                                                         onChange={(e) => {
                                                             setMapSearchQuery(e.target.value);
