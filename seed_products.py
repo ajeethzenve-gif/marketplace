@@ -55,9 +55,60 @@ def run():
         clean_name = os.path.splitext(img_name)[0].replace("_", " ").replace("-", " ")
         sku = f"SKU-ZENVE-{idx:04d}"
         
-        # Determine category, pet type, product type, brand
-        lower = img_name.lower()
-        if "pedigree" in lower:
+        # Exact mappings based on image filename
+        EXACT_IMAGE_MAP = {
+            "1749398866_crop_361.avif": ("Dog", "Supplement", "PetCare Plus", "Supplements & Vitamins", "Vitamina Puppy Growth & Development Formula"),
+            "41qgmq3ksqL._AC_.jpg": ("Cat", "Food", "Royal Canin", "Food & Nutrition", "Whiskas Adult Tuna Flavor Cat Food 1.2kg"),
+            "41RhH7IvVbL._SY300_SX300_QL70_ML2_.jpg": ("Cat", "Food", "Drools", "Food & Nutrition", "Drools Adult Ocean Fish Cat Nutrition 3kg"),
+            "5160eda954fe9ff1e54888b04e597f15.jpg": ("Cat", "Toys", "PetCare Plus", "Accessories & Feeding", "Interactive USB Feline Laser Pointer Toy"),
+            "61-2fshJWL._AC_.jpg": ("Dog", "Grooming", "PetCare Plus", "Grooming & Hygiene", "Gentle LED Pet Nail Clipper & Grinder"),
+            "615CcfwziL._AC_SL1300_.jpg": ("Cat", "Toys", "PetCare Plus", "Accessories & Feeding", "Feather Teaser Wand Feline Interactive Toy"),
+            "61DcE0Xq7CL._AC_SL1500_.jpg": ("Cat", "Accessories", "PetCare Plus", "Accessories & Feeding", "Velvet Bowtie Cat Collar with Bell"),
+            "61L5LVqbyL._AC_.jpg": ("Dog", "Toys", "PetCare Plus", "Accessories & Feeding", "Textured Squeaky Dog Chew Toy"),
+            "61N6d7o6LiL.jpg": ("Dog", "Food", "Drools", "Food & Nutrition", "Drools Focus Super Premium Adult Dog Food 4kg"),
+            "61tlMM0CMYL._AC_SL1500_.jpg": ("Dog", "Toys", "PetCare Plus", "Accessories & Feeding", "Smart Remote Control Interactive Dog Ball Toy"),
+            "61VRoVP9BGL._AC_SL1500_.jpg": ("Cat", "Feeding", "PetCare Plus", "Accessories & Feeding", "Elevated Tilted Ceramic Cat Feeding Bowls"),
+            "703727.jpg": ("Dog", "Food", "Drools", "Food & Nutrition", "Purepet Real Fresh Meat Adult Dog Food 10kg"),
+            "710nHoLQ4PL._AC_SL1500_.jpg": ("Universal", "VetEquipment", "VetLife", "Veterinary Equipment", "Professional Veterinary Diagnostic Otoscope Kit"),
+            "710OpWdQDpS.jpg": ("Dog", "Feeding", "PetCare Plus", "Accessories & Feeding", "Premium Stainless Steel Pet Feeding Bowls"),
+            "71BSLKDOeyL.jpg": ("Dog", "Toys", "PetCare Plus", "Accessories & Feeding", "Tough Rubber Dental Chew Toys for Dogs"),
+            "71HRwZsM21L.jpg": ("Dog", "Feeding", "PetCare Plus", "Accessories & Feeding", "Automatic Stainless Steel Pet Water Trough"),
+            "71lRgFqg95L._SL1500_.jpg": ("Dog", "Grooming", "PetCare Plus", "Grooming & Hygiene", "Complete Pet Grooming Scissors & Brush Kit"),
+            "71XEDMJsdrL._AC_.jpg": ("Dog", "Beds", "PetCare Plus", "Accessories & Feeding", "Plush Donut Orthopedic Pet Bed"),
+            "81GOjQGaDaL._SL1500_.jpg": ("Dog", "Accessories", "PetCare Plus", "Accessories & Feeding", "Heavy-Duty Studded Leather Dog Collar"),
+            "81VEmhZ8Y7L.jpg": ("Dog", "DentalCare", "PetCare Plus", "Supplements & Vitamins", "Greenies Regular Dental Treats for Dogs"),
+            "cn-11134207-7qukw-lgyg543roq5890.jpg": ("Dog", "Accessories", "PetCare Plus", "Accessories & Feeding", "Custom Engraved Glitter Paw Pet ID Tag"),
+            "e057c437d4612f1e25d8f968735de734.jpg": ("Cat", "Beds", "PetCare Plus", "Accessories & Feeding", "Plush Hooded Calming Cat Bed"),
+            "hdpe-rice-bags.jpg": ("Cattle", "FarmSupplies", "VetLife", "Food & Nutrition", "High Protein Dairy Cattle Feed 50kg"),
+            "id-11134207-7qul9-ljdyzoryz84te3.jpg": ("Cat", "Food", "Royal Canin", "Food & Nutrition", "Royal Canin Persian Adult Cat Food"),
+            "id-11134207-7rbk7-m7nvmve2n07518.jpg": ("Cat", "Food", "Royal Canin", "Food & Nutrition", "Me-O Gold Persian Cat Formula Food"),
+            "Livestock_Water_Feeder.jpg": ("Cattle", "FarmSupplies", "VetLife", "Accessories & Feeding", "Heavy-Duty Livestock Water Feeder"),
+            "Mineral_Mixture.jpg": ("Cattle", "FarmSupplies", "VetLife", "Supplements & Vitamins", "Minerva Feed Mineral Mixture Powder 1kg"),
+            "OIP.jpg": ("Dog", "Accessories", "PetCare Plus", "Accessories & Feeding", "Adjustable Quick-Release Pet Collar"),
+            "PetsSelectCatTreatsFish.jpg": ("Cat", "Treat", "Royal Canin", "Food & Nutrition", "Pets Select Gourmet Fish Cat Treats"),
+            "Pet_Nutritional_Powder.jpg": ("Bird", "Supplement", "PetCare Plus", "Supplements & Vitamins", "Pet Nutritional Powder for Birds & Small Pets"),
+            "ph-11134207-7r98x-lxavpu5ncy8x43.jpg": ("Dog", "Food", "Royal Canin", "Food & Nutrition", "Royal Canin Mini Adult Dog Food 2kg"),
+            "Poultry_Feed.jpeg": ("Bird", "FarmSupplies", "VetLife", "Food & Nutrition", "Nature Power High Growth Poultry Feed 50kg"),
+            "Puppy_Growth_Supplement.jpg": ("Dog", "Supplement", "PetCare Plus", "Supplements & Vitamins", "Puppy Growth & Vitality Health Supplement"),
+            "Pur-Luv-Chicken-Jerky-1.jpg": ("Dog", "Treat", "PetCare Plus", "Food & Nutrition", "Pur-Luv Chicken Jerky Dog Treats"),
+            "R.jpg": ("Dog", "Treat", "Pedigree", "Food & Nutrition", "Pedigree Schmackos Stix Puppy Treats"),
+            "R_1.jpg": ("Cattle", "FarmSupplies", "VetLife", "Food & Nutrition", "Kalmbach Feeds Generations Calf Feed 50 lbs"),
+            "Senior_Pet_Supplement.jpg": ("Cat", "Supplement", "PetCare Plus", "Supplements & Vitamins", "Senior Cat Wellness Supplement"),
+            "sg-11134201-22110-zi8xch7fjikveb.jpg": ("Dog", "Grooming", "PetCare Plus", "Grooming & Hygiene", "My Pets Friend Deep Cleaning Dog Shampoo"),
+            "sg-11134201-7qvdx-lhsl786rfcmw1b.jpg": ("Dog", "Grooming", "VetLife", "Grooming & Hygiene", "Dual-Sided Undercoat Deshedding Rake for Dogs"),
+            "sg-11134201-7rd4v-lu4rbki12lnda9.jpg": ("Cat", "Grooming", "PetCare Plus", "Grooming & Hygiene", "Illuminated LED Claw & Nail Clipper for Cats"),
+            "view.jpg": ("Cat", "Beds", "PetCare Plus", "Accessories & Feeding", "Ultra-Soft Sherpa Fleece Cat Blanket"),
+        }
+
+        if img_name in EXACT_IMAGE_MAP:
+            p_type, prod_t, b_name, cat_name, p_name = EXACT_IMAGE_MAP[img_name]
+            pet_type = p_type
+            product_type = prod_t
+            brand = brand_map[b_name]
+            category = category_map[cat_name]
+            name = p_name
+            price = Decimal(str(random.randint(350, 1500)))
+        elif "pedigree" in lower:
             brand = brand_map["Pedigree"]
             category = category_map["Food & Nutrition"]
             product_type = "Food"
@@ -111,8 +162,22 @@ def run():
             brand = brand_map["VetLife"]
             category = category_map["Veterinary Equipment"]
             product_type = "VetEquipment"
-            pet_type = "Dog"
+            pet_type = "Universal"
             price = Decimal(str(random.randint(500, 3500)))
+            name = clean_name.title()
+        elif "puppy" in lower or "dog" in lower:
+            brand = brand_map["PetCare Plus"]
+            category = category_map["Supplements & Vitamins"]
+            product_type = "Supplement"
+            pet_type = "Dog"
+            price = Decimal(str(random.randint(350, 890)))
+            name = clean_name.title()
+        elif "cattle" in lower or "calf" in lower or "feed" in lower:
+            brand = brand_map["VetLife"]
+            category = category_map["Food & Nutrition"]
+            product_type = "FarmSupplies"
+            pet_type = "Cattle"
+            price = Decimal(str(random.randint(400, 1500)))
             name = clean_name.title()
         elif "supplement" in lower or "vitamin" in lower or "calcium" in lower or "omega" in lower or "probiotic" in lower or "joint" in lower or "skin" in lower:
             brand = brand_map["PetCare Plus"]
@@ -134,7 +199,6 @@ def run():
             product_type = "Supplement" if "powder" in lower or "feed" in lower else "Other"
             pet_type = "Dog" if idx % 3 == 0 else ("Cat" if idx % 3 == 1 else "Bird")
             price = Decimal(str(random.randint(200, 1200)))
-            # If name is a random hash/code, provide a friendly name
             if len(clean_name) > 20 and not any(k in lower for k in ["care", "pet", "dog", "cat", "feed"]):
                 name = f"Premium {brand.brand_name} {category.category_name} Care {idx}"
             else:

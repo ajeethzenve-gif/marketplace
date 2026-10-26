@@ -38,13 +38,7 @@ function Wishlist() {
        LOAD WISHLIST
     ================================================== */
 
-    useEffect(() => {
-        loadWishlist();
-    }, []);
-
-
     const loadWishlist = async () => {
-
         const token = localStorage.getItem("access");
 
         if (!token) {
@@ -53,16 +47,17 @@ function Wishlist() {
         }
 
         try {
-
             const response = await axios.get(
                 "http://127.0.0.1:8000/api/wishlist/",
                 getHeaders()
             );
 
-            setWishlist(response.data);
+            const data = Array.isArray(response.data)
+                ? response.data
+                : (response.data?.results || []);
 
+            setWishlist(data);
         } catch (error) {
-
             console.log(
                 "Wishlist Load Error:",
                 error.response?.data
@@ -72,13 +67,15 @@ function Wishlist() {
                 error.response?.data?.detail ||
                 "Failed to load your wishlist."
             );
-
         } finally {
-
             setLoading(false);
-
         }
     };
+
+    useEffect(() => {
+        loadWishlist();
+    }, []);
+
 
 
     /* ==================================================

@@ -7,14 +7,8 @@ function CustomerList() {
     const [customers, setCustomers] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        loadCustomers();
-    }, []);
-
     const loadCustomers = async () => {
-
         try {
-
             const response = await axios.get(
                 "http://127.0.0.1:8000/api/accounts/customers/",
                 {
@@ -23,22 +17,22 @@ function CustomerList() {
                     },
                 }
             );
-
-            setCustomers(response.data);
-
+            const data = Array.isArray(response.data)
+                ? response.data
+                : (response.data?.results || []);
+            setCustomers(data);
         } catch (error) {
-
-            console.log(error);
-
-            alert("Unable to load customers.");
-
+            console.log("Error loading customers:", error);
+            setCustomers([]);
         } finally {
-
             setLoading(false);
-
         }
-
     };
+
+    useEffect(() => {
+        loadCustomers();
+    }, []);
+
 
     return (
 

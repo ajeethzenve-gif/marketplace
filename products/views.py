@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Q
 
 from rest_framework.permissions import (
     AllowAny,
@@ -145,17 +146,10 @@ class ProductListAPIView(APIView):
         pet_type = request.query_params.get("pet_type") or request.query_params.get("pet")
 
         if pet_type:
-            cleaned_pet = pet_type.strip()
-            # If "Other" / "Others" / "OtherPets", return all supported pets other than dogs and cats
-            if cleaned_pet.lower() in ["other", "others", "otherpets", "other_pets", "settings"]:
-                products = products.exclude(pet_type__in=["Dog", "Cat"])
-            elif "," in cleaned_pet:
-                pet_list = [p.strip() for p in cleaned_pet.split(",") if p.strip()]
-                products = products.filter(pet_type__in=pet_list)
-            else:
-                products = products.filter(
-                    pet_type__iexact=cleaned_pet
-                )
+
+            products = products.filter(
+                pet_type__iexact=pet_type
+            )
 
         # =================================================
         # MIN PRICE
@@ -792,15 +786,8 @@ class CustomerRecommendedProductsAPIView(APIView):
             )
 
         # Use LLM engine for per-pet sections inside the customer feed
+        pet_type = request.query_params.get("pet_type") or request.query_params.get("pet")
         pets = PetProfile.objects.filter(customer=customer)
-        pet_type_filter = request.query_params.get("pet_type") or request.query_params.get("pet")
-        if pet_type_filter:
-            cleaned = pet_type_filter.strip().lower()
-            if cleaned in ["other", "others", "otherpets", "other_pets", "settings"]:
-                pets = pets.exclude(pet_type__in=["Dog", "Cat"])
-            else:
-                pets = pets.filter(pet_type__iexact=pet_type_filter.strip())
-
         feed_sections = []
 
         for pet in pets:
@@ -822,8 +809,21 @@ class CustomerRecommendedProductsAPIView(APIView):
         recent_order_items = (
             OrderItem.objects.filter(order__customer=customer)
             .select_related("product")
-            .order_by("-order__order_date")[:4]
+            .order_by("-order__order_date")
         )
+        if pet_type:
+            pt_clean = str(pet_type).strip().lower()
+            if pt_clean in ["others", "other", "setting", "settings", "non_dog_cat"]:
+                recent_order_items = recent_order_items.exclude(product__pet_type__iexact="Dog").exclude(product__pet_type__iexact="Cat")
+            elif pt_clean in ["dog", "cat"]:
+                recent_order_items = recent_order_items.filter(
+                    Q(product__pet_type__iexact=pt_clean.capitalize()) | Q(product__pet_type__iexact="Universal")
+                )
+            else:
+                recent_order_items = recent_order_items.filter(
+                    Q(product__pet_type__iexact=pet_type) | Q(product__pet_type__iexact="Universal")
+                )
+        recent_order_items = recent_order_items[:4]
         if recent_order_items.exists():
             rep_items = []
             seen = set()
@@ -1011,4 +1011,4 @@ class RecommendationFeedbackAPIView(APIView):
                 "is_helpful": feedback.is_helpful
             },
             status=status.HTTP_200_OK
-        )
+        )

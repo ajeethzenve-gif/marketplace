@@ -42,20 +42,6 @@ function Review() {
     const username = localStorage.getItem("username");
 
     /* =====================================================
-       LOAD PRODUCT + REVIEWS
-    ===================================================== */
-
-    useEffect(() => {
-        loadProduct();
-        loadReviews();
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-        });
-    }, [id]);
-
-    /* =====================================================
        LOAD PRODUCT
     ===================================================== */
 
@@ -108,6 +94,21 @@ function Review() {
             setReviewsLoading(false);
         }
     };
+
+    /* =====================================================
+       LOAD PRODUCT + REVIEWS
+    ===================================================== */
+
+    useEffect(() => {
+        loadProduct();
+        loadReviews();
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+    }, [id]);
+
 
     /* =====================================================
        SUBMIT REVIEW

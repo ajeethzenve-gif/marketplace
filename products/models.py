@@ -73,6 +73,7 @@ class Product(models.Model):
         ("Rabbit", "Rabbit"),
         ("Fish", "Fish"),
         ("Cattle", "Cattle"),
+        ("Universal", "Universal"),
     ]
     
 

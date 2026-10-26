@@ -125,18 +125,18 @@
   overflow: hidden;
   z-index: 10;
   box-shadow: 0 0 22px rgba(212, 175, 55, 0.45),
-              0 6px 18px rgba(156, 116, 21, 0.4),
-              0 2px 6px rgba(0, 0, 0, 0.12);
+    0 6px 18px rgba(156, 116, 21, 0.4),
+    0 2px 6px rgba(0, 0, 0, 0.12);
   transition: transform 0.26s cubic-bezier(0.2, 0.8, 0.2, 1),
-              box-shadow 0.26s cubic-bezier(0.2, 0.8, 0.2, 1),
-              filter 0.26s ease;
+    box-shadow 0.26s cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 0.26s ease;
 }
 
 .z-main-btn:hover {
   transform: scale(1.06);
   box-shadow: 0 0 32px rgba(255, 241, 168, 0.65),
-              0 8px 24px rgba(212, 175, 55, 0.6),
-              0 3px 10px rgba(156, 116, 21, 0.42);
+    0 8px 24px rgba(212, 175, 55, 0.6),
+    0 3px 10px rgba(156, 116, 21, 0.42);
   filter: brightness(1.04);
 }
 
@@ -146,8 +146,8 @@
 
 .z-main-btn:focus-visible {
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.95),
-              0 0 0 5px #D4AF37,
-              0 8px 24px rgba(156, 116, 21, 0.45);
+    0 0 0 5px #D4AF37,
+    0 8px 24px rgba(156, 116, 21, 0.45);
 }
 
 /* Bold White Letter Z */
@@ -160,7 +160,7 @@
   line-height: 1;
   color: #ffffff;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3),
-               0 2px 6px rgba(156, 116, 21, 0.5);
+    0 2px 6px rgba(156, 116, 21, 0.5);
   display: inline-block;
   transform: translateY(-1px);
 }
@@ -174,14 +174,12 @@
   left: -130%;
   width: 70%;
   height: 200%;
-  background: linear-gradient(
-    110deg,
-    transparent 15%,
-    rgba(255, 241, 168, 0.15) 35%,
-    rgba(255, 255, 255, 0.8) 50%,
-    rgba(255, 241, 168, 0.25) 65%,
-    transparent 85%
-  );
+  background: linear-gradient(110deg,
+      transparent 15%,
+      rgba(255, 241, 168, 0.15) 35%,
+      rgba(255, 255, 255, 0.8) 50%,
+      rgba(255, 241, 168, 0.25) 65%,
+      transparent 85%);
   transform: rotate(25deg);
   pointer-events: none;
   animation: goldShimmer 3.8s infinite cubic-bezier(0.4, 0, 0.2, 1);
@@ -189,18 +187,24 @@
 }
 
 @keyframes goldShimmer {
-  0%, 20% {
+
+  0%,
+  20% {
     left: -130%;
     opacity: 0;
   }
+
   24% {
     opacity: 1;
   }
+
   58% {
     left: 140%;
     opacity: 1;
   }
-  62%, 100% {
+
+  62%,
+  100% {
     left: 140%;
     opacity: 0;
   }
@@ -215,13 +219,16 @@
     left: -130%;
     opacity: 0;
   }
+
   15% {
     opacity: 1;
   }
+
   85% {
     left: 140%;
     opacity: 1;
   }
+
   100% {
     left: 140%;
     opacity: 0;
@@ -273,18 +280,24 @@
 }
 
 @keyframes zTwinkle {
-  0%, 80%, 100% {
+
+  0%,
+  80%,
+  100% {
     opacity: 0;
     transform: scale(0.2) rotate(0deg);
   }
+
   88% {
     opacity: 1;
     transform: scale(1.15) rotate(45deg);
   }
+
   94% {
     opacity: 0.7;
     transform: scale(0.85) rotate(70deg);
   }
+
   98% {
     opacity: 0;
     transform: scale(0.3) rotate(90deg);
@@ -310,11 +323,14 @@
 }
 
 @keyframes zGoldPulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
     opacity: 0.6;
     border-color: rgba(212, 175, 55, 0.45);
   }
+
   50% {
     transform: scale(1.1);
     opacity: 0.15;
@@ -347,12 +363,12 @@
   pointer-events: none;
   transform: translate(0, 0) scale(0.25);
   transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
-              opacity 0.26s ease,
-              box-shadow 0.24s ease,
-              background-color 0.2s ease,
-              border-color 0.2s ease;
+    opacity 0.26s ease,
+    box-shadow 0.24s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
   box-shadow: 0 4px 14px rgba(212, 175, 55, 0.22),
-              0 2px 4px rgba(0, 0, 0, 0.06);
+    0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 /* Icon Sizing */
@@ -370,7 +386,7 @@
   background-color: #FFFDF0;
   border-color: #D4AF37;
   box-shadow: 0 0 20px rgba(212, 175, 55, 0.52),
-              0 6px 16px rgba(156, 116, 21, 0.26);
+    0 6px 16px rgba(156, 116, 21, 0.26);
 }
 
 .pet-btn:hover svg {
@@ -385,122 +401,8 @@
 
 .pet-btn:focus-visible {
   box-shadow: 0 0 0 2.5px #ffffff,
-              0 0 0 5px #D4AF37,
-              0 6px 16px rgba(156, 116, 21, 0.3);
-}
-
-/* =====================================================
-   ACTIVE PET BUTTON STATE (SELECTED SHOPPING EXPERIENCE)
-===================================================== */
-.pet-btn.active {
-  background: linear-gradient(135deg, #FFF1A8 0%, #F5D76E 30%, #D4AF37 70%, #9C7415 100%);
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 0 2.5px #D4AF37,
-              0 0 22px rgba(212, 175, 55, 0.75),
-              0 6px 18px rgba(156, 116, 21, 0.4);
-}
-
-.pet-btn.active svg {
-  fill: #ffffff;
-  color: #ffffff;
-  filter: drop-shadow(0 1px 2px rgba(156, 116, 21, 0.6));
-}
-
-.pet-btn.active:hover {
-  background: linear-gradient(135deg, #ffffff 0%, #FFF1A8 35%, #D4AF37 80%, #9C7415 100%);
-  box-shadow: 0 0 0 3px #FFF1A8,
-              0 0 26px rgba(255, 241, 168, 0.9),
-              0 8px 20px rgba(156, 116, 21, 0.5);
-}
-
-.pet-btn.active:hover svg {
-  fill: #ffffff;
-  color: #ffffff;
-}
-
-/* Pulsing golden halo around active pet button */
-.pet-btn.active::after {
-  content: "";
-  position: absolute;
-  inset: -6px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(212, 175, 55, 0.6);
-  animation: zActiveHaloPulse 2.4s infinite ease-in-out;
-  pointer-events: none;
-}
-
-@keyframes zActiveHaloPulse {
-  0%, 100% {
-    transform: scale(0.98);
-    opacity: 0.8;
-    border-color: rgba(212, 175, 55, 0.6);
-  }
-  50% {
-    transform: scale(1.16);
-    opacity: 0.15;
-    border-color: rgba(255, 241, 168, 0.85);
-  }
-}
-
-/* =====================================================
-   PET BUTTON FLOATING TOOLTIP
-===================================================== */
-.pet-btn-tooltip {
-  position: absolute;
-  bottom: calc(100% + 7px);
-  left: 50%;
-  transform: translateX(-50%) translateY(4px) scale(0.85);
-  background: rgba(30, 24, 12, 0.94);
-  backdrop-filter: blur(8px);
-  color: #FFF1A8;
-  border: 1px solid rgba(212, 175, 55, 0.6);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  padding: 3px 8px;
-  border-radius: 9999px;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
-  transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
-  z-index: 20;
-}
-
-.z-pet-nav-wrapper.expanded .pet-btn:hover .pet-btn-tooltip {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0) scale(1);
-}
-
-/* =====================================================
-   ACTIVE EXPERIENCE GEM BADGE ON MAIN Z BUTTON
-===================================================== */
-.z-active-badge {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #ffffff 10%, #FFF1A8 60%, #D4AF37 100%);
-  border: 1.5px solid #ffffff;
-  box-shadow: 0 0 8px rgba(255, 241, 168, 0.95),
-              0 0 4px rgba(212, 175, 55, 0.8);
-  animation: zActiveBadgePulse 2s infinite ease-in-out;
-  pointer-events: none;
-  z-index: 15;
-}
-
-@keyframes zActiveBadgePulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.9;
-  }
-  50% {
-    transform: scale(1.25);
-    opacity: 1;
-    box-shadow: 0 0 12px rgba(255, 241, 168, 1), 0 0 6px #D4AF37;
-  }
+    0 0 0 5px #D4AF37,
+    0 6px 16px rgba(156, 116, 21, 0.3);
 }
 
 /* =====================================================
@@ -670,6 +572,7 @@
 
 /* Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
+
   .z-main-btn,
   .pet-btn,
   .z-connector,

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../styles/ZPetNavigation.css";
 
 /**
@@ -57,27 +57,21 @@ const CatProfileSilhouetteIcon = () => (
 );
 
 /**
- * Clean 3-slider filter/others icon matching the design reference
+ * Setting / Gear Icon for Other Pets & Specialized Preferences
  */
-const SlidersFilterIcon = () => (
+const SettingGearIcon = () => (
   <svg
-    viewBox="0 0 48 48"
+    viewBox="0 0 24 24"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
     className="pet-icon-svg"
     aria-hidden="true"
   >
-    {/* Top Slider Track & Knob */}
-    <path d="M8 14H40" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" />
-    <circle cx="30" cy="14" r="4.2" fill="currentColor" />
-
-    {/* Middle Slider Track & Knob */}
-    <path d="M8 24H40" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" />
-    <circle cx="35" cy="24" r="4.2" fill="currentColor" />
-
-    {/* Bottom Slider Track & Knob */}
-    <path d="M8 34H40" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" />
-    <circle cx="18" cy="34" r="4.2" fill="currentColor" />
+    <circle cx="12" cy="12" r="3" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
   </svg>
 );
 
@@ -85,43 +79,21 @@ const SlidersFilterIcon = () => (
  * ZPetNavigation Component - Premium Gold Edition with Shimmer & Sparkles
  *
  * Primary Color: #D4AF37
- * Radial Layout: Dog (Top), Cat (Top-Left), Others/Settings (Top-Right)
- * Supports Dog, Cat, and Other Pets shopping experiences with visual active states.
+ * Radial Layout: Dog (Top), Cat (Top-Left), Others/Filter (Top-Right)
  */
 export default function ZPetNavigation({
   onSelectPet,
-  customRoutes,
+  customRoutes = {
+    Dog: "/Products?pet_type=Dog",
+    Cat: "/Products?pet_type=Cat",
+    Filter: "/Products",
+  },
   className = "",
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const leaveTimerRef = useRef(null);
   const wrapperRef = useRef(null);
   const navigate = useNavigate();
-  const location = useLocation();
-  const [searchParams] = useSearchParams();
-
-  // Detect currently active pet shopping experience from URL
-  const rawPet = (
-    searchParams.get("pet_type") ||
-    searchParams.get("pet") ||
-    ""
-  ).toLowerCase().trim();
-
-  const isDogActive = rawPet === "dog";
-  const isCatActive = rawPet === "cat";
-  const isOtherActive = [
-    "other",
-    "others",
-    "otherpets",
-    "other_pets",
-    "settings",
-    "bird",
-    "fish",
-    "rabbit",
-    "cattle",
-  ].includes(rawPet);
-
-  const hasActiveExperience = isDogActive || isCatActive || isOtherActive;
 
   // Clear timer on unmount
   useEffect(() => {
@@ -183,30 +155,9 @@ export default function ZPetNavigation({
 
     if (onSelectPet) {
       onSelectPet(key);
-      return;
-    }
-
-    // Toggle back to general home if clicking the already active experience
-    if (key === "Dog") {
-      if (isDogActive) {
-        navigate("/home");
-      } else {
-        navigate("/home?pet_type=Dog");
-      }
-    } else if (key === "Cat") {
-      if (isCatActive) {
-        navigate("/home");
-      } else {
-        navigate("/home?pet_type=Cat");
-      }
-    } else if (key === "Filter" || key === "Other" || key === "Settings") {
-      if (isOtherActive) {
-        navigate("/home");
-      } else {
-        navigate("/home?pet_type=Other");
-      }
-    } else if (customRoutes && customRoutes[key]) {
+    } else if (customRoutes[key]) {
       navigate(customRoutes[key]);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -247,13 +198,10 @@ export default function ZPetNavigation({
           type="button"
           className={`pet-btn pet-btn-dog ${isDogActive ? "active" : ""}`}
           onClick={() => handleItemClick("Dog")}
-          aria-label="Dog Shopping Experience"
-          title="Dog Shopping Experience"
-          aria-pressed={isDogActive}
+          aria-label="Dogs"
           tabIndex={isExpanded ? 0 : -1}
         >
           <DogProfileSilhouetteIcon />
-          <span className="pet-btn-tooltip">Dogs</span>
         </button>
 
         {/* =====================================================
@@ -263,29 +211,23 @@ export default function ZPetNavigation({
           type="button"
           className={`pet-btn pet-btn-cat ${isCatActive ? "active" : ""}`}
           onClick={() => handleItemClick("Cat")}
-          aria-label="Cat Shopping Experience"
-          title="Cat Shopping Experience"
-          aria-pressed={isCatActive}
+          aria-label="Cats"
           tabIndex={isExpanded ? 0 : -1}
         >
           <CatProfileSilhouetteIcon />
-          <span className="pet-btn-tooltip">Cats</span>
         </button>
 
         {/* =====================================================
-            3. OTHERS / SETTINGS ICON (Diagonally Upper-Right of Z)
+            3. OTHERS / FILTER ICON (Diagonally Upper-Right of Z)
         ===================================================== */}
         <button
           type="button"
-          className={`pet-btn pet-btn-filter ${isOtherActive ? "active" : ""}`}
+          className="pet-btn pet-btn-filter"
           onClick={() => handleItemClick("Filter")}
-          aria-label="Other Pets Shopping Experience (Birds, Small Pets & More)"
-          title="Other Pets Shopping Experience"
-          aria-pressed={isOtherActive}
+          aria-label="Others and Filters"
           tabIndex={isExpanded ? 0 : -1}
         >
           <SlidersFilterIcon />
-          <span className="pet-btn-tooltip">Other Pets</span>
         </button>
 
         {/* =====================================================
@@ -300,11 +242,11 @@ export default function ZPetNavigation({
               ? isDogActive
                 ? "Dog Shopping Experience active — Click to switch or close"
                 : isCatActive
-                ? "Cat Shopping Experience active — Click to switch or close"
-                : "Other Pets Shopping Experience active — Click to switch or close"
+                  ? "Cat Shopping Experience active — Click to switch or close"
+                  : "Other Pets Shopping Experience active — Click to switch or close"
               : isExpanded
-              ? "Close pet navigation"
-              : "Open pet navigation"
+                ? "Close pet navigation"
+                : "Open pet navigation"
           }
           aria-expanded={isExpanded}
           aria-haspopup="true"
