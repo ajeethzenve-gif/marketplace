@@ -84,10 +84,9 @@ function Home() {
     };
 
     const loadAllProducts = async () => {
-        try {
-            setProductsLoading(true);
+        setProductsLoading(true);
 
-            try {
+        try {
                 let allProducts = [];
                 let page = 1;
 
@@ -2287,6 +2286,6 @@ function Home() {
 
             </main>
         );
-    }
+}
 
-    export default Home;
+export default Home;
