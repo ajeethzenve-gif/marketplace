@@ -546,6 +546,10 @@ function ProductList() {
 
         setPage(1);
 
+        if (petTypeFromNavbar) {
+            navigate("/products");
+        }
+
     };
 
 
@@ -560,7 +564,8 @@ function ProductList() {
         sort ||
         selectedBrand ||
         selectedProductType ||
-        productTypesFromNavbar.length > 0;
+        productTypesFromNavbar.length > 0 ||
+        Boolean(petTypeFromNavbar);
 
 
     /* =====================================================
@@ -1109,13 +1114,27 @@ function ProductList() {
                             <div>
 
                                 <h2>
-                                    Explore Products
+                                    {petTypeFromNavbar
+                                        ? `Explore ${
+                                              petTypeFromNavbar.toLowerCase() === "other" ||
+                                              petTypeFromNavbar.toLowerCase() === "others"
+                                                  ? "Other Pets"
+                                                  : petTypeFromNavbar
+                                          } Products`
+                                        : "Explore Products"}
                                 </h2>
 
                                 <p>
 
                                     {productCount} products
-                                    found for your pet
+                                    found {petTypeFromNavbar
+                                        ? `for ${
+                                              petTypeFromNavbar.toLowerCase() === "other" ||
+                                              petTypeFromNavbar.toLowerCase() === "others"
+                                                  ? "other pets"
+                                                  : petTypeFromNavbar.toLowerCase() + "s"
+                                          }`
+                                        : "for your pet"}
 
                                 </p>
 

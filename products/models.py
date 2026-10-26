@@ -74,6 +74,7 @@ class Product(models.Model):
         ("Fish", "Fish"),
         ("Cattle", "Cattle"),
     ]
+    
 
     PRODUCT_TYPE_CHOICES = [
         ("Medicine", "Medicine"),

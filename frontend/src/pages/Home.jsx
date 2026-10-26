@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import api from "../api/api";
 import ProductCard from "../components/ProductCard";
 
@@ -13,13 +13,43 @@ import offerProduct from "../assets/images/offer_proudct-removebg.png";
 import vetVisitImage from "../assets/images/vet_home_visit.jpg";
 import petFashionImage from "../assets/images/pet_fashion_nobg.png";
 
-
-
-
 import "../styles/Home.css";
 
 function Home() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+
+    // =====================================================
+    // PET SHOPPING EXPERIENCE EXTRACTION
+    // =====================================================
+
+    const rawPetParam = (
+        searchParams.get("pet_type") ||
+        searchParams.get("pet") ||
+        ""
+    ).trim().toLowerCase();
+
+    const isDogExperience = rawPetParam === "dog";
+    const isCatExperience = rawPetParam === "cat";
+    const isOtherExperience = [
+        "other",
+        "others",
+        "otherpets",
+        "other_pets",
+        "settings",
+        "bird",
+        "fish",
+        "rabbit",
+        "cattle",
+    ].includes(rawPetParam);
+
+    const activeExperience = isDogExperience
+        ? "Dog"
+        : isCatExperience
+        ? "Cat"
+        : isOtherExperience
+        ? "Other"
+        : "";
 
     // =====================================================
     // PRODUCTS
@@ -27,6 +57,8 @@ function Home() {
 
     const [products, setProducts] = useState([]);
     const [productsLoading, setProductsLoading] = useState(true);
+    const [productError, setProductError] = useState(null);
+    const reqSeqRef = useRef(0);
 
     // =====================================================
     // PET MODAL
@@ -56,16 +88,17 @@ function Home() {
     // =====================================================
 
     useEffect(() => {
-        loadAllProducts();
-        loadCustomerRecommendations();
-    }, []);
+        loadAllProducts(activeExperience);
+        loadCustomerRecommendations(activeExperience);
+    }, [activeExperience]);
 
-    const loadCustomerRecommendations = async () => {
+    const loadCustomerRecommendations = async (petFilter = activeExperience) => {
         const token = localStorage.getItem("access");
         if (!token) return;
 
         try {
-            const response = await api.get("recommendations/customer/", {
+            const petQuery = petFilter ? `?pet_type=${encodeURIComponent(petFilter)}` : "";
+            const response = await api.get(`recommendations/customer/${petQuery}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -78,16 +111,20 @@ function Home() {
         }
     };
 
-    const loadAllProducts = async () => {
-        try {
-            setProductsLoading(true);
+    const loadAllProducts = async (petFilter = activeExperience) => {
+        const currentSeq = ++reqSeqRef.current;
+        setProductsLoading(true);
+        setProductError(null);
+        setProducts([]); // Clear stale results immediately to prevent displaying wrong pet products
 
+        try {
             let allProducts = [];
             let page = 1;
 
             while (true) {
+                const petParam = petFilter ? `&pet_type=${encodeURIComponent(petFilter)}` : "";
                 const response = await api.get(
-                    `products/?page=${page}`
+                    `products/?page=${page}${petParam}`
                 );
 
                 const responseData = response.data;
@@ -124,6 +161,11 @@ function Home() {
                 break;
             }
 
+            // Race condition check: ignore results if a newer request was dispatched
+            if (currentSeq !== reqSeqRef.current) {
+                return;
+            }
+
             // ---------------------------------------------
             // REMOVE DUPLICATES
             // ---------------------------------------------
@@ -143,13 +185,8 @@ function Home() {
             });
 
             console.log(
-                "TOTAL PRODUCTS:",
+                `TOTAL PRODUCTS (${petFilter || "All"}):`,
                 uniqueProducts.length
-            );
-
-            console.log(
-                "PRODUCT DATA:",
-                uniqueProducts
             );
 
             setProducts(uniqueProducts);
@@ -159,14 +196,21 @@ function Home() {
                 error.response?.data || error
             );
 
-            setProducts([]);
+            if (currentSeq === reqSeqRef.current) {
+                setProductError(
+                    "Unable to load products. Please check your connection and try again."
+                );
+                setProducts([]);
+            }
         } finally {
-            setProductsLoading(false);
+            if (currentSeq === reqSeqRef.current) {
+                setProductsLoading(false);
+            }
         }
     };
 
     // =====================================================
-    // NORMALIZE PRODUCT TYPE
+    // NORMALIZE PRODUCT TYPE & LINK HELPERS
     // =====================================================
 
     const getProductType = (product) => {
@@ -174,6 +218,12 @@ function Home() {
             .trim()
             .toLowerCase()
             .replace(/[\s_-]/g, "");
+    };
+
+    const getCategoryLink = (basePath) => {
+        if (!activeExperience) return basePath;
+        const separator = basePath.includes("?") ? "&" : "?";
+        return `${basePath}${separator}pet_type=${encodeURIComponent(activeExperience)}`;
     };
 
     // =====================================================
@@ -627,6 +677,29 @@ function Home() {
 
                         </div>
 
+                    ) : productError ? (
+
+                        <div className="category-products-empty">
+
+                            <div className="empty-product-icon">
+                                ⚠️
+                            </div>
+
+                            <p>
+                                {productError}
+                            </p>
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    loadAllProducts(activeExperience)
+                                }
+                            >
+                                Retry
+                            </button>
+
+                        </div>
+
                     ) : rowProducts.length > 0 ? (
 
                         rowProducts
@@ -647,17 +720,21 @@ function Home() {
                             </div>
 
                             <p>
-                                No products available
+                                No {activeExperience ? (activeExperience === "Other" ? "other pet" : activeExperience.toLowerCase()) : ""} products available
                                 in this category.
                             </p>
 
                             <button
                                 type="button"
                                 onClick={() =>
-                                    navigate("/products")
+                                    navigate(
+                                        activeExperience
+                                            ? `/products?pet_type=${encodeURIComponent(activeExperience)}`
+                                            : "/products"
+                                    )
                                 }
                             >
-                                Browse All Products
+                                Browse All {activeExperience ? (activeExperience === "Other" ? "Other Pet" : activeExperience) : ""} Products
                             </button>
 
                         </div>
@@ -1262,6 +1339,47 @@ function Home() {
             )}
 
 
+            {/* =====================================================
+                ACTIVE PET SHOPPING EXPERIENCE BANNER
+            ===================================================== */}
+            {activeExperience && (
+                <section className="pet-experience-banner-section" role="region" aria-label="Active Pet Shopping Experience">
+                    <div className="pet-experience-card">
+                        <div className="pet-experience-left">
+                            <span className="pet-experience-badge">
+                                {isDogExperience && "🐶 DOG SHOPPING EXPERIENCE"}
+                                {isCatExperience && "🐱 CAT SHOPPING EXPERIENCE"}
+                                {isOtherExperience && "🦜 OTHER PETS SHOPPING EXPERIENCE"}
+                            </span>
+                            <h2 className="pet-experience-title">
+                                {isDogExperience && "Smart Care & Essentials Curated for Dogs"}
+                                {isCatExperience && "Smart Care & Essentials Curated for Cats"}
+                                {isOtherExperience && "Smart Care & Essentials for Birds, Small & Exotic Pets"}
+                            </h2>
+                            <p className="pet-experience-desc">
+                                {isDogExperience && "Browsing dog-specific nutrition, medicines, supplements, grooming, and everyday supplies."}
+                                {isCatExperience && "Browsing cat-specific food, treats, medicines, supplements, and grooming essentials."}
+                                {isOtherExperience && "Browsing specialized products for birds, rabbits, fish, and other non-dog/non-cat companions."}
+                            </p>
+                        </div>
+                        <div className="pet-experience-right">
+                            <div className="pet-experience-stat">
+                                <strong>{productsLoading ? "..." : products.length}</strong>
+                                <span>{productsLoading ? "Loading..." : "Verified Products"}</span>
+                            </div>
+                            <button
+                                type="button"
+                                className="pet-experience-clear-btn"
+                                onClick={() => navigate("/home")}
+                                title="Exit this pet shopping experience"
+                            >
+                                View All Pets ×
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            )}
+
             {/* =================================================
                 SHOP BY CATEGORIES
             ================================================= */}
@@ -1274,7 +1392,7 @@ function Home() {
                         Shop by Categories
                     </h2>
 
-                    <Link to="/products">
+                    <Link to={getCategoryLink("/products")}>
                         View All Categories →
                     </Link>
 
@@ -1286,7 +1404,7 @@ function Home() {
                         {/* Your 7 category cards */}
 
                         <Link
-                            to="/products?product_type=Medicine&product_type=Supplements"
+                            to={getCategoryLink("/products?product_type=Medicine&product_type=Supplements")}
                             className="category-card category-medicine"
                         >
                             <div className="category-image">💊</div>
@@ -1294,7 +1412,7 @@ function Home() {
                         </Link>
 
                         <Link
-                            to="/products?product_type=food&product_type=Other"
+                            to={getCategoryLink("/products?product_type=food&product_type=Other")}
                             className="category-card category-food"
                         >
                             <div className="category-image">🥣</div>
@@ -1302,7 +1420,7 @@ function Home() {
                         </Link>
 
                         <Link
-                            to="/products?product_type=FarmSupplies"
+                            to={getCategoryLink("/products?product_type=FarmSupplies")}
                             className="category-card category-farm"
                         >
                             <div className="category-image">🐄</div>
@@ -1310,7 +1428,7 @@ function Home() {
                         </Link>
 
                         <Link
-                            to="/products?product_type=VetEquipment"
+                            to={getCategoryLink("/products?product_type=VetEquipment")}
                             className="category-card category-vet"
                         >
                             <div className="category-image">🩺</div>
@@ -1344,7 +1462,7 @@ function Home() {
                         {/* DUPLICATE FOR INFINITE LOOP */}
 
                         <Link
-                            to="/products?product_type=Medicine&product_type=Supplements"
+                            to={getCategoryLink("/products?product_type=Medicine&product_type=Supplements")}
                             className="category-card category-medicine"
                         >
                             <div className="category-image">💊</div>
@@ -1352,7 +1470,7 @@ function Home() {
                         </Link>
 
                         <Link
-                            to="/products?product_type=food&product_type=Other"
+                            to={getCategoryLink("/products?product_type=food&product_type=Other")}
                             className="category-card category-food"
                         >
                             <div className="category-image">🥣</div>
@@ -1360,7 +1478,7 @@ function Home() {
                         </Link>
 
                         <Link
-                            to="/products?product_type=FarmSupplies"
+                            to={getCategoryLink("/products?product_type=FarmSupplies")}
                             className="category-card category-farm"
                         >
                             <div className="category-image">🐄</div>
@@ -1368,7 +1486,7 @@ function Home() {
                         </Link>
 
                         <Link
-                            to="/products?product_type=VetEquipment"
+                            to={getCategoryLink("/products?product_type=VetEquipment")}
                             className="category-card category-vet"
                         >
                             <div className="category-image">🩺</div>
@@ -1572,7 +1690,7 @@ function Home() {
             <ProductRow
                 title="Medicine & Supplements"
                 products={medicineProducts}
-                viewLink="/products?product_type=Medicine&product_type=Supplements"
+                viewLink={getCategoryLink("/products?product_type=Medicine&product_type=Supplements")}
             />
 
 
@@ -1583,7 +1701,7 @@ function Home() {
                 buttonText="Shop Medicines"
                 onClick={() =>
                     navigate(
-                        "/products?product_type=Medicine&product_type=Supplements"
+                        getCategoryLink("/products?product_type=Medicine&product_type=Supplements")
                     )
                 }
             />
@@ -1596,7 +1714,7 @@ function Home() {
             <ProductRow
                 title="Food & Other"
                 products={foodAndOtherProducts}
-                viewLink="/products?product_type=food&product_type=Other"
+                viewLink={getCategoryLink("/products?product_type=food&product_type=Other")}
             />
 
 
@@ -1607,7 +1725,7 @@ function Home() {
                 buttonText="Shop Products"
                 onClick={() =>
                     navigate(
-                        "/products?product_type=food&product_type=Other"
+                        getCategoryLink("/products?product_type=food&product_type=Other")
                     )
                 }
             />
@@ -1620,7 +1738,7 @@ function Home() {
             <ProductRow
                 title="Vet Equipment"
                 products={vetEquipmentProducts}
-                viewLink="/products?product_type=VetEquipment"
+                viewLink={getCategoryLink("/products?product_type=VetEquipment")}
             />
 
 
@@ -1631,7 +1749,7 @@ function Home() {
                 buttonText="View Equipment"
                 onClick={() =>
                     navigate(
-                        "/products?product_type=VetEquipment"
+                        getCategoryLink("/products?product_type=VetEquipment")
                     )
                 }
             />
@@ -1644,7 +1762,7 @@ function Home() {
             <ProductRow
                 title="Farm Supplies"
                 products={farmSupplyProducts}
-                viewLink="/products?product_type=FarmSupplies"
+                viewLink={getCategoryLink("/products?product_type=FarmSupplies")}
             />
 
 
@@ -1655,7 +1773,7 @@ function Home() {
                 buttonText="Shop Farm Supplies"
                 onClick={() =>
                     navigate(
-                        "/products?product_type=FarmSupplies"
+                        getCategoryLink("/products?product_type=FarmSupplies")
                     )
                 }
             />

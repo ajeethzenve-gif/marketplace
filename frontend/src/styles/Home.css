@@ -3508,3 +3508,157 @@
         padding: 6px 10px;
     }
 }
+
+/* =========================================================
+   PET SHOPPING EXPERIENCE BANNER
+   ========================================================= */
+
+.pet-experience-banner-section {
+    max-width: 1320px;
+    margin: 32px auto 12px auto;
+    padding: 0 24px;
+    box-sizing: border-box;
+    animation: petBannerFadeIn 0.35s ease;
+}
+
+@keyframes petBannerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pet-experience-card {
+    background: linear-gradient(135deg, #FFFDF5 0%, #FFF9E6 45%, #FBF3D5 100%);
+    border: 1.5px solid #E6CA65;
+    border-radius: 20px;
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15),
+                0 2px 8px rgba(156, 116, 21, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.pet-experience-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(180deg, #FFF1A8, #D4AF37, #9C7415);
+}
+
+.pet-experience-left {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.pet-experience-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    align-self: flex-start;
+    background: linear-gradient(135deg, #D4AF37, #9C7415);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    box-shadow: 0 2px 8px rgba(156, 116, 21, 0.28);
+}
+
+.pet-experience-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.25;
+}
+
+.pet-experience-desc {
+    font-size: 14px;
+    color: #475569;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.pet-experience-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+}
+
+.pet-experience-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 10px 18px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    border-radius: 14px;
+}
+
+.pet-experience-stat strong {
+    font-size: 20px;
+    font-weight: 800;
+    color: #9C7415;
+    line-height: 1;
+}
+
+.pet-experience-stat span {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pet-experience-clear-btn {
+    background: #ffffff;
+    color: #1e293b;
+    border: 1.5px solid #cbd5e1;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.pet-experience-clear-btn:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: #0f172a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+@media (max-width: 860px) {
+    .pet-experience-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 20px 22px;
+    }
+
+    .pet-experience-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

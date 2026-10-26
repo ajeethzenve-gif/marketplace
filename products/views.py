@@ -61,8 +61,8 @@ class ProductListAPIView(APIView):
 
     def get_permissions(self):
 
-        # Anyone can view products
-        if self.request.method == "GET":
+        # Anyone can view products or send OPTIONS
+        if self.request.method in ["GET", "OPTIONS"]:
             return [AllowAny()]
 
         # Only admin/staff can create products
@@ -145,10 +145,17 @@ class ProductListAPIView(APIView):
         pet_type = request.query_params.get("pet_type") or request.query_params.get("pet")
 
         if pet_type:
-
-            products = products.filter(
-                pet_type__iexact=pet_type
-            )
+            cleaned_pet = pet_type.strip()
+            # If "Other" / "Others" / "OtherPets", return all supported pets other than dogs and cats
+            if cleaned_pet.lower() in ["other", "others", "otherpets", "other_pets", "settings"]:
+                products = products.exclude(pet_type__in=["Dog", "Cat"])
+            elif "," in cleaned_pet:
+                pet_list = [p.strip() for p in cleaned_pet.split(",") if p.strip()]
+                products = products.filter(pet_type__in=pet_list)
+            else:
+                products = products.filter(
+                    pet_type__iexact=cleaned_pet
+                )
 
         # =================================================
         # MIN PRICE
@@ -381,8 +388,8 @@ class ProductDetailAPIView(APIView):
 
     def get_permissions(self):
 
-        # Anyone can view product
-        if self.request.method == "GET":
+        # Anyone can view product or send OPTIONS
+        if self.request.method in ["GET", "OPTIONS"]:
             return [AllowAny()]
 
         # Only admin/staff can update/delete
@@ -786,6 +793,14 @@ class CustomerRecommendedProductsAPIView(APIView):
 
         # Use LLM engine for per-pet sections inside the customer feed
         pets = PetProfile.objects.filter(customer=customer)
+        pet_type_filter = request.query_params.get("pet_type") or request.query_params.get("pet")
+        if pet_type_filter:
+            cleaned = pet_type_filter.strip().lower()
+            if cleaned in ["other", "others", "otherpets", "other_pets", "settings"]:
+                pets = pets.exclude(pet_type__in=["Dog", "Cat"])
+            else:
+                pets = pets.filter(pet_type__iexact=pet_type_filter.strip())
+
         feed_sections = []
 
         for pet in pets:

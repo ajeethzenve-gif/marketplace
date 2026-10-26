@@ -682,11 +682,14 @@ function Navbar() {
 
         setSearch(value);
 
+        const currentPet = new URLSearchParams(location.search).get("pet_type") || new URLSearchParams(location.search).get("pet") || "";
+        const petQuery = currentPet ? `&pet_type=${encodeURIComponent(currentPet)}` : "";
+
         if (value.trim()) {
             navigate(
                 `/products?search=${encodeURIComponent(
                     value
-                )}`
+                )}${petQuery}`
             );
         }
     };
@@ -695,14 +698,17 @@ function Navbar() {
         const value =
             search.trim();
 
+        const currentPet = new URLSearchParams(location.search).get("pet_type") || new URLSearchParams(location.search).get("pet") || "";
+        const petQuery = currentPet ? `${value ? "&" : "?"}pet_type=${encodeURIComponent(currentPet)}` : "";
+
         if (value) {
             navigate(
                 `/products?search=${encodeURIComponent(
                     value
-                )}`
+                )}${petQuery}`
             );
         } else {
-            navigate("/products");
+            navigate(`/products${petQuery}`);
         }
     };
 

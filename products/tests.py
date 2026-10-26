@@ -181,3 +181,88 @@ class ExplainableRecommendationEngineTests(TestCase):
             limit=5
         )
         self.assertFalse(any(r["product"].id == self.wound_spray.id for r in recs_after))
+
+
+class PetShoppingExperienceAPITests(TestCase):
+
+    def setUp(self):
+        self.category = Category.objects.create(category_name="General")
+        self.brand = Brand.objects.create(brand_name="Zenve")
+
+        # 1. Dog product
+        self.dog_product = Product.objects.create(
+            category=self.category,
+            brand=self.brand,
+            product_name="Dog Chews",
+            description="Chews for dogs",
+            sku="SKU-DOG-TEST",
+            pet_type="Dog",
+            product_type="Treat",
+            price=Decimal("150.00"),
+            stock=10,
+            is_available=True
+        )
+
+        # 2. Cat product
+        self.cat_product = Product.objects.create(
+            category=self.category,
+            brand=self.brand,
+            product_name="Catnip Toy",
+            description="Toy for cats",
+            sku="SKU-CAT-TEST",
+            pet_type="Cat",
+            product_type="Toys",
+            price=Decimal("120.00"),
+            stock=10,
+            is_available=True
+        )
+
+        # 3. Other pet product (Bird)
+        self.bird_product = Product.objects.create(
+            category=self.category,
+            brand=self.brand,
+            product_name="Bird Seed Bell",
+            description="Seed bell for birds",
+            sku="SKU-BIRD-TEST",
+            pet_type="Bird",
+            product_type="Food",
+            price=Decimal("90.00"),
+            stock=10,
+            is_available=True
+        )
+
+    def test_dog_shopping_experience_filter(self):
+        response = self.client.get("/api/products/", {"pet_type": "Dog"})
+        self.assertEqual(response.status_code, 200)
+        results = response.data["results"]
+        product_names = [p["product_name"] for p in results]
+        self.assertIn("Dog Chews", product_names)
+        self.assertNotIn("Catnip Toy", product_names)
+        self.assertNotIn("Bird Seed Bell", product_names)
+
+    def test_cat_shopping_experience_filter(self):
+        response = self.client.get("/api/products/", {"pet_type": "Cat"})
+        self.assertEqual(response.status_code, 200)
+        results = response.data["results"]
+        product_names = [p["product_name"] for p in results]
+        self.assertIn("Catnip Toy", product_names)
+        self.assertNotIn("Dog Chews", product_names)
+        self.assertNotIn("Bird Seed Bell", product_names)
+
+    def test_other_pets_shopping_experience_filter(self):
+        # Testing 'Other'
+        response = self.client.get("/api/products/", {"pet_type": "Other"})
+        self.assertEqual(response.status_code, 200)
+        results = response.data["results"]
+        product_names = [p["product_name"] for p in results]
+        self.assertIn("Bird Seed Bell", product_names)
+        self.assertNotIn("Dog Chews", product_names)
+        self.assertNotIn("Catnip Toy", product_names)
+
+        # Testing 'others' (case-insensitive)
+        response_others = self.client.get("/api/products/", {"pet_type": "others"})
+        self.assertEqual(response_others.status_code, 200)
+        product_names_others = [p["product_name"] for p in response_others.data["results"]]
+        self.assertIn("Bird Seed Bell", product_names_others)
+        self.assertNotIn("Dog Chews", product_names_others)
+        self.assertNotIn("Catnip Toy", product_names_others)
