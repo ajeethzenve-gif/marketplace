@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'payments',
     'membership',
     'wallet',
+    'doctors',
 
 ]
 SITE_ID = 1
@@ -179,6 +180,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://localhost:5175",
+    "http://127.0.0.1:5175",
 ]
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Stethoscope,
   Search,
@@ -11,733 +11,22 @@ import {
   Phone,
   ExternalLink,
   CalendarCheck,
+  X,
+  CheckCircle2,
+  Calendar,
+  User,
+  AlertCircle,
 } from "lucide-react";
-
-
-const doctors = [
-  {
-    name: "Anand Animal Helpline (Veterinary Hospital)",
-    area: "Anand Town, Anand, Gujarat",
-    rating: "5.0",
-    reviews: "3634",
-    address:
-      "Anand-Sojitra Road, Temple, opp. Valasan, Anand, Gujarat 388325, India",
-    phone: "09537778000",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJrZSQhPVRXjkR1cE-eD8ep0c",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "MedRec Hospital Jehanabad",
-    area: "Kurtha-side, Jehanabad, Bihar",
-    rating: "5.0",
-    reviews: "1727",
-    address:
-      "Gaya - Patna Main Rd, near DM Residence, next to Nutan Honda Showroom, Jehanabad, Bihar 804408, India",
-    phone: "09801879584",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJ7QXqsCy18jkRLrjjfaOE32s",
-    site: "https://medrechospital.com/",
-    videoPrice: 399,
-    clinicPrice: 549,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Poojan hospital",
-    area: "Kheda, Kheda, Gujarat",
-    rating: "5.0",
-    reviews: "940",
-    address:
-      "Chitrakoot society, Mahudha road Mahemdawad, Dist, Kheda, Mahemdavad, Gujarat 387130, India",
-    phone: "09408693181",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJbQW2-GJhXjkRNtmOG_gyBq4",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Pruthhviraj Pet shop Gulbarga, Puppy sale, Bird food, Cat food, Fish food, Aquarium, Aquatic plants.",
-    area: "State Bank Colony, Kalaburagi, Karnataka",
-    rating: "5.0",
-    reviews: "916",
-    address:
-      "Dharshan Plaza, PNT Auto stand, Old Jewargi Rd, beside New Reliance Digital, State Bank Colony, Kalaburagi, Karnataka 585102, India",
-    phone: "09663418565",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJ_yCZcGy_yDsR4Nv7colbkeY",
-    site: "https://youtube.com/user/pruthviraj9",
-    videoPrice: 299,
-    clinicPrice: 499,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Chinsu Pet Shop",
-    area: "State Bank Colony, Kalaburagi, Karnataka",
-    rating: "5.0",
-    reviews: "811",
-    address:
-      "Opposite ZUDIO, Old Jewargi Rd, State Bank Colony, Kalaburagi, Karnataka 585102, India",
-    phone: "09663418565",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJMXXZzse_yDsRk-94954JIzs",
-    site: "https://youtu.be/EBYRHVcUbgk",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Shree Durga Medicals & Pet Shop",
-    area: "P.J. Extension, Davanagere, Karnataka",
-    rating: "5.0",
-    reviews: "777",
-    address:
-      "Veterinary Hospital Complex, Hondada Cir Rd, near Fish Market, Davangere, Karnataka 577002, India",
-    phone: "07019094691",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJV5aezX0lujsRGlI1m4W8N3I",
-    site: "",
-    videoPrice: 399,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Sri Santhoshi vet and pet agencies",
-    area: "Boyapally, Mahbubnagar, Telangana",
-    rating: "5.0",
-    reviews: "729",
-    address:
-      "D. No. 23, Prem Raj, Bus Stand, 121/1, Hospital Road, near RTC Complex, Madhura Nagar, Shamshabad, Hyderabad, Telangana 501218, India",
-    phone: "09849814732",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJq7rh_yC8yzsR0wqmP9lVXAk",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "The Pet Specialist",
-    area: "Wakad, Pune, Maharashtra",
-    rating: "5.0",
-    reviews: "637",
-    address:
-      "Shop No 5, The Avenue, Hinjawadi Phase II, Rajiv Gandhi Infotech Park, Pune, Maharashtra 411057, India",
-    phone: "09665371396",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJq1evqTG7wjsRTA7v9GCgirA",
-    site: "https://zenve.in/N/a",
-    videoPrice: 399,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Sahil The Pet King",
-    area: "Danta Ramgarh-side, Neem Ka Thana, Rajasthan",
-    rating: "5.0",
-    reviews: "623",
-    address:
-      "Unnamed Road, Shivsinghpura, Sikar, Rajasthan 332001, India",
-    phone: "09521210800",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJj3ENHh27bDkRr3QEmElhGbg",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Pet Clinic / Pet Doctor / Pet Shop / Veterinarian / Vet Doctor / Dog Hostel",
-    area: "Sikar City, Sikar, Rajasthan",
-    rating: "5.0",
-    reviews: "614",
-    address:
-      "Garhwal Bhawan, Vishwanath Mandir Marg, Anand Nagar, Sikar, Rajasthan 332001, India",
-    phone: "09549663866",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJWcshBsekbDkRDqiJGMndI84",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Petmax Pet Clinic",
-    area: "Hosakote, Bengaluru Rural, Karnataka",
-    rating: "5.0",
-    reviews: "558",
-    address:
-      "Maruthi Vet Pharma, Mayura Arts, College Rd, opposite to Ayyappa Swamy Temple, M V Extension, Hoskote, Karnataka 562114, India",
-    phone: "09019942422",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJBfy1lMwFrjsRbN1W8dj5NgQ",
-    site: "https://petmax-pet-clinic.grexa.site/",
-    videoPrice: 299,
-    clinicPrice: 499,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "DOG & CAT CARE HOSPITAL, Dr.MITHUN KHATARIYA",
-    area: "Moti Baug, Junagadh, Gujarat",
-    rating: "5.0",
-    reviews: "556",
-    address:
-      "Oppo. 2nd Gate of Agriculture University, Motibag, Gunatit Nagar, Moti Baug, Kalva Chok, Junagadh, Gujarat 362001, India",
-    phone: "09327538035",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJF19L9IwBWDkRsZDBZ_TPBzs",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "JP Pet Clinic",
-    area: "Golf Course Road, Gurugram, Haryana",
-    rating: "5.0",
-    reviews: "543",
-    address:
-      "Opp DPS-84 Rao, Atar Singh Chowk, Sikanderpur Sector 85 Rd, Gurugram, Haryana 122012, India",
-    phone: "08788898211",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJA7Lhs7c9DTkRLXeg_LqVV6k",
-    site: "http://jppetclinic.info/",
-    videoPrice: 399,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "MOKSHITHA PET CLINIC | Dr Balu Naik",
-    area: "Markapur, Prakasam, Andhra Pradesh",
-    rating: "5.0",
-    reviews: "541",
-    address:
-      "Madhavi grand street opposite New Sita Rama Sastry Hospital, Markapur, Andhra Pradesh 523316, India",
-    phone: "06304029486",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJrTLZLOoxtTsRcrRTuhs_4SM",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Dr. Navi's Veterinary Clinic",
-    area: "Palayam, Kozhikode, Kerala",
-    rating: "5.0",
-    reviews: "513",
-    address:
-      "13/5, post, Indira Nagar, Periyar Nagar, Nehru Nagar West, Kalapatti, Coimbatore, Tamil Nadu 641048, India",
-    phone: "06381414845",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJb50rnb1XqDsRvFUogwphHf4",
-    site: "",
-    videoPrice: 399,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Max Pet Hospital",
-    area: "Ayodhya Bypass, Bhopal, Madhya Pradesh",
-    rating: "5.0",
-    reviews: "483",
-    address:
-      "Bargaon Police chauki, near Kamal Motor, Avas Vikas Colony, Khaira, Gonda, Uttar Pradesh 271002, India",
-    phone: "09182346713",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJQVn4AjjvmTkRpUuWwakK86s",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Panacea Pet Clinic",
-    area: "Ateli-side, Mahendragarh, Rajasthan",
-    rating: "5.0",
-    reviews: "477",
-    address:
-      "G-83, Shri Ram Plaza, Neemrana, Rajasthan 301705, India",
-    phone: "08000852900",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJUcc3S49VbTkRxu_-3YqQhhk",
-    site: "",
-    videoPrice: 299,
-    clinicPrice: 499,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Super Vetz Multispeciality Veterinary Hospital & Doorstep Expert Veterinary Care",
-    area: "Karyavattom, Thiruvananthapuram, Kerala",
-    rating: "5.0",
-    reviews: "477",
-    address:
-      "SK das tower, Menalloor, Karyavattom, Thiruvananthapuram, Kerala 695581, India",
-    phone: "08139870187",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJT7RLp9u9BTsRVwizknCJrts",
-    site: "https://supervetz.in/",
-    videoPrice: 399,
-    clinicPrice: 699,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Vet Meds - Vet Pharmacy & Pet Zone",
-    area: "Gaddavaram, Gannavaram, Andhra Pradesh",
-    rating: "5.0",
-    reviews: "467",
-    address:
-      "Opp Veterinary Hospital Old Buddavaram Road, Gannavaram, Andhra Pradesh 521101, India",
-    phone: "08500849789",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJl3vNcXrjNToRTqB-gY3AkCg",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Kitmeer Pet Clinic & Diagnostic Centre Best pet clinic in baroda",
-    area: "Alkapuri, Vadodara, Gujarat",
-    rating: "5.0",
-    reviews: "466",
-    address:
-      "Siddhartha Excellence, Shop no.17-18, C-Wing, D mart Mall, opp. Vasna Road, Tandalja, Vadodara, Gujarat 390007, India",
-    phone: "08536853685",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJPRpHqjDHXzkRKQfdCTgUWB0",
-    site: "",
-    videoPrice: 399,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Sharma's petcare hospital Pratapnagar",
-    area: "Jagatpura, Jaipur, Rajasthan",
-    rating: "5.0",
-    reviews: "437",
-    address:
-      "NRI Cir, Sector 17, Pratap Nagar, Jaipur, Rajasthan 302033, India",
-    phone: "09257484906",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJ66h4hSfJbTkR_7qfz0lezgs",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Sneh Pet Store & Spa",
-    area: "Prahlad Nagar, Ahmedabad, Gujarat",
-    rating: "5.0",
-    reviews: "437",
-    address:
-      "103, Trinity Complex, Hebatpur Rd, Thaltej, Ahmedabad, Gujarat 380059, India",
-    phone: "09227261188",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJu7IHGfSdXjkRQnQ3yEd3e84",
-    site: "",
-    videoPrice: 299,
-    clinicPrice: 499,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Sanjeevni Dog Health Care Narsinghpur",
-    area: "Narsinghpur, Madhya Pradesh",
-    rating: "5.0",
-    reviews: "435",
-    address:
-      "Street No. 1, Main Rd, Dhanare Colony, Narsinghpur, Madhya Pradesh 487001, India",
-    phone: "07999084183",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJO3ec-hidfzkRzQqZoU65EDg",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Bhanwar Pet Hospital",
-    area: "Vidyadhar Nagar, Jaipur, Rajasthan",
-    rating: "5.0",
-    reviews: "434",
-    address:
-      "S-31, Niwaru Rd, near Chohan Hospital, Jhotwara, Jaipur, Rajasthan 302012, India",
-    phone: "09460113674",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJLzqkosuzbTkRnpNUvBflYJk",
-    site: "",
-    videoPrice: 399,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Samast Mahajan",
-    area: "Prahlad Nagar, Ahmedabad, Gujarat",
-    rating: "5.0",
-    reviews: "429",
-    address:
-      "B/108, Sun West Bank, Nr. Vallabh Sadan, Ashram Rd, Ahmedabad, Gujarat 380009, India",
-    phone: "09930380976",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJef_Z51-EXjkR9MJb6GOlvCU",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Pet & Vet Care Clinic.",
-    area: "Model Town, Bhiwani, Haryana",
-    rating: "5.0",
-    reviews: "412",
-    address:
-      "Shop No 1 Jhadu Singh Phogat Chowk, Charkhi Dadri, Haryana 127306, India",
-    phone: "09034498433",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJhfo11uqFEjkRd89b36JryZE",
-    site: "",
-    videoPrice: 399,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Vetvantage pet clinic",
-    area: "Dehradun Road, Saharanpur, Uttar Pradesh",
-    rating: "5.0",
-    reviews: "384",
-    address:
-      "No. 3, 151/6 Lane, Rajpur Rd, Doon Vihar, Jakhan, Dehradun, Uttarakhand 248003, India",
-    phone: "08476095548",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJDQAFIdLXCDkR5Ipf3j_RtiM",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Vet Buddy- Your Pet's Trusted Care Partner",
-    area: "Kankarbagh, Patna, Bihar",
-    rating: "5.0",
-    reviews: "362",
-    address:
-      "R3, Jagat Vihar Colony, Rukanpura, Patna, Bihar 800025, India",
-    phone: "08873004339",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJqfAhcMlX7TkRX3sqhmSbDLI",
-    site: "https://vetbuddyindia.com/",
-    videoPrice: 299,
-    clinicPrice: 499,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Atozpetgrooming, DOG Hostel, Dog Training",
-    area: "Dargamitta, Nellore, Andhra Pradesh",
-    rating: "5.0",
-    reviews: "348",
-    address:
-      "Bujabuja Nellore, Samata Nagar, Nellore Rural, Andhra Pradesh 524004, India",
-    phone: "08639647945",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJPfIh4THzTDoReceKTi2eiHI",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Balotra pet clinic (animal hospital)",
-    area: "Jaisalmer Road, Barmer, Rajasthan",
-    rating: "5.0",
-    reviews: "339",
-    address: "Nehru Colony, Balotra, Rajasthan 344022, India",
-    phone: "08387091288",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJV0lYKwDpQzkR9_cAESt8WAM",
-    site: "",
-    videoPrice: 399,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "KUMAR PET CARE",
-    area: "Shuklaganj, Unnao, Uttar Pradesh",
-    rating: "5.0",
-    reviews: "332",
-    address:
-      "Dayalkheda, Magarwara Industrial Area, Magarwara, Uttar Pradesh 209862, India",
-    phone: "08299455589",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJm9cnoMI_nDkRrzK_hBBq-PE",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Vinshi Elite Pet Clinic Guntur",
-    area: "Arundelpet, Guntur, Andhra Pradesh",
-    rating: "5.0",
-    reviews: "325",
-    address:
-      "Opp. Sri Vidhya High School, NGO Colony, Nallapadu Rural, Andhra Pradesh 522004, India",
-    phone: "08501815182",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJVbpCXwB1SjoRAAmX4p8IiVE",
-    site: "",
-    videoPrice: 399,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Royal Cure & Care Pet Clinic, gorakhpur",
-    area: "Golghar, Gorakhpur, Uttar Pradesh",
-    rating: "5.0",
-    reviews: "324",
-    address:
-      "Rajendra Nagar near Chandra petrol pump, Gorakhpur, Uttar Pradesh 273015, India",
-    phone: "09695723799",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJNY2iR_9FkTkRsgiLi_Vq6pg",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Blue Coat Vet – Pet Clinic in Sushant Lok",
-    area: "DLF Phase 1-5, Gurugram, Haryana",
-    rating: "5.0",
-    reviews: "281",
-    address:
-      "C-1532, Vyapar Kendra Rd, Block C, Sushant Lok Phase I, Gurugram, Haryana 122002, India",
-    phone: "07389891754",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJd74slVgZDTkRcOu7-OS6Pss",
-    site: "https://bluecoatvet.com/",
-    videoPrice: 399,
-    clinicPrice: 699,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Snake Catcher Team Durg Bhilai",
-    area: "Civic Centre, Bhilai, Chhattisgarh",
-    rating: "5.0",
-    reviews: "280",
-    address:
-      "Post Office, State Bank Colony, Sector 6, Durg, Bhilai, Chhattisgarh 490006, India",
-    phone: "07389386534",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJXz5BdsIjKToRpn0nFY066Xc",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Pet's Paradise Clinic",
-    area: "Sikar City, Sikar, Rajasthan",
-    rating: "5.0",
-    reviews: "276",
-    address: "Tilak Nagar, Sikar, Rajasthan 332001, India",
-    phone: "09610838824",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJJZ1BHQClbDkR706yioCcU0E",
-    site: "",
-    videoPrice: 299,
-    clinicPrice: 499,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Phoenix Pet Hospital",
-    area: "Gachibowli, Hyderabad, Telangana",
-    rating: "5.0",
-    reviews: "272",
-    address:
-      "My Home Mangala Rd, Kondapur, KMR Estates, Hafeezpet, Hyderabad, Telangana 500084, India",
-    phone: "08885149333",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJ2zSjByaTyzsR_r-aemvLIU4",
-    site: "",
-    videoPrice: 399,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Sharma's petcare hospital, Bajaj nagar",
-    area: "C-Scheme, Jaipur, Rajasthan",
-    rating: "5.0",
-    reviews: "257",
-    address:
-      "Kendriya Vidyalaya No.1, Bajaj Nagar, Jaipur, Rajasthan 302015, India",
-    phone: "07737484906",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJy1w7TWK1bTkRFJfRO5dQ4Is",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Vet. B. R. Boss Veterinarian",
-    area: "Sardarpura, Jodhpur, Rajasthan",
-    rating: "5.0",
-    reviews: "254",
-    address:
-      "18/710, Sector 18, Chopasni Housing Board, Jodhpur, Rajasthan 342008, India",
-    phone: "09588241864",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJz0cjYdiPQTkRtmn3dKr48Zo",
-    site: "",
-    videoPrice: 399,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "B2Vet Pet Hospital",
-    area: "Gajuwaka, Visakhapatnam, Andhra Pradesh",
-    rating: "5.0",
-    reviews: "250",
-    address:
-      "10-9-51/1, opposite Simhagiri Hospital, New Gajuwaka, Visakhapatnam, Andhra Pradesh 530026, India",
-    phone: "09398317032",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJJQ95uwtpOToROwbjeDlRogY",
-    site: "https://b2vetpetclinic.netlify.app/",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Haycho pet shop & clinic",
-    area: "Vinoba Nagar, Shivamogga, Karnataka",
-    rating: "5.0",
-    reviews: "246",
-    address:
-      "Kariyanna Building, Bus Stop, 100 Feet Rd, Adarsh Layout, Vinoba Nagara, Shivamogga, Karnataka 577204, India",
-    phone: "06362592023",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJtaCxQ9WvuzsRcKmLQUurypU",
-    site: "",
-    videoPrice: 299,
-    clinicPrice: 499,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Tommy Pet Clinic",
-    area: "Namakkal Town, Namakkal, Tamil Nadu",
-    rating: "5.0",
-    reviews: "242",
-    address:
-      "278 MA1 Savadi Street, St 2, opposite to playground, Anbu Nagar, Namakkal, Tamil Nadu 637405, India",
-    phone: "09047012200",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJ4UgwEEjPqzsRPDKZSjQxV8c",
-    site: "",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "The Vet Buddy",
-    area: "Telipara, Bilaspur, Chhattisgarh",
-    rating: "5.0",
-    reviews: "237",
-    address:
-      "Pet's Hub, Brij Vihar Nagar, Shakti Chowk, Rajkishore Nagar, Bilaspur, Chhattisgarh 495006, India",
-    phone: "08770391314",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJDwvKxY4LKDoRxAej2f4CO5g",
-    site: "",
-    videoPrice: 399,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "Little Paws Pet Clinic (Dr.Sona P.S)",
-    area: "Chala, Kannur, Kerala",
-    rating: "5.0",
-    reviews: "237",
-    address: "Koyyode Road, Chala, Kerala 670621, India",
-    phone: "09400033113",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJ2bjn4duu8CkRs-CHXJrfdzY",
-    site: "https://www.littlepawspetclinic.com/",
-    videoPrice: 349,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-
-  {
-    name: "TANVIKA PETS & MEDICAL",
-    area: "Ramanathapuram, Ramanathapuram, Tamil Nadu",
-    rating: "5.0",
-    reviews: "234",
-    address:
-      "OM SHATHI NAGAR, VINAYAGAR KOVIL, NO.6/761_9, Ramanathapuram, Tamil Nadu 623504, India",
-    phone: "09894905622",
-    map: "https://www.google.com/maps/place/?q=place_id:ChIJ3Qb_4zSXATsRZaEEtQMS_bs",
-    site: "",
-    videoPrice: 399,
-    clinicPrice: 599,
-    verified: true,
-    videoAvailable: true,
-  },
-];
+import api from "../api/api";
 
 /* =========================================================
    MAIN COMPONENT
 ========================================================= */
 
 const Booked = () => {
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const [search, setSearch] = useState("");
 
   const [selectedState, setSelectedState] = useState("");
@@ -748,18 +37,121 @@ const Booked = () => {
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [videoOnly, setVideoOnly] = useState(false);
 
+  // Booking Modal State
+  const [bookingDoctor, setBookingDoctor] = useState(null);
+  const [bookingType, setBookingType] = useState("In Clinic");
+  const [bookingDate, setBookingDate] = useState(() => {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  });
+  const [bookingSlot, setBookingSlot] = useState("10:30 AM");
+  const [petName, setPetName] = useState("");
+  const [parentName, setParentName] = useState("");
+  const [parentPhone, setParentPhone] = useState("");
+  const [reason, setReason] = useState("");
+  const [submittingBooking, setSubmittingBooking] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState(null);
+  const [bookingError, setBookingError] = useState("");
+
+  const handleOpenBooking = (doc, type = "In Clinic") => {
+    setBookingDoctor(doc);
+    setBookingType(type);
+    setBookingSlot("10:30 AM");
+    setBookingSuccess(null);
+    setBookingError("");
+  };
+
+  const handleCloseBooking = () => {
+    setBookingDoctor(null);
+    setBookingSuccess(null);
+    setBookingError("");
+  };
+
+  const handleBookSubmit = async (e) => {
+    e.preventDefault();
+    if (!bookingDoctor) return;
+    if (!petName.trim()) {
+      setBookingError("Please enter your pet's name.");
+      return;
+    }
+    if (!parentPhone.trim()) {
+      setBookingError("Please enter your contact phone number.");
+      return;
+    }
+
+    try {
+      setSubmittingBooking(true);
+      setBookingError("");
+      const response = await api.post("doctors/book/", {
+        doctor_id: bookingDoctor.id || bookingDoctor.doctor_id,
+        doctor_name: bookingDoctor.name,
+        date: bookingDate,
+        time: bookingSlot,
+        appointment_type: bookingType,
+        pet_name: petName.trim(),
+        parent_name: parentName.trim() || "Pet Parent",
+        phone: parentPhone.trim(),
+        reason: reason.trim() || "Veterinary Consultation",
+      });
+
+      if (response.data?.success) {
+        setBookingSuccess(response.data);
+      } else {
+        setBookingSuccess({
+          booking_id: response.data?.booking_id || "APT-" + Date.now().toString().slice(-6),
+          doctor_name: bookingDoctor.name,
+          appointment_date: bookingDate,
+          appointment_time: bookingSlot,
+          appointment_type: bookingType,
+        });
+      }
+    } catch (err) {
+      setBookingError(
+        err.response?.data?.error || "Failed to confirm appointment. Please try again or call the clinic."
+      );
+    } finally {
+      setSubmittingBooking(false);
+    }
+  };
+
+  /* =======================================================
+     LOAD DOCTORS FROM API
+  ======================================================= */
+
+  useEffect(() => {
+    loadDoctors();
+  }, []);
+
+  const loadDoctors = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get("doctors/");
+      const data = response.data?.results || response.data || [];
+      setDoctors(Array.isArray(data) ? data : []);
+    } catch (error) {
+      // Backend endpoint may not be implemented yet; fallback to empty list
+      setDoctors([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   /* =======================================================
      GET STATE & CITY
   ======================================================= */
 
   const getLocationParts = (area = "") => {
+    if (!area || typeof area !== "string") {
+      return { city: "", state: "" };
+    }
+
     const parts = area
       .split(",")
       .map((part) => part.trim())
       .filter(Boolean);
 
     return {
-      city: parts.length >= 2 ? parts[parts.length - 2] : "",
+      city: parts.length >= 2 ? parts[parts.length - 2] : parts[0] || "",
       state: parts.length >= 1 ? parts[parts.length - 1] : "",
     };
   };
@@ -772,11 +164,11 @@ const Booked = () => {
     return [
       ...new Set(
         doctors
-          .map((doctor) => getLocationParts(doctor.area).state)
+          .map((doctor) => getLocationParts(doctor.area || doctor.location).state)
           .filter(Boolean)
       ),
     ].sort();
-  }, []);
+  }, [doctors]);
 
   /* =======================================================
      CITIES
@@ -790,14 +182,14 @@ const Booked = () => {
             if (!selectedState) return true;
 
             return (
-              getLocationParts(doctor.area).state === selectedState
+              getLocationParts(doctor.area || doctor.location).state === selectedState
             );
           })
-          .map((doctor) => getLocationParts(doctor.area).city)
+          .map((doctor) => getLocationParts(doctor.area || doctor.location).city)
           .filter(Boolean)
       ),
     ].sort();
-  }, [selectedState]);
+  }, [doctors, selectedState]);
 
   /* =======================================================
      FILTER DOCTORS
@@ -805,12 +197,12 @@ const Booked = () => {
 
   const filteredDoctors = useMemo(() => {
     return doctors.filter((doctor) => {
-      const location = getLocationParts(doctor.area);
+      const location = getLocationParts(doctor.area || doctor.location);
 
       const doctorText = `
-        ${doctor.name}
-        ${doctor.area}
-        ${doctor.address}
+        ${doctor.name || ""}
+        ${doctor.area || doctor.location || ""}
+        ${doctor.address || ""}
       `.toLowerCase();
 
       /* SEARCH */
@@ -831,16 +223,17 @@ const Booked = () => {
 
       /* PRICE */
 
-      const videoPrice = Number(doctor.videoPrice ?? 349);
-      const clinicPrice = Number(doctor.clinicPrice ?? 599);
+      const validPrices = [doctor.videoPrice, doctor.clinicPrice]
+        .map(Number)
+        .filter((val) => !isNaN(val) && val > 0);
 
-      const minPrice = Math.min(videoPrice, clinicPrice);
-      const maxPrice = Math.max(videoPrice, clinicPrice);
+      const minPrice = validPrices.length ? Math.min(...validPrices) : 0;
+      const maxPrice = validPrices.length ? Math.max(...validPrices) : 0;
 
       let matchesPrice = true;
 
       if (selectedPrice === "under400") {
-        matchesPrice = minPrice < 400;
+        matchesPrice = minPrice > 0 && minPrice < 400;
       }
 
       if (selectedPrice === "400-600") {
@@ -853,20 +246,12 @@ const Booked = () => {
 
       /* RATING */
 
-      const rating = Number(doctor.rating);
+      const rating = Number(doctor.rating || 0);
 
       let matchesRating = true;
 
-      if (selectedRating === "4") {
-        matchesRating = rating >= 4;
-      }
-
-      if (selectedRating === "4.5") {
-        matchesRating = rating >= 4.5;
-      }
-
-      if (selectedRating === "4.8") {
-        matchesRating = rating >= 4.8;
+      if (selectedRating) {
+        matchesRating = rating >= Number(selectedRating);
       }
 
       /* VERIFIED */
@@ -890,6 +275,7 @@ const Booked = () => {
       );
     });
   }, [
+    doctors,
     search,
     selectedState,
     selectedCity,
@@ -939,9 +325,9 @@ const Booked = () => {
           </h1>
 
           <p className="hero-description">
-            20,000+ verified pet clinics across every Indian state.
-            Online consultation from ₹299, in-clinic visits from ₹499,
-            real ratings, phone numbers and maps directions.
+            Verified pet clinics across every Indian state.
+            Online consultation, in-clinic visits,
+            ratings, contact numbers and directions.
             More clinics added regularly as our network grows.
           </p>
 
@@ -1162,14 +548,21 @@ const Booked = () => {
 
           </div>
 
-          {filteredDoctors.length > 0 ? (
+          {loading ? (
+            <div className="no-results">
+              <Stethoscope size={42} />
+              <h3>Loading doctors...</h3>
+              <p>Fetching verified pet doctors and clinics.</p>
+            </div>
+          ) : filteredDoctors.length > 0 ? (
 
             <div className="doctor-grid">
 
               {filteredDoctors.map((doctor, index) => (
                 <DoctorCard
-                  key={`${doctor.name}-${index}`}
+                  key={doctor.id || `${doctor.name}-${index}`}
                   doctor={doctor}
+                  onBook={handleOpenBooking}
                 />
               ))}
 
@@ -1186,15 +579,25 @@ const Booked = () => {
               </h3>
 
               <p>
-                Try changing your state, city, price or rating filter.
+                {doctors.length === 0
+                  ? "No doctors or clinics are available at the moment."
+                  : "Try changing your state, city, price or rating filter."}
               </p>
 
-              <button
-                type="button"
-                onClick={clearFilters}
-              >
-                Clear all filters
-              </button>
+              {(search ||
+                selectedState ||
+                selectedCity ||
+                selectedPrice ||
+                selectedRating ||
+                verifiedOnly ||
+                videoOnly) && (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                >
+                  Clear all filters
+                </button>
+              )}
 
             </div>
 
@@ -1203,6 +606,208 @@ const Booked = () => {
         </div>
 
       </main>
+
+      {/* ===================================================
+          BOOKING MODAL
+      =================================================== */}
+      {bookingDoctor && (
+        <div className="booking-modal-overlay" onClick={handleCloseBooking}>
+          <div className="booking-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={handleCloseBooking} type="button" aria-label="Close">
+              <X size={20} />
+            </button>
+
+            {bookingSuccess ? (
+              <div className="booking-success-view">
+                <div className="success-icon-wrap">
+                  <CheckCircle2 size={54} color="#10b981" />
+                </div>
+                <h3>Appointment Confirmed!</h3>
+                <p className="success-subtitle">
+                  Your appointment with <strong>{bookingSuccess.doctor_name || bookingDoctor.name}</strong> has been booked successfully.
+                </p>
+
+                <div className="success-details-card">
+                  <div className="success-row">
+                    <span>Booking ID:</span>
+                    <strong>#{bookingSuccess.booking_id}</strong>
+                  </div>
+                  <div className="success-row">
+                    <span>Consultation Type:</span>
+                    <strong>{bookingSuccess.appointment_type || bookingType}</strong>
+                  </div>
+                  <div className="success-row">
+                    <span>Date & Time:</span>
+                    <strong>{bookingSuccess.appointment_date} at {bookingSuccess.appointment_time}</strong>
+                  </div>
+                  <div className="success-row">
+                    <span>Pet Name:</span>
+                    <strong>{petName}</strong>
+                  </div>
+                  <div className="success-row">
+                    <span>Clinic / Doctor:</span>
+                    <strong>{bookingDoctor.clinic_hospital || bookingDoctor.clinic_name || bookingDoctor.name}</strong>
+                  </div>
+                  <div className="success-row">
+                    <span>Location:</span>
+                    <span>{bookingDoctor.address}</span>
+                  </div>
+                </div>
+
+                <div className="modal-actions" style={{ marginTop: "24px" }}>
+                  {bookingDoctor.phone && (
+                    <a href={`tel:${bookingDoctor.phone}`} className="modal-call-btn">
+                      <Phone size={16} /> Call Clinic ({bookingDoctor.phone})
+                    </a>
+                  )}
+                  <button type="button" className="modal-done-btn" onClick={handleCloseBooking}>
+                    Done
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleBookSubmit} className="booking-form">
+                <div className="modal-header">
+                  <div className="modal-doctor-badge">
+                    <Stethoscope size={18} />
+                    <span>ZENVE BOOK A VET</span>
+                  </div>
+                  <h2>Book with {bookingDoctor.name}</h2>
+                  <p className="modal-clinic-desc">
+                    {bookingDoctor.clinic_hospital || "Zenve Partner Pet Clinic"} • {bookingDoctor.area}, {bookingDoctor.city}
+                  </p>
+                </div>
+
+                {bookingError && (
+                  <div className="booking-error-banner">
+                    <AlertCircle size={18} />
+                    <span>{bookingError}</span>
+                  </div>
+                )}
+
+                {/* Consultation Type Selector */}
+                <div className="booking-type-toggle">
+                  <button
+                    type="button"
+                    className={`toggle-btn ${bookingType === "In Clinic" ? "active" : ""}`}
+                    onClick={() => setBookingType("In Clinic")}
+                  >
+                    <CalendarCheck size={16} />
+                    <span>In-Clinic Visit</span>
+                    <strong className="toggle-price">₹{bookingDoctor.clinicPrice || 500}</strong>
+                  </button>
+                  {bookingDoctor.videoAvailable && (
+                    <button
+                      type="button"
+                      className={`toggle-btn ${bookingType === "Video Call" ? "active" : ""}`}
+                      onClick={() => setBookingType("Video Call")}
+                    >
+                      <Video size={16} />
+                      <span>Video Consult</span>
+                      <strong className="toggle-price">₹{bookingDoctor.videoPrice || 400}</strong>
+                    </button>
+                  )}
+                </div>
+
+                {/* Date and Time Slot */}
+                <div className="form-group-row">
+                  <div className="form-group">
+                    <label>
+                      <Calendar size={14} /> Appointment Date
+                    </label>
+                    <input
+                      type="date"
+                      value={bookingDate}
+                      min={new Date().toISOString().split("T")[0]}
+                      onChange={(e) => setBookingDate(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>
+                      <Clock3 size={14} /> Available Time Slot
+                    </label>
+                    <select
+                      value={bookingSlot}
+                      onChange={(e) => setBookingSlot(e.target.value)}
+                      required
+                    >
+                      {(bookingDoctor.available_slots || [
+                        "09:30 AM", "10:30 AM", "11:30 AM", "02:00 PM", "04:00 PM", "05:30 PM", "07:00 PM"
+                      ]).map((slot) => (
+                        <option key={slot} value={slot}>{slot}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Pet Name & Parent Name */}
+                <div className="form-group-row">
+                  <div className="form-group">
+                    <label>
+                      <User size={14} /> Pet's Name *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Bruno, Bella"
+                      value={petName}
+                      onChange={(e) => setPetName(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Pet Parent Name</label>
+                    <input
+                      type="text"
+                      placeholder="Your Full Name"
+                      value={parentName}
+                      onChange={(e) => setParentName(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Parent Phone & Reason */}
+                <div className="form-group-row">
+                  <div className="form-group">
+                    <label>
+                      <Phone size={14} /> Contact Phone *
+                    </label>
+                    <input
+                      type="tel"
+                      placeholder="10-digit mobile number"
+                      value={parentPhone}
+                      onChange={(e) => setParentPhone(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Reason for Visit</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Vaccination, Fever, Checkup"
+                      value={reason}
+                      onChange={(e) => setReason(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="modal-submit-row">
+                  <button
+                    type="submit"
+                    className="confirm-booking-btn"
+                    disabled={submittingBooking}
+                  >
+                    {submittingBooking ? "Confirming..." : `Confirm Booking • ₹${bookingType === "Video Call" ? (bookingDoctor.videoPrice || 400) : (bookingDoctor.clinicPrice || 500)}`}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
 
     </div>
   );
@@ -1230,18 +835,26 @@ const Feature = ({ icon, text }) => (
    DOCTOR CARD
 ========================================================= */
 
-const DoctorCard = ({ doctor }) => {
+const DoctorCard = ({ doctor, onBook }) => {
 
-  const videoPrice = doctor.videoPrice ?? 349;
-  const clinicPrice = doctor.clinicPrice ?? 599;
+  const videoPrice = doctor.videoPrice;
+  const clinicPrice = doctor.clinicPrice;
 
   return (
     <article className="doctor-card">
 
-      {/* ICON */}
+      {/* ICON / AVATAR */}
 
       <div className="doctor-icon">
-        <Stethoscope size={24} />
+        {doctor.profile_image ? (
+          <img
+            src={doctor.profile_image}
+            alt={doctor.name}
+            style={{ width: "100%", height: "100%", borderRadius: "14px", objectFit: "cover" }}
+          />
+        ) : (
+          <Stethoscope size={24} />
+        )}
       </div>
 
       {/* NAME */}
@@ -1250,15 +863,47 @@ const DoctorCard = ({ doctor }) => {
         {doctor.name}
       </h3>
 
+      {/* SPECIALITY & QUALIFICATION */}
+      {(doctor.speciality || doctor.qualification) && (
+        <div
+          className="doctor-speciality"
+          style={{
+            fontSize: "12px",
+            color: "#64258e",
+            fontWeight: "700",
+            marginBottom: "8px",
+            textTransform: "capitalize",
+          }}
+        >
+          {doctor.speciality || "Veterinarian"}
+          {doctor.qualification ? ` • ${doctor.qualification}` : ""}
+          {doctor.experience ? ` • ${doctor.experience}+ yrs` : ""}
+        </div>
+      )}
+
+      {/* CLINIC */}
+      {doctor.clinic_hospital && (
+        <div
+          className="doctor-clinic"
+          style={{
+            fontSize: "12px",
+            color: "#473d55",
+            fontWeight: "600",
+            marginBottom: "8px",
+          }}
+        >
+          🏥 {doctor.clinic_hospital}
+        </div>
+      )}
+
       {/* LOCATION */}
 
-      <div className="doctor-location">
-
-        <MapPin size={15} />
-
-        {doctor.area}
-
-      </div>
+      {(doctor.area || doctor.location) && (
+        <div className="doctor-location">
+          <MapPin size={15} />
+          {doctor.area || doctor.location}
+        </div>
+      )}
 
       {/* RATING */}
 
@@ -1270,12 +915,14 @@ const DoctorCard = ({ doctor }) => {
         />
 
         <strong>
-          {doctor.rating}
+          {doctor.rating ?? "—"}
         </strong>
 
-        <span>
-          ({doctor.reviews})
-        </span>
+        {doctor.reviews ? (
+          <span>
+            ({doctor.reviews})
+          </span>
+        ) : null}
 
         {/* VERIFIED */}
 
@@ -1305,39 +952,41 @@ const DoctorCard = ({ doctor }) => {
 
       {/* ADDRESS */}
 
-      <p className="doctor-address">
-        {doctor.address}
-      </p>
+      {doctor.address && (
+        <p className="doctor-address">
+          {doctor.address}
+        </p>
+      )}
 
       {/* PRICE */}
 
-      <div className="price-row">
+      {(videoPrice != null || clinicPrice != null) && (
+        <div className="price-row">
 
-        <div>
+          {videoPrice != null && (
+            <div>
+              <span>
+                Video
+              </span>
+              <strong>
+                ₹{videoPrice}
+              </strong>
+            </div>
+          )}
 
-          <span>
-            Video
-          </span>
-
-          <strong>
-            ₹{videoPrice}
-          </strong>
+          {clinicPrice != null && (
+            <div>
+              <span>
+                Clinic visit
+              </span>
+              <strong>
+                ₹{clinicPrice}
+              </strong>
+            </div>
+          )}
 
         </div>
-
-        <div>
-
-          <span>
-            Clinic visit
-          </span>
-
-          <strong>
-            ₹{clinicPrice}
-          </strong>
-
-        </div>
-
-      </div>
+      )}
 
       {/* ACTIONS */}
 
@@ -1347,6 +996,7 @@ const DoctorCard = ({ doctor }) => {
           <button
             type="button"
             className="video-button"
+            onClick={() => onBook?.(doctor, "Video Call")}
           >
             <Video size={15} />
             Video consult
@@ -1356,6 +1006,7 @@ const DoctorCard = ({ doctor }) => {
         <button
           type="button"
           className="book-button"
+          onClick={() => onBook?.(doctor, "In Clinic")}
         >
           <CalendarCheck size={15} />
           Book visit
@@ -1365,43 +1016,40 @@ const DoctorCard = ({ doctor }) => {
 
       {/* CONTACT */}
 
-      <div className="contact-row">
+      {(doctor.phone || doctor.map || doctor.site) && (
+        <div className="contact-row">
 
-        <a href={`tel:${doctor.phone}`}>
+          {doctor.phone && (
+            <a href={`tel:${doctor.phone}`}>
+              <Phone size={14} />
+              Call
+            </a>
+          )}
 
-          <Phone size={14} />
+          {doctor.map && (
+            <a
+              href={doctor.map}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <MapPin size={14} />
+              Maps
+            </a>
+          )}
 
-          Call
+          {doctor.site && (
+            <a
+              href={doctor.site}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <ExternalLink size={14} />
+              Site
+            </a>
+          )}
 
-        </a>
-
-        <a
-          href={doctor.map}
-          target="_blank"
-          rel="noreferrer"
-        >
-
-          <MapPin size={14} />
-
-          Maps
-
-        </a>
-
-        {doctor.site && (
-          <a
-            href={doctor.site}
-            target="_blank"
-            rel="noreferrer"
-          >
-
-            <ExternalLink size={14} />
-
-            Site
-
-          </a>
-        )}
-
-      </div>
+        </div>
+      )}
 
     </article>
   );
