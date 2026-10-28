@@ -505,6 +505,7 @@ import Payment from "./pages/Payment.jsx";
 import Membership from "./pages/Membership";
 
 import Booked from "./pages/Booked.jsx";
+import VideoConsultations from "./pages/VideoConsultations.jsx";
 
 import ManageProducts from "./admin/ManageProducts";
 import AddProduct from "./admin/AddProduct";
@@ -775,6 +776,21 @@ function AppContent() {
               element={<Booked />}
             />
 
+            {/* Video Consultations & Appointments */}
+            <Route
+              path="/video-consultations"
+              element={<VideoConsultations />}
+            />
+            <Route
+              path="/video-consult"
+              element={<VideoConsultations />}
+            />
+            <Route
+              path="/appointments"
+              element={<VideoConsultations />}
+            />
+
+
 
             {/* Recommended Products */}
             <Route
@@ -786,6 +802,32 @@ function AppContent() {
             {/* Profile */}
             <Route
               path="/profile"
+              element={<Profile />}
+            />
+
+            <Route
+              path="/personal-info"
+              element={<Profile />}
+            />
+
+            <Route
+              path="/personal-information"
+              element={<Profile />}
+            />
+
+            {/* Addresses */}
+            <Route
+              path="/addresses"
+              element={<Profile />}
+            />
+
+            <Route
+              path="/my-addresses"
+              element={<Profile />}
+            />
+
+            <Route
+              path="/profile/addresses"
               element={<Profile />}
             />
 

@@ -71,3 +71,22 @@
         display: none;
     }
 }
+
+
+.topbar-video-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+}
+
+.topbar-video-btn:hover {
+    color: #ffffff !important;
+    transform: translateY(-1px);
+}
+
+.topbar-video-icon {
+    font-size: 13px;
+    color: #ffffff;
+}

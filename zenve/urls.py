@@ -55,6 +55,7 @@ urlpatterns = [
     path("api/payments/",include("payments.urls")),
     path("api/membership/",include("membership.urls")),
     path("api/wallet/", include("wallet.urls")),
+    path("api/doctors/", include("doctors.urls")),
 ]
 if settings.DEBUG:
     urlpatterns += static(
