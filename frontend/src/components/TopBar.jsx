@@ -6,6 +6,7 @@ import {
     FaMapMarkerAlt,
     FaQuestionCircle,
     FaMobileAlt,
+    FaVideo,
 } from "react-icons/fa";
 
 import "../styles/TopBar.css";
@@ -18,7 +19,7 @@ function TopBar() {
 
                 <div className="topbar-item">
                     <FaTruck className="topbar-icon" />
-                    <span>Free Delivery on orders above ₹999</span>
+                    <span>Free Delivery on orders above ₹199</span>
                 </div>
 
                 <div className="topbar-item">
@@ -34,6 +35,11 @@ function TopBar() {
             </div>
 
             <div className="topbar-right">
+
+                <Link to="/video-consultations" className="topbar-video-btn">
+                    <FaVideo className="topbar-video-icon" />
+                    <span>Video Consult</span>
+                </Link>
 
                 <Link to="/orders">
                     <FaMapMarkerAlt />

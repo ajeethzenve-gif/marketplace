@@ -26,6 +26,7 @@ import {
     FaUserPlus,
     FaHandHoldingHeart,
     FaMapMarkerAlt,
+    FaVideo,
 } from "react-icons/fa";
 
 import {
@@ -982,6 +983,11 @@ function Navbar() {
 
                 <div className="top-right">
 
+                    <Link to="/video-consultations" className="top-video-consult-btn">
+                        <FaVideo className="top-video-icon" />
+                        <span>Video Consult</span>
+                    </Link>
+
                     <Link to="/orders">
                         Track Order
                     </Link>
@@ -1199,6 +1205,14 @@ function Navbar() {
                                 >
                                     <FaPaw />
                                     <span>My Pets</span>
+                                </Link>
+
+                                <Link
+                                    to="/video-consultations"
+                                    className="popup-btn"
+                                >
+                                    <FaVideo />
+                                    <span>Video Consultations</span>
                                 </Link>
 
                                 <Link
@@ -1447,6 +1461,11 @@ function Navbar() {
                         Book a Vet
                     </Link>
 
+                    <Link to="/video-consultations" className="category-video-consult-link">
+                        <span className="live-dot-small" />
+                        Video Consult
+                    </Link>
+
                     <Link to="/fashion">
                         Zenve Fashion
                     </Link>
@@ -1620,6 +1639,35 @@ function Navbar() {
                                 <FaStethoscope />
                                 <span>
                                     Vet Equipment
+                                </span>
+                            </button>
+
+                            <button
+                                type="button"
+                                className="drawer-video-btn"
+                                onClick={() =>
+                                    goToPage(
+                                        "/video-consultations"
+                                    )
+                                }
+                            >
+                                <FaVideo />
+                                <span>
+                                    Video Consultations
+                                </span>
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    goToPage(
+                                        "/vet-booked"
+                                    )
+                                }
+                            >
+                                <FaStethoscope />
+                                <span>
+                                    Book a Vet
                                 </span>
                             </button>
 

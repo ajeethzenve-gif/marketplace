@@ -505,6 +505,7 @@ import Payment from "./pages/Payment.jsx";
 import Membership from "./pages/Membership";
 
 import Booked from "./pages/Booked.jsx";
+import VideoConsultations from "./pages/VideoConsultations.jsx";
 
 import ManageProducts from "./admin/ManageProducts";
 import AddProduct from "./admin/AddProduct";
@@ -739,6 +740,21 @@ function AppContent() {
               path="/vet-booked"
               element={<Booked />}
             />
+
+            {/* Video Consultations & Appointments */}
+            <Route
+              path="/video-consultations"
+              element={<VideoConsultations />}
+            />
+            <Route
+              path="/video-consult"
+              element={<VideoConsultations />}
+            />
+            <Route
+              path="/appointments"
+              element={<VideoConsultations />}
+            />
+
 
 
             {/* Recommended Products */}

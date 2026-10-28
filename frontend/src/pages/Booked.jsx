@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Stethoscope,
   Search,
@@ -16,6 +17,7 @@ import {
   Calendar,
   User,
   AlertCircle,
+  Copy,
 } from "lucide-react";
 import api from "../api/api";
 
@@ -52,6 +54,7 @@ const Booked = () => {
   const [submittingBooking, setSubmittingBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(null);
   const [bookingError, setBookingError] = useState("");
+  const [copiedMeeting, setCopiedMeeting] = useState(false);
 
   const handleOpenBooking = (doc, type = "In Clinic") => {
     setBookingDoctor(doc);
@@ -330,6 +333,13 @@ const Booked = () => {
             ratings, contact numbers and directions.
             More clinics added regularly as our network grows.
           </p>
+
+          <div style={{ marginTop: "18px", marginBottom: "22px" }}>
+            <Link to="/video-consultations" className="booked-top-vc-btn">
+              <Video size={16} />
+              <span>View My Video Consultations & Appointments →</span>
+            </Link>
+          </div>
 
           <div className="feature-list">
 
@@ -653,6 +663,60 @@ const Booked = () => {
                     <span>{bookingDoctor.address}</span>
                   </div>
                 </div>
+
+                {Boolean(bookingSuccess.meeting_link || bookingSuccess.is_video || (bookingSuccess.appointment_type || bookingType) === "Video Call") && (
+                  <div className="modal-video-card">
+                    <div className="modal-video-header">
+                      <div className="modal-video-icon">
+                        <Video size={20} />
+                      </div>
+                      <div>
+                        <h4>Video Consultation Meeting Room Ready!</h4>
+                        <p>Join directly using this link when consultation starts.</p>
+                      </div>
+                    </div>
+
+                    <div className="modal-video-link-row">
+                      <input
+                        type="text"
+                        readOnly
+                        value={bookingSuccess.meeting_link || `https://meet.jit.si/ZenveConsult-${bookingSuccess.booking_id}`}
+                        className="modal-video-input"
+                      />
+                      <button
+                        type="button"
+                        className="modal-copy-link-btn"
+                        onClick={() => {
+                          const link = bookingSuccess.meeting_link || `https://meet.jit.si/ZenveConsult-${bookingSuccess.booking_id}`;
+                          navigator.clipboard.writeText(link);
+                          setCopiedMeeting(true);
+                          setTimeout(() => setCopiedMeeting(false), 2500);
+                        }}
+                      >
+                        <Copy size={14} />
+                        <span>{copiedMeeting ? "Copied!" : "Copy"}</span>
+                      </button>
+                    </div>
+
+                    <div className="modal-video-actions">
+                      <a
+                        href={bookingSuccess.meeting_link || `https://meet.jit.si/ZenveConsult-${bookingSuccess.booking_id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="modal-join-btn"
+                      >
+                        <Video size={16} /> Join Video Meeting Now <ExternalLink size={14} />
+                      </a>
+                      <Link
+                        to="/video-consultations"
+                        className="modal-all-consults-btn"
+                        onClick={handleCloseBooking}
+                      >
+                        <Calendar size={15} /> View in My Appointments
+                      </Link>
+                    </div>
+                  </div>
+                )}
 
                 <div className="modal-actions" style={{ marginTop: "24px" }}>
                   {bookingDoctor.phone && (

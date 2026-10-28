@@ -1,5 +1,7 @@
 import urllib.parse
-from datetime import datetime
+import re
+import uuid
+from datetime import datetime, date
 from django.db import connection
 from rest_framework import status
 from rest_framework.response import Response
@@ -309,6 +311,12 @@ class BookDoctorAppointmentView(APIView):
             if "AM" in appointment_time.upper() and hour == 12:
                 hour = 0
             formatted_time = f"{hour:02d}:{minute:02d}:00"
+        # Determine if video consultation and generate meeting link
+        is_video = "video" in appointment_type.lower()
+        meeting_link = None
+        if is_video:
+            meeting_code = f"ZenveConsult-{doctor_id}-{uuid.uuid4().hex[:8]}"
+            meeting_link = f"https://meet.jit.si/{meeting_code}"
 
         # Record directly in doctortest.appointments
         try:
@@ -324,8 +332,8 @@ class BookDoctorAppointmentView(APIView):
                 now = datetime.now()
                 insert_query = """
                 INSERT INTO doctortest.appointments
-                (appointment_date, appointment_time, appointment_type, created_at, doctor_id, doctor_name, notes, reason, status, updated_at, patient_id)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                (appointment_date, appointment_time, appointment_type, created_at, doctor_id, doctor_name, notes, reason, status, updated_at, patient_id, meeting_link)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """
                 cursor.execute(insert_query, [
                     appointment_date,
@@ -338,7 +346,8 @@ class BookDoctorAppointmentView(APIView):
                     reason,
                     "Confirmed",
                     now,
-                    patient_id
+                    patient_id,
+                    meeting_link
                 ])
                 booking_id = cursor.lastrowid
         except Exception as e:
@@ -352,5 +361,167 @@ class BookDoctorAppointmentView(APIView):
             "appointment_date": appointment_date,
             "appointment_time": appointment_time or formatted_time,
             "appointment_type": appointment_type,
-            "status": "Confirmed"
+            "status": "Confirmed",
+            "meeting_link": meeting_link,
+            "is_video": is_video
         }, status=status.HTTP_201_CREATED)
+
+
+class DoctorAppointmentsListView(APIView):
+    """
+    Returns appointments for pet parents, categorized into upcoming and completed,
+    with meeting links for video consultations and doctor details.
+    """
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request):
+        status_param = (request.query_params.get("status") or "").strip().lower()
+        phone_param = (request.query_params.get("phone") or "").strip()
+        type_param = (request.query_params.get("type") or "").strip().lower()
+
+        appointments = []
+        today = date.today()
+
+        try:
+            with connection.cursor() as cursor:
+                query = """
+                SELECT 
+                    a.id,
+                    a.appointment_date,
+                    a.appointment_time,
+                    a.appointment_type,
+                    a.created_at,
+                    a.doctor_id,
+                    a.doctor_name,
+                    a.notes,
+                    a.reason,
+                    a.status,
+                    a.meeting_link,
+                    COALESCE(NULLIF(p.clinic_hospital, ''), 'Zenve Partner Pet Clinic') AS clinic_hospital,
+                    COALESCE(NULLIF(p.area, ''), 'Central Area') AS area,
+                    COALESCE(NULLIF(p.city, ''), 'Bengaluru') AS city,
+                    COALESCE(NULLIF(p.speciality, ''), 'Veterinary Physician & Surgeon') AS speciality,
+                    COALESCE(NULLIF(p.qualification, ''), 'BVSc & AH') AS qualification,
+                    COALESCE(NULLIF(p.profile_image, ''), '') AS profile_image,
+                    COALESCE(NULLIF(u.phone, ''), NULLIF(p.clinic_phone, ''), '6380924878') AS doctor_phone
+                FROM doctortest.appointments a
+                LEFT JOIN doctortest.users u ON a.doctor_id = u.id
+                LEFT JOIN doctortest.doctor_profile p ON u.id = p.user_id
+                ORDER BY a.appointment_date DESC, a.appointment_time DESC
+                """
+                cursor.execute(query)
+                cols = [c[0] for c in cursor.description]
+                rows = cursor.fetchall()
+
+                for row in rows:
+                    item = dict(zip(cols, row))
+                    notes = item.get("notes") or ""
+
+                    pet_name = "Pet"
+                    parent_name = "Pet Parent"
+                    parent_phone = ""
+
+                    pet_match = re.search(r"for\s+([^(]+)\s*\(", notes, re.IGNORECASE)
+                    if pet_match:
+                        pet_name = pet_match.group(1).strip()
+
+                    parent_match = re.search(r"Parent:\s*([^,)]+)", notes, re.IGNORECASE)
+                    if parent_match:
+                        parent_name = parent_match.group(1).strip()
+
+                    phone_match = re.search(r"Phone:\s*([0-9+ ]+)", notes, re.IGNORECASE)
+                    if phone_match:
+                        parent_phone = phone_match.group(1).strip()
+
+                    if phone_param and parent_phone and phone_param not in parent_phone:
+                        continue
+
+                    raw_type = item.get("appointment_type") or "In Clinic"
+                    is_video = "video" in raw_type.lower()
+
+                    meeting_link = item.get("meeting_link")
+                    if is_video and not meeting_link:
+                        meeting_link = f"https://meet.jit.si/ZenveConsult-{item.get('id')}-{item.get('doctor_id') or 1}"
+
+                    app_status = item.get("status") or "Confirmed"
+                    app_date = item.get("appointment_date")
+
+                    is_cancelled = app_status.lower() in ("cancelled", "canceled", "rejected")
+                    is_completed = app_status.lower() in ("completed", "done", "finished")
+
+                    if not is_cancelled and not is_completed:
+                        if app_date and app_date < today:
+                            category = "completed"
+                        else:
+                            category = "upcoming"
+                    elif is_completed:
+                        category = "completed"
+                    else:
+                        category = "cancelled"
+
+                    formatted_date = str(app_date) if app_date else ""
+                    formatted_time = str(item.get("appointment_time") or "")
+
+                    appointment_obj = {
+                        "id": item.get("id"),
+                        "doctor_id": item.get("doctor_id"),
+                        "doctor_name": item.get("doctor_name") or "Dr. Specialist",
+                        "doctor_phone": item.get("doctor_phone"),
+                        "clinic_hospital": item.get("clinic_hospital"),
+                        "area": item.get("area"),
+                        "city": item.get("city"),
+                        "speciality": item.get("speciality"),
+                        "qualification": item.get("qualification"),
+                        "profile_image": item.get("profile_image"),
+                        "appointment_date": formatted_date,
+                        "appointment_time": formatted_time,
+                        "appointment_type": raw_type,
+                        "is_video": is_video,
+                        "meeting_link": meeting_link,
+                        "status": app_status,
+                        "category": category,
+                        "pet_name": pet_name,
+                        "parent_name": parent_name,
+                        "parent_phone": parent_phone,
+                        "reason": item.get("reason") or "General Health Consultation",
+                        "notes": notes,
+                        "created_at": str(item.get("created_at") or "")
+                    }
+
+                    if status_param and status_param != "all":
+                        if status_param == "upcoming" and category != "upcoming":
+                            continue
+                        if status_param == "completed" and category != "completed":
+                            continue
+                        if status_param == "cancelled" and category != "cancelled":
+                            continue
+
+                    if type_param == "video" and not is_video:
+                        continue
+
+                    appointments.append(appointment_obj)
+        except Exception as e:
+            pass
+
+        return Response(appointments, status=status.HTTP_200_OK)
+
+
+class UpdateAppointmentStatusView(APIView):
+    """
+    Allows pet parents or clinics to mark an appointment as Completed or Cancelled.
+    """
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request, appointment_id):
+        new_status = request.data.get("status") or "Completed"
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "UPDATE doctortest.appointments SET status = %s, updated_at = %s WHERE id = %s",
+                    [new_status, datetime.now(), appointment_id]
+                )
+            return Response({"success": True, "message": f"Appointment status updated to {new_status}."}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

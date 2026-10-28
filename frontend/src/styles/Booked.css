@@ -711,3 +711,168 @@
     gap: 5px;
   }
 }
+
+
+/* =====================================================
+   VIDEO CONSULTATION SHORTCUT & SUCCESS MODAL STYLES
+===================================================== */
+
+.booked-top-vc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.booked-top-vc-btn:hover {
+  background: #ffffff;
+  color: #1515a8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.modal-video-card {
+  margin-top: 18px;
+  background: linear-gradient(135deg, #f5f3ff 0%, #eff6ff 100%);
+  border: 1.5px solid #c7d2fe;
+  border-radius: 14px;
+  padding: 16px;
+  text-align: left;
+}
+
+.modal-video-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.modal-video-icon {
+  width: 38px;
+  height: 38px;
+  background: #7c3aed;
+  color: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3);
+}
+
+.modal-video-header h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #312e81;
+  margin: 0;
+}
+
+.modal-video-header p {
+  font-size: 11.5px;
+  color: #475569;
+  margin: 2px 0 0;
+}
+
+.modal-video-link-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 4px 6px 4px 10px;
+  margin-bottom: 12px;
+}
+
+.modal-video-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 12px;
+  color: #334155;
+  background: transparent;
+  font-family: monospace;
+}
+
+.modal-copy-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-copy-link-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.modal-video-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.modal-join-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: linear-gradient(135deg, #1515a8 0%, #7c3aed 100%);
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(21, 21, 168, 0.25);
+  text-align: center;
+}
+
+.modal-join-btn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  color: #ffffff;
+}
+
+.modal-all-consults-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #ffffff;
+  color: #4338ca;
+  border: 1.5px solid #c7d2fe;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-all-consults-btn:hover {
+  background: #e0e7ff;
+}
