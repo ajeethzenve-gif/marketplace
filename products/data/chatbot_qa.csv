@@ -56,7 +56,7 @@ id,question,answer
 55,Can I change the quantity of a product in my cart?,"Yes. Tell me the product name and the quantity you want. I'll help update it, subject to stock availability and the store's quantity limits."
 56,Why has my cart total changed?,"Your total may change because of quantity updates, price changes, discounts, taxes, or delivery charges. Review your cart and checkout summary for the latest breakdown."
 57,Is every product in my cart available?,"I can check availability if live inventory is connected to the website. If an item is unavailable, I can help you look for suitable alternatives."
-58,Can I buy products forA different pets in one order?,"You can add products for dogs, cats, and other supported pets to the same cart if your store allows it. Review your cart to confirm that all selected items are included."
+58,Can I buy products for different pets in one order?,"You can add products for dogs, cats, and other supported pets to the same cart if your store allows it. Review your cart to confirm that all selected items are included."
 59,How do I proceed to checkout?,"Open your cart, review your products and quantities, and click Proceed to Checkout. Follow the instructions to enter your delivery details and complete payment."
 60,Why can't I add a product to my cart?,"This may happen if the product is out of stock, the selected quantity is unavailable, or a temporary website error has occurred. Check the product page and try again. If the issue continues, contact customer support."
 61,Where is my order right now?,I can help you check your order status. Please select an order from your account or provide its order reference through the secure order lookup process.
