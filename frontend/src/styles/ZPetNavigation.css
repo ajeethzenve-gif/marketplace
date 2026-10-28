@@ -783,6 +783,26 @@
   gap: 6px;
 }
 
+.zenve-chat-end-btn {
+  background: rgba(239, 68, 68, 0.16);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.zenve-chat-end-btn:hover {
+  background: rgba(239, 68, 68, 0.35);
+  color: #ffffff;
+  border-color: #ef4444;
+}
+
 .zenve-chat-ctrl-btn {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -1438,6 +1458,11 @@
 
   .zenve-chat-header {
     padding: max(12px, env(safe-area-inset-top)) 14px 10px;
+  }
+
+  .zenve-chat-end-btn {
+    padding: 6px 10px;
+    font-size: 11px;
   }
 
   .zenve-chat-ctrl-btn {
