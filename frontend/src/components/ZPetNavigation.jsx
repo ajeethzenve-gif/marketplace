@@ -372,18 +372,6 @@ Our human support team is ready to assist you:
 • Operating Hours: Monday to Sunday, 9:00 AM – 9:00 PM IST.
 Feel free to drop a message anytime and an executive will get in touch!`;
 
-const createInitialMessages = () => [
-  {
-    id: 1,
-    sender: "assistant",
-    text: "Hi! Welcome to our pet store. How can I help you and your pet today?",
-    products: [],
-    orders: [],
-    disclaimer: null,
-    time: "Online",
-  },
-];
-
 /**
  * ZPetNavigation Component - Premium Gold Edition with Shimmer & Sparkles
  *
@@ -413,11 +401,50 @@ export default function ZPetNavigation({
   const [errorMessage, setErrorMessage] = useState("");
 
   const [sessionId, setSessionId] = useState(() => {
-    return `zenve_sess_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    try {
+      const existing = sessionStorage.getItem(SESSION_ID_KEY);
+      if (existing) return existing;
+      const newId = `zenve_sess_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      sessionStorage.setItem(SESSION_ID_KEY, newId);
+      return newId;
+    } catch (e) {
+      return `zenve_sess_${Date.now()}`;
+    }
   });
 
-  const [questionCount, setQuestionCount] = useState(0);
-  const [chatMessages, setChatMessages] = useState(() => createInitialMessages());
+  const [questionCount, setQuestionCount] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem(SESSION_COUNT_KEY);
+      if (saved !== null) {
+        const parsed = parseInt(saved, 10);
+        if (!isNaN(parsed)) return parsed;
+      }
+    } catch (e) {}
+    return 0;
+  });
+
+  const [chatMessages, setChatMessages] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem(SESSION_MESSAGES_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((m) => ({ ...m, isNew: false }));
+        }
+      }
+    } catch (e) {}
+    return [
+      {
+        id: 1,
+        sender: "assistant",
+        text: "Hi! Welcome to our pet store. How can I help you and your pet today?",
+        products: [],
+        orders: [],
+        disclaimer: null,
+        time: "Online",
+      },
+    ];
+  });
 
   const leaveTimerRef = useRef(null);
   const wrapperRef = useRef(null);
@@ -428,6 +455,19 @@ export default function ZPetNavigation({
   const lastScrollTimeRef = useRef(0);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Persist conversation and question limit count to sessionStorage across routes & remounts
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(SESSION_MESSAGES_KEY, JSON.stringify(chatMessages));
+    } catch (e) {}
+  }, [chatMessages]);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(SESSION_COUNT_KEY, String(questionCount));
+    } catch (e) {}
+  }, [questionCount]);
 
   const handleTypingProgress = useCallback(() => {
     const now = Date.now();
@@ -555,38 +595,7 @@ export default function ZPetNavigation({
     setIsExpanded((prev) => !prev);
   };
 
-  // Reset chat session to clean initial state
-  const resetChatSession = useCallback(() => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-    const newSessionId = `zenve_sess_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-    setSessionId(newSessionId);
-    setQuestionCount(0);
-    setChatMessages(createInitialMessages());
-    setChatInput("");
-    setErrorMessage("");
-    try {
-      sessionStorage.removeItem(SESSION_MESSAGES_KEY);
-      sessionStorage.removeItem(SESSION_COUNT_KEY);
-      sessionStorage.setItem(SESSION_ID_KEY, newSessionId);
-    } catch (e) {}
-
-    // Notify backend to reset session tracker
-    fetch("/api/chatbot/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: "new_session", new_session: true, session_id: newSessionId }),
-    }).catch(() => {
-      fetch("http://127.0.0.1:8000/api/chatbot/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: "new_session", new_session: true, session_id: newSessionId }),
-      }).catch(() => {});
-    });
-  }, []);
-
-  // Explicit Chatbot Close Handler — resets conversation so reopening starts fresh from the beginning
+  // Explicit Chatbot Close Handler
   const handleCloseChat = (e) => {
     if (e) {
       e.preventDefault();
@@ -594,36 +603,50 @@ export default function ZPetNavigation({
     }
     setIsChatOpen(false);
     setIsMinimized(false);
-    resetChatSession();
-  };
-
-  // End conversation handler
-  const handleEndConversation = (e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
     }
-    resetChatSession();
   };
 
   // Start genuinely new chat session (resets question count and messages)
   const handleStartNewChat = () => {
-    resetChatSession();
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const newSessionId = `zenve_sess_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    setSessionId(newSessionId);
+    setQuestionCount(0);
+    const initial = [
+      {
+        id: 1,
+        sender: "assistant",
+        text: "Hi! Welcome to our pet store. How can I help you and your pet today?",
+        products: [],
+        orders: [],
+        disclaimer: null,
+        time: "Online",
+      },
+    ];
+    setChatMessages(initial);
+    setErrorMessage("");
+    try {
+      sessionStorage.setItem(SESSION_MESSAGES_KEY, JSON.stringify(initial));
+      sessionStorage.setItem(SESSION_COUNT_KEY, "0");
+      sessionStorage.setItem(SESSION_ID_KEY, newSessionId);
+    } catch (e) {}
+
+    // Notify backend to reset session tracker
+    fetch("http://127.0.0.1:8000/api/chatbot/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "new_session", new_session: true, session_id: newSessionId }),
+    }).catch(() => {});
   };
 
   // Send message to AI Chatbot backend with request cancellation support & 2-question limit
   const handleSendChatMessage = async (presetText) => {
     const query = (presetText || chatInput).trim();
     if (!query || isLoading || isSubmittingRef.current) return;
-
-    // Check for user typing an end conversation command
-    const isEndCmd = /^(end\s*(conversation|chat)?|quit|exit|restart(\s*chat)?|start\s*over|bye|goodbye)$/i.test(query);
-    if (isEndCmd) {
-      setChatInput("");
-      resetChatSession();
-      return;
-    }
-
     isSubmittingRef.current = true;
 
     setErrorMessage("");
@@ -783,22 +806,13 @@ export default function ZPetNavigation({
             <div className="zenve-chat-header-actions">
               <button
                 type="button"
-                className="zenve-chat-end-btn"
-                onClick={handleEndConversation}
-                title="End conversation & start from beginning"
-                aria-label="End conversation"
-              >
-                End Chat
-              </button>
-              <button
-                type="button"
                 className="zenve-chat-ctrl-btn"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleStartNewChat();
                 }}
-                title="Restart chat from beginning"
-                aria-label="Restart chat from beginning"
+                title="Start new chat session"
+                aria-label="Start new chat session"
               >
                 ↺
               </button>
