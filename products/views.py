@@ -146,10 +146,30 @@ class ProductListAPIView(APIView):
         pet_type = request.query_params.get("pet_type") or request.query_params.get("pet")
 
         if pet_type:
+            cleaned_pet = str(pet_type).strip().lower()
 
-            products = products.filter(
-                pet_type__iexact=pet_type
-            )
+            if cleaned_pet in ["other-pets", "other_pets", "other", "others", "non-dog-cat"]:
+                # Show products for pets other than dogs and cats, plus universal products
+                products = products.filter(
+                    ~Q(pet_type__iexact="Dog") & ~Q(pet_type__iexact="Cat")
+                )
+            elif cleaned_pet in ["dog", "dogs"]:
+                products = products.filter(
+                    Q(pet_type__iexact="Dog") | Q(pet_type__iexact="Universal")
+                )
+            elif cleaned_pet in ["cat", "cats"]:
+                products = products.filter(
+                    Q(pet_type__iexact="Cat") | Q(pet_type__iexact="Universal")
+                )
+            elif "," in pet_type:
+                pet_list = [p.strip() for p in pet_type.split(",") if p.strip()]
+                products = products.filter(
+                    Q(pet_type__in=pet_list) | Q(pet_type__iexact="Universal")
+                )
+            else:
+                products = products.filter(
+                    Q(pet_type__iexact=pet_type) | Q(pet_type__iexact="Universal")
+                )
 
         # =================================================
         # MIN PRICE
@@ -1012,3 +1032,331 @@ class RecommendationFeedbackAPIView(APIView):
             },
             status=status.HTTP_200_OK
         )
+
+
+# =========================================================
+# AI CHATBOT ASSISTANT (TRAINED Q&A + DATABASE GROUNDED)
+# =========================================================
+
+_TRAINED_QA_CACHE = None
+_STOPWORDS = {
+    "a", "an", "the", "in", "on", "at", "to", "for", "of", "and", "or",
+    "is", "are", "do", "does", "did", "can", "could", "would", "should",
+    "you", "i", "my", "your", "we", "me", "how", "what", "which", "where", "who"
+}
+
+_PET_TAGS = {
+    "dog": "dog", "dogs": "dog", "puppy": "dog", "puppies": "dog", "canine": "dog",
+    "cat": "cat", "cats": "cat", "kitten": "cat", "kittens": "cat", "feline": "cat",
+    "bird": "bird", "birds": "bird",
+    "rabbit": "rabbit", "rabbits": "rabbit", "bunny": "rabbit", "bunnies": "rabbit",
+    "fish": "fish", "fishes": "fish",
+    "hamster": "hamster", "hamsters": "hamster"
+}
+
+
+_TRAINED_QA_CACHE = None
+_TRAINED_QA_MTIME = 0
+
+
+def _load_trained_qa():
+    global _TRAINED_QA_CACHE, _TRAINED_QA_MTIME
+    import csv
+    import os
+    import re
+
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    candidate_paths = [
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "chatbot_qa.csv"),
+        os.path.join(base_dir, "products", "data", "chatbot_qa.csv"),
+        os.path.join(base_dir, "chatbot_qa.csv"),
+    ]
+
+    csv_path = None
+    for p in candidate_paths:
+        if os.path.exists(p):
+            csv_path = p
+            break
+
+    if not csv_path:
+        return []
+
+    try:
+        current_mtime = os.path.getmtime(csv_path)
+    except Exception:
+        current_mtime = 0
+
+    if _TRAINED_QA_CACHE is not None and _TRAINED_QA_MTIME == current_mtime and current_mtime > 0:
+        return _TRAINED_QA_CACHE
+
+    records = []
+    try:
+        with open(csv_path, mode="r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                q_raw = (row.get("question") or "").strip()
+                ans_raw = (row.get("answer") or "").strip()
+                if not q_raw or not ans_raw:
+                    continue
+                norm_q = re.sub(r"[^\w\s]", "", q_raw.lower()).strip()
+                words = set(norm_q.split())
+                kw = set(w for w in words if w not in _STOPWORDS and len(w) > 1)
+                records.append({
+                    "id": row.get("id"),
+                    "question": q_raw,
+                    "answer": ans_raw,
+                    "norm_q": norm_q,
+                    "tokens": words,
+                    "keywords": kw,
+                })
+    except Exception:
+        pass
+
+    _TRAINED_QA_CACHE = records
+    _TRAINED_QA_MTIME = current_mtime
+    return _TRAINED_QA_CACHE
+
+
+def match_trained_qa(message, threshold=0.50):
+    import difflib
+    import re
+
+    dataset = _load_trained_qa()
+    if not dataset or not message:
+        return None, 0.0
+
+    user_norm = re.sub(r"[^\w\s]", "", message.lower()).strip()
+    if not user_norm:
+        return None, 0.0
+
+    user_all_tokens = set(user_norm.split())
+    user_kw = set(w for w in user_all_tokens if w not in _STOPWORDS and len(w) > 1)
+    user_pets = set(_PET_TAGS[w] for w in user_all_tokens if w in _PET_TAGS)
+
+    best_match = None
+    best_score = 0.0
+
+    for item in dataset:
+        target_norm = item["norm_q"]
+        target_all_tokens = item["tokens"]
+        target_kw = item["keywords"]
+        target_pets = set(_PET_TAGS[w] for w in target_all_tokens if w in _PET_TAGS)
+
+        # Pet conflict check: if user query specifically targets dog and candidate is cat-specific (or vice versa), skip
+        if user_pets and target_pets and not (user_pets & target_pets):
+            continue
+
+        # 1. Exact normalized match
+        if user_norm == target_norm:
+            return item, 1.0
+
+        # 2. Substring containment
+        if (len(user_norm) >= 6 and user_norm in target_norm) or (len(target_norm) >= 6 and target_norm in user_norm):
+            sub_score = 0.88
+        else:
+            sub_score = 0.0
+
+        # 3. SequenceMatcher similarity
+        seq_ratio = difflib.SequenceMatcher(None, user_norm, target_norm).ratio()
+
+        # 4. Token Jaccard similarity
+        if user_all_tokens and target_all_tokens:
+            jaccard = len(user_all_tokens & target_all_tokens) / len(user_all_tokens | target_all_tokens)
+        else:
+            jaccard = 0.0
+
+        # 5. Keyword Coverage and Jaccard
+        if user_kw and target_kw:
+            kw_recall = len(user_kw & target_kw) / len(user_kw)
+            kw_jaccard = len(user_kw & target_kw) / len(user_kw | target_kw)
+            kw_score = (0.60 * kw_recall) + (0.40 * kw_jaccard)
+        else:
+            kw_score = 0.0
+
+        composite_score = max(
+            sub_score,
+            (0.35 * seq_ratio) + (0.25 * jaccard) + (0.40 * kw_score)
+        )
+
+        if composite_score > best_score:
+            best_score = composite_score
+            best_match = item
+
+    if best_match and best_score >= threshold:
+        return best_match, best_score
+    return None, best_score
+
+
+_BACKEND_SESSION_QUESTION_COUNTS = {}
+
+
+class AIChatbotAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        import os
+        import re
+        from orders.models import Order
+
+        message = (request.data.get("message") or "").strip()
+        history = request.data.get("conversation_history") or []
+
+        if not message:
+            return Response(
+                {"error": "Message is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # ---------------------------------------------------------
+        # NON-CSV QUESTION ESCALATION MESSAGE
+        # ---------------------------------------------------------
+        SUPPORT_LIMIT_MESSAGE = (
+            "Contact Zenve Customer Support & Human Escalation:\n"
+            "Our human support team is ready to assist you:\n"
+            "• Email: [support@zenve.com](mailto:support@zenve.com)\n"
+            "• Toll-Free Helpline: 1800-ZENVE-PET (1800-936-8373)\n"
+            "• WhatsApp Support: +91 98765 43210\n"
+            "• Operating Hours: Monday to Sunday, 9:00 AM – 9:00 PM IST.\n"
+            "Feel free to drop a message anytime and an executive will get in touch!"
+        )
+
+        session_id = (
+            request.data.get("session_id")
+            or request.headers.get("X-Chatbot-Session-Id")
+            or ""
+        ).strip()
+        new_session = bool(request.data.get("new_session")) or message == "new_session"
+
+        if session_id and new_session:
+            _BACKEND_SESSION_QUESTION_COUNTS[session_id] = 0
+            if hasattr(request, "session") and request.session:
+                request.session[f"zenve_q_{session_id}"] = 0
+            return Response({"success": True, "reset": True}, status=status.HTTP_200_OK)
+
+        user = request.user if request.user and request.user.is_authenticated else None
+        customer = None
+        if user:
+            customer = getattr(user, "customer", None)
+            if not customer:
+                customer = Customer.objects.filter(user=user).first()
+
+        msg_lower = message.lower()
+        matched_products = []
+        user_orders = []
+        medical_disclaimer = None
+
+        # 1. Order Status Tracking Intent
+        is_order_query = any(k in msg_lower for k in ["order", "track", "delivery", "shipping", "shipped", "package", "status"])
+        order_num_match = re.search(r"#?(\d{1,8})", message)
+
+        if is_order_query:
+            if customer:
+                orders_qs = Order.objects.filter(customer=customer).order_by("-order_date")[:3]
+                for o in orders_qs:
+                    user_orders.append({
+                        "id": o.id,
+                        "status": o.status,
+                        "total_amount": float(o.total_amount),
+                        "order_date": o.order_date.strftime("%Y-%m-%d %H:%M"),
+                        "payment_status": o.payment_status,
+                    })
+            elif order_num_match:
+                searched_id = int(order_num_match.group(1))
+                o = Order.objects.filter(id=searched_id).first()
+                if o:
+                    user_orders.append({
+                        "id": o.id,
+                        "status": o.status,
+                        "total_amount": float(o.total_amount),
+                        "order_date": o.order_date.strftime("%Y-%m-%d %H:%M"),
+                        "payment_status": o.payment_status,
+                    })
+
+        # 2. Medical / Health Disclaimer
+        health_keywords = ["vomit", "diarrhea", "blood", "poison", "wound", "fever", "limping", "sick", "infection", "emergency", "dose", "dosage", "prescription"]
+        if any(hk in msg_lower for hk in health_keywords):
+            medical_disclaimer = "⚠️ Veterinary Notice: This information is for general pet care guidance. In emergencies or severe health conditions, please contact or visit a certified veterinarian immediately."
+
+        # 3. Product Catalog Database Grounding (Search real DB products)
+        product_query = Q(is_available=True)
+        pet_filter = None
+        if any(w in msg_lower for w in ["dog", "puppy", "canine"]):
+            pet_filter = "Dog"
+        elif any(w in msg_lower for w in ["cat", "kitten", "feline"]):
+            pet_filter = "Cat"
+        elif any(w in msg_lower for w in ["bird", "parrot", "poultry"]):
+            pet_filter = "Bird"
+        elif any(w in msg_lower for w in ["cattle", "cow", "calf", "farm", "livestock"]):
+            pet_filter = "Cattle"
+        elif any(w in msg_lower for w in ["rabbit", "bunny"]):
+            pet_filter = "Rabbit"
+        elif any(w in msg_lower for w in ["fish", "aquarium"]):
+            pet_filter = "Fish"
+
+        if pet_filter:
+            product_query &= (Q(pet_type__iexact=pet_filter) | Q(pet_type__iexact="Universal"))
+
+        # Category / keyword matching in DB
+        tokens = [t for t in re.findall(r"\b[a-zA-Z]{3,}\b", msg_lower) if t not in ["the", "for", "and", "can", "you", "what", "with", "best", "some", "need", "want", "help", "please", "pet", "pets"]]
+        if tokens:
+            token_q = Q()
+            for t in tokens[:4]:
+                token_q |= (
+                    Q(product_name__icontains=t) |
+                    Q(description__icontains=t) |
+                    Q(product_type__icontains=t) |
+                    Q(category__category_name__icontains=t) |
+                    Q(brand__brand_name__icontains=t)
+                )
+            catalog_matches = Product.objects.filter(product_query & token_q).distinct()[:4]
+        else:
+            catalog_matches = Product.objects.filter(product_query).distinct()[:4]
+
+        # If no specific matches, but pet_filter is set, grab popular items for that pet
+        if not catalog_matches and pet_filter:
+            catalog_matches = Product.objects.filter(product_query)[:4]
+
+        for p in catalog_matches:
+            img_url = p.image.url if p.image else None
+            matched_products.append({
+                "id": p.id,
+                "name": p.product_name,
+                "price": float(p.price),
+                "pet_type": p.pet_type,
+                "product_type": p.product_type,
+                "in_stock": p.stock > 0,
+                "url": f"/product/{p.id}",
+                "image": img_url,
+            })
+
+        # 4. PRIMARY ENGINE: Match against uploaded questions in chatbot_qa.csv
+        # The user can ask multiple questions from the CSV file without limit.
+        # If the user asks a question other than the CSV questions, return the support limit message.
+        matched_qa, match_score = match_trained_qa(message)
+        reply = None
+        provider = None
+        limit_reached = False
+
+        if matched_qa:
+            reply = matched_qa["answer"]
+            provider = "trained_qa"
+            limit_reached = False
+        else:
+            # Question is outside the trained CSV questions
+            reply = SUPPORT_LIMIT_MESSAGE
+            provider = "support_limit"
+            limit_reached = True
+            matched_products = []
+            user_orders = []
+
+        return Response({
+            "success": True,
+            "reply": reply,
+            "products": matched_products,
+            "orders": user_orders,
+            "disclaimer": medical_disclaimer,
+            "provider": provider,
+            "limit_reached": limit_reached,
+            "matched_question": matched_qa["question"] if matched_qa else None,
+            "match_score": round(match_score, 3) if matched_qa else None,
+        }, status=status.HTTP_200_OK)

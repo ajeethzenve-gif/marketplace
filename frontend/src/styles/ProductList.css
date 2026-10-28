@@ -1260,3 +1260,263 @@ body {
         width: 100%;
     }
 }
+
+/* =====================================================
+   BREADCRUMB NAVIGATION
+===================================================== */
+
+.products-breadcrumb-nav {
+    margin-bottom: 16px;
+    padding: 0 4px;
+}
+
+.products-breadcrumb-list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.products-breadcrumb-list a {
+    color: #475569;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.products-breadcrumb-list a:hover {
+    color: #0868dc;
+    text-decoration: underline;
+}
+
+.breadcrumb-separator {
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+}
+
+.breadcrumb-current {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+/* =====================================================
+   PET CATEGORY HERO BANNER
+===================================================== */
+
+.pet-category-hero-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    padding: 28px 36px;
+    border-radius: 20px;
+    border: 1.5px solid #E6CA65;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
+    position: relative;
+    overflow: hidden;
+}
+
+.pet-hero-text {
+    flex: 1;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 2;
+}
+
+.pet-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    align-self: flex-start;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    text-transform: uppercase;
+}
+
+.pet-hero-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.pet-hero-subtitle {
+    font-size: 14px;
+    color: #475569;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.pet-hero-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 6px;
+}
+
+.pet-hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(6px);
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 12px;
+    color: #334155;
+    font-weight: 600;
+}
+
+.pet-hero-pill strong {
+    color: #0f172a;
+    font-weight: 800;
+}
+
+.pet-hero-image-wrap {
+    flex-shrink: 0;
+    max-width: 240px;
+    max-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.pet-hero-image {
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.12));
+    border-radius: 12px;
+}
+
+/* =====================================================
+   SUB-PET FILTER BAR (FOR OTHER PETS PAGE)
+===================================================== */
+
+.sub-pet-filter-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px 18px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.sub-pet-filter-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+    white-space: nowrap;
+}
+
+.sub-pet-pills {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.sub-pet-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 9999px;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sub-pet-pill:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.sub-pet-pill.active {
+    background: #0f172a;
+    border-color: #0f172a;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+}
+
+.sub-pet-pill-icon {
+    font-size: 14px;
+}
+
+/* =====================================================
+   RESPONSIVE HERO BANNER
+===================================================== */
+
+@media (max-width: 860px) {
+    .pet-category-hero-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 22px 24px;
+        gap: 18px;
+    }
+
+    .pet-hero-image-wrap {
+        align-self: center;
+        max-height: 150px;
+    }
+
+    .pet-hero-title {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pet-hero-title {
+        font-size: 20px;
+    }
+
+    .pet-hero-subtitle {
+        font-size: 12px;
+    }
+
+    .pet-hero-meta {
+        gap: 8px;
+    }
+
+    .pet-hero-pill {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+
+    .sub-pet-filter-bar {
+        padding: 10px 12px;
+    }
+
+    .sub-pet-pill {
+        font-size: 11px;
+        padding: 5px 10px;
+    }
+}

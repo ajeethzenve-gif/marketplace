@@ -12,6 +12,7 @@ from .views import (
     CustomerRecommendedProductsAPIView,
     ExplainProductRecommendationAPIView,
     RecommendationFeedbackAPIView,
+    AIChatbotAPIView,
 )
 
 
@@ -125,5 +126,15 @@ urlpatterns = [
         "recommendations/feedback/",
         RecommendationFeedbackAPIView.as_view(),
         name="recommendation-feedback",
+    ),
+
+    # =====================================================
+    # AI CHATBOT (PET ASSISTANT)
+    # =====================================================
+
+    path(
+        "chatbot/",
+        AIChatbotAPIView.as_view(),
+        name="ai-chatbot",
     ),
 ]

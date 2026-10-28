@@ -627,7 +627,41 @@ function AppContent() {
             />
 
 
-            {/* Products */}
+            {/* Dedicated Pet Products Pages */}
+            <Route
+              path="/products/dogs"
+              element={<ProductList forcedPetType="Dog" />}
+            />
+            <Route
+              path="/products/dog"
+              element={<ProductList forcedPetType="Dog" />}
+            />
+            <Route
+              path="/products/cats"
+              element={<ProductList forcedPetType="Cat" />}
+            />
+            <Route
+              path="/products/cat"
+              element={<ProductList forcedPetType="Cat" />}
+            />
+            <Route
+              path="/products/other-pets"
+              element={<ProductList forcedPetType="other-pets" />}
+            />
+            <Route
+              path="/products/others"
+              element={<ProductList forcedPetType="other-pets" />}
+            />
+            <Route
+              path="/products/other"
+              element={<ProductList forcedPetType="other-pets" />}
+            />
+
+            {/* General Products */}
+            <Route
+              path="/products"
+              element={<ProductList />}
+            />
             <Route
               path="/Products"
               element={<ProductList />}

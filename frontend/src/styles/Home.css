@@ -38,13 +38,17 @@
     box-sizing: border-box;
 
     background:
-        radial-gradient(circle at 72% 45%,
+        radial-gradient(
+            circle at 72% 45%,
             #d7ebff 0%,
             #e5f2ff 35%,
-            transparent 65%),
-        linear-gradient(110deg,
+            transparent 65%
+        ),
+        linear-gradient(
+            110deg,
             #f4f9ff,
-            #e8f3ff);
+            #e8f3ff
+        );
 }
 
 /* When no hero-visual is rendered (image is null),
@@ -171,7 +175,7 @@
     font-size: 17px;
 }
 
-.hero-feature>span:last-child {
+.hero-feature > span:last-child {
     display: flex;
 
     flex-direction: column;
@@ -366,7 +370,9 @@
     object-fit: contain;
 
     filter:
-        drop-shadow(0 12px 12px rgba(0, 0, 0, 0.10));
+        drop-shadow(
+            0 12px 12px rgba(0, 0, 0, 0.10)
+        );
 
     /*
        Makes white backgrounds visually blend
@@ -573,7 +579,6 @@
     gap: 12px;
     width: 100%;
 }
-
 .category-slider {
     width: 100%;
     overflow: hidden;
@@ -725,16 +730,18 @@
     border-radius: 13px;
 
     background:
-        linear-gradient(100deg,
+        linear-gradient(
+            100deg,
             #eaf5ff,
-            #d9edff);
+            #d9edff
+        );
 }
 
 .offer-content {
     min-width: 220px;
 }
 
-.offer-content>span {
+.offer-content > span {
     color: #0868dc;
 
     font-size: 10px;
@@ -809,7 +816,7 @@
     text-align: center;
 }
 
-.countdown-box>strong {
+.countdown-box > strong {
     display: block;
 
     color: #14255c;
@@ -868,7 +875,7 @@
     gap: 12px;
 }
 
-.best-seller-grid>* {
+.best-seller-grid > * {
     min-width: 0;
 }
 
@@ -904,7 +911,7 @@
         0 8px 20px rgba(20, 70, 130, 0.10);
 }
 
-.service-card>img {
+.service-card > img {
     width: 100%;
     height: 80px;
 
@@ -1014,8 +1021,7 @@
 
 .pet-image {
     width: 100%;
-    height: 220px;
-    /* Increased height */
+    height: 220px; /* Increased height */
     position: relative;
     overflow: hidden;
     background: #eef7ff;
@@ -1028,8 +1034,7 @@
     height: 100%;
     display: block;
 
-    object-fit: contain;
-    /* Prevent image cropping */
+    object-fit: contain; /* Prevent image cropping */
     object-position: center;
 
     background: #eef7ff;
@@ -1166,7 +1171,6 @@
         height: 280px;
     }
 }
-
 /* =========================================================
    TRUSTED BRANDS
    ========================================================= */
@@ -1179,7 +1183,7 @@
     gap: 10px;
 }
 
-.brands-grid>div {
+.brands-grid > div {
     height: 65px;
 
     display: flex;
@@ -1197,7 +1201,7 @@
     transition: 0.2s ease;
 }
 
-.brands-grid>div:hover {
+.brands-grid > div:hover {
     transform: translateY(-2px);
 
     border-color: #8ebcf0;
@@ -1401,14 +1405,16 @@
         opacity: 0;
 
         transform:
-            translateY(20px) scale(0.96);
+            translateY(20px)
+            scale(0.96);
     }
 
     to {
         opacity: 1;
 
         transform:
-            translateY(0) scale(1);
+            translateY(0)
+            scale(1);
     }
 
 }
@@ -1430,9 +1436,11 @@
     border-bottom: 1px solid #e5ebf3;
 
     background:
-        linear-gradient(135deg,
+        linear-gradient(
+            135deg,
             #eff8ff,
-            #ffffff);
+            #ffffff
+        );
 }
 
 .pet-modal-title {
@@ -1920,7 +1928,7 @@
         font-size: 15px;
     }
 
-    .hero-feature>span:last-child {
+    .hero-feature > span:last-child {
         font-size: 7px;
     }
 
@@ -2047,7 +2055,7 @@
        ===================================================== */
 
     .category-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+          grid-template-columns: repeat(2, minmax(0, 1fr));
 
         gap: 9px;
     }
@@ -2129,7 +2137,7 @@
         gap: 6px;
     }
 
-    .brands-grid>div {
+    .brands-grid > div {
         height: 50px;
 
         font-size: 8px;
@@ -2301,484 +2309,44 @@
 /* =========================================================
    HERO SLIDER - NEW
 ========================================================= */
-.hero-slider {
-    display: block;
-}
-
-.hero-slide {
-    min-height: 370px;
-    display: flex;
-    animation: heroSlideIn .45s ease;
-}
-
-@keyframes heroSlideIn {
-    from {
-        opacity: 0;
-        transform: translateX(18px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.hero-slider .hero-content {
-    flex: 0 0 50%;
-}
-
-.hero-slider .hero-visual {
-    flex: 0 0 50%;
-}
-
-.slider-arrow {
-    position: absolute;
-    top: 50%;
-    z-index: 100;
-    width: 38px;
-    height: 38px;
-    border: none;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, .9);
-    color: #0868dc;
-    font-size: 22px;
-    cursor: pointer;
-    box-shadow: 0 5px 18px rgba(20, 70, 130, .14);
-    transform: translateY(-50%);
-    opacity: 0;
-    transition: .25s ease;
-}
-
-.hero-slider:hover .slider-arrow {
-    opacity: 1;
-}
-
-.slider-arrow:hover {
-    background: #0868dc;
-    color: #fff;
-}
-
-.slider-prev {
-    left: 15px;
-}
-
-.slider-next {
-    right: 15px;
-}
-
-.slider-dots {
-    position: absolute;
-    left: 50%;
-    bottom: 15px;
-    z-index: 100;
-    display: flex;
-    gap: 8px;
-    transform: translateX(-50%);
-}
-
-.slider-dot {
-    width: 8px;
-    height: 8px;
-    padding: 0;
-    border: none;
-    border-radius: 20px;
-    background: rgba(8, 104, 220, .28);
-    cursor: pointer;
-    transition: .25s ease;
-}
-
-.slider-dot.active {
-    width: 28px;
-    background: #0868dc;
-}
-
-.adoption-slide {
-    background: radial-gradient(circle at 72% 45%, #ffe0d0 0%, #ffefe7 35%, transparent 65%), linear-gradient(110deg, #fff9f5, #ffede3);
-}
-
-.prescription-slide {
-    background: radial-gradient(circle at 72% 45%, #d8efff 0%, #eaf7ff 35%, transparent 65%), linear-gradient(110deg, #f7fcff, #e9f6ff);
-}
-
-.home-visit-slide {
-    background: radial-gradient(circle at 72% 45%, #dff6e8 0%, #effbf3 35%, transparent 65%), linear-gradient(110deg, #f7fffa, #e8f8ee);
-}
-
-.offers-slide {
-    background: radial-gradient(circle at 72% 45%, #ffe3a1 0%, #fff2cf 35%, transparent 65%), linear-gradient(110deg, #fffaf0, #fff0c9);
-}
-
-.slider-visual {
-    position: absolute;
-    inset: 0;
-    z-index: 5;
-    overflow: hidden;
-}
-
-.adoption-visual .visual-dog {
-    position: absolute;
-    left: 18%;
-    bottom: 20px;
-    font-size: 190px;
-    filter: drop-shadow(0 12px 12px rgba(0, 0, 0, .12));
-}
-
-.adoption-visual .visual-cat {
-    position: absolute;
-    right: 20%;
-    bottom: 35px;
-    font-size: 125px;
-}
-
-.visual-heart {
-    position: absolute;
-    top: 60px;
-    right: 34%;
-    font-size: 65px;
-    animation: heartFloat 2s ease-in-out infinite;
-}
-
-.visual-caption {
-    position: absolute;
-    bottom: 20px;
-    right: 8%;
-    padding: 9px 14px;
-    border-radius: 20px;
-    background: #fff;
-    color: #c65b36;
-    font-size: 11px;
-    font-weight: 700;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
-}
-
-@keyframes heartFloat {
-
-    0%,
-    100% {
-        transform: translateY(0)
-    }
-
-    50% {
-        transform: translateY(-10px)
-    }
-}
-
-.prescription-paper {
-    position: absolute;
-    left: 25%;
-    bottom: 42px;
-    width: 220px;
-    height: 250px;
-    padding: 28px;
-    box-sizing: border-box;
-    border-radius: 16px;
-    background: #fff;
-    box-shadow: 0 18px 40px rgba(20, 70, 130, .16);
-    transform: rotate(-5deg);
-}
-
-.paper-title {
-    color: #0868dc;
-    font-size: 12px;
-    font-weight: 800;
-    margin-bottom: 24px;
-}
-
-.paper-line {
-    width: 100%;
-    height: 10px;
-    margin-bottom: 14px;
-    border-radius: 10px;
-    background: #dcecff;
-}
-
-.paper-line.short {
-    width: 62%
-}
-
-.paper-line.medium {
-    width: 80%
-}
-
-.paper-check {
-    position: absolute;
-    right: -22px;
-    bottom: 18px;
-    width: 54px;
-    height: 54px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: #28b779;
-    color: #fff;
-    font-size: 30px;
-    font-weight: 800;
-}
-
-.medicine-pill {
-    position: absolute;
-    right: 15%;
-    bottom: 70px;
-    font-size: 100px;
-}
-
-.medicine-bottle {
-    position: absolute;
-    right: 30%;
-    bottom: 20px;
-    font-size: 80px;
-}
-
-.visit-house {
-    position: absolute;
-    right: 26%;
-    bottom: 40px;
-    font-size: 180px;
-}
-
-.visit-vet {
-    position: absolute;
-    left: 15%;
-    bottom: 25px;
-    font-size: 150px;
-}
-
-.visit-pet {
-    position: absolute;
-    right: 9%;
-    bottom: 25px;
-    font-size: 105px;
-}
-
-.visit-badge {
-    position: absolute;
-    top: 65px;
-    right: 22%;
-    width: 70px;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    border-radius: 50%;
-    background: #28b779;
-    color: #fff;
-    font-size: 11px;
-    font-weight: 800;
-}
-
-.offer-percent {
-    position: absolute;
-    left: 18%;
-    top: 50px;
-    width: 155px;
-    height: 155px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: #ff6b35;
-    color: #fff;
-    font-size: 42px;
-    font-weight: 800;
-    transform: rotate(-10deg);
-    box-shadow: 0 15px 35px rgba(255, 107, 53, .28);
-}
-
-.offer-percent small {
-    font-size: 20px
-}
-
-.offer-gift {
-    position: absolute;
-    right: 16%;
-    bottom: 25px;
-    font-size: 165px
-}
-
-.offer-food-icon {
-    position: absolute;
-    left: 18%;
-    bottom: 20px;
-    font-size: 100px
-}
-
-.offer-sale-tag {
-    position: absolute;
-    right: 20%;
-    top: 55px;
-    padding: 10px 18px;
-    border-radius: 8px;
-    background: #0868dc;
-    color: #fff;
-    font-size: 18px;
-    font-weight: 800;
-    transform: rotate(12deg)
-}
-
-@media (max-width:850px) {
-    .hero-slider .hero-content {
-        flex-basis: 52%
-    }
-
-    .hero-slider .hero-visual {
-        flex-basis: 48%
-    }
-
-    .adoption-visual .visual-dog {
-        font-size: 135px;
-        left: 10%
-    }
-
-    .adoption-visual .visual-cat {
-        font-size: 90px;
-        right: 10%
-    }
-
-    .prescription-paper {
-        left: 12%;
-        transform: scale(.78) rotate(-5deg)
-    }
-
-    .medicine-pill {
-        font-size: 75px
-    }
-
-    .medicine-bottle {
-        font-size: 60px
-    }
-
-    .visit-house {
-        font-size: 125px
-    }
-
-    .visit-vet {
-        font-size: 100px
-    }
-
-    .visit-pet {
-        font-size: 75px
-    }
-
-    .offer-percent {
-        transform: scale(.75) rotate(-10deg);
-        left: 8%
-    }
-
-    .offer-gift {
-        font-size: 120px
-    }
-
-    .offer-food-icon {
-        font-size: 70px
-    }
-}
-
-@media (max-width:700px) {
-    .hero-slider {
-        min-height: 650px
-    }
-
-    .hero-slider .hero-slide {
-        min-height: 650px;
-        flex-direction: column
-    }
-
-    .hero-slider .hero-content {
-        flex: 0 0 auto;
-        width: 100%
-    }
-
-    .hero-slider .hero-visual {
-        flex: 1 0 auto;
-        width: 100%;
-        min-height: 280px
-    }
-
-    .slider-arrow {
-        opacity: 1;
-        width: 32px;
-        height: 32px;
-        font-size: 18px
-    }
-
-    .adoption-visual .visual-dog {
-        font-size: 135px;
-        left: 18%
-    }
-
-    .adoption-visual .visual-cat {
-        font-size: 90px;
-        right: 18%
-    }
-
-    .visual-heart {
-        font-size: 45px;
-        right: 35%;
-        top: 25px
-    }
-
-    .prescription-paper {
-        left: 18%;
-        bottom: 18px;
-        transform: scale(.78) rotate(-5deg);
-        transform-origin: bottom left
-    }
-
-    .medicine-pill {
-        right: 10%;
-        font-size: 70px
-    }
-
-    .medicine-bottle {
-        right: 28%;
-        font-size: 55px
-    }
-
-    .visit-house {
-        font-size: 120px;
-        right: 28%
-    }
-
-    .visit-vet {
-        font-size: 95px;
-        left: 15%
-    }
-
-    .visit-pet {
-        font-size: 70px
-    }
-
-    .visit-badge {
-        top: 15px;
-        right: 18%;
-        transform: scale(.8)
-    }
-
-    .offer-percent {
-        top: 20px;
-        left: 12%;
-        transform: scale(.7) rotate(-10deg)
-    }
-
-    .offer-gift {
-        right: 10%;
-        font-size: 120px
-    }
-
-    .offer-food-icon {
-        font-size: 75px;
-        left: 14%
-    }
-
-    .offer-sale-tag {
-        right: 12%;
-        top: 25px;
-        font-size: 13px
-    }
-}
+.hero-slider { display:block; }
+.hero-slide { min-height:370px; display:flex; animation:heroSlideIn .45s ease; }
+@keyframes heroSlideIn { from { opacity:0; transform:translateX(18px); } to { opacity:1; transform:translateX(0); } }
+.hero-slider .hero-content { flex:0 0 50%; }
+.hero-slider .hero-visual { flex:0 0 50%; }
+.slider-arrow { position:absolute; top:50%; z-index:100; width:38px; height:38px; border:none; border-radius:50%; background:rgba(255,255,255,.9); color:#0868dc; font-size:22px; cursor:pointer; box-shadow:0 5px 18px rgba(20,70,130,.14); transform:translateY(-50%); opacity:0; transition:.25s ease; }
+.hero-slider:hover .slider-arrow { opacity:1; }
+.slider-arrow:hover { background:#0868dc; color:#fff; }
+.slider-prev { left:15px; } .slider-next { right:15px; }
+.slider-dots { position:absolute; left:50%; bottom:15px; z-index:100; display:flex; gap:8px; transform:translateX(-50%); }
+.slider-dot { width:8px; height:8px; padding:0; border:none; border-radius:20px; background:rgba(8,104,220,.28); cursor:pointer; transition:.25s ease; }
+.slider-dot.active { width:28px; background:#0868dc; }
+
+.adoption-slide { background:radial-gradient(circle at 72% 45%,#ffe0d0 0%,#ffefe7 35%,transparent 65%),linear-gradient(110deg,#fff9f5,#ffede3); }
+.prescription-slide { background:radial-gradient(circle at 72% 45%,#d8efff 0%,#eaf7ff 35%,transparent 65%),linear-gradient(110deg,#f7fcff,#e9f6ff); }
+.home-visit-slide { background:radial-gradient(circle at 72% 45%,#dff6e8 0%,#effbf3 35%,transparent 65%),linear-gradient(110deg,#f7fffa,#e8f8ee); }
+.offers-slide { background:radial-gradient(circle at 72% 45%,#ffe3a1 0%,#fff2cf 35%,transparent 65%),linear-gradient(110deg,#fffaf0,#fff0c9); }
+
+.slider-visual { position:absolute; inset:0; z-index:5; overflow:hidden; }
+.adoption-visual .visual-dog { position:absolute; left:18%; bottom:20px; font-size:190px; filter:drop-shadow(0 12px 12px rgba(0,0,0,.12)); }
+.adoption-visual .visual-cat { position:absolute; right:20%; bottom:35px; font-size:125px; }
+.visual-heart { position:absolute; top:60px; right:34%; font-size:65px; animation:heartFloat 2s ease-in-out infinite; }
+.visual-caption { position:absolute; bottom:20px; right:8%; padding:9px 14px; border-radius:20px; background:#fff; color:#c65b36; font-size:11px; font-weight:700; box-shadow:0 5px 15px rgba(0,0,0,.08); }
+@keyframes heartFloat { 0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)} }
+
+.prescription-paper { position:absolute; left:25%; bottom:42px; width:220px; height:250px; padding:28px; box-sizing:border-box; border-radius:16px; background:#fff; box-shadow:0 18px 40px rgba(20,70,130,.16); transform:rotate(-5deg); }
+.paper-title { color:#0868dc; font-size:12px; font-weight:800; margin-bottom:24px; }
+.paper-line { width:100%; height:10px; margin-bottom:14px; border-radius:10px; background:#dcecff; }.paper-line.short{width:62%}.paper-line.medium{width:80%}
+.paper-check { position:absolute; right:-22px; bottom:18px; width:54px; height:54px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:#28b779; color:#fff; font-size:30px; font-weight:800; }
+.medicine-pill { position:absolute; right:15%; bottom:70px; font-size:100px; }.medicine-bottle { position:absolute; right:30%; bottom:20px; font-size:80px; }
+
+.visit-house { position:absolute; right:26%; bottom:40px; font-size:180px; }.visit-vet { position:absolute; left:15%; bottom:25px; font-size:150px; }.visit-pet { position:absolute; right:9%; bottom:25px; font-size:105px; }
+.visit-badge { position:absolute; top:65px; right:22%; width:70px; height:70px; display:flex; align-items:center; justify-content:center; text-align:center; border-radius:50%; background:#28b779; color:#fff; font-size:11px; font-weight:800; }
+
+.offer-percent { position:absolute; left:18%; top:50px; width:155px; height:155px; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:50%; background:#ff6b35; color:#fff; font-size:42px; font-weight:800; transform:rotate(-10deg); box-shadow:0 15px 35px rgba(255,107,53,.28); }.offer-percent small{font-size:20px}.offer-gift{position:absolute;right:16%;bottom:25px;font-size:165px}.offer-food-icon{position:absolute;left:18%;bottom:20px;font-size:100px}.offer-sale-tag{position:absolute;right:20%;top:55px;padding:10px 18px;border-radius:8px;background:#0868dc;color:#fff;font-size:18px;font-weight:800;transform:rotate(12deg)}
+
+@media (max-width:850px){.hero-slider .hero-content{flex-basis:52%}.hero-slider .hero-visual{flex-basis:48%}.adoption-visual .visual-dog{font-size:135px;left:10%}.adoption-visual .visual-cat{font-size:90px;right:10%}.prescription-paper{left:12%;transform:scale(.78) rotate(-5deg)}.medicine-pill{font-size:75px}.medicine-bottle{font-size:60px}.visit-house{font-size:125px}.visit-vet{font-size:100px}.visit-pet{font-size:75px}.offer-percent{transform:scale(.75) rotate(-10deg);left:8%}.offer-gift{font-size:120px}.offer-food-icon{font-size:70px}}
+@media (max-width:700px){.hero-slider{min-height:650px}.hero-slider .hero-slide{min-height:650px;flex-direction:column}.hero-slider .hero-content{flex:0 0 auto;width:100%}.hero-slider .hero-visual{flex:1 0 auto;width:100%;min-height:280px}.slider-arrow{opacity:1;width:32px;height:32px;font-size:18px}.adoption-visual .visual-dog{font-size:135px;left:18%}.adoption-visual .visual-cat{font-size:90px;right:18%}.visual-heart{font-size:45px;right:35%;top:25px}.prescription-paper{left:18%;bottom:18px;transform:scale(.78) rotate(-5deg);transform-origin:bottom left}.medicine-pill{right:10%;font-size:70px}.medicine-bottle{right:28%;font-size:55px}.visit-house{font-size:120px;right:28%}.visit-vet{font-size:95px;left:15%}.visit-pet{font-size:70px}.visit-badge{top:15px;right:18%;transform:scale(.8)}.offer-percent{top:20px;left:12%;transform:scale(.7) rotate(-10deg)}.offer-gift{right:10%;font-size:120px}.offer-food-icon{font-size:75px;left:14%}.offer-sale-tag{right:12%;top:25px;font-size:13px}}
 
 /* =========================================================
    CORRECTED HERO SLIDER IMAGES
@@ -2817,7 +2385,6 @@
         opacity: 0;
         transform: scale(0.96);
     }
-
     to {
         opacity: 1;
         transform: scale(1);
@@ -2915,7 +2482,6 @@
         height: 100%;
     }
 }
-
 /* =========================================================
    CATEGORY PRODUCT ROWS
    ========================================================= */
@@ -2931,7 +2497,7 @@
     gap: 12px;
 }
 
-.category-product-grid>* {
+.category-product-grid > * {
     min-width: 0;
 }
 
@@ -3037,10 +2603,12 @@
     border-radius: 14px;
 
     background:
-        linear-gradient(105deg,
+        linear-gradient(
+            105deg,
             #eaf5ff 0%,
             #dceeff 50%,
-            #eef8ff 100%);
+            #eef8ff 100%
+        );
 
     border: 1px solid #d6e9fb;
 
@@ -3200,12 +2768,16 @@
     position: relative;
 
     background:
-        radial-gradient(circle at 80% 50%,
+        radial-gradient(
+            circle at 80% 50%,
             #d6edff 0%,
-            transparent 38%),
-        linear-gradient(110deg,
+            transparent 38%
+        ),
+        linear-gradient(
+            110deg,
             #edf7ff,
-            #dcefff);
+            #dcefff
+        );
 
     border: 1px solid #d8eafa;
 }
@@ -3253,7 +2825,7 @@
     font-weight: 800;
 }
 
-.ai-chat-content>p {
+.ai-chat-content > p {
     max-width: 560px;
 
     margin: 0 0 15px;
@@ -3275,7 +2847,7 @@
     margin-bottom: 16px;
 }
 
-.ai-chat-features>div {
+.ai-chat-features > div {
     display: flex;
 
     align-items: center;
@@ -3573,7 +3145,7 @@
         font-size: 20px;
     }
 
-    .ai-chat-content>p {
+    .ai-chat-content > p {
         font-size: 10px;
     }
 
@@ -3662,8 +3234,8 @@
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 55%),
-        radial-gradient(circle at 10% 80%, rgba(0, 200, 200, 0.12) 0%, transparent 50%);
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 55%),
+        radial-gradient(circle at 10% 80%, rgba(0,200,200,0.12) 0%, transparent 50%);
     z-index: 0;
 }
 
@@ -3677,8 +3249,8 @@
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.10) 0%, transparent 55%),
-        radial-gradient(circle at 85% 80%, rgba(255, 200, 255, 0.12) 0%, transparent 50%);
+        radial-gradient(circle at 15% 20%, rgba(255,255,255,0.10) 0%, transparent 55%),
+        radial-gradient(circle at 85% 80%, rgba(255,200,255,0.12) 0%, transparent 50%);
     z-index: 0;
 }
 
@@ -3705,7 +3277,7 @@
     display: inline-block;
     background: rgba(255, 255, 255, 0.20);
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.30);
+    border: 1px solid rgba(255,255,255,0.30);
     color: #fff;
     font-size: 13px;
     font-weight: 600;
@@ -3766,7 +3338,7 @@
 
 .promo-stat span {
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.70);
+    color: rgba(255,255,255,0.70);
     font-weight: 500;
 }
 
@@ -3784,12 +3356,12 @@
     cursor: pointer;
     width: fit-content;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.20);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.20);
 }
 
 .promo-hero-btn:hover {
     transform: translateY(-3px) scale(1.03);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.28);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.28);
 }
 
 .promo-fashion-btn {
@@ -3819,21 +3391,21 @@
 }
 
 .promo-vet-circle {
-    background: rgba(255, 255, 255, 0.15);
-    border: 2px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 0 60px rgba(255, 255, 255, 0.10);
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.25);
+    box-shadow: 0 0 60px rgba(255,255,255,0.10);
 }
 
 .promo-fashion-circle {
-    background: rgba(255, 255, 255, 0.15);
-    border: 2px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 0 60px rgba(255, 200, 255, 0.15);
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.25);
+    box-shadow: 0 0 60px rgba(255,200,255,0.15);
 }
 
 .promo-visual-emoji {
     font-size: 80px;
     line-height: 1;
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.25));
 }
 
 .promo-float-badge {
@@ -3844,7 +3416,7 @@
     font-weight: 700;
     padding: 8px 14px;
     border-radius: 50px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
     white-space: nowrap;
     animation: promoBadgeFloat 3s ease-in-out infinite;
 }
@@ -3870,27 +3442,13 @@
 }
 
 @keyframes promoBadgeFloat {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-6px);
-    }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
 }
 
 @keyframes promoBadgeFloatMiddle {
-
-    0%,
-    100% {
-        transform: translateY(-50%);
-    }
-
-    50% {
-        transform: translateY(calc(-50% - 6px));
-    }
+    0%, 100% { transform: translateY(-50%); }
+    50% { transform: translateY(calc(-50% - 6px)); }
 }
 
 @media (max-width: 900px) {
@@ -3959,4 +3517,292 @@
         font-size: 11px;
         padding: 6px 10px;
     }
+}
+
+/* =========================================================
+   INDIVIDUAL PET THEMES & MODE SWITCHER BAR
+   ========================================================= */
+
+.pet-theme-switcher-bar {
+    width: calc(100% - 52px);
+    margin: 0 auto 16px;
+    background: #ffffff;
+    border: 1px solid rgba(220, 228, 240, 0.9);
+    border-radius: 18px;
+    padding: 10px 18px;
+    box-shadow: 0 4px 18px rgba(16, 36, 92, 0.05);
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    transition: all 0.28s ease;
+}
+
+.pet-theme-switcher-inner {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.pet-theme-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #10245c;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pet-theme-pills {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pet-pill {
+    padding: 7px 15px;
+    border-radius: 999px;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pet-pill:hover {
+    background: #f1f5f9;
+    color: #1e293b;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.pet-pill.active {
+    background: #10245c;
+    color: #ffffff;
+    border-color: #10245c;
+    box-shadow: 0 2px 8px rgba(16, 36, 92, 0.2);
+}
+
+/* =========================================================
+   1. DOG THEME (Warm Golden Amber & Honey)
+   ========================================================= */
+
+.home-body.theme-dog {
+    --theme-primary: #D97706;
+    --theme-dark: #92400E;
+    --theme-light: #FEF3C7;
+    --theme-glow: rgba(217, 119, 6, 0.25);
+}
+
+.home-body.theme-dog .pet-theme-switcher-bar {
+    border-color: #FCD34D;
+    background: linear-gradient(90deg, #FFFBEB 0%, #ffffff 100%);
+    box-shadow: 0 4px 20px rgba(217, 119, 6, 0.12);
+}
+
+.home-body.theme-dog .pet-theme-label {
+    color: #92400E;
+}
+
+.home-body.theme-dog .pet-pill.pet-pill-dog.active {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    border-color: #B45309;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
+}
+
+.home-body.theme-dog .hero-section {
+    background:
+        radial-gradient(circle at 72% 45%, #FEF3C7 0%, #FDE68A 35%, transparent 65%),
+        linear-gradient(110deg, #FFFBEB 0%, #FEF3C7 100%);
+    border: 1.5px solid #FDE68A;
+}
+
+.home-body.theme-dog .hero-label {
+    background: #FFFBEB;
+    color: #92400E;
+    border: 1px solid #FCD34D;
+}
+
+.home-body.theme-dog .hero-content h1 span {
+    color: #D97706;
+}
+
+.home-body.theme-dog .hero-btn-primary {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    box-shadow: 0 6px 18px rgba(217, 119, 6, 0.35);
+}
+
+.home-body.theme-dog .product-category-section .section-heading h2 {
+    color: #78350F;
+}
+
+.home-body.theme-dog .section-heading a {
+    color: #D97706;
+}
+
+.home-body.theme-dog .home-advertisement {
+    background: linear-gradient(120deg, #FFFBEB 0%, #FEF3C7 100%);
+    border: 1px solid #FDE68A;
+}
+
+.home-body.theme-dog .advertisement-label {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.home-body.theme-dog .advertisement-button {
+    background: #92400E;
+}
+
+/* =========================================================
+   2. CAT THEME (Feline Royal Purple & Violet)
+   ========================================================= */
+
+.home-body.theme-cat {
+    --theme-primary: #7C3AED;
+    --theme-dark: #5B21B6;
+    --theme-light: #F3E8FF;
+    --theme-glow: rgba(124, 58, 237, 0.25);
+}
+
+.home-body.theme-cat .pet-theme-switcher-bar {
+    border-color: #DDD6FE;
+    background: linear-gradient(90deg, #FAF5FF 0%, #ffffff 100%);
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.12);
+}
+
+.home-body.theme-cat .pet-theme-label {
+    color: #5B21B6;
+}
+
+.home-body.theme-cat .pet-pill.pet-pill-cat.active {
+    background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+    border-color: #5B21B6;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+}
+
+.home-body.theme-cat .hero-section {
+    background:
+        radial-gradient(circle at 72% 45%, #EDE9FE 0%, #DDD6FE 35%, transparent 65%),
+        linear-gradient(110deg, #FAF5FF 0%, #F3E8FF 100%);
+    border: 1.5px solid #DDD6FE;
+}
+
+.home-body.theme-cat .hero-label {
+    background: #FAF5FF;
+    color: #5B21B6;
+    border: 1px solid #C4B5FD;
+}
+
+.home-body.theme-cat .hero-content h1 span {
+    color: #7C3AED;
+}
+
+.home-body.theme-cat .hero-btn-primary {
+    background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.35);
+}
+
+.home-body.theme-cat .product-category-section .section-heading h2 {
+    color: #4C1D95;
+}
+
+.home-body.theme-cat .section-heading a {
+    color: #7C3AED;
+}
+
+.home-body.theme-cat .home-advertisement {
+    background: linear-gradient(120deg, #FAF5FF 0%, #F3E8FF 100%);
+    border: 1px solid #DDD6FE;
+}
+
+.home-body.theme-cat .advertisement-label {
+    background: #F3E8FF;
+    color: #5B21B6;
+}
+
+.home-body.theme-cat .advertisement-button {
+    background: #5B21B6;
+}
+
+/* =========================================================
+   3. SETTING / OTHERS THEME (Emerald Nature & Farm)
+   ========================================================= */
+
+.home-body.theme-others {
+    --theme-primary: #059669;
+    --theme-dark: #065F46;
+    --theme-light: #D1FAE5;
+    --theme-glow: rgba(5, 150, 105, 0.25);
+}
+
+.home-body.theme-others .pet-theme-switcher-bar {
+    border-color: #A7F3D0;
+    background: linear-gradient(90deg, #ECFDF5 0%, #ffffff 100%);
+    box-shadow: 0 4px 20px rgba(5, 150, 105, 0.12);
+}
+
+.home-body.theme-others .pet-theme-label {
+    color: #065F46;
+}
+
+.home-body.theme-others .pet-pill.pet-pill-others.active {
+    background: linear-gradient(135deg, #10B981 0%, #047857 100%);
+    border-color: #064E3B;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
+}
+
+.home-body.theme-others .hero-section {
+    background:
+        radial-gradient(circle at 72% 45%, #D1FAE5 0%, #A7F3D0 35%, transparent 65%),
+        linear-gradient(110deg, #ECFDF5 0%, #D1FAE5 100%);
+    border: 1.5px solid #A7F3D0;
+}
+
+.home-body.theme-others .hero-label {
+    background: #ECFDF5;
+    color: #065F46;
+    border: 1px solid #6EE7B7;
+}
+
+.home-body.theme-others .hero-content h1 span {
+    color: #059669;
+}
+
+.home-body.theme-others .hero-btn-primary {
+    background: linear-gradient(135deg, #10B981 0%, #047857 100%);
+    box-shadow: 0 6px 18px rgba(5, 150, 105, 0.35);
+}
+
+.home-body.theme-others .product-category-section .section-heading h2 {
+    color: #064E3B;
+}
+
+.home-body.theme-others .section-heading a {
+    color: #059669;
+}
+
+.home-body.theme-others .home-advertisement {
+    background: linear-gradient(120deg, #ECFDF5 0%, #D1FAE5 100%);
+    border: 1px solid #A7F3D0;
+}
+
+.home-body.theme-others .advertisement-label {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.home-body.theme-others .advertisement-button {
+    background: #065F46;
 }

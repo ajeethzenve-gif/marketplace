@@ -117,6 +117,7 @@ CORS_ALLOW_HEADERS = [
     "user-agent",
     "x-csrftoken",
     "x-requested-with",
+    "x-chatbot-session-id",
 ]
 
 CSRF_TRUSTED_ORIGINS = [

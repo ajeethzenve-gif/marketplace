@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 import {
     FaBoxOpen,
@@ -9,16 +9,179 @@ import {
     FaTimes,
     FaSortAmountDown,
     FaCheck,
+    FaChevronRight,
 } from "react-icons/fa";
 
 import api from "../api/api";
 import ProductCard from "../components/ProductCard";
 import Pagination from "../components/Pagination.jsx";
 
+import dogImage from "../assets/images/dog-transparent.png";
+import catImage from "../assets/images/cat-transparent.png";
+import productImage from "../assets/images/product-transparent.png";
+import otherFeedsBanner from "../assets/images/other_feeds_banner.jpg";
+
 import "../styles/ProductList.css";
 
 
-function ProductList() {
+function ProductList({ forcedPetType }) {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [searchParams] = useSearchParams();
+
+    /* =====================================================
+       DETERMINE PET EXPERIENCE TYPE
+       From prop, URL pathname (/products/dogs, /products/cats, /products/other-pets),
+       or query params (?pet_type=Dog)
+    ===================================================== */
+
+    const pathname = location.pathname.toLowerCase();
+
+    let initialPetType = forcedPetType || "";
+    if (!initialPetType) {
+        if (pathname === "/products/dogs" || pathname === "/products/dog") {
+            initialPetType = "Dog";
+        } else if (pathname === "/products/cats" || pathname === "/products/cat") {
+            initialPetType = "Cat";
+        } else if (
+            pathname === "/products/other-pets" ||
+            pathname === "/products/others" ||
+            pathname === "/products/other"
+        ) {
+            initialPetType = "other-pets";
+        } else {
+            initialPetType =
+                searchParams.get("pet_type") ||
+                searchParams.get("pet") ||
+                "";
+        }
+    }
+
+    // Sub-pet filter for Other Pets page (e.g. "", "Bird", "Cattle")
+    const [specificPetFilter, setSpecificPetFilter] = useState("");
+
+    /* =====================================================
+       PET EXPERIENCE CONFIGURATION
+    ===================================================== */
+
+    const petConfig = useMemo(() => {
+        const pt = (initialPetType || "").toLowerCase();
+
+        if (pt === "dog" || pt === "dogs") {
+            return {
+                key: "dog",
+                title: "Everything for Your Dog",
+                subtitle:
+                    "Discover high-protein food, healthy treats, grooming essentials, veterinary medicines, joint care & fun toys tailored for dogs.",
+                badge: "🐶 DEDICATED DOG SHOP",
+                breadcrumb: "Dogs",
+                breadcrumbPath: "/products/dogs",
+                bannerImage: dogImage,
+                bannerBg:
+                    "linear-gradient(135deg, #FFFDF5 0%, #FFF8E6 50%, #FDF1D0 100%)",
+                badgeBg: "linear-gradient(135deg, #D4AF37, #9C7415)",
+                borderColor: "#E6CA65",
+                accentColor: "#9C7415",
+                categories: [
+                    "Food",
+                    "Medicine",
+                    "Supplements",
+                    "Grooming",
+                    "Toys",
+                    "Leashes",
+                    "Accessories",
+                    "DentalCare",
+                ],
+                subPets: null,
+            };
+        }
+
+        if (pt === "cat" || pt === "cats") {
+            return {
+                key: "cat",
+                title: "Everything for Your Cat",
+                subtitle:
+                    "Nutritious ocean fish & poultry meals, soothing drops, hairball remedies, interactive catnip toys & grooming for happy felines.",
+                badge: "🐱 DEDICATED CAT SHOP",
+                breadcrumb: "Cats",
+                breadcrumbPath: "/products/cats",
+                bannerImage: catImage,
+                bannerBg:
+                    "linear-gradient(135deg, #FBF8FF 0%, #F5EEFF 50%, #EADCFF 100%)",
+                badgeBg: "linear-gradient(135deg, #8B5CF6, #6D28D9)",
+                borderColor: "#D8B4FE",
+                accentColor: "#7C3AED",
+                categories: [
+                    "Food",
+                    "Medicine",
+                    "Supplements",
+                    "Grooming",
+                    "Toys",
+                    "Accessories",
+                ],
+                subPets: null,
+            };
+        }
+
+        if (
+            pt === "other-pets" ||
+            pt === "other" ||
+            pt === "others"
+        ) {
+            return {
+                key: "other-pets",
+                title: "Everything for Your Other Pets",
+                subtitle:
+                    "Specialized care for Birds, Rabbits, Cattle & Farm Animals. Fortified feeds, mineral mixtures, feeders & clinical vet equipment.",
+                badge: "🕊️ BIRDS, FARM & SMALL PETS",
+                breadcrumb: "Other Pets",
+                breadcrumbPath: "/products/other-pets",
+                bannerImage: otherFeedsBanner,
+                bannerBg:
+                    "linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 50%, #BBF7D0 100%)",
+                badgeBg: "linear-gradient(135deg, #10B981, #047857)",
+                borderColor: "#86EFAC",
+                accentColor: "#15803D",
+                categories: [
+                    "Food",
+                    "Supplements",
+                    "FarmSupplies",
+                    "VetEquipment",
+                    "Accessories",
+                ],
+                subPets: [
+                    { label: "All Other Pets", value: "", icon: "🐾" },
+                    { label: "Birds & Poultry", value: "Bird", icon: "🦜" },
+                    { label: "Cattle & Farm", value: "Cattle", icon: "🐄" },
+                ],
+            };
+        }
+
+        return {
+            key: "all",
+            title: "Explore All Products",
+            subtitle:
+                "Browse premium pet foods, medicines, vitamins, grooming essentials, toys and accessories for every beloved pet.",
+            badge: "🐾 ZENVE PET MARKETPLACE",
+            breadcrumb: "All Products",
+            breadcrumbPath: "/products",
+            bannerImage: productImage,
+            bannerBg:
+                "linear-gradient(135deg, #F4F9FF 0%, #E8F3FF 50%, #D7EBFF 100%)",
+            badgeBg: "linear-gradient(135deg, #3B82F6, #1D4ED8)",
+            borderColor: "#93C5FD",
+            accentColor: "#1D4ED8",
+            categories: [
+                "Medicine",
+                "Supplements",
+                "Food",
+                "Accessories",
+                "Grooming",
+                "Toys",
+            ],
+            subPets: null,
+        };
+    }, [initialPetType]);
 
     /* =====================================================
        PRODUCT STATE
@@ -28,7 +191,6 @@ function ProductList() {
     const [productCount, setProductCount] = useState(0);
     const [loading, setLoading] = useState(true);
 
-
     /* =====================================================
        BRAND STATE
     ===================================================== */
@@ -36,7 +198,6 @@ function ProductList() {
     const [brands, setBrands] = useState([]);
     const [brandsLoading, setBrandsLoading] = useState(false);
     const [showAllBrands, setShowAllBrands] = useState(false);
-
 
     /* =====================================================
        FILTER STATE
@@ -50,7 +211,6 @@ function ProductList() {
     const [maxPrice, setMaxPrice] = useState("");
     const [sort, setSort] = useState("");
 
-
     /* =====================================================
        PAGINATION STATE
     ===================================================== */
@@ -58,12 +218,9 @@ function ProductList() {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
-
     /* =====================================================
        URL SEARCH PARAMS
     ===================================================== */
-
-    const [searchParams] = useSearchParams();
 
     const searchFromNavbar =
         searchParams.get("search") || "";
@@ -71,21 +228,11 @@ function ProductList() {
     const productTypesFromNavbar =
         searchParams.getAll("product_type");
 
-    const petTypeFromNavbar =
-        searchParams.get("pet_type") || searchParams.get("pet") || "";
-
-
     /* =====================================================
-       CATEGORIES
+       CATEGORIES FOR SIDEBAR
     ===================================================== */
 
-    const categories = [
-        "Medicine",
-        "Supplements",
-        "Food",
-        "Accessories",
-        "Grooming",
-    ];
+    const categories = petConfig.categories;
 
 
     /* =====================================================
@@ -227,14 +374,13 @@ function ProductList() {
             }
 
             /* PET TYPE */
+            const effectivePetType = specificPetFilter || initialPetType;
 
-            if (petTypeFromNavbar) {
-
+            if (effectivePetType) {
                 params.append(
                     "pet_type",
-                    petTypeFromNavbar
+                    effectivePetType
                 );
-
             }
 
 
@@ -341,6 +487,24 @@ function ProductList() {
 
 
     /* =====================================================
+       RESET FILTERS ON PET TYPE OR ROUTE CHANGE
+    ===================================================== */
+
+    useEffect(() => {
+
+        setSelectedProductType("");
+        setSpecificPetFilter("");
+        setSelectedBrand("");
+        setSearch("");
+        setMinPrice("");
+        setMaxPrice("");
+        setSort("");
+        setPage(1);
+
+    }, [initialPetType, pathname]);
+
+
+    /* =====================================================
        NAVBAR SEARCH / CATEGORY CHANGE
     ===================================================== */
 
@@ -377,7 +541,8 @@ function ProductList() {
         maxPrice,
         sort,
         productTypesFromNavbar.join("|"),
-        petTypeFromNavbar,
+        initialPetType,
+        specificPetFilter,
     ]);
 
 
@@ -544,11 +709,9 @@ function ProductList() {
 
         setSort("");
 
-        setPage(1);
+        setSpecificPetFilter("");
 
-        if (petTypeFromNavbar) {
-            navigate("/products");
-        }
+        setPage(1);
 
     };
 
@@ -565,7 +728,7 @@ function ProductList() {
         selectedBrand ||
         selectedProductType ||
         productTypesFromNavbar.length > 0 ||
-        Boolean(petTypeFromNavbar);
+        Boolean(specificPetFilter);
 
 
     /* =====================================================
@@ -642,9 +805,92 @@ function ProductList() {
 
         <div className="products-page">
 
-
             <div className="products-main-container">
 
+                {/* =============================================
+                    BREADCRUMB NAVIGATION
+                ============================================= */}
+                <nav className="products-breadcrumb-nav" aria-label="Breadcrumb">
+                    <ol className="products-breadcrumb-list">
+                        <li>
+                            <Link to="/home">Home</Link>
+                        </li>
+                        <li className="breadcrumb-separator">
+                            <FaChevronRight />
+                        </li>
+                        <li>
+                            <Link to="/products">Products</Link>
+                        </li>
+                        {petConfig.key !== "all" && (
+                            <>
+                                <li className="breadcrumb-separator">
+                                    <FaChevronRight />
+                                </li>
+                                <li className="breadcrumb-current" aria-current="page">
+                                    {petConfig.breadcrumb}
+                                </li>
+                            </>
+                        )}
+                        {selectedProductType && (
+                            <>
+                                <li className="breadcrumb-separator">
+                                    <FaChevronRight />
+                                </li>
+                                <li className="breadcrumb-current">
+                                    {selectedProductType}
+                                </li>
+                            </>
+                        )}
+                    </ol>
+                </nav>
+
+                {/* =============================================
+                    PET CATEGORY HERO BANNER
+                ============================================= */}
+                <div
+                    className={`pet-category-hero-banner pet-banner-${petConfig.key}`}
+                    style={{
+                        background: petConfig.bannerBg,
+                        borderColor: petConfig.borderColor,
+                    }}
+                >
+                    <div className="pet-hero-text">
+                        <span
+                            className="pet-hero-badge"
+                            style={{
+                                background: petConfig.badgeBg,
+                            }}
+                        >
+                            {petConfig.badge}
+                        </span>
+
+                        <h1 className="pet-hero-title">{petConfig.title}</h1>
+
+                        <p className="pet-hero-subtitle">{petConfig.subtitle}</p>
+
+                        <div className="pet-hero-meta">
+                            <span className="pet-hero-pill">
+                                <strong>{productCount}</strong> Products Found
+                            </span>
+                            <span className="pet-hero-pill">
+                                ✓ 100% Quality Assured
+                            </span>
+                            <span className="pet-hero-pill">
+                                🚚 Doorstep Delivery
+                            </span>
+                        </div>
+                    </div>
+
+                    {petConfig.bannerImage && (
+                        <div className="pet-hero-image-wrap">
+                            <img
+                                src={petConfig.bannerImage}
+                                alt={petConfig.title}
+                                className="pet-hero-image"
+                            />
+                        </div>
+                    )}
+                </div>
 
                 <div className="products-layout">
 
@@ -1108,45 +1354,61 @@ function ProductList() {
                     <main className="products-content">
 
 
-                        <div className="products-result-header">
+                        {/* =========================================
+                            SUB-PET TYPE TABS (REQUIREMENT 4)
+                        ========================================= */}
+                        {petConfig.subPets && (
+                            <div className="sub-pet-filter-bar">
+                                <span className="sub-pet-filter-label">
+                                    Pet Category:
+                                </span>
 
+                                <div className="sub-pet-pills">
+                                    {petConfig.subPets.map((sp) => (
+                                        <button
+                                            key={sp.value}
+                                            type="button"
+                                            className={`sub-pet-pill ${
+                                                specificPetFilter === sp.value
+                                                    ? "active"
+                                                    : ""
+                                            }`}
+                                            onClick={() => {
+                                                setSpecificPetFilter(sp.value);
+                                                setPage(1);
+                                            }}
+                                        >
+                                            <span className="sub-pet-pill-icon">
+                                                {sp.icon}
+                                            </span>
+                                            <span>{sp.label}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="products-result-header">
 
                             <div>
 
                                 <h2>
-                                    {petTypeFromNavbar
-                                        ? `Explore ${
-                                              petTypeFromNavbar.toLowerCase() === "other" ||
-                                              petTypeFromNavbar.toLowerCase() === "others"
-                                                  ? "Other Pets"
-                                                  : petTypeFromNavbar
-                                          } Products`
-                                        : "Explore Products"}
+                                    {petConfig.title}
                                 </h2>
 
                                 <p>
-
-                                    {productCount} products
-                                    found {petTypeFromNavbar
-                                        ? `for ${
-                                              petTypeFromNavbar.toLowerCase() === "other" ||
-                                              petTypeFromNavbar.toLowerCase() === "others"
-                                                  ? "other pets"
-                                                  : petTypeFromNavbar.toLowerCase() + "s"
-                                          }`
-                                        : "for your pet"}
-
+                                    {productCount} products found {petConfig.key !== "all" ? `for ${petConfig.breadcrumb.toLowerCase()}` : "in store"}
+                                    {selectedProductType ? ` • ${selectedProductType}` : ""}
+                                    {specificPetFilter ? ` • ${specificPetFilter}` : ""}
                                 </p>
 
                             </div>
-
 
                             <div className="page-indicator">
 
                                 Page {page} of {totalPages}
 
                             </div>
-
 
                         </div>
 
