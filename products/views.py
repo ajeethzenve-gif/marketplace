@@ -1039,104 +1039,31 @@ class RecommendationFeedbackAPIView(APIView):
 # =========================================================
 
 _TRAINED_QA_CACHE = None
-_TRAINED_QA_MTIME = 0
-_TRAINED_QA_IDF = {}
-_TRAINED_QA_AVG_LEN = 1.0
-
 _STOPWORDS = {
-    "a", "an", "the", "in", "on", "at", "to", "for", "of", "and", "or", "from", "with",
-    "is", "are", "am", "was", "were", "be", "been", "being",
-    "do", "does", "did", "done",
-    "have", "has", "had", "having",
-    "can", "could", "would", "should", "will", "shall", "may", "might",
-    "you", "i", "my", "your", "we", "our", "us", "me", "they", "them",
-    "how", "what", "which", "where", "who", "whom", "why", "when",
-    "there", "here", "please", "tell", "show", "give", "know", "want", "need", "like", "any", "some"
+    "a", "an", "the", "in", "on", "at", "to", "for", "of", "and", "or",
+    "is", "are", "do", "does", "did", "can", "could", "would", "should",
+    "you", "i", "my", "your", "we", "me", "how", "what", "which", "where", "who"
 }
 
 _PET_TAGS = {
     "dog": "dog", "dogs": "dog", "puppy": "dog", "puppies": "dog", "canine": "dog",
     "cat": "cat", "cats": "cat", "kitten": "cat", "kittens": "cat", "feline": "cat",
-    "bird": "bird", "birds": "bird", "parrot": "bird",
+    "bird": "bird", "birds": "bird",
     "rabbit": "rabbit", "rabbits": "rabbit", "bunny": "rabbit", "bunnies": "rabbit",
-    "fish": "fish", "fishes": "fish", "aquarium": "fish",
+    "fish": "fish", "fishes": "fish",
     "hamster": "hamster", "hamsters": "hamster"
 }
 
-_SYNONYMS = {
-    "buy": ["purchase", "order", "shop", "get"],
-    "purchase": ["buy", "order"],
-    "product": ["item", "goods"],
-    "item": ["product", "goods"],
-    "track": ["status", "tracking", "locate", "shipped", "where", "progress", "check"],
-    "tracking": ["track", "status", "locate", "where"],
-    "where": ["track", "status", "locate", "check"],
-    "status": ["track", "where", "check"],
-    "pay": ["payment", "method", "methods", "accept", "upi", "card", "cod"],
-    "payment": ["pay", "method", "methods", "options"],
-    "refund": ["return", "money", "cancel", "reimbursement"],
-    "return": ["refund", "exchange", "cancel", "returning"],
-    "cancel": ["cancellation", "cancelation", "stop"],
-    "support": ["contact", "help", "care", "helpline", "reach", "phone", "number"],
-    "contact": ["support", "help", "reach", "talk", "call", "email"],
-    "cost": ["price", "fee", "charge", "much", "shipping", "delivery"],
-    "shipping": ["delivery", "cost", "fee", "courier", "charge", "deliver"],
-    "ship": ["shipping", "delivery", "deliver", "dispatch"],
-    "deliver": ["delivery", "shipping", "pincode", "pin code"],
-    "delivery": ["deliver", "shipping", "cost", "fee"],
-    "delayed": ["delay", "late", "slow"],
-    "delay": ["delayed", "late", "slow"],
-    "reorder": ["repeat", "buy again", "order again"],
-    "sick": ["unwell", "ill", "emergency", "medicine"],
-    "unwell": ["sick", "ill", "emergency"],
-}
 
-
-def _stem(word):
-    w = word.lower()
-    if len(w) <= 3:
-        return w
-    if w.endswith("ies") and len(w) > 4:
-        return w[:-3] + "y"
-    if w.endswith("es") and len(w) > 3 and not w.endswith(("ses", "zes", "ches", "shes")):
-        return w[:-1]
-    if w.endswith("s") and len(w) > 3 and not w.endswith("ss"):
-        return w[:-1]
-    if w.endswith("ing") and len(w) > 4:
-        return w[:-3]
-    if w.endswith("ed") and len(w) > 4:
-        return w[:-2]
-    return w
-
-
-_SYNONYM_STEMS = {}
-for _k, _vals in _SYNONYMS.items():
-    _targets = {_stem(_v) for _v in _vals}
-    _targets.add(_stem(_k))
-    _SYNONYM_STEMS[_k] = _targets
-    _SYNONYM_STEMS[_stem(_k)] = _targets
-
-
-def _normalize_text(text):
-    import re
-    # Convert "pincode" to "pin code" to align with CSV
-    t = re.sub(r"\bpincode\b", "pin code", text.lower())
-    return re.sub(r"[^a-z0-9\s]", " ", t).strip()
-
-
-def _tokenize_text(text):
-    clean = _normalize_text(text)
-    raw_tokens = [w for w in clean.split() if w]
-    stems = [_stem(t) for t in raw_tokens if t not in _STOPWORDS and len(t) > 1]
-    return raw_tokens, stems
+_TRAINED_QA_CACHE = None
+_TRAINED_QA_MTIME = 0
 
 
 def _load_trained_qa():
-    global _TRAINED_QA_CACHE, _TRAINED_QA_MTIME, _TRAINED_QA_IDF, _TRAINED_QA_AVG_LEN
+    global _TRAINED_QA_CACHE, _TRAINED_QA_MTIME
     import csv
     import os
-    import math
-    from collections import Counter
+    import re
 
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     candidate_paths = [
@@ -1171,138 +1098,85 @@ def _load_trained_qa():
                 ans_raw = (row.get("answer") or "").strip()
                 if not q_raw or not ans_raw:
                     continue
-                raw_t, stems = _tokenize_text(q_raw)
-                pet = set(_PET_TAGS[w] for w in raw_t if w in _PET_TAGS)
+                norm_q = re.sub(r"[^\w\s]", "", q_raw.lower()).strip()
+                words = set(norm_q.split())
+                kw = set(w for w in words if w not in _STOPWORDS and len(w) > 1)
                 records.append({
                     "id": row.get("id"),
                     "question": q_raw,
                     "answer": ans_raw,
-                    "norm_q": " ".join(raw_t),
-                    "raw_tokens": set(raw_t),
-                    "stems": stems,
-                    "stem_set": set(stems),
-                    "pets": pet,
+                    "norm_q": norm_q,
+                    "tokens": words,
+                    "keywords": kw,
                 })
     except Exception:
         pass
 
-    doc_count = len(records)
-    df = Counter()
-    for item in records:
-        for t in item["stem_set"]:
-            df[t] += 1
-
-    idf_map = {}
-    for term, freq in df.items():
-        idf_map[term] = math.log((doc_count - freq + 0.5) / (freq + 0.5) + 1.0)
-
     _TRAINED_QA_CACHE = records
     _TRAINED_QA_MTIME = current_mtime
-    _TRAINED_QA_IDF = idf_map
-    _TRAINED_QA_AVG_LEN = sum(len(d["stems"]) for d in records) / max(1, doc_count)
     return _TRAINED_QA_CACHE
 
 
-def match_trained_qa(message, threshold=0.35):
+def match_trained_qa(message, threshold=0.50):
     import difflib
-    from collections import Counter
+    import re
 
     dataset = _load_trained_qa()
     if not dataset or not message:
         return None, 0.0
 
-    q_norm = _normalize_text(message)
-    q_raw, q_stems = _tokenize_text(message)
-    if not q_stems and not q_norm:
+    user_norm = re.sub(r"[^\w\s]", "", message.lower()).strip()
+    if not user_norm:
         return None, 0.0
 
-    q_stem_set = set(q_stems)
-    q_pets = set(_PET_TAGS[w] for w in q_raw if w in _PET_TAGS)
-
-    # 1. Exact normalized match check
-    for item in dataset:
-        if q_norm == item["norm_q"]:
-            return item, 1.0
-
-    # Expand query stems with synonyms
-    expanded_stems = set(q_stems)
-    for token in set(q_raw).union(q_stems):
-        if token in _SYNONYM_STEMS:
-            expanded_stems.update(_SYNONYM_STEMS[token])
+    user_all_tokens = set(user_norm.split())
+    user_kw = set(w for w in user_all_tokens if w not in _STOPWORDS and len(w) > 1)
+    user_pets = set(_PET_TAGS[w] for w in user_all_tokens if w in _PET_TAGS)
 
     best_match = None
     best_score = 0.0
 
-    k1 = 1.5
-    b = 0.75
-    avg_len = _TRAINED_QA_AVG_LEN or 1.0
-    idf_map = _TRAINED_QA_IDF
-
     for item in dataset:
-        # Pet conflict check
-        if q_pets and item["pets"] and not (q_pets & item["pets"]):
+        target_norm = item["norm_q"]
+        target_all_tokens = item["tokens"]
+        target_kw = item["keywords"]
+        target_pets = set(_PET_TAGS[w] for w in target_all_tokens if w in _PET_TAGS)
+
+        # Pet conflict check: if user query specifically targets dog and candidate is cat-specific (or vice versa), skip
+        if user_pets and target_pets and not (user_pets & target_pets):
             continue
 
-        target_stems = item["stems"]
-        target_stem_set = item["stem_set"]
-        if not target_stems:
-            continue
+        # 1. Exact normalized match
+        if user_norm == target_norm:
+            return item, 1.0
 
-        doc_len = len(target_stems)
-        term_freqs = Counter(target_stems)
-
-        # BM25 component with synonym expansion
-        bm25_score = 0.0
-        for t in expanded_stems:
-            if t in term_freqs:
-                tf = term_freqs[t]
-                term_idf = idf_map.get(t, 1.0)
-                weight = 1.3 if t in q_stem_set else 0.8
-                term_score = term_idf * (tf * (k1 + 1)) / (tf + k1 * (1 - b + b * (doc_len / avg_len)))
-                bm25_score += weight * term_score
-
-        max_possible_bm25 = sum(idf_map.get(t, 1.0) * (k1 + 1) for t in q_stem_set) or 1.0
-        norm_bm25 = min(1.0, bm25_score / (max_possible_bm25 * 1.2))
-
-        # Precision & Recall & Jaccard (using expanded stems for flexible recall)
-        if q_stem_set:
-            overlap = q_stem_set.intersection(target_stem_set)
-            expanded_overlap = expanded_stems.intersection(target_stem_set)
-            recall = len(expanded_overlap) / len(q_stem_set)
-            precision = len(overlap) / len(target_stem_set)
-            jaccard = len(overlap) / len(q_stem_set.union(target_stem_set))
+        # 2. Substring containment
+        if (len(user_norm) >= 6 and user_norm in target_norm) or (len(target_norm) >= 6 and target_norm in user_norm):
+            sub_score = 0.88
         else:
-            recall = precision = jaccard = 0.0
+            sub_score = 0.0
 
-        # SequenceMatcher ratio
-        seq_ratio = difflib.SequenceMatcher(None, q_norm, item["norm_q"]).ratio()
+        # 3. SequenceMatcher similarity
+        seq_ratio = difflib.SequenceMatcher(None, user_norm, target_norm).ratio()
 
-        # Length ratio factor (favors concise direct matches over long questions)
-        len_ratio = len(q_stems) / max(1, len(target_stems))
-        len_factor = min(1.0, len_ratio)
+        # 4. Token Jaccard similarity
+        if user_all_tokens and target_all_tokens:
+            jaccard = len(user_all_tokens & target_all_tokens) / len(user_all_tokens | target_all_tokens)
+        else:
+            jaccard = 0.0
 
-        # Substring & Prefix bonus
-        sub_bonus = 0.0
-        if q_norm and item["norm_q"]:
-            if item["norm_q"].startswith(q_norm):
-                sub_bonus = 0.35 * (len(q_norm) / len(item["norm_q"]))
-            elif q_norm in item["norm_q"]:
-                sub_bonus = 0.20 * (len(q_norm) / len(item["norm_q"]))
-            elif item["norm_q"] in q_norm:
-                sub_bonus = 0.20 * (len(item["norm_q"]) / len(q_norm))
+        # 5. Keyword Coverage and Jaccard
+        if user_kw and target_kw:
+            kw_recall = len(user_kw & target_kw) / len(user_kw)
+            kw_jaccard = len(user_kw & target_kw) / len(user_kw | target_kw)
+            kw_score = (0.60 * kw_recall) + (0.40 * kw_jaccard)
+        else:
+            kw_score = 0.0
 
-        composite_score = (
-            (0.35 * norm_bm25) +
-            (0.25 * recall) +
-            (0.15 * precision) +
-            (0.10 * jaccard) +
-            (0.05 * seq_ratio) +
-            (0.10 * len_factor) +
-            sub_bonus
+        composite_score = max(
+            sub_score,
+            (0.35 * seq_ratio) + (0.25 * jaccard) + (0.40 * kw_score)
         )
-
-        if recall >= 1.0 and len(q_stem_set) >= 2:
-            composite_score = max(composite_score, 0.85 * len_factor)
 
         if composite_score > best_score:
             best_score = composite_score
