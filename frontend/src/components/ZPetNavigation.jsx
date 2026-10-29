@@ -540,7 +540,17 @@ export default function ZPetNavigation({
     }).catch(() => {});
   }, []);
 
-  // Explicit Chatbot Close Handler - closes and resets conversation so reopening starts fresh
+  // Minimize Chatbot Handler - closes the chat panel but preserves chat history
+  const handleMinimizeChat = useCallback((e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setIsChatOpen(false);
+    setIsMinimized(false);
+  }, []);
+
+  // Explicit Chatbot Close Handler - closes and erases conversation
   const handleCloseChat = useCallback((e) => {
     if (e) {
       e.preventDefault();
@@ -556,7 +566,7 @@ export default function ZPetNavigation({
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
         if (isChatOpen) {
-          handleCloseChat();
+          handleMinimizeChat();
         } else if (isExpanded) {
           setIsExpanded(false);
         }
@@ -567,7 +577,7 @@ export default function ZPetNavigation({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isChatOpen, isExpanded, handleCloseChat]);
+  }, [isChatOpen, isExpanded, handleMinimizeChat]);
 
   // Handle outside click to collapse radial menu (does not touch chat panel)
   useEffect(() => {
@@ -729,9 +739,6 @@ export default function ZPetNavigation({
 
     // AI Chatbot: open floating chat panel explicitly without navigation
     if (key === "Chatbot" || key === "AI") {
-      if (!isChatOpen) {
-        handleStartNewChat();
-      }
       setIsChatOpen(true);
       setIsMinimized(false);
       if (onSelectPet) {
@@ -794,34 +801,21 @@ export default function ZPetNavigation({
             <div className="zenve-chat-header-actions">
               <button
                 type="button"
-                className="zenve-chat-end-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleCloseChat(e);
-                }}
-                title="End conversation and close"
-                aria-label="End conversation and close"
+                className="zenve-chat-ctrl-btn minimize-btn"
+                onClick={handleMinimizeChat}
+                title="Minimize chat"
+                aria-label="Minimize Pet Assistant"
               >
-                End Chat
-              </button>
-              <button
-                type="button"
-                className="zenve-chat-ctrl-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleStartNewChat();
-                }}
-                title="Start new chat session"
-                aria-label="Start new chat session"
-              >
-                ↺
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" width="13" height="13">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
               </button>
               <button
                 type="button"
                 className="zenve-chat-ctrl-btn close-btn"
                 onClick={handleCloseChat}
-                title="Close chat"
-                aria-label="Close Pet Assistant"
+                title="Close and erase chat"
+                aria-label="Close and erase Pet Assistant"
               >
                 ✕
               </button>
@@ -841,7 +835,7 @@ export default function ZPetNavigation({
                           msg={msg}
                           onProgress={handleTypingProgress}
                           onNavigate={navigate}
-                          onCloseChat={handleCloseChat}
+                          onCloseChat={handleMinimizeChat}
                           onStartNewChat={handleStartNewChat}
                         />
                       ) : (
