@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/ZPetNavigation.css";
 import zenveZIcon from "../assets/logo/zenve-z-icon.png";
@@ -450,10 +450,12 @@ export default function ZPetNavigation({
   const leaveTimerRef = useRef(null);
   const wrapperRef = useRef(null);
   const chatPanelRef = useRef(null);
+  const chatMessagesContainerRef = useRef(null);
   const chatMessagesEndRef = useRef(null);
   const abortControllerRef = useRef(null);
   const isSubmittingRef = useRef(false);
   const lastScrollTimeRef = useRef(0);
+  const prevChatOpenRef = useRef(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -493,14 +495,37 @@ export default function ZPetNavigation({
   const isChatActive = isChatOpen && !isMinimized;
   const hasActiveExperience = isDogActive || isCatActive || isSettingActive || isChatActive;
 
-  // Auto-scroll chat to latest message smoothly without breaking user viewport
+  // When opening or reopening the chat panel, instantly position at bottom without scrolling from start
+  useLayoutEffect(() => {
+    if (isChatOpen && !isMinimized) {
+      const jumpToBottom = () => {
+        if (chatMessagesContainerRef.current) {
+          chatMessagesContainerRef.current.scrollTop = chatMessagesContainerRef.current.scrollHeight;
+        }
+        if (chatMessagesEndRef.current) {
+          chatMessagesEndRef.current.scrollIntoView({ behavior: "auto", block: "end" });
+        }
+      };
+
+      jumpToBottom();
+      const t1 = setTimeout(jumpToBottom, 15);
+      const t2 = setTimeout(jumpToBottom, 50);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+      };
+    }
+  }, [isChatOpen, isMinimized]);
+
+  // Auto-scroll chat smoothly only for new incoming messages while chat is already actively open
   useEffect(() => {
-    if (isChatOpen && !isMinimized && chatMessagesEndRef.current) {
+    if (isChatOpen && !isMinimized && prevChatOpenRef.current) {
       const frameId = requestAnimationFrame(() => {
-        chatMessagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        chatMessagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
       });
       return () => cancelAnimationFrame(frameId);
     }
+    prevChatOpenRef.current = isChatOpen && !isMinimized;
   }, [chatMessages, isChatOpen, isMinimized, isLoading]);
 
   // Clean up timers and abort pending requests on unmount
@@ -546,6 +571,7 @@ export default function ZPetNavigation({
       e.preventDefault();
       e.stopPropagation();
     }
+    setChatMessages((prev) => prev.map((m) => ({ ...m, isNew: false })));
     setIsChatOpen(false);
     setIsMinimized(false);
   }, []);
@@ -739,6 +765,7 @@ export default function ZPetNavigation({
 
     // AI Chatbot: open floating chat panel explicitly without navigation
     if (key === "Chatbot" || key === "AI") {
+      setChatMessages((prev) => prev.map((m) => ({ ...m, isNew: false })));
       setIsChatOpen(true);
       setIsMinimized(false);
       if (onSelectPet) {
@@ -827,7 +854,7 @@ export default function ZPetNavigation({
             <>
               <div className="zenve-chat-body">
                 {/* Messages stream */}
-                <div className="zenve-chat-messages">
+                <div ref={chatMessagesContainerRef} className="zenve-chat-messages">
                   {chatMessages.map((msg) => (
                     <div key={msg.id} className={`zenve-msg-row ${msg.sender}`}>
                       {msg.sender === "assistant" ? (
