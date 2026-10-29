@@ -364,6 +364,17 @@ const AssistantMessageBubble = React.memo(({
 const SESSION_MESSAGES_KEY = "zenve_chatbot_messages";
 const SESSION_COUNT_KEY = "zenve_chatbot_question_count";
 const SESSION_ID_KEY = "zenve_chatbot_session_id";
+const INITIAL_CHAT_MESSAGES = [
+  {
+    id: 1,
+    sender: "assistant",
+    text: "Hi! Welcome to our pet store. How can I help you and your pet today?",
+    products: [],
+    orders: [],
+    disclaimer: null,
+    time: "Online",
+  },
+];
 const LIMIT_EXCEEDED_MESSAGE = `Contact Zenve Customer Support & Human Escalation:
 Our human support team is ready to assist you:
 • Email: [support@zenve.com](mailto:support@zenve.com)
@@ -433,17 +444,7 @@ export default function ZPetNavigation({
         }
       }
     } catch (e) {}
-    return [
-      {
-        id: 1,
-        sender: "assistant",
-        text: "Hi! Welcome to our pet store. How can I help you and your pet today?",
-        products: [],
-        orders: [],
-        disclaimer: null,
-        time: "Online",
-      },
-    ];
+    return INITIAL_CHAT_MESSAGES;
   });
 
   const leaveTimerRef = useRef(null);
@@ -514,16 +515,48 @@ export default function ZPetNavigation({
     };
   }, []);
 
+  // Start genuinely new chat session (resets question count, input, and messages)
+  const handleStartNewChat = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const newSessionId = `zenve_sess_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    setSessionId(newSessionId);
+    setQuestionCount(0);
+    setChatInput("");
+    setErrorMessage("");
+    setChatMessages(INITIAL_CHAT_MESSAGES);
+    try {
+      sessionStorage.setItem(SESSION_MESSAGES_KEY, JSON.stringify(INITIAL_CHAT_MESSAGES));
+      sessionStorage.setItem(SESSION_COUNT_KEY, "0");
+      sessionStorage.setItem(SESSION_ID_KEY, newSessionId);
+    } catch (e) {}
+
+    // Notify backend to reset session tracker
+    fetch("http://127.0.0.1:8000/api/chatbot/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "new_session", new_session: true, session_id: newSessionId }),
+    }).catch(() => {});
+  }, []);
+
+  // Explicit Chatbot Close Handler - closes and resets conversation so reopening starts fresh
+  const handleCloseChat = useCallback((e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setIsChatOpen(false);
+    setIsMinimized(false);
+    handleStartNewChat();
+  }, [handleStartNewChat]);
+
   // Global Escape-key listener to close chat panel or radial menu
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
         if (isChatOpen) {
-          setIsChatOpen(false);
-          setIsMinimized(false);
-          if (abortControllerRef.current) {
-            abortControllerRef.current.abort();
-          }
+          handleCloseChat();
         } else if (isExpanded) {
           setIsExpanded(false);
         }
@@ -534,7 +567,7 @@ export default function ZPetNavigation({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isChatOpen, isExpanded]);
+  }, [isChatOpen, isExpanded, handleCloseChat]);
 
   // Handle outside click to collapse radial menu (does not touch chat panel)
   useEffect(() => {
@@ -593,54 +626,6 @@ export default function ZPetNavigation({
   const handleMainClick = (e) => {
     e.stopPropagation();
     setIsExpanded((prev) => !prev);
-  };
-
-  // Explicit Chatbot Close Handler
-  const handleCloseChat = (e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    setIsChatOpen(false);
-    setIsMinimized(false);
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-  };
-
-  // Start genuinely new chat session (resets question count and messages)
-  const handleStartNewChat = () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-    const newSessionId = `zenve_sess_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-    setSessionId(newSessionId);
-    setQuestionCount(0);
-    const initial = [
-      {
-        id: 1,
-        sender: "assistant",
-        text: "Hi! Welcome to our pet store. How can I help you and your pet today?",
-        products: [],
-        orders: [],
-        disclaimer: null,
-        time: "Online",
-      },
-    ];
-    setChatMessages(initial);
-    setErrorMessage("");
-    try {
-      sessionStorage.setItem(SESSION_MESSAGES_KEY, JSON.stringify(initial));
-      sessionStorage.setItem(SESSION_COUNT_KEY, "0");
-      sessionStorage.setItem(SESSION_ID_KEY, newSessionId);
-    } catch (e) {}
-
-    // Notify backend to reset session tracker
-    fetch("http://127.0.0.1:8000/api/chatbot/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: "new_session", new_session: true, session_id: newSessionId }),
-    }).catch(() => {});
   };
 
   // Send message to AI Chatbot backend with request cancellation support & 2-question limit
@@ -744,6 +729,9 @@ export default function ZPetNavigation({
 
     // AI Chatbot: open floating chat panel explicitly without navigation
     if (key === "Chatbot" || key === "AI") {
+      if (!isChatOpen) {
+        handleStartNewChat();
+      }
       setIsChatOpen(true);
       setIsMinimized(false);
       if (onSelectPet) {
@@ -806,6 +794,18 @@ export default function ZPetNavigation({
             <div className="zenve-chat-header-actions">
               <button
                 type="button"
+                className="zenve-chat-end-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCloseChat(e);
+                }}
+                title="End conversation and close"
+                aria-label="End conversation and close"
+              >
+                End Chat
+              </button>
+              <button
+                type="button"
                 className="zenve-chat-ctrl-btn"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -841,7 +841,7 @@ export default function ZPetNavigation({
                           msg={msg}
                           onProgress={handleTypingProgress}
                           onNavigate={navigate}
-                          onCloseChat={() => setIsChatOpen(false)}
+                          onCloseChat={handleCloseChat}
                           onStartNewChat={handleStartNewChat}
                         />
                       ) : (
