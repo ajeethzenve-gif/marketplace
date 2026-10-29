@@ -109,9 +109,8 @@ function Home() {
         try {
             setProductsLoading(true);
 
-            try {
-                let allProducts = [];
-                let page = 1;
+            let allProducts = [];
+            let page = 1;
 
                 while (true) {
                     let url = `products/?page=${page}`;
