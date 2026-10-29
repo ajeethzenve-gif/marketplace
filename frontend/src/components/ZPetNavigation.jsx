@@ -821,7 +821,7 @@ export default function ZPetNavigation({
                 <h3 className="zenve-chat-title">Zenve Pet Assistant</h3>
                 <div className="zenve-chat-status">
                   <span className="zenve-status-dot" />
-                  <span>Online • AI Store Assistant</span>
+                  <span>Online • AI Assistant</span>
                 </div>
               </div>
             </div>
