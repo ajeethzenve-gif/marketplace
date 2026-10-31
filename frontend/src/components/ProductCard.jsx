@@ -47,7 +47,7 @@ function ProductCard({ product, pet = null, onFeedbackSubmitted = null }) {
         try {
 
             const response = await axios.get(
-                "http://127.0.0.1:8000/api/wishlist/",
+                "/api/wishlist/",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -115,7 +115,7 @@ function ProductCard({ product, pet = null, onFeedbackSubmitted = null }) {
 
             const response = await axios.post(
 
-                "http://127.0.0.1:8000/api/wishlist/toggle/",
+                "/api/wishlist/toggle/",
 
                 {
                     product_id: product.id
@@ -222,7 +222,7 @@ function ProductCard({ product, pet = null, onFeedbackSubmitted = null }) {
 
             await axios.post(
 
-                "http://127.0.0.1:8000/api/cart/add/",
+                "/api/cart/add/",
 
                 {
                     product_id: product.id,
@@ -289,7 +289,7 @@ function ProductCard({ product, pet = null, onFeedbackSubmitted = null }) {
         ? (
             product.image.startsWith("http")
                 ? product.image
-                : `http://127.0.0.1:8000${product.image}`
+                : `${product.image}`
         )
         : "https://via.placeholder.com/300x200";
 

@@ -46,7 +46,7 @@ function ExplainModal({ product, pet, isOpen, onClose, onFeedbackSubmitted }) {
         try {
             setSubmitting(true);
             await axios.post(
-                "http://127.0.0.1:8000/api/products/recommendations/feedback/",
+                "/api/products/recommendations/feedback/",
                 {
                     product_id: product.id,
                     pet_id: pet?.id || null,
@@ -85,7 +85,7 @@ function ExplainModal({ product, pet, isOpen, onClose, onFeedbackSubmitted }) {
         const src = product.product_image || product.image || "";
         if (!src) return "https://via.placeholder.com/88x88";
         if (src.startsWith("http")) return src;
-        return `http://127.0.0.1:8000${src}`;
+        return `${src}`;
     })();
 
     // ✅ Render via Portal so the modal escapes any overflow:hidden parent

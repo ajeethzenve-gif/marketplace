@@ -115,7 +115,7 @@ function Login() {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/accounts/login/",
+        "/api/accounts/login/",
         {
           username: loginData.username,
           password: loginData.password,
@@ -206,7 +206,7 @@ function Login() {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/accounts/send-otp/",
+        "/api/accounts/send-otp/",
         {
           mobile: `+91${mobile}`,
         }
@@ -277,7 +277,7 @@ function Login() {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/accounts/verify-mobile-otp/",
+        "/api/accounts/verify-mobile-otp/",
         {
           mobile: `+91${mobile}`,
           otp: otp,
@@ -379,7 +379,7 @@ function Login() {
       }
 
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/accounts/google-login/",
+        "/api/accounts/google-login/",
         {
           token: credentialResponse.credential,
         }

@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "./ProductAdd.css";
 
 
-const API_URL = "http://127.0.0.1:8000/api";
+const API_URL = "/api";
 
 
 function EditProduct() {
@@ -241,7 +241,7 @@ function EditProduct() {
                 } else {
 
                     setImagePreview(
-                        `http://127.0.0.1:8000${product.image}`
+                        `${product.image}`
                     );
 
                 }

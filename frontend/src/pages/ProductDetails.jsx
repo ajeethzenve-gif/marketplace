@@ -148,7 +148,7 @@ function ProductDetails() {
 
             const response = await axios.get(
 
-                "http://127.0.0.1:8000/api/wishlist/",
+                "/api/wishlist/",
 
                 {
                     headers: {
@@ -222,7 +222,7 @@ function ProductDetails() {
 
             const response = await axios.post(
 
-                "http://127.0.0.1:8000/api/wishlist/toggle/",
+                "/api/wishlist/toggle/",
 
                 {
                     product_id: id
@@ -384,7 +384,7 @@ function ProductDetails() {
 
             await axios.post(
 
-                "http://127.0.0.1:8000/api/cart/add/",
+                "/api/cart/add/",
 
                 {
                     product_id: product.id,
@@ -498,7 +498,7 @@ function ProductDetails() {
 
                                     :
 
-                                    `http://127.0.0.1:8000${product.product_image}`
+                                    `${product.product_image}`
 
                             )
 
@@ -600,7 +600,7 @@ function ProductDetails() {
 
                 :
 
-                `http://127.0.0.1:8000${product.product_image}`
+                `${product.product_image}`
 
         )
 

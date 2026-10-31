@@ -4,6 +4,8 @@ from .views import (
     BookDoctorAppointmentView,
     DoctorAppointmentsListView,
     UpdateAppointmentStatusView,
+    TwilioVideoTokenView,
+    TwilioSignalView,
 )
 
 urlpatterns = [
@@ -11,4 +13,6 @@ urlpatterns = [
     path("book/", BookDoctorAppointmentView.as_view(), name="book-doctor-appointment"),
     path("appointments/", DoctorAppointmentsListView.as_view(), name="doctor-appointments-list"),
     path("appointments/<int:appointment_id>/status/", UpdateAppointmentStatusView.as_view(), name="update-appointment-status"),
+    path("twilio/token/", TwilioVideoTokenView.as_view(), name="twilio-video-token"),
+    path("twilio/signal/", TwilioSignalView.as_view(), name="twilio-signal"),
 ]

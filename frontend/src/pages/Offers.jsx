@@ -29,7 +29,7 @@ function Offers() {
     // API URL
     // =====================================================
 
-    const API_URL = "http://127.0.0.1:8000/api";
+    const API_URL = "/api";
 
 
     // =====================================================
@@ -276,7 +276,7 @@ function Offers() {
         }
 
 
-        return `http://127.0.0.1:8000${product.image}`;
+        return `${product.image}`;
 
     };
 

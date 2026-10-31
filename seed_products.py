@@ -1,7 +1,9 @@
+from marketplace.zenve import settings
 import os
 import random
 from decimal import Decimal
-from django.conf import settings
+
+
 from products.models import Category, Brand, Product, ProductImage, Medicine, Supplement
 
 def run():
@@ -53,6 +55,7 @@ def run():
     seeded_count = 0
     for idx, img_name in enumerate(images, start=1):
         clean_name = os.path.splitext(img_name)[0].replace("_", " ").replace("-", " ")
+        lower = clean_name.lower()
         sku = f"SKU-ZENVE-{idx:04d}"
         
         # Exact mappings based on image filename

@@ -48,7 +48,7 @@ function Wishlist() {
 
         try {
             const response = await axios.get(
-                "http://127.0.0.1:8000/api/wishlist/",
+                "/api/wishlist/",
                 getHeaders()
             );
 
@@ -99,7 +99,7 @@ function Wishlist() {
         try {
 
             await axios.delete(
-                `http://127.0.0.1:8000/api/wishlist/remove/${productId}/`,
+                `/api/wishlist/remove/${productId}/`,
                 getHeaders()
             );
 
@@ -138,7 +138,7 @@ function Wishlist() {
         try {
 
             await axios.post(
-                "http://127.0.0.1:8000/api/cart/add/",
+                "/api/cart/add/",
                 {
                     product_id: productId,
                     quantity: 1,

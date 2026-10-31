@@ -36,10 +36,10 @@ function Pets() {
     // =====================================================
 
     const API_URL =
-        "http://127.0.0.1:8000/api/accounts/pets/";
+        "/api/accounts/pets/";
 
     const BACKEND_URL =
-        "http://127.0.0.1:8000";
+        "";
 
     // =====================================================
     // SWEET ALERT HELPERS

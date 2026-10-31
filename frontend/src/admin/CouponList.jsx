@@ -11,7 +11,7 @@ function CouponList() {
     const loadCoupons = async () => {
         try {
             const response = await axios.get(
-                "http://127.0.0.1:8000/api/coupons/",
+                "/api/coupons/",
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("access")}`

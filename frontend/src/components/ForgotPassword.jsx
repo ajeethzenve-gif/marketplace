@@ -104,7 +104,7 @@ function ForgotPassword() {
 
       const response = await axios.post(
 
-        "http://127.0.0.1:8000/api/accounts/forgot-password/",
+        "/api/accounts/forgot-password/",
 
         {
           email: cleanEmail
@@ -303,7 +303,7 @@ function ForgotPassword() {
 
       const response = await axios.post(
 
-        "http://127.0.0.1:8000/api/accounts/verify-otp/",
+        "/api/accounts/verify-otp/",
 
         {
           email:
@@ -410,7 +410,7 @@ function ForgotPassword() {
 
       const response = await axios.post(
 
-        "http://127.0.0.1:8000/api/accounts/forgot-password/",
+        "/api/accounts/forgot-password/",
 
         {
           email: cleanEmail
@@ -595,7 +595,7 @@ function ForgotPassword() {
 
       const response = await axios.post(
 
-        "http://127.0.0.1:8000/api/accounts/reset-password/",
+        "/api/accounts/reset-password/",
 
         {
           email:

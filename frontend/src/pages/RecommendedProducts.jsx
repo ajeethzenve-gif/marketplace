@@ -25,8 +25,8 @@ function RecommendedProducts() {
     const [error, setError] = useState("");
     const [activeFilter, setActiveFilter] = useState("all"); // 'all' | 'high_match' | 'health' | 'food' | 'care'
 
-    const PET_API = `http://127.0.0.1:8000/api/accounts/pets/${petId}/`;
-    const RECOMMENDED_API = `http://127.0.0.1:8000/api/pet/${petId}/recommended/`;
+    const PET_API = `/api/accounts/pets/${petId}/`;
+    const RECOMMENDED_API = `/api/pet/${petId}/recommended/`;
 
     useEffect(() => {
         if (!token) {

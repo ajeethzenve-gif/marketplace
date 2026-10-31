@@ -457,32 +457,32 @@
 }
 
 /* =====================================================
-   CARDS GRID
+   CARDS GRID & MODERN APPOINTMENT CARDS
 ===================================================== */
 
 .vc-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
+  gap: 24px;
 }
 
 .vc-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 18px;
-  padding: 22px;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
   display: flex;
   flex-direction: column;
-  transition: all 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
 }
 
 .vc-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 28px rgba(21, 21, 168, 0.08);
   border-color: #cbd5e1;
+  box-shadow: 0 16px 36px -4px rgba(79, 70, 229, 0.1), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
 }
 
 .vc-card.is-video-card::before {
@@ -492,31 +492,35 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 50%, #06b6d4 100%);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
 }
 
-/* CARD TOP */
+/* =====================================================
+   CARD TOP / DOCTOR PROFILE
+===================================================== */
 
 .vc-card-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 14px;
+  margin-bottom: 18px;
 }
 
 .vc-doctor-profile {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 14px;
+  min-width: 0;
 }
 
 .vc-avatar {
   position: relative;
   width: 54px;
   height: 54px;
-  border-radius: 14px;
-  overflow: visible;
+  border-radius: 16px;
   flex-shrink: 0;
 }
 
@@ -524,85 +528,126 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 14px;
+  border-radius: 16px;
   border: 2px solid #e2e8f0;
 }
 
 .vc-avatar-placeholder {
   width: 100%;
   height: 100%;
-  background: #eff6ff;
-  color: #1515a8;
-  border-radius: 14px;
+  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+  color: #4338ca;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #dbeafe;
+  border: 1.5px solid #c7d2fe;
 }
 
 .vc-avatar-badge {
   position: absolute;
-  bottom: -4px;
-  right: -4px;
+  bottom: -3px;
+  right: -3px;
   width: 20px;
   height: 20px;
-  background: #7c3aed;
-  color: #ffffff;
   border-radius: 50%;
+  background: #4f46e5;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #ffffff;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .vc-doctor-meta {
   display: flex;
   flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.vc-doctor-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .vc-doctor-name {
-  font-size: 16px;
+  font-size: 16.5px;
   font-weight: 700;
   color: #0f172a;
   margin: 0;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vc-verified-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .vc-doctor-spec {
   font-size: 12.5px;
+  font-weight: 500;
   color: #64748b;
-  margin: 2px 0;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .vc-clinic-name {
   font-size: 12px;
+  font-weight: 500;
   color: #94a3b8;
   display: flex;
   align-items: center;
   gap: 4px;
-  margin: 0;
+  margin: 2px 0 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
+.vc-clinic-icon {
+  flex-shrink: 0;
+  color: #94a3b8;
+}
+
+/* =====================================================
+   TOP BADGES (UNIFORM & COHESIVE)
+===================================================== */
 
 .vc-card-badges {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 6px;
+  flex-shrink: 0;
 }
 
 .vc-badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-size: 11.5px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.2px;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .vc-badge.video-badge {
   background: #f5f3ff;
-  color: #7c3aed;
+  color: #6d28d9;
   border: 1px solid #ddd6fe;
 }
 
@@ -614,160 +659,275 @@
 
 .vc-badge.status-badge.status-confirmed {
   background: #ecfdf5;
-  color: #059669;
+  color: #047857;
   border: 1px solid #a7f3d0;
 }
 
 .vc-badge.status-badge.status-completed {
   background: #eff6ff;
-  color: #2563eb;
+  color: #1d4ed8;
   border: 1px solid #bfdbfe;
 }
 
-/* DETAILS BOX */
+/* =====================================================
+   APPOINTMENT DETAILS GRID
+===================================================== */
 
 .vc-details-box {
   background: #f8fafc;
-  border: 1px solid #f1f5f9;
-  border-radius: 12px;
-  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 14px 16px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 16px;
   margin-bottom: 14px;
 }
 
 .vc-detail-item {
   display: flex;
-  align-items: flex-start;
-  gap: 9px;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
 }
 
-.detail-icon {
+.vc-detail-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   color: #64748b;
-  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.vc-detail-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .detail-label {
-  display: block;
-  font-size: 11px;
-  color: #64748b;
-  text-transform: uppercase;
+  font-size: 10.5px;
   font-weight: 600;
-  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  line-height: 1.2;
 }
 
 .detail-value {
-  display: block;
   font-size: 13px;
-  color: #1e293b;
   font-weight: 600;
+  color: #1e293b;
   margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
 }
+
+.vc-bullet {
+  color: #cbd5e1;
+  margin: 0 2px;
+}
+
+/* =====================================================
+   CHIEF CONCERN CALLOUT
+===================================================== */
 
 .vc-reason-strip {
   background: #fffbeb;
-  border: 1px solid #fef3c7;
-  border-radius: 8px;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
   padding: 8px 12px;
-  font-size: 12.5px;
   margin-bottom: 16px;
   display: flex;
-  align-items: flex-start;
-  gap: 6px;
+  align-items: center;
+  gap: 9px;
 }
 
-.reason-label {
+.reason-label-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
   font-weight: 700;
-  color: #b45309;
+  color: #92400e;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  background: rgba(251, 191, 36, 0.25);
+  padding: 3px 7px;
+  border-radius: 6px;
   flex-shrink: 0;
 }
 
 .reason-text {
-  color: #92400e;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #78350f;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* =====================================================
-   VIDEO MEETING BOX (THE MAIN FEATURE)
+   VIDEO MEETING BOX (PREMIUM TELEHEALTH READY)
 ===================================================== */
 
 .vc-meeting-box {
-  background: linear-gradient(135deg, #f5f3ff 0%, #eff6ff 100%);
-  border: 1.5px solid #c7d2fe;
-  border-radius: 14px;
+  background: linear-gradient(145deg, #fcfbff 0%, #f5f4fe 100%);
+  border: 1.5px solid #dcd7fa;
+  border-radius: 16px;
   padding: 16px;
   margin-bottom: 16px;
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.06);
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.05);
 }
 
 .vc-meeting-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   margin-bottom: 12px;
 }
 
 .vc-meeting-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: #7c3aed;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.28);
 }
 
-.vc-meeting-title h4 {
-  font-size: 14px;
+.vc-meeting-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.vc-meeting-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.vc-meeting-title-row h4 {
+  font-size: 13.5px;
   font-weight: 700;
-  color: #312e81;
+  color: #1e1b4b;
   margin: 0;
+}
+
+.vc-encrypted-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .vc-meeting-title p {
   font-size: 11.5px;
   color: #475569;
-  margin: 2px 0 0;
+  margin: 0;
+  line-height: 1.4;
 }
+
+/* MEETING LINK / ROOM BAR */
 
 .vc-meeting-link-bar {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   background: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: 10px;
-  padding: 4px 6px 4px 10px;
+  padding: 5px 6px 5px 8px;
   margin-bottom: 12px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.vc-room-id-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 3px 7px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  flex-shrink: 0;
+}
+
+.vc-room-prefix {
+  font-size: 9px;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.vc-room-code {
+  font-size: 11px;
+  font-weight: 600;
+  color: #334155;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .vc-meeting-link-input {
   flex: 1;
   border: none;
   outline: none;
-  font-size: 12px;
-  color: #334155;
+  font-size: 11px;
+  color: #64748b;
   background: transparent;
-  font-family: monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .vc-copy-btn {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 6px 12px;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
+  height: 28px;
+  padding: 0 10px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
   border-radius: 7px;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
   color: #334155;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .vc-copy-btn:hover {
@@ -775,36 +935,56 @@
   color: #0f172a;
 }
 
+.vc-copy-btn.is-copied {
+  background: #ecfdf5;
+  border-color: #6ee7b7;
+  color: #059669;
+}
+
+/* =====================================================
+   MEETING ACTIONS (CLEAN HIERARCHICAL LAYOUT)
+===================================================== */
+
 .vc-meeting-actions {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 8px;
 }
 
-.vc-btn-connect {
-  flex: 2;
-  display: inline-flex;
+/* Primary Hero Action Button */
+.vc-btn-primary-connect {
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: linear-gradient(135deg, #1515a8 0%, #7c3aed 100%);
+  width: 100%;
+  height: 42px;
+  background: linear-gradient(135deg, #1515a8 0%, #6366f1 100%);
   color: #ffffff;
-  padding: 10px 14px;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 700;
+  letter-spacing: 0.1px;
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.22s ease;
   box-shadow: 0 4px 14px rgba(21, 21, 168, 0.25);
-  text-align: center;
+  border: none;
 }
 
-.vc-btn-connect:hover {
-  opacity: 0.95;
+.vc-btn-primary-connect:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(21, 21, 168, 0.35);
+  box-shadow: 0 8px 22px rgba(21, 21, 168, 0.35);
   color: #ffffff;
+  opacity: 0.98;
+}
+
+/* Secondary 2-Column Balanced Row */
+.vc-secondary-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
 }
 
 .vc-btn-inapp {
@@ -813,23 +993,55 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
+  height: 36px;
   background: #ffffff;
   color: #4338ca;
   border: 1.5px solid #c7d2fe;
-  padding: 9px 12px;
-  border-radius: 10px;
-  font-size: 12.5px;
+  padding: 0 10px;
+  border-radius: 9px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .vc-btn-inapp:hover {
-  background: #e0e7ff;
+  background: #eef2ff;
   border-color: #818cf8;
 }
 
-/* CARD FOOTER */
+.vc-btn-telehealth {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1.5px solid #86efac;
+  padding: 0 10px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.vc-btn-telehealth:hover {
+  background: #dcfce7;
+  border-color: #4ade80;
+  color: #166534;
+}
+
+/* =====================================================
+   CARD FOOTER ACTIONS
+===================================================== */
 
 .vc-card-footer {
   margin-top: auto;
@@ -845,9 +1057,10 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 9px 14px;
+  height: 36px;
+  padding: 0 14px;
   border-radius: 9px;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
@@ -856,21 +1069,22 @@
 }
 
 .vc-footer-btn.complete {
-  background: #ecfdf5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
   flex: 1;
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
 }
 
 .vc-footer-btn.complete:hover {
-  background: #d1fae5;
+  background: #dcfce7;
+  border-color: #86efac;
 }
 
 .vc-footer-btn.rebook {
-  background: #eff6ff;
-  color: #1e40af;
-  border: 1px solid #bfdbfe;
   flex: 1;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
 }
 
 .vc-footer-btn.rebook:hover {
@@ -880,11 +1094,12 @@
 .vc-footer-btn.call {
   background: #f8fafc;
   color: #475569;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #e2e8f0;
 }
 
 .vc-footer-btn.call:hover {
   background: #f1f5f9;
+  border-color: #cbd5e1;
   color: #0f172a;
 }
 
@@ -1191,3 +1406,37 @@
   }
 }
 
+
+
+
+/* Fullscreen In-App Twilio Zoom Video Modal */
+.vc-modal-overlay.vc-modal-fullscreen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #0d1117;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.vc-modal-dialog.vc-dialog-fullscreen {
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  border-radius: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: none;
+  box-shadow: none;
+}

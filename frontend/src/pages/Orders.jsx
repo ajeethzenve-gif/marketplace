@@ -66,7 +66,7 @@ function Orders() {
             }
 
             const response = await axios.get(
-                "http://127.0.0.1:8000/api/orders/",
+                "/api/orders/",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -144,7 +144,7 @@ function Orders() {
             console.log("Loading order:", id);
 
             const response = await axios.get(
-                `http://127.0.0.1:8000/api/orders/${id}/`,
+                `/api/orders/${id}/`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -205,7 +205,7 @@ function Orders() {
             const token = localStorage.getItem("access");
 
             await axios.patch(
-                `http://127.0.0.1:8000/api/orders/${orderId}/cancel/`,
+                `/api/orders/${orderId}/cancel/`,
                 {},
                 {
                     headers: {
@@ -1273,7 +1273,7 @@ function Orders() {
                                                                         "http"
                                                                     )
                                                                         ? item.product_image
-                                                                        : `http://127.0.0.1:8000${item.product_image}`
+                                                                        : `${item.product_image}`
                                                                 )
 
                                                                 : null;

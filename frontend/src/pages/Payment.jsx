@@ -36,7 +36,7 @@ function Payment() {
     // API CONFIG
     // =====================================
 
-    const API_BASE_URL = "http://127.0.0.1:8000";
+    const API_BASE_URL = "";
 
     const WALLET_BALANCE_API_URL =
         `${API_BASE_URL}/api/wallet/balance/`;

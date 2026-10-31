@@ -22,7 +22,7 @@ function Cart() {
 
             const response = await axios.get(
 
-                "http://127.0.0.1:8000/api/cart/",
+                "/api/cart/",
 
                 {
                     headers: {
@@ -55,7 +55,7 @@ function Cart() {
 
             await axios.put(
 
-                "http://127.0.0.1:8000/api/cart/update/",
+                "/api/cart/update/",
 
                 {
                     product_id: productId,
@@ -87,7 +87,7 @@ function Cart() {
 
             await axios.delete(
 
-                `http://127.0.0.1:8000/api/cart/remove/${productId}/`,
+                `/api/cart/remove/${productId}/`,
 
                 {
                     headers: {
@@ -242,7 +242,7 @@ function Cart() {
                                             <div className="cart-image-wrapper">
 
                                                 <img
-                                                    src={`http://127.0.0.1:8000${item.image}`}
+                                                    src={`${item.image}`}
                                                     alt={item.product_name}
                                                     className="cart-image"
                                                 />

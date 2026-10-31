@@ -20,7 +20,7 @@ function OrderList() {
 
         try {
             const response = await axios.get(
-                "http://127.0.0.1:8000/api/orders/admin/",
+                "/api/orders/admin/",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -87,7 +87,7 @@ function OrderList() {
 
             await axios.patch(
 
-                `http://127.0.0.1:8000/api/orders/status/${id}/`,
+                `/api/orders/status/${id}/`,
 
                 {
 

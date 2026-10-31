@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   Video,
   Calendar,
@@ -10,6 +10,10 @@ import {
   CheckCircle2,
   AlertCircle,
   Copy,
+  Check,
+  Lock,
+  FileText,
+  ShieldCheck,
   ExternalLink,
   ChevronRight,
   Search,
@@ -21,11 +25,71 @@ import {
   ArrowRight,
   RefreshCw,
 } from "lucide-react";
+
+// Get the official Twilio telehealth video room link
+const getDoctorTelehealthUrl = (appointment) => {
+  if (appointment?.meeting_link && !appointment.meeting_link.includes("localhost")) {
+    return appointment.meeting_link;
+  }
+  const roomCode = appointment?.room_code || `ZenveTelehealth-${appointment?.doctor_id || 1}-${appointment?.id || 1}`;
+  return `https://video.twilio.com/rooms/${encodeURIComponent(roomCode)}`;
+};
+
+// Format doctor name cleanly without duplicate 'Dr.'
+const formatDoctorName = (name) => {
+  if (!name) return "Dr. Veterinarian";
+  const cleaned = name.trim().replace(/^(Dr\.?\s*)+/i, "");
+  return `Dr. ${cleaned}`;
+};
+
+// Format time to clean 12-hour AM/PM format
+const formatTime12h = (timeStr) => {
+  if (!timeStr) return "--:--";
+  const trimmed = timeStr.trim();
+  if (/am|pm/i.test(trimmed)) return trimmed;
+  const match = trimmed.match(/^(\d{1,2}):(\d{2})/);
+  if (match) {
+    let hours = parseInt(match[1], 10);
+    const minutes = match[2];
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+    const padHour = String(hours).padStart(2, "0");
+    return `${padHour}:${minutes} ${ampm}`;
+  }
+  return timeStr;
+};
+
+// Format friendly date (e.g. 'Thu, 05 Nov 2026')
+const formatDateDisplay = (dateStr) => {
+  if (!dateStr) return "";
+  try {
+    const parts = dateStr.split("-");
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      const d = new Date(year, month, day);
+      if (!isNaN(d.getTime())) {
+        return d.toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "2-digit",
+          year: "numeric",
+        });
+      }
+    }
+    return dateStr;
+  } catch (e) {
+    return dateStr;
+  }
+};
 import api from "../api/api";
+import TwilioConsultationRoom from "../components/video/TwilioConsultationRoom";
 import "../styles/VideoConsultations.css";
 
 const VideoConsultations = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -40,7 +104,16 @@ const VideoConsultations = () => {
 
   useEffect(() => {
     fetchAppointments();
-  }, []);
+    const roomParam = searchParams.get('room') || searchParams.get('join');
+    if (roomParam) {
+      setActiveMeeting({
+        room_code: roomParam,
+        doctor_name: 'Attending Veterinarian',
+        parent_name: 'Pet Parent',
+        reason: 'Telehealth Consultation',
+      });
+    }
+  }, [searchParams]);
 
   const fetchAppointments = async () => {
     try {
@@ -58,7 +131,7 @@ const VideoConsultations = () => {
   };
 
   const handleCopyLink = (appointment) => {
-    const link = appointment.meeting_link || `https://meet.jit.si/ZenveConsult-${appointment.id}`;
+    const link = getDoctorTelehealthUrl(appointment);
     navigator.clipboard.writeText(link);
     setCopiedId(appointment.id);
     setTimeout(() => {
@@ -304,40 +377,50 @@ const VideoConsultations = () => {
             {filteredAppointments.map((app) => {
               const isUpcoming = app.category === "upcoming";
               const isVideo = app.is_video;
-              const meetingLink =
-                app.meeting_link || `https://meet.jit.si/ZenveConsult-${app.id}`;
+              const meetingLink = getDoctorTelehealthUrl(app);
+              const docName = formatDoctorName(app.doctor_name);
+              const formattedDate = formatDateDisplay(app.appointment_date);
+              const formattedTime = formatTime12h(app.appointment_time);
+              const roomCodeDisplay = app.room_code || `ZenveConsult-${app.id}`;
 
               return (
                 <div
                   key={app.id}
-                  className={`vc-card ${isUpcoming ? "is-upcoming" : "is-completed"} ${
-                    isVideo ? "is-video-card" : ""
-                  }`}
+                  className={`vc-card ${isUpcoming ? "is-upcoming" : "is-completed"} ${isVideo ? "is-video-card" : ""
+                    }`}
                 >
-                  {/* CARD HEADER */}
+                  {/* CARD TOP / DOCTOR PROFILE */}
                   <div className="vc-card-top">
                     <div className="vc-doctor-profile">
                       <div className="vc-avatar">
                         {app.profile_image ? (
-                          <img src={app.profile_image} alt={app.doctor_name} />
+                          <img src={app.profile_image} alt={docName} />
                         ) : (
                           <div className="vc-avatar-placeholder">
                             <Stethoscope size={22} />
                           </div>
                         )}
                         {isVideo && (
-                          <span className="vc-avatar-badge" title="Video Enabled">
-                            <Video size={12} />
+                          <span className="vc-avatar-badge" title="HD Video Telehealth Ready">
+                            <Video size={11} />
                           </span>
                         )}
                       </div>
 
                       <div className="vc-doctor-meta">
-                        <h3 className="vc-doctor-name">{app.doctor_name}</h3>
-                        <p className="vc-doctor-spec">{app.speciality || "Veterinary Surgeon"}</p>
+                        <div className="vc-doctor-name-row">
+                          <h3 className="vc-doctor-name">{docName}</h3>
+                          <span className="vc-verified-badge" title="Verified Veterinary Specialist">
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none">
+                              <circle cx="12" cy="12" r="10" fill="#3b82f6" />
+                              <path d="M7.5 12l3 3 6-6" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </span>
+                        </div>
+                        <p className="vc-doctor-spec">{app.speciality || "Chief Veterinary Surgeon & Telehealth Specialist"}</p>
                         <p className="vc-clinic-name">
-                          <MapPin size={13} />
-                          <span>{app.clinic_hospital || "Zenve Partner Pet Clinic"}</span>
+                          <MapPin size={12} className="vc-clinic-icon" />
+                          <span>{app.clinic_hospital || "Zenve Central Veterinary Clinic"}</span>
                         </p>
                       </div>
                     </div>
@@ -345,79 +428,87 @@ const VideoConsultations = () => {
                     <div className="vc-card-badges">
                       {isVideo ? (
                         <span className="vc-badge video-badge">
-                          <Video size={13} />
+                          <Video size={12} />
                           <span>Video Consult</span>
                         </span>
                       ) : (
                         <span className="vc-badge clinic-badge">
-                          <Calendar size={13} />
+                          <Calendar size={12} />
                           <span>In Clinic</span>
                         </span>
                       )}
 
                       <span
-                        className={`vc-badge status-badge ${
-                          isUpcoming ? "status-confirmed" : "status-completed"
-                        }`}
+                        className={`vc-badge status-badge ${isUpcoming ? "status-confirmed" : "status-completed"
+                          }`}
                       >
                         {isUpcoming ? (
                           <>
                             <span className="pulse-dot" />
-                            Confirmed
+                            <span>Confirmed</span>
                           </>
                         ) : (
                           <>
-                            <CheckCircle2 size={13} />
-                            Completed
+                            <CheckCircle2 size={12} />
+                            <span>Completed</span>
                           </>
                         )}
                       </span>
                     </div>
                   </div>
 
-                  {/* APPOINTMENT DETAILS */}
+                  {/* APPOINTMENT DETAILS 4-ITEM GRID */}
                   <div className="vc-details-box">
                     <div className="vc-detail-item">
-                      <Calendar size={16} className="detail-icon" />
-                      <div>
-                        <span className="detail-label">Consultation Date</span>
-                        <strong className="detail-value">{app.appointment_date}</strong>
+                      <div className="vc-detail-icon-wrap">
+                        <Calendar size={15} />
+                      </div>
+                      <div className="vc-detail-content">
+                        <span className="detail-label">Date</span>
+                        <strong className="detail-value">{formattedDate}</strong>
                       </div>
                     </div>
 
                     <div className="vc-detail-item">
-                      <Clock size={16} className="detail-icon" />
-                      <div>
-                        <span className="detail-label">Scheduled Time</span>
-                        <strong className="detail-value">{app.appointment_time}</strong>
+                      <div className="vc-detail-icon-wrap">
+                        <Clock size={15} />
+                      </div>
+                      <div className="vc-detail-content">
+                        <span className="detail-label">Time</span>
+                        <strong className="detail-value">{formattedTime}</strong>
                       </div>
                     </div>
 
                     <div className="vc-detail-item">
-                      <User size={16} className="detail-icon" />
-                      <div>
+                      <div className="vc-detail-icon-wrap">
+                        <User size={15} />
+                      </div>
+                      <div className="vc-detail-content">
                         <span className="detail-label">Pet & Parent</span>
                         <strong className="detail-value">
-                          {app.pet_name} • {app.parent_name}
+                          {app.pet_name} <span className="vc-bullet">•</span> {app.parent_name}
                         </strong>
                       </div>
                     </div>
 
-                    {app.doctor_phone && (
-                      <div className="vc-detail-item">
-                        <Phone size={16} className="detail-icon" />
-                        <div>
-                          <span className="detail-label">Clinic Contact</span>
-                          <strong className="detail-value">{app.doctor_phone}</strong>
-                        </div>
+                    <div className="vc-detail-item">
+                      <div className="vc-detail-icon-wrap">
+                        <Phone size={15} />
                       </div>
-                    )}
+                      <div className="vc-detail-content">
+                        <span className="detail-label">Clinic Contact</span>
+                        <strong className="detail-value">{app.doctor_phone || "+91 90803 41343"}</strong>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* REASON / SYMPTOMS */}
+                  {/* CHIEF CONCERN / SYMPTOMS CALLOUT */}
                   {app.reason && (
                     <div className="vc-reason-strip">
-                      <span className="reason-label">Concern / Symptoms:</span>
+                      <span className="reason-label-badge">
+                        <FileText size={12} />
+                        <span>Concern</span>
+                      </span>
                       <span className="reason-text">{app.reason}</span>
                     </div>
                   )}
@@ -430,57 +521,80 @@ const VideoConsultations = () => {
                           <Video size={18} />
                         </div>
                         <div className="vc-meeting-title">
-                          <h4>
-                            {isUpcoming
-                              ? "Live Video Consultation Link Ready"
-                              : "Consultation Video Room"}
-                          </h4>
+                          <div className="vc-meeting-title-row">
+                            <h4>
+                              {isUpcoming
+                                ? "Live Video Consultation Ready"
+                                : "Consultation Video Room"}
+                            </h4>
+                            <span className="vc-encrypted-pill">
+                              <Lock size={10} />
+                              <span>Encrypted HD</span>
+                            </span>
+                          </div>
                           <p>
-                            Both you and Dr. {app.doctor_name} connect to this secure link.
+                            Both you and {docName} connect to this private consultation room.
                           </p>
                         </div>
                       </div>
 
                       {/* MEETING LINK DISPLAY */}
                       <div className="vc-meeting-link-bar">
+                        <div className="vc-room-id-tag">
+                          <span className="vc-room-prefix">ROOM</span>
+                          <span className="vc-room-code">{roomCodeDisplay}</span>
+                        </div>
                         <input
                           type="text"
                           readOnly
                           value={meetingLink}
                           className="vc-meeting-link-input"
+                          title="Meeting URL"
                         />
                         <button
                           type="button"
-                          className="vc-copy-btn"
+                          className={`vc-copy-btn ${copiedId === app.id ? "is-copied" : ""}`}
                           onClick={() => handleCopyLink(app)}
                           title="Copy meeting link"
                         >
-                          <Copy size={15} />
-                          <span>{copiedId === app.id ? "Copied!" : "Copy Link"}</span>
+                          {copiedId === app.id ? (
+                            <>
+                              <Check size={13} />
+                              <span>Copied!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy size={13} />
+                              <span>Copy Link</span>
+                            </>
+                          )}
                         </button>
                       </div>
 
                       {/* MEETING ACTIONS */}
                       <div className="vc-meeting-actions">
-                        <a
-                          href={meetingLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="vc-btn-connect"
-                        >
-                          <Video size={17} />
-                          <span>Join Video Meeting (New Tab)</span>
-                          <ExternalLink size={15} />
-                        </a>
-
+                        {/* Primary Hero Action */}
                         <button
                           type="button"
-                          className="vc-btn-inapp"
+                          className="vc-btn-primary-connect"
                           onClick={() => setActiveMeeting(app)}
                         >
-                          <Maximize2 size={16} />
-                          <span>Connect In App</span>
+                          <Video size={17} />
+                          <span>Join Twilio Video Consultation</span>
+                          <Sparkles size={15} />
                         </button>
+
+                        {/* Secondary Split Action Row */}
+                        <div className="vc-secondary-actions-row">
+                          <button
+                            type="button"
+                            className="vc-btn-inapp"
+                            onClick={() => handleCopyLink(app)}
+                          >
+                            <Copy size={14} />
+                            <span>{copiedId === app.id ? "Twilio Link Copied!" : "Copy Twilio Link"}</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -494,7 +608,7 @@ const VideoConsultations = () => {
                         onClick={() => handleMarkCompleted(app.id)}
                         disabled={updatingId === app.id}
                       >
-                        <CheckCircle2 size={16} />
+                        <CheckCircle2 size={15} />
                         <span>
                           {updatingId === app.id ? "Updating..." : "Mark as Completed"}
                         </span>
@@ -505,14 +619,14 @@ const VideoConsultations = () => {
                         className="vc-footer-btn rebook"
                         onClick={() => navigate("/vet-booked")}
                       >
-                        <RefreshCw size={15} />
+                        <RefreshCw size={14} />
                         <span>Book Follow-Up</span>
                       </button>
                     )}
 
                     {app.doctor_phone && (
                       <a href={`tel:${app.doctor_phone}`} className="vc-footer-btn call">
-                        <Phone size={15} />
+                        <Phone size={14} />
                         <span>Call Doctor</span>
                       </a>
                     )}
@@ -533,8 +647,8 @@ const VideoConsultations = () => {
               {activeTab === "upcoming"
                 ? "No Upcoming Consultations"
                 : activeTab === "completed"
-                ? "No Completed Consultations"
-                : "No Appointments Found"}
+                  ? "No Completed Consultations"
+                  : "No Appointments Found"}
             </h3>
             <p>
               {activeTab === "upcoming"
@@ -550,63 +664,27 @@ const VideoConsultations = () => {
         )}
       </div>
 
-      {/* IN-APP INTERACTIVE VIDEO CALL MODAL */}
+      {/* IN-APP TWILIO VIDEO CALL MODAL */}
       {activeMeeting && (
-        <div className="vc-modal-overlay">
-          <div className="vc-modal-dialog">
-            <div className="vc-modal-header">
-              <div className="vc-modal-meta">
-                <div className="vc-modal-badge">
-                  <span className="live-dot" />
-                  <span>LIVE CONSULTATION</span>
-                </div>
-                <h3>
-                  Video Call with {activeMeeting.doctor_name} • Pet: {activeMeeting.pet_name}
-                </h3>
-              </div>
-              <div className="vc-modal-header-actions">
-                <a
-                  href={activeMeeting.meeting_link || `https://meet.jit.si/ZenveConsult-${activeMeeting.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="vc-modal-newtab-btn"
-                  title="Open in Full Window"
-                >
-                  <ExternalLink size={16} />
-                  <span>Open Full Window</span>
-                </a>
-                <button
-                  type="button"
-                  className="vc-modal-close-btn"
-                  onClick={() => setActiveMeeting(null)}
-                  title="Close Video Window"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-            </div>
-
-            <div className="vc-iframe-wrapper">
-              <iframe
-                src={activeMeeting.meeting_link || `https://meet.jit.si/ZenveConsult-${activeMeeting.id}`}
-                title={`Video Meeting with ${activeMeeting.doctor_name}`}
-                allow="camera; microphone; fullscreen; display-capture; autoplay"
-                className="vc-meeting-iframe"
-              />
-            </div>
-
-            <div className="vc-modal-footer">
-              <span>
-                🔒 Encrypted Consultation Room • Zenve Pet Telehealth
-              </span>
-              <button
-                type="button"
-                className="vc-modal-hangup-btn"
-                onClick={() => setActiveMeeting(null)}
-              >
-                Leave Meeting
-              </button>
-            </div>
+        <div className="vc-modal-overlay vc-modal-fullscreen">
+          <div className="vc-modal-dialog vc-dialog-fullscreen">
+            <TwilioConsultationRoom
+              roomName={
+                activeMeeting.room_code ||
+                `ZenveTelehealth-${activeMeeting.doctor_id || 1}-${activeMeeting.id}`
+              }
+              identity={`PetParent-${activeMeeting.parent_name || "Parent"}`}
+              displayName={activeMeeting.parent_name || "Pet Parent"}
+              role="patient"
+              patientName={
+                activeMeeting.pet_name
+                  ? `${activeMeeting.pet_name} (${activeMeeting.parent_name || "Parent"})`
+                  : activeMeeting.parent_name || "Pet Parent"
+              }
+              doctorName={formatDoctorName(activeMeeting.doctor_name)}
+              reason={activeMeeting.reason || "Virtual Veterinary Consultation"}
+              onLeave={() => setActiveMeeting(null)}
+            />
           </div>
         </div>
       )}

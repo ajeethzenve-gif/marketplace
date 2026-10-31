@@ -18,8 +18,10 @@ import {
   User,
   AlertCircle,
   Copy,
+  Check,
 } from "lucide-react";
 import api from "../api/api";
+import "../styles/Booked.css";
 
 /* =========================================================
    MAIN COMPONENT
@@ -131,7 +133,7 @@ const Booked = () => {
       const response = await api.get("doctors/");
       const data = response.data?.results || response.data || [];
       setDoctors(Array.isArray(data) ? data : []);
-    } catch (error) {
+    } catch {
       // Backend endpoint may not be implemented yet; fallback to empty list
       setDoctors([]);
     } finally {
@@ -333,13 +335,6 @@ const Booked = () => {
             ratings, contact numbers and directions.
             More clinics added regularly as our network grows.
           </p>
-
-          <div style={{ marginTop: "18px", marginBottom: "22px" }}>
-            <Link to="/video-consultations" className="booked-top-vc-btn">
-              <Video size={16} />
-              <span>View My Video Consultations & Appointments →</span>
-            </Link>
-          </div>
 
           <div className="feature-list">
 
@@ -670,51 +665,80 @@ const Booked = () => {
                       <div className="modal-video-icon">
                         <Video size={20} />
                       </div>
-                      <div>
-                        <h4>Video Consultation Meeting Room Ready!</h4>
-                        <p>Join directly using this link when consultation starts.</p>
+                      <div className="modal-video-text">
+                        <div className="modal-video-badge">
+                          <span className="pulse-dot" />
+                          <span>Live Telehealth Room Ready</span>
+                        </div>
+                        <h4>Virtual Consultation Meeting Room</h4>
+                        <p>Join directly using your secure room link when the consultation begins.</p>
                       </div>
                     </div>
 
-                    <div className="modal-video-link-row">
-                      <input
-                        type="text"
-                        readOnly
-                        value={bookingSuccess.meeting_link || `https://meet.jit.si/ZenveConsult-${bookingSuccess.booking_id}`}
-                        className="modal-video-input"
-                      />
-                      <button
-                        type="button"
-                        className="modal-copy-link-btn"
-                        onClick={() => {
-                          const link = bookingSuccess.meeting_link || `https://meet.jit.si/ZenveConsult-${bookingSuccess.booking_id}`;
-                          navigator.clipboard.writeText(link);
-                          setCopiedMeeting(true);
-                          setTimeout(() => setCopiedMeeting(false), 2500);
-                        }}
-                      >
-                        <Copy size={14} />
-                        <span>{copiedMeeting ? "Copied!" : "Copy"}</span>
-                      </button>
-                    </div>
+                    {(() => {
+                      const roomCode = bookingSuccess.room_code || `ZenveTelehealth-1-${bookingSuccess.booking_id || bookingSuccess.id || 'room'}`;
+                      const origin = typeof window !== "undefined" && window.location?.origin ? window.location.origin : "";
+                      const inAppMeetingPath = `/video-consultations?room=${encodeURIComponent(roomCode)}`;
+                      const docTelehealthLink = bookingSuccess.meeting_link && !bookingSuccess.meeting_link.includes("video.twilio.com")
+                        ? bookingSuccess.meeting_link
 
-                    <div className="modal-video-actions">
-                      <a
-                        href={bookingSuccess.meeting_link || `https://meet.jit.si/ZenveConsult-${bookingSuccess.booking_id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="modal-join-btn"
-                      >
-                        <Video size={16} /> Join Video Meeting Now <ExternalLink size={14} />
-                      </a>
-                      <Link
-                        to="/video-consultations"
-                        className="modal-all-consults-btn"
-                        onClick={handleCloseBooking}
-                      >
-                        <Calendar size={15} /> View in My Appointments
-                      </Link>
-                    </div>
+                        : `${origin}${inAppMeetingPath}`;
+
+
+
+
+
+                      return (
+                        <>
+                          <div className="modal-video-link-row">
+                            <input
+                              type="text"
+                              readOnly
+                              value={docTelehealthLink}
+                              className="modal-video-input"
+                              onClick={(e) => e.target.select()}
+                              title="Click to select meeting URL"
+                            />
+                            <button
+                              type="button"
+                              className={`modal-copy-link-btn ${copiedMeeting ? "copied" : ""}`}
+                              onClick={() => {
+                                navigator.clipboard.writeText(docTelehealthLink);
+                                setCopiedMeeting(true);
+                                setTimeout(() => setCopiedMeeting(false), 2500);
+                              }}
+                              title="Copy consultation URL"
+                            >
+                              {copiedMeeting ? <Check size={14} /> : <Copy size={14} />}
+                              <span>{copiedMeeting ? "Copied!" : "Copy Link"}</span>
+                            </button>
+                          </div>
+
+                          <div className="modal-video-actions">
+                            <a
+                              href={docTelehealthLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="modal-join-btn"
+                              title="Open video consultation room"
+                            >
+                              <Video size={16} />
+                              <span>Join Video Consultation</span>
+                              <ExternalLink size={14} />
+                            </a>
+                            <Link
+                              to="/video-consultations"
+                              className="modal-all-consults-btn"
+                              onClick={handleCloseBooking}
+                              title="View consultation appointments"
+                            >
+                              <Calendar size={15} />
+                              <span>View in My Appointments</span>
+                            </Link>
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
                 )}
 

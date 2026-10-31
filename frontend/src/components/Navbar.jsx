@@ -153,7 +153,7 @@ function Navbar() {
 
         try {
             const response = await axios.get(
-                "http://127.0.0.1:8000/api/accounts/profile/",
+                "/api/accounts/profile/",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -174,7 +174,7 @@ function Navbar() {
                 setProfileImage(image);
             } else {
                 setProfileImage(
-                    `http://127.0.0.1:8000${image}`
+                    `${image}`
                 );
             }
         } catch (error) {
@@ -207,7 +207,7 @@ function Navbar() {
 
         try {
             const response = await axios.get(
-                "http://127.0.0.1:8000/api/accounts/pets/",
+                "/api/accounts/pets/",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -249,7 +249,7 @@ function Navbar() {
 
         try {
             const response = await axios.get(
-                "http://127.0.0.1:8000/api/cart/",
+                "/api/cart/",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -326,7 +326,7 @@ function Navbar() {
 
         try {
             const response = await axios.get(
-                "http://127.0.0.1:8000/api/wishlist/",
+                "/api/wishlist/",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,

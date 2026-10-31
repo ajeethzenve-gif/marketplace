@@ -44,7 +44,7 @@ function ManageProducts() {
 
 
             const response = await axios.get(
-                "http://127.0.0.1:8000/api/products/admin/",
+                "/api/products/admin/",
                 {
                     headers: {
                         Authorization:
@@ -160,7 +160,7 @@ function ManageProducts() {
 
             await axios.delete(
 
-                `http://127.0.0.1:8000/api/products/${selectedProduct.id}/`,
+                `/api/products/${selectedProduct.id}/`,
 
                 {
                     headers: {
@@ -226,7 +226,7 @@ function ManageProducts() {
 
 
         // If serializer returns /media/...
-        return `http://127.0.0.1:8000${image}`;
+        return `${image}`;
 
     };
 

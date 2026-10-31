@@ -558,7 +558,7 @@ export default function ZPetNavigation({
     } catch (e) {}
 
     // Notify backend to reset session tracker
-    fetch("http://127.0.0.1:8000/api/chatbot/", {
+    fetch("/api/chatbot/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: "new_session", new_session: true, session_id: newSessionId }),
@@ -702,7 +702,7 @@ export default function ZPetNavigation({
         content: m.text,
       }));
 
-      const res = await fetch("http://127.0.0.1:8000/api/chatbot/", {
+      const res = await fetch("/api/chatbot/", {
         method: "POST",
         headers,
         body: JSON.stringify({
